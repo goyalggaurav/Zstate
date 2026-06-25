@@ -1,0 +1,81 @@
+{
+  "task_id": "GOOGL_footnote_reconciliation",
+  "version": "1.0.0-pilot",
+  "status": "pilot",
+  "benchmark_version": "benchmark_v0.1",
+
+  "ticker": "GOOGL",
+  "cik": "0001652044",
+  "sector": "tech",
+  "archetype": "footnote_reconciliation",
+  "task_type": "F",
+  "difficulty_tier": "L2",
+
+  "prompt": {
+    "text": "Using Alphabet Inc.'s FY2024 Form 10-K (fiscal year ended December 31, 2024), reconcile reportable segment revenues to consolidated total revenue.\n\n1. Extract FY2024 revenue for Google Services, Google Cloud, and Other Bets from the segment disclosure.\n2. Sum the three reportable segments and compare to consolidated total revenue on the income statement / revenue disaggregation tables.\n3. Identify and quantify any reconciling item(s). Explain, citing the filing, why the reconciling item is not included in the three reportable segments.\n4. Produce a reconciliation table (USD millions) and a short narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Every numeric value must include a citation (document, note/section, table).\n- If a value cannot be verified, mark it unverified — do not interpolate.",
+    "constraints": [
+      "Document: GOOGL 10-K FY2024 only",
+      "No Buy/Hold/Sell or price target",
+      "Python required to verify segment sum + reconciling item = consolidated total"
+    ]
+  },
+
+  "required_documents": [
+    {
+      "doc_id": "GOOGL_10K_2024",
+      "form_type": "10-K",
+      "fiscal_period": "FY2024",
+      "filing_date": "2025-02-05",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/goog-10k-2024.htm",
+      "role": "primary"
+    }
+  ],
+
+  "allowed_tools": [
+    "Search_Filing",
+    "PDF_Parser",
+    "Python_Interpreter"
+  ],
+
+  "mandate_profile": null,
+  "compliance_baseline": "citation_only",
+
+  "expected_outputs": {
+    "schema_ref": "forensics_report_v1",
+    "required_sections": [
+      "reconciliation_table",
+      "reconciling_item_explanation",
+      "citations"
+    ],
+    "structured_fields": [
+      "google_services_revenue_fy2024",
+      "google_cloud_revenue_fy2024",
+      "other_bets_revenue_fy2024",
+      "segment_sum_fy2024",
+      "reconciling_item_amount",
+      "reconciling_item_label",
+      "consolidated_total_revenue_fy2024",
+      "reconciliation_balanced"
+    ]
+  },
+
+  "execution_limits": {
+    "max_tool_calls": 30,
+    "max_tokens": 80000,
+    "timeout_seconds": 600,
+    "required_stages": [1, 2]
+  },
+
+  "scoring": {
+    "task_type_weights": { "layer1": 0.55, "layer2": 0.25, "layer3": 0.20 },
+    "finra_required": false,
+    "layer2_method": "section_recall_automated"
+  },
+
+  "ground_truth_ref": "../ground_truth/GOOGL_footnote_reconciliation_gt.json",
+  "gold_path_ref": "../gold_paths/GOOGL_footnote_reconciliation.json",
+
+  "authored_by": "pilot_template",
+  "review_status": "pending_expert_sign_off",
+  "created_at": "2025-06-25T00:00:00Z"
+}

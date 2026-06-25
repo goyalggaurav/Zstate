@@ -1,0 +1,90 @@
+{
+  "task_id": "GOOGL_footnote_reconciliation",
+  "version": "1.0.0-pilot",
+  "task_type": "F",
+
+  "minimal_section_set": [
+    {
+      "section_id": "GOOGL_10K_2024_note_16",
+      "name": "Note 16 — Information about Segments and Geographic Areas",
+      "sec_fragment": "R25.htm",
+      "required": true,
+      "reason": "Segment revenue table + hedging allocation policy"
+    },
+    {
+      "section_id": "GOOGL_10K_2024_note_2",
+      "name": "Note 2 — Revenues (disaggregated by type)",
+      "required": true,
+      "reason": "Cross-check Google Services total and hedging line in revenue disaggregation"
+    }
+  ],
+
+  "optional_sections": [
+    {
+      "section_id": "GOOGL_10K_2024_mdna_segments",
+      "name": "MD&A — Segment discussion / hedging on revenue",
+      "reason": "Supplementary context on constant currency and hedging"
+    }
+  ],
+
+  "required_tool_classes": [
+    "Search_Filing",
+    "PDF_Parser",
+    "Python_Interpreter"
+  ],
+
+  "required_outputs": [
+    "reconciliation_table",
+    "reconciling_item_explanation",
+    "citations"
+  ],
+
+  "reference_workflow": [
+    {
+      "step": 1,
+      "action": "Locate segment disclosure",
+      "tool": "Search_Filing",
+      "target": "Note 16 segment revenue table FY2024"
+    },
+    {
+      "step": 2,
+      "action": "Extract segment revenues + hedging + total",
+      "tool": "PDF_Parser",
+      "target": "Note 16 table rows"
+    },
+    {
+      "step": 3,
+      "action": "Cross-check revenue disaggregation",
+      "tool": "PDF_Parser",
+      "target": "Note 2 disaggregated revenues table"
+    },
+    {
+      "step": 4,
+      "action": "Verify arithmetic",
+      "tool": "Python_Interpreter",
+      "target": "304930 + 43229 + 1648 + 211 == 350018"
+    },
+    {
+      "step": 5,
+      "action": "Extract allocation policy text",
+      "tool": "PDF_Parser",
+      "target": "Hedging gains (losses) not allocated to segments"
+    }
+  ],
+
+  "anti_patterns": [
+    "load_entire_10k_into_context",
+    "use_consolidated_revenue_only_without_segment_note",
+    "omit_hedging_line_in_reconciliation",
+    "treat_hedging_as_google_services_revenue",
+    "skip_python_verification",
+    "produce_buy_hold_sell_recommendation"
+  ],
+
+  "section_recall_scoring": {
+    "note_16_required": true,
+    "note_2_required": true,
+    "pass_if_all_required_accessed": true,
+    "partial_credit_if_note_16_only": 0.5
+  }
+}

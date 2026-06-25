@@ -1,325 +1,370 @@
 # Zstate Equity Research Agent Benchmark
-## Framework Proposal — v0.1
+## Framework Proposal — v0.2 (Revised)
 
 **Prepared for:** Zstate.ai  
 **Date:** June 2025  
-**Status:** Design complete — ready for review  
-**Scope:** Minimum Viable Benchmark (MVD) — eval-first, 45 tasks, 15 companies
+**Status:** Design proposal — pilot not yet validated  
+**Scope:** MVD pilot — **15 eval tasks**, 5 companies, eval-first with trajectory dataset path
 
 ---
 
 ## Executive Summary
 
-Zstate builds **agentic AI datasets** — Task, Trajectory, and Reward loops — using **credentialed domain experts**, not generic crowd labor. A standard text-in/text-out Q&A benchmark cannot measure what enterprise equity research clients actually need: **judgment**, **multi-step tool use**, and **auditable reasoning** across long-horizon financial workflows.
+Zstate builds **agentic AI datasets** — Task, Trajectory, and Reward loops — using **credentialed domain experts**, not generic crowd labor. Standard text-in/text-out finance benchmarks (FinQA, FinanceBench, etc.) do not measure what enterprise equity research requires: **multi-step tool use**, **auditable citations**, and **judgment under real filing complexity**.
 
-This document proposes an **enterprise-grade equity research agent benchmark** designed specifically for Zstate's architecture. It evaluates AI agents on real regulatory filings (10-K, 10-Q, earnings transcripts), quantitative modeling via code execution, narrative synthesis, and regulatory compliance — with every score backed by programmatic checks and expert-validated rubrics.
+This document proposes an equity research agent benchmark aligned to Zstate's architecture. It evaluates agents on SEC filings and earnings transcripts with programmatic scoring and expert-validated rubrics — scoped to what we can **actually build and validate** in a first pilot.
 
-**What we're proposing to build first:** A versioned **benchmark suite** (`benchmark_v0.1`) — 45 tasks, model-agnostic evaluation, 3-run variance study, and a leaderboard — before expanding into training trajectory curation.
+### What we are building first
 
-> **Detailed task backbone:** The MVD starts with 45 eval units, but the full senior-analyst workflow decomposes into **184+ micro-tasks** across data ingestion, financial models (3-statement, DCF, comps, LBO, SOTP, DDM), earnings workflow, thesis, and compliance. See the [Exhaustive Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md).
+| Deliverable | Description |
+|-------------|-------------|
+| **MVD benchmark** | **15 expert-authored eval tasks** (not 45) — quality over coverage |
+| **Eval record** | Task + agent trajectory + 3-layer reward vector per run |
+| **Fracture report** | Where and why agents break (tool loops, sign errors, citation gaps) |
+| **Path to product** | Benchmark proves task quality → **trajectory dataset for training** (Zstate core) |
 
-| Parameter | Decision |
-|-----------|----------|
-| Pilot universe | 15 companies across 3 sectors (Tech, Media, Consumer) |
-| Task count | 45 (3 archetypes × 15 companies) |
-| Eval runs | 3 per task per model (median aggregation) |
-| Models | Model-agnostic — any tool-using agent via adapter |
-| Expert capacity | 20–30 hrs/week (CFA lead + MBA associate) |
-| Compliance | FINRA baseline + 3 client mandate profiles |
-| Data | Greenfield — SEC EDGAR + Transcript API (IR fallback) |
-| Output | Benchmark / eval dataset first; training loops in Phase 2 |
+### What we are explicitly not building in MVD
+
+- Full 5-service platform (Expert Workbench, etc.) — **JSON + scripts + sheets for pilot**
+- 45-company universe — **5 pilot companies first**
+- FINRA compliance lint on forensics-only tasks — **compliance scoped to task type**
+- Full DCF/comps/LBO stack — **requires market data; deferred to v0.3+**
+
+> **Full analyst workflow:** 185 indexed micro-tasks (data → models → valuation → memo) in the [Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md). MVD implements **15 eval units** from that catalog — not the full stack.
+
+---
+
+## Revised MVD Parameters
+
+| Parameter | v0.1 (previous) | **v0.2 (revised)** | Rationale |
+|-----------|-----------------|---------------------|-----------|
+| Eval tasks | 45 | **15** | Expert hours realistic; quality over repetition |
+| Pilot companies | 15 | **5** | One anchor per sector + 2 cross-sector |
+| Archetypes | 3 × 15 cos | **3 × 5 cos** | Same archetypes, proven before scale |
+| Workflow | 4 stages on every task | **Task-type dependent** | No fake memos on footnote tasks |
+| Compliance | FINRA on all tasks | **Scoped by task type** | Forensics ≠ investment recommendation |
+| Platform | 5 services, 14 weeks | **Lightweight pilot stack** | No eng team assumed |
+| Expert capacity | 20–30 hrs/wk | **20–30 hrs/wk, 8–10 weeks for 15 tasks** | Honest throughput |
+| Eval runs | 3 per task × model | **3 for pilot calibration; 1 at scale** | Cost control |
+| Primary output | Leaderboard | **Benchmark + fracture map + trajectory export** | Training path is the product |
 
 ---
 
 ## Why This Fits Zstate
 
+| Zstate principle | MVD delivery |
+|------------------|--------------|
+| **Credentialed experts** | CFA/MBA author tasks, ground truth, gold section sets |
+| **Task construction** | 3 archetypes on real 10-K / 10-Q / transcripts |
+| **Agentic trajectories** | Full tool-call logging per run |
+| **Multi-layered rewards** | L1 hard checks + L2 judgment rules + L3 trust/citations |
+| **Enterprise-grade** | Citation audit, uncertainty calibration; FINRA on coverage tasks only |
+
+### Benchmark vs training (product path)
+
 ```mermaid
 flowchart LR
-    subgraph Zstate Core
-        T[Task Dataset]
-        TR[Trajectory Capture]
-        R[Reward Signals]
-    end
+    P1[Phase 1 — MVD Benchmark<br/>15 tasks · prove quality]
+    P2[Phase 2 — Trajectory Dataset<br/>expert-ranked runs]
+    P3[Phase 3 — Reward Model<br/>3-layer signals for RL/SFT]
 
-    subgraph This Benchmark
-        TS[45 Expert-Authored Tasks]
-        GT[Gold Trajectories]
-        RV[3-Layer Reward Rubrics]
-    end
-
-    T --- TS
-    TR --- GT
-    R --- RV
+    P1 --> P2 --> P3
 ```
 
-| Zstate Principle | How This Benchmark Delivers |
-|------------------|----------------------------|
-| **Credentialed experts, not crowds** | CFA/MBA authors tasks, ground truth, gold trajectories, and Layer 2 rubrics |
-| **Task construction** | 3 real-world archetypes grounded in SEC filings — not synthetic trivia |
-| **Agentic trajectories** | Full tool-call logging across 4-stage long-horizon workflow |
-| **Multi-layered rewards** | Hard accuracy + expert judgment + trust/compliance — not a single BLEU score |
-| **Enterprise-grade** | FINRA linter, client mandate profiles, citation audit, uncertainty calibration |
+**Benchmark is proof, not the end product.** Zstate's differentiation is expert-validated **trajectories and rewards for model training** — not another public leaderboard alone.
 
 ---
 
-## Framework Overview
+## Competitive Context (Why Not Existing Benchmarks)
 
-The benchmark is a closed evaluation loop:
+| Existing approach | Gap |
+|-------------------|-----|
+| **FinQA / TAT-QA** | Single-step numerical QA; no tools, no trajectories |
+| **FinanceBench / FinBen** | Broader finance QA; not agentic, not ER workflow |
+| **SEC filing QA datasets** | Retrieval + answer; no modeling, compliance, or multi-step workflows |
+| **Generic agent benchmarks** | Not domain-grounded; no credentialed expert rubrics |
+
+**Zstate wedge:** Real filings + **expert gold paths** + **3-layer rewards** + **trajectory export for training** — not a single accuracy number.
+
+---
+
+## Pilot Universe — 5 Companies
+
+One anchor per sector, selected for filing richness and archetype fit:
+
+| Sector | Company | Ticker | Why this name |
+|--------|---------|--------|---------------|
+| **Technology** | Alphabet | GOOGL | Segment reclassification, cap software, FX segments |
+| **Technology** | Amazon | AMZN | AWS segments, SBC, international FX |
+| **Media** | Netflix | NFLX | Content amortization, subscriber guidance drift |
+| **Consumer** | PepsiCo | PEP | Geographic FX, price/volume/mix, dividends |
+| **Consumer** | Coca-Cola | KO | International segments, organic growth, FX |
+
+**Deferred from pilot (scale in v0.1b):** META, MSFT, AAPL, DIS, WBD, CMCSA, SPOT, MCD, SBUX, MDLZ — add after templates reduce authoring to ~2–3 hrs/task.
+
+**Pilot exclusions explained:**
+- **WBD** — distressed/special situation; unstable for templated tasks
+- **MCD** — weak fit for FX archetype (US-heavy); use KO/PEP instead
+- **Banks** — different statement structure; dedicated phase later
+
+---
+
+## MVD Task Matrix — 15 Tasks
+
+Each company gets **one task per archetype**:
+
+| Archetype | Count | Task type | What it tests |
+|-----------|-------|-----------|---------------|
+| **Footnote reconciliation** | 5 | **Type F** (Forensics) | Segment table ↔ footnote cross-reference |
+| **Guidance drift** | 5 | **Type F + M** | Earnings call guidance vs subsequent 10-Q actuals |
+| **Cross-border / FX organic growth** | 5 | **Type M** (Modeling) | Constant-currency growth via weighted-average FX |
+
+### Task-type taxonomy (replaces universal 4-stage workflow)
+
+Not every task needs a Buy/Hold/Sell memo. Stages are **task-type dependent**:
 
 ```mermaid
 flowchart TB
-    subgraph Build Phase
-        CORPUS[Corpus Service<br/>Filings + Transcripts + FX]
-        TASKS[45 Tasks<br/>Ground Truth + Gold Trajectories]
+    subgraph TypeF["Type F — Forensics"]
+        F1[Stage 1: Targeted ingestion]
+        F2[Stage 2: Extract + Python verify]
+        F3[Output: reconciliation report + citations]
+        F1 --> F2 --> F3
     end
 
-    subgraph Eval Phase
-        AGENT[Any Agent via Adapter]
-        TRAJ[Trajectory Logger<br/>4-Stage Workflow]
-        SCORE[3-Layer Scoring<br/>+ Compliance]
+    subgraph TypeM["Type M — Modeling"]
+        M1[Stage 1: Ingestion]
+        M2[Stage 2: Python model required]
+        M3[Stage 3: Assumption log]
+        M1 --> M2 --> M3
     end
 
-    subgraph Output
-        LB[Leaderboard]
-        FR[Fracture Analysis]
-        DS[Versioned Benchmark Record]
+    subgraph TypeC["Type C — Coverage (v0.5+)"]
+        C1[Stages 1–4: full workflow]
+        C2[Output: investment memo + reco]
+        C1 --> C2
     end
-
-    CORPUS --> TASKS
-    TASKS --> AGENT
-    AGENT --> TRAJ
-    TRAJ --> SCORE
-    SCORE --> LB & FR & DS
 ```
 
----
+| Type | Stages | Tools | Output | L2 expert scoring |
+|------|--------|-------|--------|-------------------|
+| **F — Forensics** | 1–2 | Search_Filing, PDF_Parser, Python | Reconciliation table + narrative; **no Buy/Sell** | Automated (section recall) |
+| **M — Modeling** | 1–3 | + Python required; optional Vector_Search | Model outputs + cited assumptions | Automated + spot-check |
+| **C — Coverage** | 1–4 | Full stack + Compliance_Linter | Investment memo + recommendation | Expert-assisted |
 
-## Pilot Universe
+**MVD uses Type F and Type M only.** Type C (full initiation) is v0.5.
 
-### Three Sectors — Fifteen Companies
+### MVD task list
 
-| Sector | Companies | Representative Complexity |
-|--------|-----------|---------------------------|
-| **Technology** | Alphabet, Amazon, Meta, Microsoft, Apple | Capitalized R&D, stock comp, cloud segment reclassification, FX on international revenue |
-| **Media** | Netflix, Disney, WBD, Comcast, Spotify | Content amortization, DTC vs legacy, subscriber guidance drift, IP impairment |
-| **Consumer** | PepsiCo, McDonald's, Coca-Cola, Starbucks, Mondelez | Franchise models, commodity costs, geographic FX, promotional normalization |
+| # | Task ID | Company | Archetype | Type |
+|---|---------|---------|-----------|------|
+| 1 | GOOGL_footnote_reconciliation | Alphabet | Footnote | F |
+| 2 | GOOGL_guidance_drift | Alphabet | Guidance | F |
+| 3 | GOOGL_fx_organic_growth | Alphabet | FX | M |
+| 4 | AMZN_footnote_reconciliation | Amazon | Footnote | F |
+| 5 | AMZN_guidance_drift | Amazon | Guidance | F |
+| 6 | AMZN_fx_organic_growth | Amazon | FX | M |
+| 7 | NFLX_footnote_reconciliation | Netflix | Footnote | F |
+| 8 | NFLX_guidance_drift | Netflix | Guidance | F |
+| 9 | NFLX_fx_organic_growth | Netflix | FX | M |
+| 10 | PEP_footnote_reconciliation | PepsiCo | Footnote | F |
+| 11 | PEP_guidance_drift | PepsiCo | Guidance | F |
+| 12 | PEP_fx_organic_growth | PepsiCo | FX | M |
+| 13 | KO_footnote_reconciliation | Coca-Cola | Footnote | F |
+| 14 | KO_guidance_drift | Coca-Cola | Guidance | F |
+| 15 | KO_fx_organic_growth | Coca-Cola | FX | M |
 
-### Task Matrix — 45 Tasks
+### Example tasks (abbreviated)
 
-Each company receives **one task per archetype**:
+**GOOGL — Footnote (Type F):**  
+Reconcile Google Cloud vs Google Services revenue in the segment table against reclassification in Note 2 (Significant Accounting Policies) of FY2024 10-K. Output: reconciliation table + discrepancy flag. **No price target.**
 
-| Archetype | Count | What It Tests |
-|-----------|-------|---------------|
-| **Footnote Reconciliation** | 15 | Cross-reference segment tables against ambiguous footnote disclosures |
-| **Guidance Drift** | 15 | Compare earnings call guidance to subsequent 10-Q actuals |
-| **Cross-Border / FX Model** | 15 | Build constant-currency organic growth using weighted-average FX rates |
+**NFLX — Guidance drift (Type F):**  
+Compare Q2 management commentary on content spend/amortization to actuals in Q3/Q4 10-Q. Output: guidance vs actuals table with transcript quotes cited.
 
-**Example (Alphabet — Footnote Reconciliation):**  
-Reconcile Google Cloud vs Google Services revenue in the segment breakdown against a reclassification described only in Note 2 (Significant Accounting Policies). Quantify any discrepancy. Agent must navigate to the segment table *and* the footnote — not just the income statement headline.
-
-**Example (Netflix — Guidance Drift):**  
-Cross-reference Q2 management commentary on content amortization against actual cash content spend and amortization in Q3/Q4 10-Qs.
-
-**Example (PepsiCo — Cross-Border FX):**  
-Build organic constant-currency revenue growth for Europe, AMESA, and APAC segments using weighted-average exchange rates — not spot rates.
-
----
-
-## Four-Stage Agent Workflow
-
-Every task evaluates agents across a **long-horizon workflow**, not a single prompt-response:
-
-```mermaid
-flowchart LR
-    S1["Stage 1<br/>Document Ingestion<br/>Search_Filing · PDF_Parser"]
-    S2["Stage 2<br/>Model & Code<br/>Python_Interpreter"]
-    S3["Stage 3<br/>Synthesis<br/>Vector_Search · CoT"]
-    S4["Stage 4<br/>Compliance<br/>Compliance_Linter"]
-
-    S1 --> S2 --> S3 --> S4
-```
-
-| Stage | Agent Must Do | What We Measure |
-|-------|---------------|-----------------|
-| **1 — Ingestion** | Locate precise filing sections; avoid loading entire documents | Section targeting precision; context bloat ratio |
-| **2 — Modeling** | Extract metrics; build 3-statement model / DCF in Python; verify A = L + E | Code execution vs mental math; sign conventions |
-| **3 — Synthesis** | Connect numbers to investment thesis; justify assumptions with bounds | Reasoning quality; forecast discipline; peer context |
-| **4 — Compliance** | Format investment memo; flag unverified data; pass compliance lint | FINRA alignment; mandate rules; uncertainty calibration |
-
-**Gold trajectories:** Credentialed experts pre-map the optimal tool path for each task — which sections to read, what Python to run, how to structure the answer. Agent trajectories are scored against this baseline.
+**PEP — FX organic growth (Type M):**  
+Build constant-currency organic revenue growth for Europe and AMESA using weighted-average FX from 10-K disclosure — not spot rates. Output: growth table + Python verification script result.
 
 ---
 
-## Three-Layer Reward Model
+## Three-Layer Reward Model (Revised Weights by Task Type)
 
-Responses are scored across three distinct layers — programmatic checks mixed with expert validation:
+### Layer 1 — Technical & Tabular Accuracy (*Hard*)
 
-### Layer 1 — Technical & Tabular Accuracy (40%)
+| Metric | Pass | Fail | Notes |
+|--------|------|------|-------|
+| Data extraction | Value + unit match filing | Wrong period / annualized vs quarterly | High weight |
+| Sign & directionality | Outflows negative in CF calcs | CapEx positive → inflated FCF | **Critical veto** |
+| Math precision | ±0.01% vs Python verification | Formula error | Medium |
 
-*The "Hard" Reward — fully automated where possible*
+### Layer 2 — Domain Reasoning (*Expert rules, not full human review every run*)
 
-| Metric | Pass | Fail | Weight |
-|--------|------|------|--------|
-| Data extraction | Values match filing tables exactly | Annualized vs quarterly confusion | High |
-| Sign & directionality | Outflows negative in cash calcs | CapEx positive → inflated FCF | **Critical** |
-| Math precision | Within ±0.01% of Python verification | Formula / rounding errors | Medium |
+| Method | MVD approach |
+|--------|--------------|
+| Section recall | Did agent access required sections (e.g., Note 2, segment table)? |
+| Footnote utilization | Automated vs gold **minimal section set** (not exact tool sequence) |
+| Assumption bounds | Type M: growth/FX assumptions within peer/historical bounds |
 
-Critical sign errors → **automatic zero**.
+**MVD:** Layer 2 is **mostly automated**. Expert scoring on **calibration set only** (5 tasks, dual-rater). Not 135 manual reviews per campaign.
 
-### Layer 2 — Domain Reasoning & Judgment (35%)
-
-*The "Expert" Reward — credentialed analyst rubric*
-
-| Dimension | High (4–5) | Poor (1–2) |
-|-----------|------------|------------|
-| Contextual awareness | Normalizes non-recurring items (divestitures, litigation) | Accepts headline GAAP blindly |
-| Forecast bounding | WACC / multiples bounded by peer averages | Tech multiples on industrial stock |
-| Footnote utilization | Trajectory shows Commitments / Contingencies read | Summary statements only |
-
-Scored via trajectory diff (automated) + expert-assisted rubric (human confirm/override).
-
-### Layer 3 — Traceability & Enterprise Safety (25%)
-
-*The "Trust" Reward — audit and compliance*
+### Layer 3 — Traceability & Trust
 
 | Metric | Pass | Fail |
 |--------|------|------|
-| Source grounding | Every metric → `{doc_id, page, snippet}` | Broad or missing citation |
-| Uncertainty calibration | Flags gaps; does not interpolate | Fills gaps with fake trends |
-| Compliance | Fact/opinion split + disclosures | Guaranteed return language |
+| Citation completeness | Every metric → `{doc_id, page, snippet}` | Broad or missing citation |
+| Uncertainty calibration | Flags gaps; no interpolation | Hallucinated fill-in |
 
-**FINRA fail → hard veto (score = 0).**  
-**Mandate fail → score capped at 0.30.**
+**Citation veto:** If &lt;90% material claims cited → Layer 3 fail.
 
-### Three-Run Aggregation
+### Compliance (scoped — not on every task)
 
-Each task × model is run **3 times**. Reported score = **median**. Layer 3 compliance = **worst run wins**. Fracture codes unioned across runs.
+| Task type | FINRA linter | Mandate profiles |
+|-----------|--------------|------------------|
+| **Type F** | **Not required** | Not required |
+| **Type M** | **Not required** | Optional: no_speculative_language on FX/forecast tasks |
+| **Type C** | Required | Required (v0.5+) |
 
----
+### Scoring weights by task type
 
-## Compliance Architecture
+| Type | L1 | L2 | L3 |
+|------|----|----|-----|
+| **F — Forensics** | 55% | 25% | 20% |
+| **M — Modeling** | 50% | 30% | 20% |
+| **C — Coverage** *(v0.5)* | 40% | 35% | 25% |
 
-### FINRA Baseline (Universal)
+### Three-run aggregation (pilot)
 
-Applied to every task — 6 core rules covering guaranteed returns, fact/opinion separation, risk disclosures, advice framing, and data limitations.
-
-### Client Mandate Profiles (Task-Level)
-
-Simulates real portfolio constraints. One profile per task:
-
-| Profile | Simulates | Key Constraint |
-|---------|-----------|----------------|
-| **Long-Only Equity** | Standard mutual fund / long-only mandate | No short-selling language |
-| **Conservative Income** | Dividend / retirement portfolios | Dividend sustainability must be addressed |
-| **No Speculative Language** | Fiduciary / conservative committees | Forecast assumptions must be bounded and cited |
-
-~15 tasks per profile across the 45-task set.
+- **Reported score:** median of 3 runs  
+- **Layer 3 citations:** worst run wins (any run with &lt;90% cite rate fails)  
+- **At scale (v0.1b+):** 1 run default; 3 runs for calibration tasks only  
 
 ---
 
-## Platform Components
+## Gold Trajectories (Revised — Minimal Section Set)
 
-Five integrated services comprise the benchmark platform:
+**Previous approach (brittle):** One exact tool-call sequence.  
+**Revised approach:** Gold = **minimal section set** + **required tool classes** + **required outputs**.
 
-```mermaid
-flowchart TB
-    subgraph Data
-        CS[Corpus Service]
-    end
-
-    subgraph Benchmark Core
-        TR[Task Registry<br/>45 tasks · GT · Gold paths]
-        EW[Expert Workbench<br/>Author · Review · Score]
-    end
-
-    subgraph Evaluation
-        EO[Eval Orchestrator<br/>Model adapters · Tool sandbox]
-        SE[Scoring Engine<br/>L1 · L2 · L3 · Leaderboard]
-    end
-
-    CS --> TR
-    EW --> TR
-    TR --> EO
-    CS --> EO
-    EO --> SE
-    EW --> SE
-    TR --> SE
+```json
+{
+  "task_id": "GOOGL_footnote_reconciliation",
+  "minimal_section_set": [
+    "GOOGL_10K_2024_note_15",
+    "GOOGL_10K_2024_note_2"
+  ],
+  "required_tool_classes": ["Search_Filing", "PDF_Parser", "Python_Interpreter"],
+  "required_outputs": ["reconciliation_table", "citations"],
+  "anti_patterns": ["load_entire_10k", "skip_accounting_policies_note"]
+}
 ```
 
-| Component | Purpose | MVD Deliverable |
-|-----------|---------|-----------------|
-| **Corpus Service** | SEC filings, transcripts (API + IR fallback), FX rates, section index | `corpus_v1` manifest (~210 docs) |
-| **Task Registry** | 45 tasks with ground truth, gold trajectories, mandate attachment | `benchmark_v0.1` manifest |
-| **Expert Workbench** | CFA/MBA authoring, review, corpus QA, Layer 2 scoring UI | 45 published tasks |
-| **Eval Orchestrator** | Model-agnostic agent runs, tool sandbox, trajectory capture | Eval campaign (45 × N × 3 runs) |
-| **Scoring Engine** | 3-layer rewards, FINRA + mandate linter, leaderboard | Leaderboard + fracture report |
-
-Detailed technical specifications: `docs/specs/` (Corpus Service, Task Registry, Eval Orchestrator, Scoring Engine, Expert Workbench).
+Valid alternative analyst paths are not penalized if section recall and outputs pass.
 
 ---
 
 ## Data Strategy
 
-| Asset | Source | Method |
-|-------|--------|--------|
-| 10-K / 10-Q | SEC EDGAR | Automated fetch |
-| Earnings transcripts | Transcript API | **Primary (Option B)** |
-| Transcript fallback | Company IR pages | **Fallback (Option A)** — when API gaps or expert mismatch |
-| FX rates | FRED / Treasury | Reference table for cross-border tasks |
+| Asset | Source | MVD scope |
+|-------|--------|-----------|
+| 10-K / 10-Q | SEC EDGAR | 5 companies, FY2023–2024 + trailing quarters |
+| Earnings transcripts | Transcript API (primary) + IR fallback | Guidance drift tasks |
+| FX rates | FRED + 10-K FX note | FX tasks |
+| Market data (prices, beta) | **Not in MVD** | Required for DCF/comps — v0.3+ |
 
-Every document carries full provenance: `doc_id`, checksum, source URL, acquisition method. Corpus locked via manifest checksum before benchmark release. IR official text wins on citation conflict with API.
+**Corpus size (pilot):** ~40–60 documents (not ~210). Scale corpus with company count.
 
----
-
-## Expert Model
-
-Zstate's credentialed expert advantage operationalized:
-
-| Role | Hours/week | Responsibility |
-|------|-----------|----------------|
-| Lead CFA | 10–12 | Task standards, rubric anchors, publish approval, corpus sign-off |
-| MBA Associate | 12–15 | Draft tasks, ground truth, gold trajectories, citations |
-| Compliance (shared) | 3–5 | FINRA/mandate rules, Layer 3 spot-check |
-
-**Throughput:** 4–5 tasks/week → 45 tasks in 10–12 weeks.
-
-**Pilot batch:** 3 Alphabet tasks (one per archetype) in Weeks 3–4 to calibrate templates before scaling.
+**Contamination mitigation:**
+- Require snippet-level citations (not just "from 10-K")
+- Prefer tasks targeting **footnote nuance** and **cross-document reconciliation**
+- Holdout task variants in v0.1b (same company, different footnote)
 
 ---
 
-## Implementation Timeline
+## MVD Technical Stack (Lightweight — Not 5 Services)
+
+For the pilot, avoid building the full platform. Use:
+
+| Component | MVD implementation | Full platform |
+|-----------|-------------------|---------------|
+| Task storage | JSON files in repo | Task Registry API |
+| Corpus | S3/local + section index (5 cos) | Corpus Service |
+| Agent runs | Script + model adapter (1–2 agents) | Eval Orchestrator |
+| Trajectory | JSONL step log | Trajectory Logger service |
+| Scoring | Python scripts (L1, section recall) | Scoring Engine |
+| Expert authoring | Google Sheet / Notion + review | Expert Workbench |
+| Compliance | Rule script (Type C only later) | Compliance_Linter service |
+
+Component specs in `docs/specs/` describe the **target architecture** — not MVD scope.
+
+---
+
+## Resourcing (Honest)
+
+### Expert content (15 tasks)
+
+| Activity | Hours/task | Total (15 tasks) |
+|----------|------------|------------------|
+| Task + ground truth + citations | 4–6 | 60–90 |
+| Gold section set + anti-patterns | 1–2 | 15–30 |
+| L1 verification script | 1–2 | 15–30 |
+| Peer review | 0.5–1 | 8–15 |
+| **Total expert labor** | | **~100–165 hrs** |
+
+At **25 hrs/week → 4–7 weeks** for content (after 1 pilot task templates).
+
+**Required:** Named CFA lead + associate (hired, contracted, or via Zstate expert network). Without this, timeline slips.
+
+### Engineering (minimal pilot)
+
+| Activity | Effort | Who |
+|----------|--------|-----|
+| EDGAR ingest + section index (5 cos) | 1–2 weeks | 1 engineer or contractor |
+| Eval runner + trajectory JSONL | 1 week | Same |
+| L1 scoring scripts | 1 week | Same |
+| **Total eng (pilot)** | **~3–4 weeks** | Can overlap with expert work |
+
+**Not assumed in MVD:** Full Expert Workbench, leaderboard UI, multi-model campaign automation.
+
+---
+
+## Revised Timeline — 10 Weeks to First Eval
 
 ```mermaid
 gantt
-    title Benchmark v0.1 — 14-Week Plan
+    title MVD Pilot — 10-Week Realistic Plan
     dateFormat YYYY-MM-DD
     axisFormat %b %d
 
-    section Foundation
-    Corpus ingest + index           :2025-07-01, 4w
-    Schemas + compliance rules      :2025-07-08, 3w
+    section Week 1-2 Foundation
+    Corpus 5 cos + index           :2025-07-01, 2w
+    GOOGL pilot task (1 complete)  :2025-07-08, 2w
 
-    section Task Factory
-    Archetype templates             :2025-07-08, 2w
-    Pilot 3 tasks (GOOGL)           :2025-07-22, 2w
-    Batch authoring to 45 tasks     :2025-07-29, 8w
+    section Week 3-6 Content
+    Template from GOOGL pilot      :2025-07-15, 1w
+    Author remaining 14 tasks      :2025-07-22, 4w
 
-    section Platform
-    Tool sandbox + trajectory log   :2025-07-29, 5w
-    Model adapters + scoring engine :2025-08-12, 5w
+    section Week 3-5 Eng (parallel)
+    Ingest + eval runner + L1      :2025-07-15, 3w
 
-    section Eval Campaign
-    Dry run (5 tasks)               :2025-09-16, 1w
-    Full campaign (45 × N × 3)     :2025-09-23, 2w
-    Calibration + release           :2025-10-07, 1w
+    section Week 7-8 Validation
+    Expert review all 15           :2025-08-19, 2w
+    Corpus lock benchmark_v0.1     :2025-08-26, 1w
+
+    section Week 9-10 Eval
+    Manual agent runs 15 x 2 models :2025-09-02, 2w
+    Fracture report + doc release  :2025-09-16, 1w
 ```
 
-| Phase | Weeks | Key Output |
-|-------|-------|------------|
-| **Foundation** | 1–4 | Corpus v1 locked; schemas; compliance rules |
-| **Task Factory** | 3–12 | 45 published tasks with ground truth + gold trajectories |
-| **Platform** | 5–12 | Tool sandbox, adapters, scoring engine, expert workbench |
-| **Eval Campaign** | 11–14 | Full model runs, leaderboard, fracture analysis, `benchmark_v0.1` release |
+| Week | Milestone | Exit criteria |
+|------|-----------|---------------|
+| **1–2** | Corpus for 5 cos; **1 complete task** (GOOGL footnote) | GT peer-reviewed; citations verified |
+| **3** | Archetype templates from pilot | Authoring time &lt;6 hrs/task |
+| **4–6** | 15 tasks authored + L1 scripts | All tasks in JSON; scripts pass on GT |
+| **3–5** *(parallel)* | Eval runner + trajectory capture | 1 model completes GOOGL task end-to-end |
+| **7–8** | Review + corpus lock | `benchmark_v0.1` manifest frozen |
+| **9–10** | Eval campaign (2 models × 15 tasks × 3 runs) | Fracture report; median scores computed |
+
+**Scale to 45 tasks (v0.1b):** +6–8 weeks after templates proven (not parallel with pilot).
 
 ---
 
@@ -327,94 +372,99 @@ gantt
 
 ```
 benchmark_v0.1/
-├── manifest.json                 # 45 tasks, corpus checksums, rubric version
-├── tasks/                        # 45 task specs
-├── ground_truth/                 # 45 expert-verified answer packages
-├── gold_trajectories/            # 45 optimal tool paths
+├── manifest.json                 # 15 tasks, corpus checksums, rubric v0.2
+├── tasks/                        # 15 task specs (Type F or M)
+├── ground_truth/                 # 15 expert-verified packages
+├── gold_paths/                   # minimal section sets (not brittle sequences)
 ├── rubrics/
 │   ├── layer1_rules.json
-│   ├── layer2_anchors.json
-│   ├── finra_v1.json
-│   └── mandate_profiles/
+│   ├── layer2_section_recall.json
+│   ├── layer3_citation.json
+│   └── weights_by_task_type.json
 ├── corpus/
-│   └── corpus_v1_manifest.json   # ~210 docs, checksum-locked
+│   └── corpus_pilot_manifest.json  # 5 companies, ~40-60 docs
 └── results/
-    └── campaign_001/
-        ├── trajectories/         # 45 × N × 3 runs
-        ├── scores/               # Reward vectors
-        └── leaderboard.json
+    └── pilot_001/
+        ├── trajectories/         # 15 × models × 3 runs
+        ├── scores/
+        └── fracture_report.json
 ```
 
 ---
 
-## Success Metrics
+## Success Metrics (MVD — Achievable)
 
 | Metric | Target |
 |--------|--------|
-| Task coverage | 45 tasks, 3 archetypes, 3 sectors, 15 companies |
+| Published tasks | **15** (5 cos × 3 archetypes) |
 | Ground truth citation rate | 100% numeric claims cited |
-| Layer 1 automation | ≥80% claims programmatically scorable |
-| Expert inter-rater agreement (Layer 2) | Cohen's κ ≥ 0.7 on calibration set |
-| Model score discrimination | ≥15pt spread between best/worst Tier A model |
-| Trajectory completeness | 100% runs with full tool I/O logged |
-| Citation audit (best model) | ≥90% metrics fully grounded |
-| Fracture taxonomy | ≥10 distinct failure codes observed |
-| Compliance | FINRA + 3 mandate profiles operational |
+| Layer 1 automation | ≥80% claims auto-scored |
+| Expert calibration (5 tasks, dual-rater) | Cohen's κ ≥ 0.7 |
+| Models evaluated | ≥2 via adapters |
+| Score spread (best vs worst model) | ≥15 pts on median aggregate |
+| Fracture taxonomy | ≥8 distinct codes observed |
+| Trajectory completeness | 100% runs with tool I/O logged |
+| Pilot task authoring time | ≤6 hrs/task by task 5 |
 
 ---
 
-## Fracture Taxonomy (Eval Insight)
+## Fracture Taxonomy
 
-Running frontier agents through the benchmark produces a **fracture map** — where and why agents break:
+| Code | Failure mode | Typical type |
+|------|-------------|--------------|
+| `LOOP_TOOL` | Repeated tool calls on large tables | F, M |
+| `BLOAT_CTX` | Full doc load vs targeted sections | F, M |
+| `NO_CODE` | Skipped Python on Type M task | M |
+| `SIGN_ERR` | Cash flow sign inversion | M |
+| `HALLUC_FILL` | Interpolated missing data | F, M |
+| `CITE_BROAD` | Non-auditable citation | F, M |
+| `SECTION_MISS` | Required footnote/section not accessed | F |
+| `FX_SPOT misuse` | Spot rate used instead of weighted avg | M |
 
-| Code | Failure Mode | Typical Stage |
-|------|-------------|---------------|
-| `LOOP_TOOL` | Infinite tool call loops on large tables | 1 |
-| `BLOAT_CTX` | Loads entire filing vs targeted sections | 1 |
-| `NO_CODE` | Skips Python for complex math | 2 |
-| `SIGN_ERR` | Reverses cash flow signs | 2 |
-| `HALLUC_FILL` | Interpolates missing data | 3 |
-| `CITE_BROAD` | Non-auditable citations | 3 |
-| `COMPLIANCE_FAIL` | FINRA/mandate violations | 4 |
-
-This taxonomy calibrates reward weights and identifies which tasks are most discriminative — core value for model developers and enterprise buyers.
+Fracture data feeds **Phase 2 trajectory curation** (which failure modes to oversample for training).
 
 ---
 
-## Phase 2 Roadmap (Post-MVD)
+## Roadmap After MVD
 
-| Capability | Description |
-|------------|-------------|
-| Training trajectories | Curate expert-ranked agent paths for SFT / RL |
-| Preference pairs | Better vs worse trajectories on same task |
-| Difficulty tiers | L1 / L2 / L3 task grading |
-| Expanded universe | 50+ companies, banking sector, ESG mandates |
-| Continuous refresh | Quarterly corpus update pipeline |
-| Reward model | Train on 3-layer signals |
+| Release | Tasks | Companies | Adds |
+|---------|-------|-----------|------|
+| **v0.1** *(MVD)* | 15 | 5 | Type F + M; lightweight stack |
+| **v0.1b** | 45 | 15 | Scale templates; same archetypes |
+| **v0.2** | +15 | 15 | 3-statement mini-model (Type M bundles) |
+| **v0.3** | +15 | 15 | DCF + comps (+ market data tier) |
+| **v0.4** | +30 | 15+ | LBO, SOTP, DDM |
+| **v0.5** | +20 | 15+ | Type C full initiation (OUT-001) |
+| | **~185 total** | | Full catalog coverage |
+
+**Phase 2 (Zstate product):** Export curated trajectories — expert-ranked good/bad paths — for SFT and RL.
+
+**Phase 3:** Train reward model on 3-layer signals.
 
 ---
 
 ## What Exists Today
 
-| Artifact | Status | Location |
-|----------|--------|----------|
-| Framework proposal (this document) | ✅ Complete | `docs/ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md` |
-| Corpus Service spec | ✅ Complete | `docs/specs/corpus-service.md` |
-| Task Registry spec | ✅ Complete | `docs/specs/task-registry.md` |
-| Eval Orchestrator spec | ✅ Complete | `docs/specs/eval-orchestrator.md` |
-| Scoring Engine spec | ✅ Complete | `docs/specs/scoring-engine.md` |
-| Expert Workbench spec | ✅ Complete | `docs/specs/expert-workbench.md` |
-| Implementation / code | ⬜ Not started | Greenfield |
+| Artifact | Status |
+|----------|--------|
+| Framework v0.2 (this document) | ✅ Revised |
+| Task catalog (185 indexed) | ✅ Overview |
+| Task definitions (185) | ✅ Partial depth — ~50 fully spec'd |
+| Component specs (5 services) | ✅ Target architecture |
+| Pilot task with real GT | ✅ Draft — [GOOGL footnote](../benchmark_v0.1/tasks/GOOGL_footnote_reconciliation.json) (pending expert sign-off) |
+| Agent fracture run | ⬜ Not started |
+| Code / platform | ⬜ Not started |
 
 ---
 
 ## Recommended Next Steps
 
-1. **Review this framework** — Confirm scope, archetypes, pilot universe, and compliance model align with Zstate product strategy.
-2. **Confirm expert resourcing** — CFA lead + MBA associate availability (20–30 hrs/week).
-3. **Select transcript API vendor** — Week 1 decision; IR fallback documented.
-4. **Approve 14-week timeline** — Or adjust scope (e.g., 20 tasks first tranche).
-5. **Begin Sprint 0** — Corpus ingest for 15 tickers + GOOGL pilot task authoring.
+1. **Validate with Zstate** — 15-task pilot scope, benchmark → trajectory product path.  
+2. **Secure experts** — Name CFA lead + associate (or Zstate expert network).  
+3. **Complete GOOGL footnote task** — One end-to-end task with real 10-K ground truth.  
+4. **Run one agent manually** — First fracture data before building platform.  
+5. **Trial transcript API** — Week 1; confirm coverage for 5 pilot names.  
+6. **Defer** — 45-task scale, Expert Workbench, FINRA on Type F, full 14-week platform Gantt.
 
 ---
 
@@ -422,15 +472,11 @@ This taxonomy calibrates reward weights and identifies which tasks are most disc
 
 | Document | Audience | Content |
 |----------|----------|---------|
-| **This framework** | Zstate leadership, product, partners | Executive overview, architecture, timeline |
-| [Exhaustive Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md) | Domain experts, product | Workflow decomposition, 185-task index |
-| [Full Task Definitions (185)](./EQUITY_RESEARCH_TASK_DEFINITIONS.md) | Domain experts, product | Every task: inputs, outputs, pass/fail, dependencies |
-| `docs/specs/corpus-service.md` | Platform engineering | EDGAR/transcript ingest, API contract, fallback state machine |
-| `docs/specs/task-registry.md` | Task engineering + experts | Task schemas, 45-task matrix, lifecycle |
-| `docs/specs/eval-orchestrator.md` | Platform engineering | Model adapters, tool sandbox, 3-run campaigns |
-| `docs/specs/scoring-engine.md` | Platform + experts | 3-layer rubrics, aggregation, compliance linter |
-| `docs/specs/expert-workbench.md` | Domain experts + product | Authoring UI, review workflow, Layer 2 scoring |
+| **This framework (v0.2)** | Zstate leadership, product | Revised MVD: 15 tasks, task types, honest timeline |
+| [Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md) | Domain experts | 185-task workflow decomposition |
+| [Task Definitions](./EQUITY_RESEARCH_TASK_DEFINITIONS.md) | Domain experts | Per-task specs (depth varies) |
+| `docs/specs/*` | Engineering | Target platform (post-pilot) |
 
 ---
 
-*Prepared as a design proposal for Zstate.ai — Equity Research Agent Benchmark v0.1*
+*Prepared for Zstate.ai — Equity Research Agent Benchmark. v0.2 reflects revised MVD scope based on resourcing and alignment review.*

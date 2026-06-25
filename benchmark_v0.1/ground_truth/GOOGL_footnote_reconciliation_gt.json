@@ -1,0 +1,140 @@
+{
+  "task_id": "GOOGL_footnote_reconciliation",
+  "version": "1.0.0-pilot",
+  "fiscal_period": "FY2024",
+  "unit": "USD_millions",
+
+  "extracted_values": [
+    {
+      "metric_id": "google_services_revenue_fy2024",
+      "value": 304930,
+      "label": "Google Services revenue",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "GOOGL_10K_2024",
+        "note": "Note 16 — Information about Segments and Geographic Areas",
+        "sec_fragment": "R25.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/R25.htm",
+        "snippet": "Google Services ... $ 304,930"
+      }
+    },
+    {
+      "metric_id": "google_cloud_revenue_fy2024",
+      "value": 43229,
+      "label": "Google Cloud revenue",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "GOOGL_10K_2024",
+        "note": "Note 16 — Information about Segments and Geographic Areas",
+        "sec_fragment": "R25.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/R25.htm",
+        "snippet": "Google Cloud ... 43,229"
+      }
+    },
+    {
+      "metric_id": "other_bets_revenue_fy2024",
+      "value": 1648,
+      "label": "Other Bets revenue",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "GOOGL_10K_2024",
+        "note": "Note 16",
+        "sec_fragment": "R25.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/R25.htm",
+        "snippet": "Other Bets ... 1,648"
+      }
+    },
+    {
+      "metric_id": "hedging_gains_losses_fy2024",
+      "value": 211,
+      "label": "Hedging gains (losses)",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "GOOGL_10K_2024",
+        "note": "Note 16 (also Note 2 — Revenues disaggregation table)",
+        "sec_fragment": "R25.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/R25.htm",
+        "snippet": "Hedging gains (losses) ... 211"
+      }
+    },
+    {
+      "metric_id": "consolidated_total_revenue_fy2024",
+      "value": 350018,
+      "label": "Total revenues",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "GOOGL_10K_2024",
+        "note": "Note 16 / Consolidated statements",
+        "sec_fragment": "R25.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/R25.htm",
+        "snippet": "Total revenues $ 350,018"
+      }
+    }
+  ],
+
+  "computed_values": [
+    {
+      "metric_id": "segment_sum_fy2024",
+      "value": 349807,
+      "formula": "google_services + google_cloud + other_bets",
+      "tolerance": 0,
+      "verification_script_ref": "../scripts/verify_googl_footnote_reconciliation.py"
+    },
+    {
+      "metric_id": "reconciling_item_amount",
+      "value": 211,
+      "formula": "consolidated_total - segment_sum",
+      "equals_metric": "hedging_gains_losses_fy2024",
+      "tolerance": 0
+    },
+    {
+      "metric_id": "reconciliation_balanced",
+      "value": true,
+      "formula": "segment_sum + hedging_gains_losses == consolidated_total",
+      "tolerance": 0
+    }
+  ],
+
+  "qualitative_anchors": [
+    {
+      "dimension": "footnote_utilization",
+      "expected_behavior": "Agent cites Note 16 language that hedging gains (losses) related to revenue are NOT allocated to reportable segments",
+      "score_anchor": 5,
+      "reference_text": "Additionally, hedging gains (losses) related to revenue are not allocated to our segments."
+    },
+    {
+      "dimension": "contextual_awareness",
+      "expected_behavior": "Agent does not treat hedging as a fourth operating segment; identifies it as consolidated-level reconciling item",
+      "score_anchor": 5
+    }
+  ],
+
+  "required_narrative_points": [
+    "Sum of Google Services, Google Cloud, and Other Bets does not equal consolidated revenue without hedging line",
+    "Hedging gains (losses) of $211M is the reconciling item for FY2024",
+    "Filing states hedging gains (losses) related to revenue are not allocated to segments"
+  ],
+
+  "known_failure_modes": [
+    "segment_sum_only — sums three segments and claims reconciliation without hedging line",
+    "wrong_period — uses quarterly or FY2023 values",
+    "hedging_as_segment — misclassifies hedging as operating segment revenue",
+    "income_statement_only — uses consolidated revenue without reading Note 16",
+    "unit_error — thousands vs millions"
+  ],
+
+  "layer1_checks": [
+    { "check": "google_services_revenue_fy2024", "weight": "high" },
+    { "check": "google_cloud_revenue_fy2024", "weight": "high" },
+    { "check": "other_bets_revenue_fy2024", "weight": "medium" },
+    { "check": "reconciling_item_amount", "weight": "critical" },
+    { "check": "consolidated_total_revenue_fy2024", "weight": "high" },
+    { "check": "reconciliation_balanced", "weight": "critical" }
+  ],
+
+  "expert_sign_off": {
+    "status": "pending",
+    "reviewer": null,
+    "notes": "Numbers verified against Alphabet 10-K FY2024 (filed 2025-02-05). Requires CFA peer review before publish."
+  }
+}

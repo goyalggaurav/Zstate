@@ -4,9 +4,9 @@ Equity Research Agent Benchmark — design and specifications.
 
 ## Share with Zstate
 
-**Start here:** [Equity Research Agent Benchmark — Framework Proposal v0.1](./ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md)
+**Start here:** [Equity Research Agent Benchmark — Framework Proposal v0.2 (Revised)](./ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md)
 
-This is the primary document for stakeholder review: executive summary, architecture, pilot scope, timeline, and deliverables.
+Revised MVD: **15 tasks**, 5 pilot companies, task types (F/M/C), honest 10-week timeline, lightweight pilot stack.
 
 ## Detailed Task Backbone
 
@@ -28,5 +28,5 @@ Senior-analyst decomposition: SEC/IR data → 3-statement model → DCF / comps 
 
 ## Status
 
-- **Framework, task catalog & specs:** Complete (v0.1 draft)
-- **Implementation:** Not started
+- **Framework v0.2 (revised MVD):** Complete — 15 tasks, task types, honest timeline
+- **Pilot task package:** GOOGL footnote reconciliation (draft, pending expert sign-off)
