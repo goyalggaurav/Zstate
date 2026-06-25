@@ -166,6 +166,8 @@ Each of the 15 pilot companies receives exactly one task per archetype.
 
 ## 5. Gold Trajectory Schema
 
+The gold trajectory acts as a **multi-objective optimization signal** for reinforcement learning (RL), specifically rewarding **path efficiency** and **section recall accuracy**. It is consumed by the Scoring Engine (Layer 2 trajectory scoring) and exported for Phase 3 reward-model training.
+
 ```json
 {
   "task_id": "GOOGL_footnote_reconciliation",
@@ -244,6 +246,20 @@ Each of the 15 pilot companies receives exactly one task per archetype.
   ]
 }
 ```
+
+### 5.1 Anti-patterns (required field)
+
+`anti_patterns` must appear in **every** gold path JSON. These are expert-defined behaviors that produce **negative reward signals** — they are first-class inputs for reward-model developers, not optional notes.
+
+| Consumer | Use |
+|----------|-----|
+| **Scoring Engine (L2)** | Trajectory penalty when agent behavior matches an anti-pattern |
+| **Reward model (Phase 3)** | Negative sampling / contrastive training pairs |
+| **Fracture report** | Classify failure modes (e.g., `SECTION_MISS`, `PATH_BLOAT`) |
+
+**Scoring severity:** Not every anti-pattern is a hard veto. Layer 2 patterns reduce trajectory/judgment scores; Layer 1 patterns fail hard accuracy; Layer 3 patterns may veto only when explicitly tagged (e.g., FINRA/reco on wrong task type). Task authors must document the expected layer and penalty in the gold path metadata.
+
+**Publish gate:** A task cannot move to `published` without a non-empty `anti_patterns` array peer-reviewed by the Lead CFA.
 
 ---
 

@@ -164,7 +164,7 @@ def build_complete_framework(tasks: list[dict]) -> Document:
         [
             ["F — Forensics", "1–2: Ingest + Extract/Verify", "Reconciliation report", "Citations only", "GOOGL footnote Q1 2026"],
             ["M — Modeling", "1–3: Ingest + Python model", "Model + assumption log", "Optional mandate", "PEP FX organic growth"],
-            ["C — Coverage", "1–4: Full workflow + memo", "Investment memo + reco", "FINRA + mandate", "Full initiation (v0.5)"],
+            ["C — Coverage", "1–4: Full workflow + memo", "Investment memo + reco", "FINRA + mandate", "Full initiation (v0.5 — deferred: market data APIs)"],
         ],
     )
 
@@ -179,7 +179,19 @@ def build_complete_framework(tasks: list[dict]) -> Document:
         ],
     )
 
-    add_heading(doc, "5. MVD Pilot — 15 Tasks", 1)
+    add_heading(doc, "5. Gold Trajectories & Anti-Patterns", 1)
+    doc.add_paragraph(
+        "Gold trajectories use a minimal section set (not brittle tool sequences). The gold "
+        "trajectory acts as a multi-objective optimization signal for reinforcement learning "
+        "(RL), specifically rewarding path efficiency and section recall accuracy."
+    )
+    doc.add_paragraph(
+        "Anti-patterns (required in every gold path JSON): Expert-defined negative signals "
+        "for the reward model — e.g., load_entire_10k (path bloat), skip_accounting_policies_note "
+        "(section recall failure), produce_buy_hold_sell_recommendation on Type F tasks."
+    )
+
+    add_heading(doc, "6. MVD Pilot — 15 Tasks", 1)
     mvd_rows = [
         ["GOOGL", "Footnote", "F", "Q1 2026 segment vs consolidated (hedging loss)"],
         ["GOOGL", "Guidance drift", "F", "Call guidance vs 10-Q actuals"],
@@ -199,7 +211,7 @@ def build_complete_framework(tasks: list[dict]) -> Document:
     ]
     add_table(doc, ["Company", "Archetype", "Type", "Focus"], mvd_rows)
 
-    add_heading(doc, "6. Full Task Catalog — 185 Tasks (Detailed)", 1)
+    add_heading(doc, "7. Full Task Catalog — 185 Tasks (Detailed)", 1)
     doc.add_paragraph(
         "Each task below includes ID, name, description, inputs, outputs, dependencies, "
         "pass/fail criteria, and difficulty. Organized by layer."
@@ -240,7 +252,7 @@ def build_complete_framework(tasks: list[dict]) -> Document:
         doc.add_paragraph(f"Fail conditions: {t['fail']}")
         doc.add_paragraph(f"Difficulty: {t['difficulty']}")
 
-    add_heading(doc, "7. Roadmap to Full Catalog", 1)
+    add_heading(doc, "8. Roadmap to Full Catalog", 1)
     add_table(
         doc,
         ["Release", "Tasks", "Adds"],
@@ -250,7 +262,7 @@ def build_complete_framework(tasks: list[dict]) -> Document:
             ["v0.2", "+15", "3-statement model bundles"],
             ["v0.3", "+15", "DCF + comps (+ market data)"],
             ["v0.4", "+30", "LBO, SOTP, DDM"],
-            ["v0.5", "+20", "Type C full initiation"],
+            ["v0.5", "+20", "Type C full initiation (Bloomberg/Refinitiv + FINRA)"],
         ],
     )
 
@@ -280,6 +292,7 @@ def build_senior_process_mapping() -> Document:
             "Benchmark (Phase 1) proves task quality; trajectories (Phase 2) are the product",
             "Differentiation: credentialed experts + real SEC filings + auditable agent runs",
             "MVD: 15 eval tasks, 5 companies, 10-week pilot — not 45 tasks on day one",
+            "Type C (Buy/Sell memo) deferred to v0.5 — requires licensed market data (Bloomberg/Refinitiv) and FINRA workflow",
         ],
     )
 
@@ -300,7 +313,10 @@ def build_senior_process_mapping() -> Document:
     )
 
     add_heading(doc, "Phase 2 — Task Construction", 2)
-    doc.add_paragraph("Objective: Expert-authored tasks with ground truth and gold paths.")
+    doc.add_paragraph(
+        "Objective: Expert-authored tasks with ground truth and gold paths (minimal section sets "
+        "plus documented anti-patterns for scoring)."
+    )
     add_table(
         doc,
         ["Step", "Owner", "Input", "Output"],

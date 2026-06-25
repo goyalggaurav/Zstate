@@ -29,6 +29,7 @@ This document proposes an equity research agent benchmark aligned to Zstate's ar
 - 45-company universe — **5 pilot companies first**
 - FINRA compliance lint on forensics-only tasks — **compliance scoped to task type**
 - Full DCF/comps/LBO stack — **requires market data; deferred to v0.3+**
+- Type C coverage tasks (Buy/Hold/Sell initiation memo) — **deferred to v0.5**; requires licensed market data (Bloomberg/Refinitiv APIs), live price/consensus feeds, and FINRA-compliant recommendation workflow
 
 > **Full analyst workflow:** 185 indexed micro-tasks (data → models → valuation → memo) in the [Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md). MVD implements **15 eval units** from that catalog — not the full stack.
 
@@ -152,7 +153,7 @@ flowchart TB
 | **M — Modeling** | 1–3 | + Python required; optional Vector_Search | Model outputs + cited assumptions | Automated + spot-check |
 | **C — Coverage** | 1–4 | Full stack + Compliance_Linter | Investment memo + recommendation | Expert-assisted |
 
-**MVD uses Type F and Type M only.** Type C (full initiation) is v0.5.
+**MVD uses Type F and Type M only.** Type C (full initiation memo with Buy/Hold/Sell recommendation) is **deferred to v0.5** — not because the workflow is undefined, but because it depends on **enterprise data integrations** we intentionally exclude from the SEC/transcript-only pilot: licensed market data APIs (Bloomberg, Refinitiv, or equivalent) for live prices, peer multiples, and consensus estimates; FINRA-compliant recommendation language; and client mandate profiles. Building Type C on stale or scraped market data would produce non-auditable evals and fail enterprise IT review.
 
 ### MVD task list
 
@@ -243,7 +244,9 @@ Build constant-currency organic revenue growth for Europe and AMESA using weight
 ## Gold Trajectories (Revised — Minimal Section Set)
 
 **Previous approach (brittle):** One exact tool-call sequence.  
-**Revised approach:** Gold = **minimal section set** + **required tool classes** + **required outputs**.
+**Revised approach:** Gold = **minimal section set** + **required tool classes** + **required outputs** + **anti-patterns**.
+
+The gold trajectory acts as a **multi-objective optimization signal** for reinforcement learning (RL), specifically rewarding **path efficiency** (minimal, targeted tool use) and **section recall accuracy** (required notes and tables accessed). Expert-validated runs that match the gold path become positive preference pairs for SFT; anti-pattern hits become explicit negative signals for the reward model.
 
 ```json
 {
@@ -259,6 +262,21 @@ Build constant-currency organic revenue growth for Europe and AMESA using weight
 ```
 
 Valid alternative analyst paths are not penalized if section recall and outputs pass.
+
+### Anti-patterns (required — do not omit from gold path JSON)
+
+`anti_patterns` is **first-class schema**, not optional commentary. It gives reward-model and scoring-engine developers clear **negative signals** to train and evaluate against:
+
+| Anti-pattern | Negative signal | Layer |
+|--------------|-----------------|-------|
+| `load_entire_10k` / `load_entire_10q` | Path inefficiency; context bloat | L2 (trajectory) |
+| `skip_accounting_policies_note` | Section recall failure | L2 |
+| `positive_180_instead_of_hedging_loss` | Sign/directionality error | L1 |
+| `produce_buy_hold_sell_recommendation` | Wrong task type (Type F has no reco) | L3 / veto |
+
+**Scoring severity:** Anti-patterns are **not** blanket hard vetoes. Most map to **Layer 2 trajectory penalties** (reduced score, still gradable). Layer 1 hits (e.g., sign errors) fail hard accuracy. Only designated Layer 3 violations (e.g., reco on a Type F task) trigger a veto.
+
+**Implementation rule:** Every published task must ship `anti_patterns` in its gold path JSON (see [GOOGL pilot](../benchmark_v0.1/gold_paths/GOOGL_footnote_reconciliation.json)). The Scoring Engine applies layer-appropriate penalties; Phase 3 training uses hits as negative sampling signals (detail in [Task Registry](./specs/task-registry.md)).
 
 ---
 
@@ -434,7 +452,7 @@ Fracture data feeds **Phase 2 trajectory curation** (which failure modes to over
 | **v0.2** | +15 | 15 | 3-statement mini-model (Type M bundles) |
 | **v0.3** | +15 | 15 | DCF + comps (+ market data tier) |
 | **v0.4** | +30 | 15+ | LBO, SOTP, DDM |
-| **v0.5** | +20 | 15+ | Type C full initiation (OUT-001) |
+| **v0.5** | +20 | 15+ | Type C full initiation (OUT-001) — requires market data tier + FINRA workflow |
 | | **~185 total** | | Full catalog coverage |
 
 **Phase 2 (Zstate product):** Export curated trajectories — expert-ranked good/bad paths — for SFT and RL.
