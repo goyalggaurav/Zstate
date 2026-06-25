@@ -423,7 +423,8 @@ This taxonomy calibrates reward weights and identifies which tasks are most disc
 | Document | Audience | Content |
 |----------|----------|---------|
 | **This framework** | Zstate leadership, product, partners | Executive overview, architecture, timeline |
-| [Exhaustive Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md) | Domain experts, product | 184+ micro-tasks: data → models → valuation → thesis |
+| [Exhaustive Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md) | Domain experts, product | Workflow decomposition, 185-task index |
+| [Full Task Definitions (185)](./EQUITY_RESEARCH_TASK_DEFINITIONS.md) | Domain experts, product | Every task: inputs, outputs, pass/fail, dependencies |
 | `docs/specs/corpus-service.md` | Platform engineering | EDGAR/transcript ingest, API contract, fallback state machine |
 | `docs/specs/task-registry.md` | Task engineering + experts | Task schemas, 45-task matrix, lifecycle |
 | `docs/specs/eval-orchestrator.md` | Platform engineering | Model adapters, tool sandbox, 3-run campaigns |

@@ -595,18 +595,20 @@ flowchart TB
 
 ### 11.2 Compliance Micro-Tasks
 
+*Prefix `CPL-` — see [Full Task Definitions](./EQUITY_RESEARCH_TASK_DEFINITIONS.md)*
+
 | Task ID | Task | Pass |
 |---------|------|------|
-| **COMP-001** | Separate fact from opinion | Required |
-| **COMP-002** | No guaranteed return language | FINRA |
-| **COMP-003** | Risk of loss disclosure | FINRA |
-| **COMP-004** | Price target disclaimer | FINRA |
-| **COMP-005** | Long-only mandate compliance | No short language |
-| **COMP-006** | Conservative income: dividend risk disclosed | Mandate |
-| **COMP-007** | No speculative language without bounds | Mandate |
-| **COMP-008** | Cite all material data points | Audit |
-| **COMP-009** | Flag unverified data explicitly | Trust |
-| **COMP-010** | Past performance disclaimer if cited | FINRA |
+| **CPL-001** | Separate fact from opinion | Required |
+| **CPL-002** | No guaranteed return language | FINRA |
+| **CPL-003** | Risk of loss disclosure | FINRA |
+| **CPL-004** | Price target disclaimer | FINRA |
+| **CPL-005** | Long-only mandate compliance | No short language |
+| **CPL-006** | Conservative income: dividend risk disclosed | Mandate |
+| **CPL-007** | No speculative language without bounds | Mandate |
+| **CPL-008** | Cite all material data points | Audit |
+| **CPL-009** | Flag unverified data explicitly | Trust |
+| **CPL-010** | Past performance disclaimer if cited | FINRA |
 
 ---
 
@@ -624,8 +626,9 @@ flowchart TB
 | 5 — Earnings | EARN- | 12 | Preview, recap, guidance drift |
 | 6 — Thesis | TH- | 10 | Bull/bear, catalysts, reco |
 | 7 — Risk | RISK- | 10 | Downside, contingencies |
-| 8 — Compliance | COMP- | 10 | FINRA + mandates |
-| **Total indexed micro-tasks** | | **~184** | Expandable to 200+ with sector variants |
+| **CPL-** | Compliance | 10 | CPL-001 – CPL-010 |
+| **OUT-** | Output assembly | 1 | OUT-001 |
+| **Total indexed micro-tasks** | | **185** | Full definitions: [Task Definitions](./EQUITY_RESEARCH_TASK_DEFINITIONS.md) |
 
 ---
 
@@ -680,7 +683,7 @@ flowchart TB
     DCF & COMP & LBO & SOTP & DDM --> VAL[VAL-001–006]
     FS --> EARN[EARN-001–012]
     VAL & EARN & IND --> TH[TH-001–010]
-    TH --> OUT[Memo + COMP-001–010]
+    TH --> OUT[Memo + CPL-001–010]
     FS --> RISK[RISK-001–010]
     RISK --> OUT
 ```
@@ -696,7 +699,7 @@ flowchart TB
 | SOTP-007 (sum to price) | SOTP-003–006, D-019 net debt |
 | EARN-007 (guidance drift) | D-011, D-002, D-003 |
 | VAL-001 (football field) | ≥2 valuation methods complete |
-| TH-009 (Buy/Hold/Sell) | VAL-003, RISK-001, COMP-001–010 |
+| TH-009 (Buy/Hold/Sell) | VAL-003, RISK-001, CPL-001–010 |
 
 ---
 
@@ -798,7 +801,7 @@ What each model tier should achieve as benchmark matures:
 | 10 | VAL-001–003 | Football field → PT |
 | 11 | TH-001–010 | Buy/Hold/Sell thesis |
 | 12 | RISK-001–007 | Risk section |
-| 13 | COMP-001–010 | Compliance lint → publish |
+| 13 | CPL-001–010 | Compliance lint → publish |
 
 ---
 

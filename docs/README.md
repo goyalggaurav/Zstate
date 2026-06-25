@@ -10,7 +10,9 @@ This is the primary document for stakeholder review: executive summary, architec
 
 ## Detailed Task Backbone
 
-**For exhaustive analyst workflow:** [Equity Research Benchmark — Exhaustive Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md)
+**For exhaustive analyst workflow:** [Task Catalog Overview](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md)
+
+**All 185 task definitions:** [Full Task Definitions](./EQUITY_RESEARCH_TASK_DEFINITIONS.md)
 
 Senior-analyst decomposition: SEC/IR data → 3-statement model → DCF / comps / LBO / SOTP / DDM → earnings & guidance → thesis → compliant memo. **184+ indexed micro-tasks** with dependencies, sector variants, and roadmap to full catalog coverage.
 
