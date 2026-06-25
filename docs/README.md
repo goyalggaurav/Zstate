@@ -8,6 +8,12 @@ Equity Research Agent Benchmark — design and specifications.
 
 This is the primary document for stakeholder review: executive summary, architecture, pilot scope, timeline, and deliverables.
 
+## Detailed Task Backbone
+
+**For exhaustive analyst workflow:** [Equity Research Benchmark — Exhaustive Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md)
+
+Senior-analyst decomposition: SEC/IR data → 3-statement model → DCF / comps / LBO / SOTP / DDM → earnings & guidance → thesis → compliant memo. **184+ indexed micro-tasks** with dependencies, sector variants, and roadmap to full catalog coverage.
+
 ## Component Specifications
 
 | Spec | Description |
@@ -20,5 +26,5 @@ This is the primary document for stakeholder review: executive summary, architec
 
 ## Status
 
-- **Framework & specs:** Complete (v0.1 draft)
+- **Framework, task catalog & specs:** Complete (v0.1 draft)
 - **Implementation:** Not started

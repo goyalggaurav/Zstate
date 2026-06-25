@@ -16,6 +16,8 @@ This document proposes an **enterprise-grade equity research agent benchmark** d
 
 **What we're proposing to build first:** A versioned **benchmark suite** (`benchmark_v0.1`) — 45 tasks, model-agnostic evaluation, 3-run variance study, and a leaderboard — before expanding into training trajectory curation.
 
+> **Detailed task backbone:** The MVD starts with 45 eval units, but the full senior-analyst workflow decomposes into **184+ micro-tasks** across data ingestion, financial models (3-statement, DCF, comps, LBO, SOTP, DDM), earnings workflow, thesis, and compliance. See the [Exhaustive Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md).
+
 | Parameter | Decision |
 |-----------|----------|
 | Pilot universe | 15 companies across 3 sectors (Tech, Media, Consumer) |
@@ -421,6 +423,7 @@ This taxonomy calibrates reward weights and identifies which tasks are most disc
 | Document | Audience | Content |
 |----------|----------|---------|
 | **This framework** | Zstate leadership, product, partners | Executive overview, architecture, timeline |
+| [Exhaustive Task Catalog](./EQUITY_RESEARCH_BENCHMARK_TASK_CATALOG.md) | Domain experts, product | 184+ micro-tasks: data → models → valuation → thesis |
 | `docs/specs/corpus-service.md` | Platform engineering | EDGAR/transcript ingest, API contract, fallback state machine |
 | `docs/specs/task-registry.md` | Task engineering + experts | Task schemas, 45-task matrix, lifecycle |
 | `docs/specs/eval-orchestrator.md` | Platform engineering | Model adapters, tool sandbox, 3-run campaigns |
