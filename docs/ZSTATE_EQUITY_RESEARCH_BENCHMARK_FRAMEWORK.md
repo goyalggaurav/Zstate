@@ -176,8 +176,8 @@ flowchart TB
 
 ### Example tasks (abbreviated)
 
-**GOOGL — Footnote (Type F):**  
-Reconcile Google Cloud vs Google Services revenue in the segment table against reclassification in Note 2 (Significant Accounting Policies) of FY2024 10-K. Output: reconciliation table + discrepancy flag. **No price target.**
+**GOOGL — Footnote (Type F, Q1 2026):**  
+Reconcile Q1 2026 segment revenues to consolidated total ($109,896M). Segment sum is $110,076M; **hedging gains (losses) of $(180)M** is not allocated to reportable segments (Note 15, 10-Q filed April 30, 2026). Trap: agents omit hedging or use +180 instead of a loss. **No price target.**
 
 **NFLX — Guidance drift (Type F):**  
 Compare Q2 management commentary on content spend/amortization to actuals in Q3/Q4 10-Q. Output: guidance vs actuals table with transcript quotes cited.
@@ -266,7 +266,7 @@ Valid alternative analyst paths are not penalized if section recall and outputs 
 
 | Asset | Source | MVD scope |
 |-------|--------|-----------|
-| 10-K / 10-Q | SEC EDGAR | 5 companies, FY2023–2024 + trailing quarters |
+| 10-K / 10-Q | SEC EDGAR | Latest filed periods (e.g. FY2025 10-K, Q1 2026 10-Q) |
 | Earnings transcripts | Transcript API (primary) + IR fallback | Guidance drift tasks |
 | FX rates | FRED + 10-K FX note | FX tasks |
 | Market data (prices, beta) | **Not in MVD** | Required for DCF/comps — v0.3+ |
@@ -461,7 +461,7 @@ Fracture data feeds **Phase 2 trajectory curation** (which failure modes to over
 
 1. **Validate with Zstate** — 15-task pilot scope, benchmark → trajectory product path.  
 2. **Secure experts** — Name CFA lead + associate (or Zstate expert network).  
-3. **Complete GOOGL footnote task** — One end-to-end task with real 10-K ground truth.  
+3. **Complete GOOGL footnote task** — Q1 2026 10-Q ground truth (latest quarter filed).  
 4. **Run one agent manually** — First fracture data before building platform.  
 5. **Trial transcript API** — Week 1; confirm coverage for 5 pilot names.  
 6. **Defer** — 45-task scale, Expert Workbench, FINRA on Type F, full 14-week platform Gantt.

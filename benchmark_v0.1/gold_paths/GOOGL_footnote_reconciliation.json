@@ -1,29 +1,31 @@
 {
   "task_id": "GOOGL_footnote_reconciliation",
-  "version": "1.0.0-pilot",
+  "version": "1.1.0-pilot",
   "task_type": "F",
+  "fiscal_period": "2026Q1",
 
   "minimal_section_set": [
     {
-      "section_id": "GOOGL_10K_2024_note_16",
-      "name": "Note 16 — Information about Segments and Geographic Areas",
-      "sec_fragment": "R25.htm",
+      "section_id": "GOOGL_10Q_2026Q1_note_15",
+      "name": "Note 15 — Information about Segments and Geographic Areas",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
       "required": true,
-      "reason": "Segment revenue table + hedging allocation policy"
+      "reason": "Q1 2026 segment revenue table + hedging allocation policy"
     },
     {
-      "section_id": "GOOGL_10K_2024_note_2",
+      "section_id": "GOOGL_10Q_2026Q1_note_2",
       "name": "Note 2 — Revenues (disaggregated by type)",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
       "required": true,
-      "reason": "Cross-check Google Services total and hedging line in revenue disaggregation"
+      "reason": "Cross-check segment totals and hedging line for three months ended March 31, 2026"
     }
   ],
 
   "optional_sections": [
     {
-      "section_id": "GOOGL_10K_2024_mdna_segments",
-      "name": "MD&A — Segment discussion / hedging on revenue",
-      "reason": "Supplementary context on constant currency and hedging"
+      "section_id": "GOOGL_10Q_2026Q1_mdna",
+      "name": "MD&A — Segment operating income discussion",
+      "reason": "Supplementary segment context"
     }
   ],
 
@@ -42,49 +44,49 @@
   "reference_workflow": [
     {
       "step": 1,
-      "action": "Locate segment disclosure",
+      "action": "Locate Q1 2026 segment disclosure",
       "tool": "Search_Filing",
-      "target": "Note 16 segment revenue table FY2024"
+      "target": "Note 15 segment revenue table — three months ended March 31, 2026"
     },
     {
       "step": 2,
       "action": "Extract segment revenues + hedging + total",
       "tool": "PDF_Parser",
-      "target": "Note 16 table rows"
+      "target": "Note 15 table rows for 2026 column"
     },
     {
       "step": 3,
-      "action": "Cross-check revenue disaggregation",
+      "action": "Cross-check Note 2 disaggregation",
       "tool": "PDF_Parser",
-      "target": "Note 2 disaggregated revenues table"
+      "target": "Note 2 revenues by type — March 31, 2026 column"
     },
     {
       "step": 4,
-      "action": "Verify arithmetic",
+      "action": "Verify arithmetic including negative hedging",
       "tool": "Python_Interpreter",
-      "target": "304930 + 43229 + 1648 + 211 == 350018"
+      "target": "89637 + 20028 + 411 + (-180) == 109896"
     },
     {
       "step": 5,
-      "action": "Extract allocation policy text",
+      "action": "Extract hedging allocation policy",
       "tool": "PDF_Parser",
-      "target": "Hedging gains (losses) not allocated to segments"
+      "target": "hedging gains (losses) not allocated to segments"
     }
   ],
 
   "anti_patterns": [
-    "load_entire_10k_into_context",
-    "use_consolidated_revenue_only_without_segment_note",
+    "use_fy2024_or_fy2025_annual_instead_of_q1_2026_10q",
+    "use_q1_2025_column_instead_of_q1_2026",
+    "positive_180_instead_of_hedging_loss",
     "omit_hedging_line_in_reconciliation",
-    "treat_hedging_as_google_services_revenue",
-    "skip_python_verification",
+    "load_entire_10q_without_targeting_notes",
     "produce_buy_hold_sell_recommendation"
   ],
 
   "section_recall_scoring": {
-    "note_16_required": true,
+    "note_15_required": true,
     "note_2_required": true,
     "pass_if_all_required_accessed": true,
-    "partial_credit_if_note_16_only": 0.5
+    "partial_credit_if_note_15_only": 0.5
   }
 }

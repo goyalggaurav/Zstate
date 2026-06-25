@@ -1,6 +1,6 @@
 {
   "task_id": "GOOGL_footnote_reconciliation",
-  "version": "1.0.0-pilot",
+  "version": "1.1.0-pilot",
   "status": "pilot",
   "benchmark_version": "benchmark_v0.1",
 
@@ -12,22 +12,36 @@
   "difficulty_tier": "L2",
 
   "prompt": {
-    "text": "Using Alphabet Inc.'s FY2024 Form 10-K (fiscal year ended December 31, 2024), reconcile reportable segment revenues to consolidated total revenue.\n\n1. Extract FY2024 revenue for Google Services, Google Cloud, and Other Bets from the segment disclosure.\n2. Sum the three reportable segments and compare to consolidated total revenue on the income statement / revenue disaggregation tables.\n3. Identify and quantify any reconciling item(s). Explain, citing the filing, why the reconciling item is not included in the three reportable segments.\n4. Produce a reconciliation table (USD millions) and a short narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Every numeric value must include a citation (document, note/section, table).\n- If a value cannot be verified, mark it unverified — do not interpolate.",
+    "text": "Using Alphabet Inc.'s Form 10-Q for the quarter ended March 31, 2026 (filed April 30, 2026), reconcile reportable segment revenues to consolidated total revenue for Q1 2026.\n\n1. Extract Q1 2026 revenue for Google Services, Google Cloud, and Other Bets from the segment disclosure (Note 15) and cross-check against the revenue disaggregation table (Note 2).\n2. Sum the three reportable segments and compare to consolidated total revenue for the quarter.\n3. Identify and quantify any reconciling item(s). Explain, citing the filing, why the reconciling item is not included in the three reportable segments.\n4. Produce a reconciliation table (USD millions) and a short narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified 10-Q and cited sections within it.\n- Every numeric value must include a citation (document, note/section, table).\n- Hedging gains (losses) may be negative — preserve sign correctly.\n- Python required to verify: segment_sum + hedging = consolidated total.\n- If a value cannot be verified, mark it unverified — do not interpolate.",
     "constraints": [
-      "Document: GOOGL 10-K FY2024 only",
+      "Document: GOOGL 10-Q 2026Q1 only",
       "No Buy/Hold/Sell or price target",
-      "Python required to verify segment sum + reconciling item = consolidated total"
+      "Python required for reconciliation arithmetic"
     ]
   },
 
   "required_documents": [
     {
-      "doc_id": "GOOGL_10K_2024",
-      "form_type": "10-K",
-      "fiscal_period": "FY2024",
-      "filing_date": "2025-02-05",
-      "sec_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/goog-10k-2024.htm",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "form_type": "10-Q",
+      "fiscal_period": "2026Q1",
+      "period_end": "2026-03-31",
+      "filing_date": "2026-04-30",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
       "role": "primary"
+    }
+  ],
+
+  "supplementary_documents": [
+    {
+      "doc_id": "GOOGL_10K_2025",
+      "form_type": "10-K",
+      "fiscal_period": "FY2025",
+      "period_end": "2025-12-31",
+      "filing_date": "2026-02-05",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "role": "context_only",
+      "note": "Latest annual filing for policy context — not required to solve Q1 task"
     }
   ],
 
@@ -48,13 +62,14 @@
       "citations"
     ],
     "structured_fields": [
-      "google_services_revenue_fy2024",
-      "google_cloud_revenue_fy2024",
-      "other_bets_revenue_fy2024",
-      "segment_sum_fy2024",
+      "google_services_revenue",
+      "google_cloud_revenue",
+      "other_bets_revenue",
+      "segment_sum",
+      "hedging_gains_losses",
       "reconciling_item_amount",
       "reconciling_item_label",
-      "consolidated_total_revenue_fy2024",
+      "consolidated_total_revenue",
       "reconciliation_balanced"
     ]
   },
@@ -77,5 +92,5 @@
 
   "authored_by": "pilot_template",
   "review_status": "pending_expert_sign_off",
-  "created_at": "2025-06-25T00:00:00Z"
+  "updated_at": "2026-06-25T00:00:00Z"
 }
