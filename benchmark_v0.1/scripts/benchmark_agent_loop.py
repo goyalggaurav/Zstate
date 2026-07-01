@@ -235,12 +235,12 @@ class MockBlindSumAgent:
             {
                 "type": "tool_call",
                 "tool": "Search_Filing",
-                "input": {"ticker": ticker, "period": period, "section": "note_15"},
+                "input": {"ticker": ticker, "period": period, "section": "segment_financials"},
             },
             {
                 "type": "tool_call",
                 "tool": "Search_Filing",
-                "input": {"ticker": ticker, "period": period, "section": "note_2"},
+                "input": {"ticker": ticker, "period": period, "section": "revenue_disaggregation"},
             },
             {
                 "type": "tool_call",

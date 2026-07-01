@@ -72,7 +72,7 @@ Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_e
 
 **Discrimination campaign (P2-09):** [campaigns/pilot_eval_discrimination_v1.json](./campaigns/pilot_eval_discrimination_v1.json) sets `"eval_mode": true` (generic citation rules, no task-specific examples) and uses L2 gold-path scoring (section recall + access order + tool coverage) plus L3 partial credit on citations.
 
-**Three-task campaign (P2-10):** [campaigns/pilot_eval_3task_v1.json](./campaigns/pilot_eval_3task_v1.json) adds `AMZN_footnote_reconciliation` with a **4-section ordered gold path** (policy → Note 10 → income statement → MD&A International). PEP L3 now requires **distinct snippets per metric** (`l3_citation_rules.distinct_snippets_required`).
+**Three-task campaign (P2-10):** [campaigns/pilot_eval_3task_v1.json](./campaigns/pilot_eval_3task_v1.json) adds `AMZN_footnote_reconciliation` with a **5-section ordered gold path** (policy → compensation disclosure → segment financials → consolidated primary → narrative FX). PEP L3 now requires **distinct snippets per metric** (`l3_citation_rules.distinct_snippets_required`).
 
 **Live results (Jul 2026):** 18/18 runs (`gpt-4o` + `claude-sonnet-4-5` × 3 tasks × 3). Headline composite median **1.0** — GOOGL/AMZN still at ceiling. **PEP separates models:** gpt-4o composite **0.864** (L3 0.32, duplicate MD&A row citations + halluc snippets); claude median **1.0** (one run 0.898 on duplicate snippet). Fractures: `CITE_HALLUC`×3, `CITE_BROAD`×4. Full report: [runs/pilot_eval_3task_v1/pilot_eval_3task_v1.json](./runs/pilot_eval_3task_v1/pilot_eval_3task_v1.json).
 
@@ -83,7 +83,11 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
   --campaign benchmark_v0.1/campaigns/pilot_eval_discrimination_v2.json
 ```
 
-**AMZN path hardening (P2-12):** Five-section gold path adds required `stock_compensation_note` (Note 8) between policy and Note 10, plus optional decoy slug `note_10_prior_year` (FY2024 column only). Prior live runs that skipped Note 8 score lower on L2 section recall when rescored — discrimination v2 weighted composite shifts to **gpt-4o 0.885 vs claude 0.953** (was 0.932 vs 1.0).
+**AMZN path hardening (P2-12):** Five-section gold path adds required `compensation_disclosure` (Note 8 — Stockholders' Equity, SBC expense table) between policy and segment financials, plus optional decoy slug `segment_financials_prior_year` (FY2024 column only). Prior live runs that skipped Note 8 score lower on L2 section recall when rescored — discrimination v2 weighted composite **gpt-4o 0.885 vs claude 0.953** under role slugs + legacy alias rescore.
+
+**Universal task architecture (P2-13–15):** Tasks are defined by **archetype** (`F_exact`, `F_adjustment`, `M_organic`), not company-specific note numbers. Each bundle maps stable **path_role** slugs (`segment_financials`, `narrative_organic`, `compensation_disclosure`, …) to issuer-specific `filing_label` text. Per-company customization lives only in bundle JSON; prompts, L1 router (`verify_benchmark_l1.py`), and scoring are archetype-driven. Bundles v1.2 include `legacy_section_slugs[]` so prior live traces (e.g. `note_15`, `mdna_organic`) still score correctly on rescore.
+
+Schema: [schemas/archetype_roles_v1.json](./schemas/archetype_roles_v1.json) · Helpers: [scripts/archetype_roles.py](./scripts/archetype_roles.py)
 
 ```bash
 export BENCHMARK_RUN_DELAY_SECONDS=3

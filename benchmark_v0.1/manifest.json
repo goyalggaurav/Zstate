@@ -16,7 +16,7 @@
         "ground_truth": "ground_truth/GOOGL_footnote_reconciliation_gt.json",
         "gold_path": "gold_paths/GOOGL_footnote_reconciliation.json",
         "grader_rubric": "rubrics/GOOGL_footnote_reconciliation_grader.md",
-        "verify_script": "scripts/verify_googl_footnote_reconciliation.py"
+        "verify_script": "scripts/verify_benchmark_l1.py"
       }
     },
     {
@@ -29,7 +29,7 @@
         "ground_truth": "ground_truth/PEP_fx_organic_growth_gt.json",
         "gold_path": "gold_paths/PEP_fx_organic_growth.json",
         "grader_rubric": "rubrics/PEP_fx_organic_growth_grader.md",
-        "verify_script": "scripts/verify_fx_organic_growth.py",
+        "verify_script": "scripts/verify_benchmark_l1.py",
         "verify_script_task_entry": "scripts/verify_pep_fx_organic_growth.py"
       }
     },
@@ -43,7 +43,7 @@
         "ground_truth": "ground_truth/AMZN_footnote_reconciliation_gt.json",
         "gold_path": "gold_paths/AMZN_footnote_reconciliation.json",
         "grader_rubric": "rubrics/AMZN_footnote_reconciliation_grader.md",
-        "verify_script": "scripts/verify_amzn_footnote_reconciliation.py"
+        "verify_script": "scripts/verify_benchmark_l1.py"
       }
     }
   ],

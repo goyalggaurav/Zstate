@@ -5,12 +5,12 @@
     {
       "type": "tool_call",
       "tool": "Search_Filing",
-      "input": {"ticker": "PEP", "period": "FY2025", "section": "note_1"}
+      "input": {"ticker": "PEP", "period": "FY2025", "section": "segment_financials"}
     },
     {
       "type": "tool_call",
       "tool": "Search_Filing",
-      "input": {"ticker": "PEP", "period": "FY2025", "section": "mdna_organic"}
+      "input": {"ticker": "PEP", "period": "FY2025", "section": "narrative_organic"}
     },
     {
       "type": "tool_call",

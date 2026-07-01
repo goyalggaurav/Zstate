@@ -323,32 +323,32 @@ def check_section_retrieval_contract() -> None:
     pep = BenchmarkToolBackend(load_bundle("PEP_fx_organic_growth"))
     amzn = BenchmarkToolBackend(load_bundle("AMZN_footnote_reconciliation"))
 
-    ok = googl.call("Search_Filing", ticker="GOOGL", period="2026Q1", section="note_15")
+    ok = googl.call("Search_Filing", ticker="GOOGL", period="2026Q1", section="segment_financials")
     assert NOT_FOUND_PREFIX not in ok, ok
     assert googl.log[-1].get("doc_id") == "GOOGL_10Q_2026Q1"
-    assert googl.log[-1].get("section_slug") == "note_15"
+    assert googl.log[-1].get("section_slug") == "segment_financials"
 
-    ok2 = pep.call("Search_Filing", ticker="PEP", period="FY2025", section="mdna_organic")
+    ok2 = pep.call("Search_Filing", ticker="PEP", period="FY2025", section="narrative_organic")
     assert NOT_FOUND_PREFIX not in ok2, ok2
-    assert pep.log[-1].get("section_slug") == "mdna_organic"
+    assert pep.log[-1].get("section_slug") == "narrative_organic"
 
     drift = googl.call("Search_Filing", ticker="GOOGL", period="2026Q1", section="Note 15")
     assert drift.startswith(NOT_FOUND_PREFIX), drift
     assert "unknown section slug" in drift
 
-    amzn_policy = amzn.call("Search_Filing", ticker="AMZN", period="FY2025", section="segment_reporting_policy")
+    amzn_policy = amzn.call("Search_Filing", ticker="AMZN", period="FY2025", section="segment_policy")
     assert NOT_FOUND_PREFIX not in amzn_policy, amzn_policy
-    assert amzn.log[-1].get("section_slug") == "segment_reporting_policy"
+    assert amzn.log[-1].get("section_slug") == "segment_policy"
 
-    amzn_sbc = amzn.call("Search_Filing", ticker="AMZN", period="FY2025", section="stock_compensation_note")
+    amzn_sbc = amzn.call("Search_Filing", ticker="AMZN", period="FY2025", section="compensation_disclosure")
     assert NOT_FOUND_PREFIX not in amzn_sbc, amzn_sbc
-    assert amzn.log[-1].get("section_slug") == "stock_compensation_note"
+    assert amzn.log[-1].get("section_slug") == "compensation_disclosure"
 
-    amzn_decoy = amzn.call("Search_Filing", ticker="AMZN", period="FY2025", section="note_10_prior_year")
+    amzn_decoy = amzn.call("Search_Filing", ticker="AMZN", period="FY2025", section="segment_financials_prior_year")
     assert NOT_FOUND_PREFIX not in amzn_decoy, amzn_decoy
     assert "637,959" in amzn_decoy
 
-    wrong_period = googl.call("Search_Filing", ticker="GOOGL", period="FY2025", section="note_15")
+    wrong_period = googl.call("Search_Filing", ticker="GOOGL", period="FY2025", section="segment_financials")
     assert wrong_period.startswith(NOT_FOUND_PREFIX), wrong_period
 
     invented = googl.call("Search_Filing", ticker="GOOGL", period="2026Q1", section="note_99")
@@ -582,9 +582,14 @@ def check_openai_submit_schema() -> None:
         assert cite["minItems"] == n_metrics and cite.get("maxItems") == n_metrics
 
     from agents.benchmark_tool_specs import citation_guidance_for_task  # noqa: E402
+    from agent_output_contract import load_json  # noqa: E402
 
-    pep_guidance = citation_guidance_for_task("PEP_fx_organic_growth")
-    assert "Reported growth" in pep_guidance and "EMEA" in pep_guidance
+    pep_bundle = load_bundle("PEP_fx_organic_growth")
+    pep_gold_path = load_json(ROOT / "benchmark_v0.1" / "gold_paths" / "PEP_fx_organic_growth.json")
+    pep_guidance = citation_guidance_for_task(
+        "PEP_fx_organic_growth", bundle=pep_bundle, gold_path=pep_gold_path
+    )
+    assert "Preferred retrieval order" in pep_guidance and "narrative_organic" in pep_guidance
     pep_gold = ROOT / "benchmark_v0.1" / "contract_fixtures" / "PEP_fx_organic_growth_submission_gold.json"
     pep_l3 = run([
         sys.executable,
@@ -678,7 +683,7 @@ def check_anthropic_adapter() -> None:
         assert "function" not in tool
 
     prompt = build_system_prompt(task, bundle)
-    assert "GOOGL" in prompt or "footnote" in prompt.lower()
+    assert "segment_financials" in prompt and "ALLOWED SECTION SLUGS" in prompt
 
     agent = AnthropicBenchmarkAgent(task, bundle, model="claude-sonnet-4-5", api_key="test-key")
     assert agent.tools[0]["name"] == "Search_Filing"
@@ -751,6 +756,7 @@ def check_eval_mode_prompts() -> None:
     """P2-09 — eval_mode strips task-specific citation cheat-sheets."""
     sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
     from agents.benchmark_tool_specs import build_system_prompt, citation_guidance_for_task  # noqa: E402
+    from agent_output_contract import load_json  # noqa: E402
     from benchmark_eval_mode import eval_mode_enabled  # noqa: E402
     from benchmark_tool_backend import load_bundle  # noqa: E402
 
@@ -761,16 +767,19 @@ def check_eval_mode_prompts() -> None:
         (ROOT / "benchmark_v0.1" / "tasks" / "PEP_fx_organic_growth.json").read_text()
     )
     bundle = load_bundle(task["task_id"])
-    dev_guidance = citation_guidance_for_task("PEP_fx_organic_growth", eval_mode=False)
+    gold_path = load_json(ROOT / "benchmark_v0.1" / "gold_paths" / "PEP_fx_organic_growth.json")
+    dev_guidance = citation_guidance_for_task(
+        "PEP_fx_organic_growth", eval_mode=False, bundle=bundle, gold_path=gold_path
+    )
     eval_guidance = citation_guidance_for_task("PEP_fx_organic_growth", eval_mode=True)
-    assert "Reported growth" in dev_guidance
-    assert "Reported growth" not in eval_guidance
+    assert "Preferred retrieval order" in dev_guidance
+    assert "Preferred retrieval order" not in eval_guidance
     assert "eval mode" in eval_guidance.lower()
 
     dev_prompt = build_system_prompt(task, bundle, eval_mode=False)
     eval_prompt = build_system_prompt(task, bundle, eval_mode=True)
-    assert "Reported growth" in dev_prompt
-    assert "Reported growth" not in eval_prompt
+    assert "Preferred retrieval order" in dev_prompt
+    assert "Preferred retrieval order" not in eval_prompt
 
 
 def check_discrimination_scoring() -> None:
@@ -892,10 +901,10 @@ def check_amzn_l2_path() -> None:
         skip_sbc_plan = {
             **json.loads(plan.read_text()),
             "actions": [
-                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_reporting_policy"}},
-                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "note_10_segments"}},
-                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "income_statement"}},
-                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "mdna_international_fx"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_policy"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_financials"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "consolidated_primary"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "narrative_fx"}},
                 {"type": "tool_call", "tool": "Python_Interpreter", "input": {"expression": "426305 + 161894 + 128725"}},
                 {"type": "submit_structured_output", "structured_output": {
                     "north_america_net_sales": 426305,
@@ -928,17 +937,17 @@ def check_amzn_l2_path() -> None:
         skip_l2 = score_l2_section_recall(
             skip_trace, task_id="AMZN_footnote_reconciliation", gold_path=gold_path, bundle=bundle
         )
-        assert "stock_compensation_note" in skip_l2.get("missing_sections", []), skip_l2
+        assert "compensation_disclosure" in skip_l2.get("missing_sections", []), skip_l2
         assert skip_l2["l2_score"] < l2["l2_score"], (skip_l2, l2)
 
         wrong_order_plan = {
             **json.loads(plan.read_text()),
             "actions": [
-                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "note_10_segments"}},
-                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_reporting_policy"}},
-                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "stock_compensation_note"}},
-                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "income_statement"}},
-                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "mdna_international_fx"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_financials"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_policy"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "compensation_disclosure"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "consolidated_primary"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "narrative_fx"}},
                 {"type": "tool_call", "tool": "Python_Interpreter", "input": {"expression": "426305 + 161894 + 128725"}},
                 {"type": "submit_structured_output", "structured_output": {
                     "north_america_net_sales": 426305,
@@ -975,6 +984,26 @@ def check_amzn_l2_path() -> None:
         assert bad_l2["l2_score"] < l2["l2_score"], (bad_l2, l2)
 
 
+def check_archetype_roles() -> None:
+    """P2-13 — path_role slugs + archetype schema alignment."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from archetype_roles import load_archetype_schema, task_archetype, validate_registry  # noqa: E402
+    from benchmark_tool_backend import load_bundle  # noqa: E402
+
+    schema = load_archetype_schema()
+    assert "F_exact" in schema["archetypes"]
+    for task_id in (
+        "GOOGL_footnote_reconciliation",
+        "PEP_fx_organic_growth",
+        "AMZN_footnote_reconciliation",
+    ):
+        archetype = task_archetype(task_id)
+        bundle = load_bundle(task_id)
+        checks = validate_registry(bundle, archetype)
+        failed = [c for c in checks if not c[2]]
+        assert not failed, (task_id, failed)
+
+
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
@@ -983,6 +1012,7 @@ def main() -> int:
         ("Fracture taxonomy registry", check_fracture_taxonomy_registry),
         ("Corpus manifest", check_corpus_manifest),
         ("Corpus bundles", check_corpus_bundles),
+        ("Archetype path roles", check_archetype_roles),
         ("Section retrieval contract", check_section_retrieval_contract),
         ("Benchmark agent output contract", check_benchmark_agent_contract),
         ("PM FSM fallback escalation", check_pm_fsm_fallback_escalation),

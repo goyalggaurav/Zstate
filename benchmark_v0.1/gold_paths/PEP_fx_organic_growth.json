@@ -1,6 +1,7 @@
 {
   "task_id": "PEP_fx_organic_growth",
   "version": "0.3.0-draft",
+  "archetype": "M_organic",
   "task_type": "M",
   "fiscal_period": "FY2025",
 
@@ -99,7 +100,7 @@
       "section_order": 0.25,
       "tool_coverage": 0.25
     },
-    "expected_section_order": ["note_1", "mdna_organic"],
+    "expected_section_order": ["segment_financials", "narrative_organic"],
     "required_tools": ["Search_Filing", "Python_Interpreter"]
   },
 

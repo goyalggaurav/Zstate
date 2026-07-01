@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.4  
-**Last updated:** July 2026 (post P2-11 discrimination v2 — `pilot_eval_3task_v1` live 18/18)
+**Last updated:** July 2026 (post P2-15 universal path_role architecture — bundles v1.2, 24 smoke checks)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -76,7 +76,10 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-09 | **Discrimination eval** — eval_mode + L2 gold-path + L3 partial | done | Live 12/12; PEP composite 0.966; `CITE_HALLUC`×5; GOOGL still 1.0 — scorer validated, ranking deferred |
 | P2-10 | **Harder L3 + 3rd task** — PEP distinct snippets; AMZN 4-section path | done | Live 18/18; PEP task median 0.881; `pilot_eval_3task_v1` |
 | P2-11 | **Discrimination v2** — drop GOOGL headline; weighted per-model composite | done | `pilot_eval_discrimination_v2`; gpt-4o 0.932 vs claude 1.0 |
-| P2-12 | **AMZN path hardening** — Note 8 required + FY2024 decoy slug | done | 5-section path; `stock_compensation_note`; `note_10_prior_year` decoy |
+| P2-12 | **AMZN path hardening** — Note 8 required + FY2024 decoy slug | done | 5-section path; `compensation_disclosure`; `segment_financials_prior_year` decoy |
+| P2-13 | **Universal archetypes** — `archetype_roles_v1.json` + `archetype_roles.py` | done | `F_exact`, `F_adjustment`, `M_organic`; decoy trap registry |
+| P2-14 | **Path-role slugs** — migrate bundles/gold paths/tasks to role slugs (v1.2) | done | `segment_financials`, `narrative_organic`, `compensation_disclosure`, etc.; unified `verify_benchmark_l1.py` |
+| P2-15 | **Legacy slug aliasing** — rescore old live traces without re-run | done | `legacy_section_slugs[]` on registry; L2/L3 + backend canonicalize |
 
 ---
 
@@ -126,7 +129,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 23 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 24 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 
 ---

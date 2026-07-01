@@ -1,31 +1,31 @@
 {
   "plan_id": "amzn_good_v1",
-  "description": "Reference scripted agent — policy → Note 8 SBC → Note 10 → income statement → MD&A FX, Python sum check",
+  "description": "Reference scripted agent — role-ordered gold path (F_exact)",
   "actions": [
     {
       "type": "tool_call",
       "tool": "Search_Filing",
-      "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_reporting_policy"}
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_policy"}
     },
     {
       "type": "tool_call",
       "tool": "Search_Filing",
-      "input": {"ticker": "AMZN", "period": "FY2025", "section": "stock_compensation_note"}
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "compensation_disclosure"}
     },
     {
       "type": "tool_call",
       "tool": "Search_Filing",
-      "input": {"ticker": "AMZN", "period": "FY2025", "section": "note_10_segments"}
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_financials"}
     },
     {
       "type": "tool_call",
       "tool": "Search_Filing",
-      "input": {"ticker": "AMZN", "period": "FY2025", "section": "income_statement"}
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "consolidated_primary"}
     },
     {
       "type": "tool_call",
       "tool": "Search_Filing",
-      "input": {"ticker": "AMZN", "period": "FY2025", "section": "mdna_international_fx"}
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "narrative_fx"}
     },
     {
       "type": "tool_call",

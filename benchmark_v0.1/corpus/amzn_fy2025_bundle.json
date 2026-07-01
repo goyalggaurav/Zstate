@@ -1,103 +1,117 @@
 {
   "bundle_id": "amzn_fy2025_bundle",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "task_id": "AMZN_footnote_reconciliation",
+  "archetype": "F_exact",
   "documents": {
-    "segment_reporting_policy": {
+    "segment_policy_doc": {
       "doc_id": "AMZN_10K_2025",
       "doc_type": "10-K",
-      "section": "segment_reporting_policy",
+      "section": "segment_policy",
       "name": "Item 1 — Segment reporting overview",
       "excerpt": "Item 1. Business\n\nWe have organized our operations into three segments: North America, International, and Amazon Web Services (\"AWS\"). These segments reflect the way the Company evaluates its business performance and manages its operations.\n\nInformation on our net sales is contained in Item 8 of Part II, \"Financial Statements and Supplementary Data — Note 10 — Segment Information.\"\n\nCertain operating expense line items, including stock-based compensation, are not allocated to segment results when measuring segment operating performance."
     },
-    "stock_compensation_note": {
+    "compensation_disclosure_doc": {
       "doc_id": "AMZN_10K_2025",
       "doc_type": "10-K",
-      "section": "stock_compensation_note",
-      "name": "Note 8 — Stock-Based Compensation",
-      "excerpt": "Note 8 — Stock-Based Compensation\n\nStock-based compensation expense was $22.4 billion for the year ended December 31, 2025.\n\nWe measure segment operating performance before stock-based compensation expense; these amounts are not allocated to North America, International, or AWS segment results."
+      "section": "compensation_disclosure",
+      "name": "Note 8 — Stockholders' Equity (SBC expense)",
+      "excerpt": "Note 8 — Stockholders' Equity\n\nStock Award Plans\n\nStock-based compensation expense is as follows (in millions):\n\nYear Ended December 31, 2025\n\nTotal stock-based compensation expense $ 22,411\n\nWe measure segment operating performance before stock-based compensation expense; these amounts are not allocated to North America, International, or AWS segment results."
     },
-    "note_10_segments": {
+    "segment_financials_doc": {
       "doc_id": "AMZN_10K_2025",
       "doc_type": "10-K",
-      "section": "note_10",
+      "section": "segment_financials",
       "name": "Note 10 — Segment Information",
       "excerpt": "Note 10 — Segment Information\n\nYear Ended December 31, 2025\n\nNorth America\nNet sales $ 426,305\nOperating income $ 29,619\n\nInternational\nNet sales $ 161,894\nOperating income $ 4,750\n\nAWS\nNet sales $ 128,725\nOperating income $ 45,606\n\nConsolidated\nNet sales $ 716,924\nOperating income $ 79,975"
     },
-    "note_10_prior_year": {
+    "segment_financials_prior_year_doc": {
       "doc_id": "AMZN_10K_2025",
       "doc_type": "10-K",
-      "section": "note_10_prior_year",
+      "section": "segment_financials_prior_year",
       "name": "Note 10 — Segment Information (FY2024 column only)",
       "excerpt": "Note 10 — Segment Information\n\nYear Ended December 31, 2024\n\nNorth America\nNet sales $ 387,497\nOperating income $ 24,967\n\nInternational\nNet sales $ 142,906\nOperating income $ 2,746\n\nAWS\nNet sales $ 107,556\nOperating income $ 39,834\n\nConsolidated\nNet sales $ 637,959\nOperating income $ 67,547"
     },
-    "income_statement": {
+    "consolidated_primary_doc": {
       "doc_id": "AMZN_10K_2025",
       "doc_type": "10-K",
-      "section": "income_statement",
+      "section": "consolidated_primary",
       "name": "Consolidated Statements of Operations",
       "excerpt": "CONSOLIDATED STATEMENTS OF OPERATIONS\n(in millions, except per share data)\n\nYear Ended December 31, 2025\n\nNet sales $ 716,924\nOperating income 79,975\nNet income $ 77,670"
     },
-    "mdna_international_fx": {
+    "narrative_fx_doc": {
       "doc_id": "AMZN_10K_2025",
       "doc_type": "10-K",
-      "section": "mdna_international_fx",
+      "section": "narrative_fx",
       "name": "MD&A — International net sales and FX",
       "excerpt": "Management's Discussion and Analysis of Financial Condition and Results of Operations\n\nInternational Segment\n\nInternational segment sales increased 13% year-over-year to $161.9 billion in 2025, or increased 10% excluding changes in foreign exchange rates.\n\nNorth America segment sales increased 10% year-over-year to $426.3 billion.\n\nAWS segment sales increased 20% year-over-year to $128.7 billion."
     }
   },
   "section_registry": [
     {
-      "section_slug": "segment_reporting_policy",
+      "section_slug": "segment_policy",
+      "path_role": "segment_policy",
       "section_id": "AMZN_10K_2025_segment_policy",
       "doc_id": "AMZN_10K_2025",
-      "document_key": "segment_reporting_policy",
-      "name": "Item 1 — Segment reporting overview",
+      "document_key": "segment_policy_doc",
+      "filing_label": "Item 1 — Segment reporting overview",
+      "legacy_section_slugs": ["segment_reporting_policy"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
-      "section_slug": "stock_compensation_note",
+      "section_slug": "compensation_disclosure",
+      "path_role": "compensation_disclosure",
       "section_id": "AMZN_10K_2025_stock_comp",
       "doc_id": "AMZN_10K_2025",
-      "document_key": "stock_compensation_note",
-      "name": "Note 8 — Stock-Based Compensation",
+      "document_key": "compensation_disclosure_doc",
+      "filing_label": "Note 8 — Stockholders' Equity (SBC expense table)",
+      "legacy_section_slugs": ["stock_compensation_note"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
-      "section_slug": "note_10_segments",
+      "section_slug": "segment_financials",
+      "path_role": "segment_financials",
       "section_id": "AMZN_10K_2025_note_10",
       "doc_id": "AMZN_10K_2025",
-      "document_key": "note_10_segments",
-      "name": "Note 10 — Segment Information",
+      "document_key": "segment_financials_doc",
+      "filing_label": "Note 10 — Segment Information (FY2025 column)",
+      "legacy_section_slugs": ["note_10_segments", "note_10"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
-      "section_slug": "note_10_prior_year",
+      "section_slug": "segment_financials_prior_year",
+      "path_role": "segment_financials_prior_year",
       "section_id": "AMZN_10K_2025_note_10_py",
       "doc_id": "AMZN_10K_2025",
-      "document_key": "note_10_prior_year",
-      "name": "Note 10 — Segment Information (FY2024 column only)",
+      "document_key": "segment_financials_prior_year_doc",
+      "filing_label": "Note 10 — Segment Information (FY2024 column only)",
+      "legacy_section_slugs": ["note_10_prior_year"],
       "required": false,
+      "decoy_trap": "prior_year_column",
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
-      "section_slug": "income_statement",
+      "section_slug": "consolidated_primary",
+      "path_role": "consolidated_primary",
       "section_id": "AMZN_10K_2025_income_statement",
       "doc_id": "AMZN_10K_2025",
-      "document_key": "income_statement",
-      "name": "Consolidated Statements of Operations",
+      "document_key": "consolidated_primary_doc",
+      "filing_label": "Consolidated Statements of Operations",
+      "legacy_section_slugs": ["income_statement"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
-      "section_slug": "mdna_international_fx",
+      "section_slug": "narrative_fx",
+      "path_role": "narrative_fx",
       "section_id": "AMZN_10K_2025_mdna_intl",
       "doc_id": "AMZN_10K_2025",
-      "document_key": "mdna_international_fx",
-      "name": "MD&A — International net sales and FX",
+      "document_key": "narrative_fx_doc",
+      "filing_label": "MD&A — International net sales and FX",
+      "legacy_section_slugs": ["mdna_international_fx"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     }
@@ -114,12 +128,12 @@
   ],
   "retrieval_keys": {
     "Search_Filing": {
-      "AMZN:FY2025:segment_reporting_policy": "segment_reporting_policy",
-      "AMZN:FY2025:stock_compensation_note": "stock_compensation_note",
-      "AMZN:FY2025:note_10_segments": "note_10_segments",
-      "AMZN:FY2025:note_10_prior_year": "note_10_prior_year",
-      "AMZN:FY2025:income_statement": "income_statement",
-      "AMZN:FY2025:mdna_international_fx": "mdna_international_fx"
+      "AMZN:FY2025:segment_policy": "segment_policy_doc",
+      "AMZN:FY2025:compensation_disclosure": "compensation_disclosure_doc",
+      "AMZN:FY2025:segment_financials": "segment_financials_doc",
+      "AMZN:FY2025:segment_financials_prior_year": "segment_financials_prior_year_doc",
+      "AMZN:FY2025:consolidated_primary": "consolidated_primary_doc",
+      "AMZN:FY2025:narrative_fx": "narrative_fx_doc"
     }
   }
 }

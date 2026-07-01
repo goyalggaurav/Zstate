@@ -1,39 +1,44 @@
 {
   "bundle_id": "googl_q1_2026_bundle",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "task_id": "GOOGL_footnote_reconciliation",
+  "archetype": "F_adjustment",
   "documents": {
-    "note_15_segments": {
+    "segment_financials_doc": {
       "doc_id": "GOOGL_10Q_2026Q1",
       "doc_type": "10-Q",
-      "section": "note_15",
+      "section": "segment_financials",
       "name": "Note 15 — Information about Segments and Geographic Areas",
       "excerpt": "Note 15 — Information about Segments and Geographic Areas\n\nRevenues, traffic acquisition costs (TAC) and monetization metrics by segment\n\nThree Months Ended March 31, 2026\n\nGoogle Services $ 89,637\nGoogle Cloud 20,028\nOther Bets 411\nHedging gains (losses) (180)\nTotal revenues $ 109,896\n\nAdditionally, hedging gains (losses) related to revenue are not allocated to our segments. Hedging gains (losses) related to revenue are not allocated to reportable segments."
     },
-    "note_2_revenues": {
+    "revenue_disaggregation_doc": {
       "doc_id": "GOOGL_10Q_2026Q1",
       "doc_type": "10-Q",
-      "section": "note_2",
+      "section": "revenue_disaggregation",
       "name": "Note 2 — Revenues",
       "excerpt": "Note 2 — Revenues\n\nDisaggregation of revenue by type\n\nThree months ended March 31, 2026\n\nAdvertising revenues $ 66,885\nGoogle subscriptions, platforms, and devices 10,799\nGoogle Cloud 20,028\nOther Bets 411\nHedging gains (losses) (180)\nTotal revenues $ 109,896"
     }
   },
   "section_registry": [
     {
-      "section_slug": "note_15",
+      "section_slug": "segment_financials",
+      "path_role": "segment_financials",
       "section_id": "GOOGL_10Q_2026Q1_note_15",
       "doc_id": "GOOGL_10Q_2026Q1",
-      "document_key": "note_15_segments",
-      "name": "Note 15 — Information about Segments and Geographic Areas",
+      "document_key": "segment_financials_doc",
+      "filing_label": "Note 15 — Information about Segments and Geographic Areas",
+      "legacy_section_slugs": ["note_15"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
-      "section_slug": "note_2",
+      "section_slug": "revenue_disaggregation",
+      "path_role": "revenue_disaggregation",
       "section_id": "GOOGL_10Q_2026Q1_note_2",
       "doc_id": "GOOGL_10Q_2026Q1",
-      "document_key": "note_2_revenues",
-      "name": "Note 2 — Revenues",
+      "document_key": "revenue_disaggregation_doc",
+      "filing_label": "Note 2 — Revenues (disaggregation by type)",
+      "legacy_section_slugs": ["note_2"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     }
@@ -50,8 +55,8 @@
   ],
   "retrieval_keys": {
     "Search_Filing": {
-      "GOOGL:2026Q1:note_15": "note_15_segments",
-      "GOOGL:2026Q1:note_2": "note_2_revenues"
+      "GOOGL:2026Q1:segment_financials": "segment_financials_doc",
+      "GOOGL:2026Q1:revenue_disaggregation": "revenue_disaggregation_doc"
     }
   }
 }

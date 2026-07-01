@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from agent_output_contract import amzn_gold_values, googl_gold_values, pep_gold_values
+from agent_output_contract import load_json, resolve_bench_path  # noqa: E402
+from archetype_roles import dev_citation_guidance, gold_path_path, gt_metric_values, registry_prompt_lines  # noqa: E402
 from benchmark_eval_mode import eval_mode_enabled
 
 CORPUS_TOOLS = frozenset({"Search_Filing", "PDF_Parser", "Python_Interpreter"})
@@ -18,14 +19,7 @@ EVAL_CITATION_GUIDANCE = (
 
 
 def _metric_properties(task_id: str) -> dict[str, dict]:
-    if task_id == "GOOGL_footnote_reconciliation":
-        sample = googl_gold_values()
-    elif task_id == "PEP_fx_organic_growth":
-        sample = pep_gold_values()
-    elif task_id == "AMZN_footnote_reconciliation":
-        sample = amzn_gold_values()
-    else:
-        raise ValueError(f"No submit schema for task {task_id!r}")
+    sample = gt_metric_values(task_id)
     props: dict[str, dict] = {}
     for key, val in sample.items():
         props[key] = {"type": "integer" if isinstance(val, int) else "number"}
@@ -36,65 +30,32 @@ def metric_keys(task_id: str) -> set[str]:
     return set(_metric_properties(task_id).keys())
 
 
-def citation_guidance_for_task(task_id: str, *, eval_mode: bool | None = None) -> str:
-    """Task-specific L3 citation rules for system prompt and tool descriptions."""
+def citation_guidance_for_task(
+    task_id: str,
+    *,
+    eval_mode: bool | None = None,
+    bundle: dict | None = None,
+    gold_path: dict | None = None,
+) -> str:
     if eval_mode_enabled(eval_mode):
         return EVAL_CITATION_GUIDANCE
-    if task_id == "PEP_fx_organic_growth":
-        return (
-            "CITATION RULES (PEP — critical):\n"
-            "- snippet MUST be a copy-paste substring from the exact Search_Filing tool output you received.\n"
-            "- Do NOT paraphrase column headers (e.g. never use \"Reported growth  8%\" or \"Organic revenue growth  6%\").\n"
-            "- For mdna_organic percentage metrics, cite table cell text from the segment row, e.g.:\n"
-            "    emea_reported_growth_pct → \"EMEA                            8%\"\n"
-            "    emea_fx_impact_pct → \"2%\" (from EMEA row in mdna_organic excerpt)\n"
-            "    latam_foods_reported_growth_pct → \"(0.2)%\"\n"
-            "- For note_1 revenue metrics, cite lines like \"EMEA $ 18,025\" or \"LatAm Foods $ 10,549\".\n"
-            "- Each metric MUST use a distinct verbatim snippet — never reuse the same substring for multiple metrics.\n"
-            "- Include policy_acknowledgements: [\"no_wae_fx_table\"]."
-        )
-    if task_id == "AMZN_footnote_reconciliation":
-        return (
-            "CITATION RULES (AMZN):\n"
-            "- Follow gold path order: segment_reporting_policy → stock_compensation_note → note_10_segments → income_statement → mdna_international_fx.\n"
-            "- Use note_10_segments for FY2025 segment net sales — not note_10_prior_year (FY2024 decoy).\n"
-            "- Each metric MUST use a distinct verbatim snippet — never reuse the same substring.\n"
-            "- Segment net sales from Note 10; consolidated from income statement; International growth from MD&A.\n"
-            "- Include policy_acknowledgements: [\"sbc_not_in_segment_oi\"]."
-        )
-    if task_id == "GOOGL_footnote_reconciliation":
-        return (
-            "CITATION RULES (GOOGL):\n"
-            "- snippet MUST be copy-pasted from Search_Filing output (note_15 or note_2).\n"
-            "- Example: \"Google Services $ 89,637\", \"Hedging gains (losses) (180)\", \"Total revenues $ 109,896\"."
-        )
+    if bundle is not None and gold_path is not None:
+        return dev_citation_guidance(bundle, gold_path)
     return "CITATION RULES: each snippet must be a verbatim substring from a retrieved section excerpt."
 
 
 def snippet_field_description(task_id: str, *, eval_mode: bool | None = None) -> str:
-    base = (
+    return (
         "Verbatim substring from the Search_Filing/PDF_Parser tool output for this section_slug. "
         "Copy-paste exactly; do not rephrase column headers or labels."
     )
-    if eval_mode_enabled(eval_mode):
-        return base
-    if task_id == "PEP_fx_organic_growth":
-        return (
-            base
-            + " For mdna_organic, use table row/cell text (e.g. \"EMEA                            8%\"), "
-            "not headers like \"Reported growth\"."
-        )
-    return base
 
 
 def build_system_prompt(task: dict, bundle: dict, *, eval_mode: bool | None = None) -> str:
     """Shared system prompt for OpenAI and Anthropic benchmark agents."""
     task_id = task["task_id"]
-    registry = bundle.get("section_registry", [])
-    slug_lines = "\n".join(
-        f"  - {e['section_slug']}: {e.get('name', e['section_id'])}"
-        for e in registry
-    )
+    gold_path = load_json(resolve_bench_path(gold_path_path(task_id)))
+    slug_lines = registry_prompt_lines(bundle)
     policy_lines = ""
     for note in bundle.get("policy_notes", []):
         if note.get("agent_ack_required"):
@@ -115,7 +76,7 @@ def build_system_prompt(task: dict, bundle: dict, *, eval_mode: bool | None = No
         f"  - citations: exactly one entry per metrics key ({metric_list}) — no omissions\n"
         "  - each citation snippet must be a verbatim substring from a section you retrieved\n"
         "  - policy_acknowledgements: include every REQUIRED policy_id listed below\n\n"
-        f"{citation_guidance_for_task(task_id, eval_mode=eval_mode)}\n\n"
+        f"{citation_guidance_for_task(task_id, eval_mode=eval_mode, bundle=bundle, gold_path=gold_path)}\n\n"
         f"TASK:\n{task['prompt']['text']}\n\n"
         f"ALLOWED SECTION SLUGS:\n{slug_lines or '  (see tool enum)'}"
         f"{policy_lines}"
@@ -184,7 +145,7 @@ def build_tool_definitions(task: dict, bundle: dict, *, eval_mode: bool | None =
             "section": {
                 "type": "string",
                 "enum": section_enum,
-                "description": "Canonical section_slug from filing bundle (lowercase, e.g. note_15).",
+                "description": "Canonical path_role section_slug from filing bundle (lowercase, underscores).",
             },
         },
         "required": ["ticker", "period", "section"],
@@ -287,7 +248,7 @@ def build_tool_definitions(task: dict, bundle: dict, *, eval_mode: bool | None =
                 "description": (
                     f"Submit final agent_submission_v1 with all {n_metrics} metrics, "
                     f"{n_metrics} citations (one per metric_id), and required policy acks. "
-                    f"{citation_guidance_for_task(task_id, eval_mode=eval_mode).split(chr(10))[0]}. Ends the task."
+                    f"{citation_guidance_for_task(task_id, eval_mode=eval_mode, bundle=bundle, gold_path=load_json(resolve_bench_path(gold_path_path(task_id)))).split(chr(10))[0]}. Ends the task."
                 ),
                 "parameters": submit_params,
             },

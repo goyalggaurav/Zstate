@@ -1,6 +1,7 @@
 {
   "task_id": "GOOGL_footnote_reconciliation",
   "version": "1.2.0-pilot",
+  "archetype": "F_adjustment",
   "task_type": "F",
   "fiscal_period": "2026Q1",
 
@@ -109,10 +110,10 @@
   ],
 
   "section_recall_scoring": {
-    "note_15_required": true,
-    "note_2_required": true,
     "pass_if_all_required_accessed": true,
-    "partial_credit_if_note_15_only": 0.5
+    "partial_credit_if_only": {
+      "segment_financials": 0.5
+    }
   },
 
   "l2_gold_path": {
@@ -121,7 +122,7 @@
       "section_order": 0.25,
       "tool_coverage": 0.25
     },
-    "expected_section_order": ["note_15", "note_2"],
+    "expected_section_order": ["segment_financials", "revenue_disaggregation"],
     "required_tools": ["Search_Filing", "Python_Interpreter"]
   }
 }

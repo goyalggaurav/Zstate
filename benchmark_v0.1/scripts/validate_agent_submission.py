@@ -22,6 +22,7 @@ ROOT = BENCH.parent
 
 sys.path.insert(0, str(SCRIPTS))
 
+from archetype_roles import canonicalize_section_slug  # noqa: E402
 from benchmark_tool_backend import load_bundle  # noqa: E402
 
 TASK_BUNDLES = {
@@ -155,6 +156,8 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
         metric_id = cite.get("metric_id")
         doc_id = cite.get("doc_id")
         section_slug = cite.get("section_slug")
+        if section_slug:
+            section_slug = canonicalize_section_slug(bundle, section_slug)
         snippet = cite.get("snippet")
         cite_ok = True
 

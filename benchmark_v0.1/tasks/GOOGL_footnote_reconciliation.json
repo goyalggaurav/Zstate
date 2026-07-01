@@ -7,7 +7,7 @@
   "ticker": "GOOGL",
   "cik": "0001652044",
   "sector": "tech",
-  "archetype": "footnote_reconciliation",
+  "archetype": "F_adjustment",
   "task_type": "F",
   "difficulty_tier": "L2",
 

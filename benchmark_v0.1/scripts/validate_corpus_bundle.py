@@ -50,11 +50,15 @@ CONTRACT_PHRASES: dict[str, list[str]] = {
         "637,959",
         "stock-based compensation",
         "not allocated to segment results",
-        "22.4 billion",
+        "22,411",
         "increased 13%",
         "increased 10% excluding changes in foreign exchange rates",
     ],
 }
+
+
+sys.path.insert(0, str(BENCH / "scripts"))
+from archetype_roles import validate_registry as validate_archetype_registry  # noqa: E402
 
 
 def load_json(path: Path) -> dict:
@@ -201,6 +205,17 @@ def validate_task(task_id: str) -> dict:
 
     for label, required, passed in validate_policy_notes(bundle, task_id):
         add_check(label, required, passed)
+
+    archetype = task_json.get("archetype") or gold_path.get("archetype") or bundle.get("archetype")
+    if archetype:
+        add_check("task_archetype_set", archetype, bool(archetype))
+        add_check(
+            "gold_path_archetype_match",
+            archetype,
+            gold_path.get("archetype") in (None, archetype) and bundle.get("archetype") in (None, archetype),
+        )
+        for label, required, passed in validate_archetype_registry(bundle, archetype):
+            add_check(label, required, passed)
 
     return {
         "task_id": task_id,

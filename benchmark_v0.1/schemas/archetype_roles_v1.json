@@ -1,0 +1,52 @@
+{
+  "schema_version": "archetype_roles_v1",
+  "description": "Universal section roles and L1 archetypes for Track A benchmark tasks. section_slug MUST equal path_role in bundle registry.",
+
+  "path_roles": {
+    "segment_policy": "Segment definitions and reporting policy (Item 1 or equivalent)",
+    "compensation_disclosure": "Stock-based compensation / equity comp disclosure (note location varies by filer)",
+    "segment_financials": "Reportable segment financial table for the scored period",
+    "revenue_disaggregation": "Revenue disaggregation or secondary cross-check note",
+    "consolidated_primary": "Consolidated income statement or primary total",
+    "narrative_fx": "MD&A segment narrative with FX or reported vs constant-currency growth",
+    "narrative_organic": "MD&A organic / constant-currency revenue bridge table"
+  },
+
+  "decoy_traps": {
+    "prior_year_column": {
+      "description": "Same note layout but prior fiscal period column only",
+      "failure_mode": "wrong_period",
+      "fracture_code": "HALLUC_FILL"
+    }
+  },
+
+  "archetypes": {
+    "F_exact": {
+      "task_type": "F",
+      "description": "Segment net sales sum equals consolidated (no adjustment line)",
+      "reconciliation_mode": "exact",
+      "default_path_order": [
+        "segment_policy",
+        "compensation_disclosure",
+        "segment_financials",
+        "consolidated_primary",
+        "narrative_fx"
+      ],
+      "optional_roles": ["compensation_disclosure", "narrative_fx"]
+    },
+    "F_adjustment": {
+      "task_type": "F",
+      "description": "Segment sum differs from consolidated; reconciling item required",
+      "reconciliation_mode": "adjustment",
+      "default_path_order": ["segment_financials", "revenue_disaggregation"],
+      "optional_roles": []
+    },
+    "M_organic": {
+      "task_type": "M",
+      "description": "Segment revenue + organic/CC growth decomposition",
+      "reconciliation_mode": "organic_bridge",
+      "default_path_order": ["segment_financials", "narrative_organic"],
+      "optional_roles": []
+    }
+  }
+}

@@ -1,16 +1,16 @@
 {
   "plan_id": "googl_good_v1",
-  "description": "Reference scripted agent — Note 15 + Note 2 retrieval, Python reconciliation, gold structured output",
+  "description": "Reference scripted agent — segment_financials + revenue_disaggregation (F_adjustment)",
   "actions": [
     {
       "type": "tool_call",
       "tool": "Search_Filing",
-      "input": {"ticker": "GOOGL", "period": "2026Q1", "section": "note_15"}
+      "input": {"ticker": "GOOGL", "period": "2026Q1", "section": "segment_financials"}
     },
     {
       "type": "tool_call",
       "tool": "Search_Filing",
-      "input": {"ticker": "GOOGL", "period": "2026Q1", "section": "note_2"}
+      "input": {"ticker": "GOOGL", "period": "2026Q1", "section": "revenue_disaggregation"}
     },
     {
       "type": "tool_call",

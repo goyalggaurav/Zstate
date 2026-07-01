@@ -1,39 +1,44 @@
 {
   "bundle_id": "pep_fy2025_bundle",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "task_id": "PEP_fx_organic_growth",
+  "archetype": "M_organic",
   "documents": {
-    "note_1_segments": {
+    "segment_financials_doc": {
       "doc_id": "PEP_10K_2025",
       "doc_type": "10-K",
-      "section": "note_1",
+      "section": "segment_financials",
       "name": "Note 1 — Segment Reporting",
       "excerpt": "Note 1 — Segment Reporting\n\nNet revenue by segment\n\nYear ended December 27, 2025\nEMEA $ 18,025\nLatAm Foods $ 10,549\n\nYear ended December 28, 2024\nEMEA $ 16,658\nLatAm Foods $ 10,568\n\n(Additional segments omitted.)"
     },
-    "mdna_organic_revenue": {
+    "narrative_organic_doc": {
       "doc_id": "PEP_10K_2025",
       "doc_type": "10-K",
-      "section": "mdna_organic",
+      "section": "narrative_organic",
       "name": "MD&A — Net Revenue and Organic Revenue Performance",
       "excerpt": "Net Revenue and Organic Revenue Performance\n\nThe following table presents reported net revenue growth, the impact of foreign exchange translation, and organic revenue growth on a constant-currency basis for our reportable segments:\n\n                              Reported    Foreign exchange    Organic\n                              growth      translation impact  revenue growth\nEMEA                            8%              2%                  6%\nLatin America Foods           (0.2)%           (4.7)%                4.5%\n\nNote: This filing does not include a weighted-average FX rate table for currency pairs used in constant-currency calculations. Organic revenue growth and foreign exchange translation impacts are disclosed in the table above."
     }
   },
   "section_registry": [
     {
-      "section_slug": "note_1",
+      "section_slug": "segment_financials",
+      "path_role": "segment_financials",
       "section_id": "PEP_10K_2025_note_1_segments",
       "doc_id": "PEP_10K_2025",
-      "document_key": "note_1_segments",
-      "name": "Note 1 — Segment Reporting",
+      "document_key": "segment_financials_doc",
+      "filing_label": "Note 1 — Segment Reporting",
+      "legacy_section_slugs": ["note_1"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
-      "section_slug": "mdna_organic",
+      "section_slug": "narrative_organic",
+      "path_role": "narrative_organic",
       "section_id": "PEP_10K_2025_mdna_organic_revenue",
       "doc_id": "PEP_10K_2025",
-      "document_key": "mdna_organic_revenue",
-      "name": "MD&A — Net Revenue and Organic Revenue Performance",
+      "document_key": "narrative_organic_doc",
+      "filing_label": "MD&A — Net Revenue and Organic Revenue Performance",
+      "legacy_section_slugs": ["mdna_organic"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     }
@@ -50,8 +55,8 @@
   ],
   "retrieval_keys": {
     "Search_Filing": {
-      "PEP:FY2025:note_1": "note_1_segments",
-      "PEP:FY2025:mdna_organic": "mdna_organic_revenue"
+      "PEP:FY2025:segment_financials": "segment_financials_doc",
+      "PEP:FY2025:narrative_organic": "narrative_organic_doc"
     }
   }
 }

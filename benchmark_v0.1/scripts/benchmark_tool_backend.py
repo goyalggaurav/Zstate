@@ -75,7 +75,21 @@ class BenchmarkToolBackend:
             entry["section_slug"]: entry for entry in self.section_registry
         }
         self.registry_slugs = set(self.registry_by_slug)
+        from archetype_roles import legacy_slug_map
+
+        self._legacy_slug_map = legacy_slug_map(corpus)
         self.log: list[dict] = []
+
+    def _resolve_slug(self, section_raw: str) -> str | None:
+        if not is_canonical_slug(section_raw):
+            return None
+        slug = section_raw
+        canonical = self._legacy_slug_map.get(slug, slug)
+        if canonical in self.registry_slugs:
+            return canonical
+        if slug in self.registry_slugs:
+            return slug
+        return None
 
     def _search_filing(self, ticker: str, period: str, section_raw: str) -> tuple[str, str | None, str | None]:
         if not is_canonical_slug(section_raw):
@@ -85,13 +99,13 @@ class BenchmarkToolBackend:
                 None,
                 None,
             )
-        slug = section_raw
-        if slug not in self.registry_slugs:
+        slug = self._resolve_slug(section_raw)
+        if slug is None:
             return (
                 f"{NOT_FOUND_PREFIX} unknown section slug {section_raw!r}; "
                 f"allowed: {sorted(self.registry_slugs)}",
                 None,
-                slug,
+                section_raw,
             )
         key = f"{ticker}:{period}:{slug}"
         doc_key = self.keys["Search_Filing"].get(key)

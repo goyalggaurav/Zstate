@@ -7,15 +7,15 @@
   "ticker": "AMZN",
   "cik": "0001018724",
   "sector": "tech",
-  "archetype": "footnote_reconciliation",
+  "archetype": "F_exact",
   "task_type": "F",
   "difficulty_tier": "L3",
 
   "prompt": {
-    "text": "Using Amazon.com, Inc.'s Form 10-K for the fiscal year ended December 31, 2025 (filed February 6, 2026), reconcile reportable segment net sales to consolidated net sales for FY2025 and summarize International FX effects.\n\n1. Read Item 1 segment reporting overview — identify the three reportable segments and how stock-based compensation is treated in segment performance measurement.\n2. Read Note 8 — Stock-Based Compensation — confirm corporate SBC is not allocated to segment operating results.\n3. Extract FY2025 net sales for North America, International, and AWS from Note 10 — Segment Information (2025 column only; do not use prior-year-only tables).\n4. Cross-check consolidated net sales on the Consolidated Statements of Operations.\n5. From MD&A, extract International reported growth % and growth % excluding foreign exchange.\n6. Use Python to verify segment net sales sum equals consolidated net sales.\n7. Produce a reconciliation table (USD millions) and short narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Every numeric value must include a citation (document, section, table).\n- Each citation must use a distinct verbatim snippet — do not reuse the same substring for multiple metrics.\n- Python required for segment-sum verification.\n- Acknowledge required policy notes in your submission.",
+    "text": "Using Amazon.com, Inc.'s Form 10-K for the fiscal year ended December 31, 2025 (filed February 6, 2026), reconcile reportable segment net sales to consolidated net sales for FY2025 and summarize International FX effects.\n\nRetrieve filing sections by path_role slug (see tool enum):\n1. segment_policy — three reportable segments and SBC non-allocation policy.\n2. compensation_disclosure — corporate stock-based compensation treatment (not allocated to segment OI).\n3. segment_financials — FY2025 net sales by North America, International, AWS (scored period column only).\n4. consolidated_primary — consolidated net sales cross-check.\n5. narrative_fx — International reported vs FX-neutral growth %.\n6. Python — verify segment net sales sum equals consolidated net sales.\n7. Produce reconciliation table (USD millions) and short narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Do not use decoy slug segment_financials_prior_year for scored metrics.\n- Each citation must use a distinct verbatim snippet.\n- Python required for segment-sum verification.\n- Acknowledge required policy notes in your submission.",
     "constraints": [
       "Document: AMZN 10-K FY2025 only",
-      "Five-section workflow: policy → Note 8 SBC → Note 10 → income statement → MD&A International",
+      "Role-ordered workflow: segment_policy → compensation_disclosure → segment_financials → consolidated_primary → narrative_fx",
       "No Buy/Hold/Sell or price target"
     ]
   },

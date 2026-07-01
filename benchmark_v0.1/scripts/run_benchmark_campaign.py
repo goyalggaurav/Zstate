@@ -152,37 +152,18 @@ def published_tasks(manifest: dict) -> dict[str, dict]:
 
 def verify_cmd(task_entry: dict, agent_path: Path) -> list[str]:
     task_id = task_entry["task_id"]
-    paths = task_entry["paths"]
+    script = BENCH / "scripts" / "verify_benchmark_l1.py"
+    cmd = [
+        sys.executable,
+        str(script),
+        "--task",
+        task_id,
+        "--agent-output",
+        str(agent_path),
+    ]
     if task_id == "GOOGL_footnote_reconciliation":
-        script = BENCH / paths["verify_script"]
-        return [
-            sys.executable,
-            str(script),
-            "--period",
-            "q1_2026",
-            "--agent-output",
-            str(agent_path),
-        ]
-    if task_id == "AMZN_footnote_reconciliation":
-        script = BENCH / paths["verify_script"]
-        return [
-            sys.executable,
-            str(script),
-            "--agent-output",
-            str(agent_path),
-        ]
-    if task_id == "PEP_fx_organic_growth":
-        script = BENCH / paths.get("verify_script_task_entry", paths["verify_script"])
-        gt = BENCH / paths["ground_truth"]
-        return [
-            sys.executable,
-            str(script),
-            "--ground-truth",
-            str(gt),
-            "--agent-output",
-            str(agent_path),
-        ]
-    raise ValueError(f"No verify command for task {task_id}")
+        cmd.extend(["--period", "q1_2026"])
+    return cmd
 
 
 def run_verify(task_entry: dict, agent_path: Path) -> dict:

@@ -24,6 +24,7 @@ BENCH = SCRIPTS.parent
 sys.path.insert(0, str(SCRIPTS))
 
 from agent_output_contract import load_json  # noqa: E402
+from archetype_roles import canonicalize_section_slug  # noqa: E402
 from benchmark_tool_backend import load_bundle, normalize_section_slug  # noqa: E402
 from validate_agent_submission import validate_submission  # noqa: E402
 
@@ -48,51 +49,26 @@ def load_gold_path(task_id: str) -> dict:
 
 
 def run_l1_verify(task_id: str, agent_path: Path, manifest: dict) -> dict:
-    for entry in manifest.get("pilot_tasks", []):
-        if entry["task_id"] != task_id:
-            continue
-        paths = entry["paths"]
-        if task_id == "GOOGL_footnote_reconciliation":
-            script = BENCH / paths["verify_script"]
-            cmd = [
-                sys.executable,
-                str(script),
-                "--period",
-                "q1_2026",
-                "--agent-output",
-                str(agent_path),
-            ]
-        elif task_id == "AMZN_footnote_reconciliation":
-            script = BENCH / paths["verify_script"]
-            cmd = [
-                sys.executable,
-                str(script),
-                "--agent-output",
-                str(agent_path),
-            ]
-        elif task_id == "PEP_fx_organic_growth":
-            script = BENCH / paths.get("verify_script_task_entry", paths["verify_script"])
-            gt = BENCH / paths["ground_truth"]
-            cmd = [
-                sys.executable,
-                str(script),
-                "--ground-truth",
-                str(gt),
-                "--agent-output",
-                str(agent_path),
-            ]
-        else:
-            raise ValueError(f"No verify script for {task_id!r}")
-        proc = subprocess.run(cmd, cwd=BENCH, capture_output=True, text=True)
-        if proc.returncode not in (0, 1):
-            return {"error": proc.stderr.strip() or proc.stdout.strip(), "exit_code": proc.returncode}
-        try:
-            report = json.loads(proc.stdout)
-        except json.JSONDecodeError:
-            return {"error": "invalid verify JSON", "raw": proc.stdout[:500]}
-        report["verify_exit_code"] = proc.returncode
-        return report
-    raise ValueError(f"Task {task_id!r} not in manifest")
+    script = BENCH / "scripts" / "verify_benchmark_l1.py"
+    cmd = [
+        sys.executable,
+        str(script),
+        "--task",
+        task_id,
+        "--agent-output",
+        str(agent_path),
+    ]
+    if task_id == "GOOGL_footnote_reconciliation":
+        cmd.extend(["--period", "q1_2026"])
+    proc = subprocess.run(cmd, cwd=BENCH.parent, capture_output=True, text=True)
+    if proc.returncode not in (0, 1):
+        return {"error": proc.stderr.strip() or proc.stdout.strip(), "exit_code": proc.returncode}
+    try:
+        report = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return {"error": "invalid verify JSON", "raw": proc.stdout[:500]}
+    report["verify_exit_code"] = proc.returncode
+    return report
 
 
 def required_section_slugs(bundle: dict) -> list[str]:
@@ -104,18 +80,19 @@ def required_section_slugs(bundle: dict) -> list[str]:
     return slugs
 
 
-def sections_accessed_from_trace(trace: dict) -> set[str]:
+def sections_accessed_from_trace(trace: dict, *, bundle: dict | None = None) -> set[str]:
     accessed: set[str] = set()
     for entry in trace.get("tool_log", []):
         if entry.get("tool") not in ("Search_Filing", "PDF_Parser"):
             continue
         slug = entry.get("section_slug")
         if slug:
-            accessed.add(slug)
+            accessed.add(canonicalize_section_slug(bundle, slug) if bundle else slug)
             continue
         section = entry.get("input", {}).get("section")
         if section and not str(entry.get("output", "")).startswith("NOT FOUND"):
-            accessed.add(normalize_section_slug(section))
+            raw = normalize_section_slug(section)
+            accessed.add(canonicalize_section_slug(bundle, raw) if bundle else raw)
     for step in trace.get("steps", []):
         if step.get("type") != "tool_call":
             continue
@@ -126,11 +103,12 @@ def sections_accessed_from_trace(trace: dict) -> set[str]:
             continue
         slug = step.get("section_slug")
         if slug:
-            accessed.add(slug)
+            accessed.add(canonicalize_section_slug(bundle, slug) if bundle else slug)
             continue
         section = step.get("input", {}).get("section")
         if section:
-            accessed.add(normalize_section_slug(section))
+            raw = normalize_section_slug(section)
+            accessed.add(canonicalize_section_slug(bundle, raw) if bundle else raw)
     return accessed
 
 
@@ -146,7 +124,7 @@ def tools_used_from_trace(trace: dict) -> set[str]:
     return used
 
 
-def first_section_access_order(trace: dict, expected: list[str]) -> list[str]:
+def first_section_access_order(trace: dict, expected: list[str], *, bundle: dict | None = None) -> list[str]:
     """Return subset of expected slugs in order of first trace access."""
     if not trace or not expected:
         return []
@@ -164,6 +142,8 @@ def first_section_access_order(trace: dict, expected: list[str]) -> list[str]:
             section = step.get("input", {}).get("section")
             if section:
                 slug = normalize_section_slug(section)
+        if slug and bundle:
+            slug = canonicalize_section_slug(bundle, slug)
         if not slug or slug not in expected or slug in seen:
             continue
         seen.add(slug)
@@ -176,10 +156,11 @@ def score_section_order(
     expected_order: list[str],
     *,
     strict_first_section: str | None = None,
+    bundle: dict | None = None,
 ) -> tuple[float, list[str]]:
     if trace is None or len(expected_order) < 2:
         return 1.0, []
-    observed = first_section_access_order(trace, expected_order)
+    observed = first_section_access_order(trace, expected_order, bundle=bundle)
     if len(observed) < 2:
         return 0.0, ["section_order"]
     correct = 0
@@ -248,7 +229,7 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
             "components": {"section_recall": 0.0, "section_order": 0.0, "tool_coverage": 0.0},
         }
 
-    accessed = sorted(sections_accessed_from_trace(trace))
+    accessed = sorted(sections_accessed_from_trace(trace, bundle=bundle))
     accessed_set = set(accessed)
     missing = [s for s in required if s not in accessed_set]
     recall_cfg = gold_path.get("section_recall_scoring", {})
@@ -256,14 +237,15 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
     if not missing:
         recall_score = 1.0
         recall_failures: list[str] = []
-    elif (
-        len(missing) == len(required) - 1
-        and "note_15" in accessed_set
-        and recall_cfg.get("partial_credit_if_note_15_only") is not None
-        and "note_15" in required
-    ):
-        recall_score = float(recall_cfg["partial_credit_if_note_15_only"])
-        recall_failures = ["section_partial"]
+    elif len(missing) == len(required) - 1:
+        accessed_required = [s for s in required if s in accessed_set]
+        partial_map = recall_cfg.get("partial_credit_if_only") or {}
+        if len(accessed_required) == 1 and accessed_required[0] in partial_map:
+            recall_score = float(partial_map[accessed_required[0]])
+            recall_failures = ["section_partial"]
+        else:
+            recall_score = (len(required) - len(missing)) / len(required)
+            recall_failures = ["section_miss"] if missing else []
     else:
         recall_score = (len(required) - len(missing)) / len(required)
         recall_failures = ["section_miss"] if missing else []
@@ -273,6 +255,7 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
         trace,
         gp["expected_section_order"],
         strict_first_section=gp.get("strict_first_section"),
+        bundle=bundle,
     )
     tool_score, tool_failures = score_tool_coverage(trace, gp["required_tools"])
 

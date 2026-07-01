@@ -1,6 +1,6 @@
 # Corpus bundle + benchmark runtime contract (v1.1)
 
-**Status:** v1.1 — extends v1.0 (2026-07-01) with sectional retrieval registry, citation schema, policy notes  
+**Status:** v1.2 — universal path_role slugs + archetypes (P2-13–15); extends v1.1 with `legacy_section_slugs` for rescore  
 **Consumers:** `benchmark_tool_backend.py`, `benchmark_agent_loop.py`, `validate_corpus_bundle.py`, `validate_agent_submission.py` (planned)
 
 ---
@@ -52,19 +52,21 @@ Agents MUST NOT pass free-text queries. `Search_Filing` resolves **only** via th
 |-----------|--------|-----------------|-----------------|
 | `ticker` | Task JSON `ticker` field | `GOOGL` | `PEP` |
 | `period` | Task fiscal period slug | `2026Q1` | `FY2025` |
-| `section_slug` | `section_registry[].section_slug` | `note_15`, `note_2` | `note_1`, `mdna_organic` |
+| `section_slug` | `section_registry[].section_slug` | `segment_financials`, `revenue_disaggregation` | `segment_financials`, `narrative_organic` |
 
-**Normalization (backend):** lowercase `section_slug`; replace spaces/hyphens with `_`. Reject if normalized slug ∉ registry.
+**Normalization (backend):** lowercase `section_slug`; replace spaces/hyphens with `_`. Reject display names (e.g. `"Note 15"`). Accept canonical slug or any token in `legacy_section_slugs[]` (resolved to canonical before lookup).
 
-**Registry entry (required per section):**
+**Registry entry (required per section, v1.2):**
 
 ```json
 {
-  "section_slug": "note_15",
+  "section_slug": "segment_financials",
+  "path_role": "segment_financials",
   "section_id": "GOOGL_10Q_2026Q1_note_15",
   "doc_id": "GOOGL_10Q_2026Q1",
-  "document_key": "note_15_segments",
-  "name": "Note 15 — Segments",
+  "document_key": "segment_financials_doc",
+  "filing_label": "Note 15 — Information about Segments and Geographic Areas",
+  "legacy_section_slugs": ["note_15"],
   "required": true,
   "allowed_tools": ["Search_Filing", "PDF_Parser"]
 }
@@ -72,20 +74,35 @@ Agents MUST NOT pass free-text queries. `Search_Filing` resolves **only** via th
 
 | Field | Rule |
 |-------|------|
-| `section_slug` | Stable API token — only value agent may pass as `section` |
+| `section_slug` | Stable API token — canonical value agent should pass as `section` |
+| `path_role` | Must equal `section_slug` (v1.2); archetype-validated role from `schemas/archetype_roles_v1.json` |
+| `filing_label` | Human-readable note/section title for prompts (issuer-specific) |
+| `legacy_section_slugs` | Optional prior slug tokens accepted by backend/L2/L3 rescore (migration only) |
 | `section_id` | Must match `gold_paths/*/minimal_section_set[].section_id` |
 | `document_key` | Key in `documents{}` |
 | `required` | If true, L2 section-recall expects a tool hit on this slug |
+| `decoy_trap` | Optional; must be a known trap type in archetype schema (decoys are never `required`) |
+
+### 1c. Archetypes (v1.2 — universal task design)
+
+| Field | Location | Rule |
+|-------|----------|------|
+| `archetype` | Task JSON + bundle + gold path | One of `F_exact`, `F_adjustment`, `M_organic` |
+| Path order | `gold_paths/*/l2_gold_path.expected_section_order` | List of **path_role** slugs; scoring is archetype-generic |
+| L1 verify | `manifest.json` → `verify_script` | Unified `scripts/verify_benchmark_l1.py` routes by archetype |
+
+Per-company customization is **bundle-only** (excerpt text, `filing_label`, decoy slugs). Task prompts reference path roles, not note numbers.
 
 **Drift failures (backend returns, does not guess):**
 
 | Agent input | Result |
 |-------------|--------|
-| `section: "Note 15"` (display name) | `NOT FOUND` — must pass exact slug `note_15` |
-| `section: "note_15"` + wrong period `FY2025` | `NOT FOUND` |
+| `section: "Note 15"` (display name) | `NOT FOUND` — must pass canonical slug `segment_financials` |
+| `section: "note_15"` (legacy) | Resolves to `segment_financials` if listed in `legacy_section_slugs` |
+| Valid slug + wrong period `FY2025` | `NOT FOUND` |
 | Valid slug never in `retrieval_keys` | Validator fail at bundle build |
 
-**Implementation status:** **Enforced** — `is_canonical_slug()` in `benchmark_tool_backend.py`; B3 in `validate_corpus_bundle.py`; `check_section_retrieval_contract()` in smoke tests.
+**Implementation status:** **Enforced** — `is_canonical_slug()` + `legacy_slug_map()` in `benchmark_tool_backend.py` / `archetype_roles.py`; archetype checks in `validate_corpus_bundle.py`; `check_archetype_roles()` in smoke tests.
 
 ### 1b. Policy notes (bundle metadata for traps)
 
