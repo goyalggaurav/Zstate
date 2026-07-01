@@ -6,6 +6,8 @@
 **Status:** Design proposal — pilot not yet validated  
 **Scope:** MVD pilot — **15 eval tasks**, 5 companies, eval-first with trajectory dataset path
 
+> **Implementation map:** Technical structure → [ARCHITECTURE.md](./ARCHITECTURE.md). Priorities → [ROADMAP.md](./ROADMAP.md) / [BACKLOG.md](./BACKLOG.md). Dual-control RL env → [env_v1/](../env_v1/). CFA review process → [EXPERT_REVIEW_WORKFLOW.md](./EXPERT_REVIEW_WORKFLOW.md).
+
 ---
 
 ## Executive Summary

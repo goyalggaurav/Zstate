@@ -5,3 +5,10 @@ node_modules/
 dist/
 .next/
 *.tsbuildinfo
+__pycache__/
+*.py[cod]
+
+# Dual-control RL env — private expert artifacts (never commit)
+env_v1/gold_keys/
+**/gold_keys/*.json
+!**/gold_keys.example/

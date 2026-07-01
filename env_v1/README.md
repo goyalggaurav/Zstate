@@ -1,0 +1,60 @@
+# env_v1 — Dual-Control RL Environment
+
+AlphaNote-Bench **Track B**: tau2-bench-style analyst + PM simulator with 4-component composite reward.
+
+**Lab pitch:** Runnable environment with exposed verifier — not a single-turn leaderboard.
+
+## Quick start
+
+```bash
+# Score a sample trace (deterministic components)
+python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_good.json
+
+# Generate demo trajectories (good / partial / timeout)
+python3 env_v1/scripts/run_episode.py --mode all
+python3 env_v1/scripts/run_episode.py --mode partial
+python3 env_v1/scripts/run_episode.py --mode timeout
+```
+
+## Layout
+
+```
+env_v1/
+├── manifest.json
+├── docs/
+│   ├── dual_control_spec_v1.md      # Full environment spec
+│   ├── flow_diagram.mermaid         # Reward generation flow
+│   └── METHODOLOGY_RL_ENV.md        # Lab-facing methodology (draft)
+├── episodes/
+│   └── solaris_adj_eps_dispute_v1.json
+├── corpus/
+│   └── solaris_bundle_v1.json       # Fixed excerpts (public-safe)
+├── pm_policies/
+│   └── pm_v1.json                   # PM branching FSM (public-safe brief)
+├── verifier/
+│   ├── weights.json
+│   └── defense_rubric.json
+├── gold_keys.example/               # Template — copy to gold_keys/ locally
+│   └── solaris_adj_eps_v1.json
+├── gold_keys/                       # GITIGNORED — expert private artifacts
+├── scripts/
+│   ├── tool_backend.py
+│   ├── run_episode.py
+│   └── score_episode.py
+└── runs/                            # Episode traces + scores
+```
+
+## Gold keys (private)
+
+Copy `gold_keys.example/` → `gold_keys/` locally. **Never commit** `gold_keys/`.
+
+## Relation to benchmark_v0.1 (Track A)
+
+| Track A (`benchmark_v0.1/`) | Track B (`env_v1/`) |
+|-----------------------------|---------------------|
+| Single-turn Type F/M tasks | Multi-turn dual-control |
+| 3-layer L1/L2/L3 reward | 4-component composite reward |
+| Real SEC filings (GOOGL pilot) | Solaris fictional bundle v1 |
+| Public leaderboard | Private env + verifier for labs |
+
+See [docs/ROADMAP.md](../docs/ROADMAP.md) and [docs/BACKLOG.md](../docs/BACKLOG.md).

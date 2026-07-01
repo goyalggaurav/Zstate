@@ -1,0 +1,38 @@
+{
+  "episode_id": "solaris_adj_eps_dispute_v1",
+  "version": "1.0.0",
+  "company": "Solaris Components Inc.",
+  "ticker": "SLRS",
+  "scenario": "earnings_quality_dispute",
+  "period": "2025Q2",
+
+  "brief": {
+    "text": "Solaris Components (SLRS) reported Q2 EPS of $1.42 vs sell-side consensus of $1.28 (+$0.14 beat). Your portfolio manager wants an adjusted EPS view that reflects underlying earnings quality.\n\n1. Retrieve relevant filing, transcript, and consensus data.\n2. Identify one-time vs recurring components of the beat.\n3. Brief the PM with your adjusted EPS and reasoning via send_message_to_pm.\n4. Respond to PM pushback; re-query data if needed.\n5. Submit final adjusted EPS via submit_recommendation.\n\nConstraints: use tools only (no external data). Cite sources from retrieved excerpts. Turn budget: 8 exchanges."
+  },
+
+  "corpus_ref": "../corpus/solaris_bundle_v1.json",
+  "pm_policy_ref": "../pm_policies/pm_v1.json",
+  "gold_key_ref": "../gold_keys/solaris_adj_eps_v1.json",
+
+  "allowed_tools": [
+    "get_filing",
+    "get_transcript",
+    "get_consensus",
+    "calculator",
+    "send_message_to_pm",
+    "submit_recommendation"
+  ],
+
+  "execution_limits": {
+    "max_turns": 8,
+    "timeout_seconds": 900
+  },
+
+  "expected_submission_fields": [
+    "adjusted_eps",
+    "classification",
+    "rationale",
+    "sale_leaseback_excluded",
+    "rd_credit_treatment"
+  ]
+}

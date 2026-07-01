@@ -1,0 +1,45 @@
+{
+  "episode_id": "solaris_adj_eps_dispute_v1",
+  "termination": "submit",
+  "components": {
+    "outcome": 1.0,
+    "grounding": 1.0,
+    "defense": 0.9,
+    "hallucination_penalty": 0.0
+  },
+  "composite_reward": 0.88,
+  "details": {
+    "outcome": {
+      "sale_leaseback_excluded": true,
+      "binary_half": 1.0,
+      "adjusted_eps": 1.2,
+      "eps_in_valid_set": true,
+      "judgment_half": 1.0
+    },
+    "grounding": {
+      "required": [
+        "10-K_FY2023_footnote_rd",
+        "10-K_FY2024_footnote_rd",
+        "10-Q_2025Q2"
+      ],
+      "retrieved": [
+        "10-K_FY2023_footnote_rd",
+        "10-K_FY2024_footnote_rd",
+        "10-Q_2025Q2",
+        "consensus_eps_2025Q2"
+      ],
+      "hits": [
+        "10-K_FY2023_footnote_rd",
+        "10-K_FY2024_footnote_rd",
+        "10-Q_2025Q2"
+      ]
+    },
+    "defense": {
+      "source": "step_scores"
+    },
+    "hallucination": {
+      "hits": []
+    }
+  },
+  "formula": "0.45 * outcome + 0.25 * grounding + 0.20 * defense - 0.10 * hallucination"
+}

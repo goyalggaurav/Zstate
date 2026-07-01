@@ -1,3 +1,5 @@
+> **Catalog note:** Section 16 reflects original v0.1 packaging (45-task MVD). **Current MVD is 15 tasks** (5 companies) per Framework v0.2 and [ROADMAP.md](./ROADMAP.md). Full 185-task index remains the long-run workflow map.
+
 # Equity Research Agent Benchmark — Exhaustive Task Catalog
 ## Senior Analyst Workflow Decomposition
 

@@ -1,0 +1,23 @@
+{
+  "benchmark_version": "benchmark_v0.1",
+  "mvd_target_tasks": 15,
+  "mvd_pilot_companies": 5,
+  "published_tasks": 0,
+  "pilot_tasks": [
+    {
+      "task_id": "GOOGL_footnote_reconciliation",
+      "task_type": "F",
+      "status": "pending_cfa_review",
+      "paths": {
+        "task": "tasks/GOOGL_footnote_reconciliation.json",
+        "ground_truth": "ground_truth/GOOGL_footnote_reconciliation_gt.json",
+        "gold_path": "gold_paths/GOOGL_footnote_reconciliation.json",
+        "verify_script": "scripts/verify_googl_footnote_reconciliation.py"
+      }
+    }
+  ],
+  "related": {
+    "architecture": "../docs/ARCHITECTURE.md",
+    "env_v1": "../env_v1/manifest.json"
+  }
+}

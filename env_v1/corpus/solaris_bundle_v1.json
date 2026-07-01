@@ -1,0 +1,49 @@
+{
+  "bundle_id": "solaris_bundle_v1",
+  "version": "1.0.0",
+  "company": "Solaris Components Inc.",
+  "note": "Fictional corpus for env_v1 pilot. Expert annotator expands excerpts before lab demo.",
+
+  "documents": {
+    "10-Q_2025Q2": {
+      "doc_type": "10-Q",
+      "period": "2025Q2",
+      "excerpt": "NON-GAAP RECONCILIATION (unaudited, per share):\nReported EPS: $1.42\n\nAdjustments:\n  Sale-leaseback gain on Tucson fab facility: +$0.18 (one-time, non-operating; see Note 7)\n  R&D tax credit true-up: +$0.04 (see Note 12)\n\nNote 7 — Sale-leaseback: On April 15, 2025, Solaris completed a sale-leaseback of its Tucson fabrication facility. The Company recognized a gain of $24.3 million ($0.18 per diluted share). Management does not expect similar transactions in the foreseeable future.\n\nNote 12 — Income taxes: The Company recorded a $5.4 million ($0.04 per diluted share) benefit related to a true-up of R&D tax credits upon completion of the 2024 tax return filing. The true-up reflects revised credit calculations based on qualifying R&D expenditures."
+    },
+    "10-K_FY2024_footnote_rd": {
+      "doc_type": "10-K",
+      "period": "FY2024",
+      "excerpt": "Note 14 — Income taxes: In fiscal 2024, Solaris recorded a $3.1 million ($0.02 per diluted share) benefit from an R&D tax credit true-up following amended state filings. Qualifying expenditures differed from initial estimates due to project reclassification."
+    },
+    "10-K_FY2023_footnote_rd": {
+      "doc_type": "10-K",
+      "period": "FY2023",
+      "excerpt": "Note 14 — Income taxes: No material R&D tax credit true-up was recorded in fiscal 2023."
+    },
+    "transcript_2025Q2": {
+      "doc_type": "transcript",
+      "period": "2025Q2",
+      "excerpt": "CFO: Q2 EPS of $1.42 reflects strong packaging demand and a $24 million gain from the Tucson sale-leaseback, which we view as non-recurring.\n\nAnalyst (Q&A): Can you clarify whether the R&D tax credit true-up is recurring?\n\nCFO: The true-up relates to finalization of our 2024 return. Each year's credit depends on qualifying project mix — we don't budget for true-ups in our forward guide."
+    },
+    "consensus_eps_2025Q2": {
+      "doc_type": "consensus",
+      "period": "2025Q2",
+      "metric": "eps",
+      "excerpt": "Consensus EPS: $1.28 (n=12 brokers).\nMethodology note: Majority of models exclude the sale-leaseback gain ($0.18). Three brokers also exclude the R&D tax credit true-up ($0.04); nine include it as part of adjusted earnings."
+    }
+  },
+
+  "retrieval_keys": {
+    "get_filing": {
+      "10-Q:2025Q2": "10-Q_2025Q2",
+      "10-K:FY2024": "10-K_FY2024_footnote_rd",
+      "10-K:FY2023": "10-K_FY2023_footnote_rd"
+    },
+    "get_transcript": {
+      "2025Q2": "transcript_2025Q2"
+    },
+    "get_consensus": {
+      "eps:2025Q2": "consensus_eps_2025Q2"
+    }
+  }
+}

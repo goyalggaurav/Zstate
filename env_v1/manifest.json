@@ -1,0 +1,17 @@
+{
+  "env_version": "env_v1.0.0",
+  "description": "AlphaNote-Bench dual-control RL environment — Track B",
+  "episodes": [
+    {
+      "episode_id": "solaris_adj_eps_dispute_v1",
+      "spec_ref": "docs/dual_control_spec_v1.md",
+      "corpus_ref": "corpus/solaris_bundle_v1.json",
+      "pm_policy_ref": "pm_policies/pm_v1.json",
+      "gold_key_ref": "gold_keys/solaris_adj_eps_v1.json",
+      "status": "pilot"
+    }
+  ],
+  "verifier_ref": "verifier/weights.json",
+  "turn_budget": 8,
+  "timeout_outcome_cap": 0.5
+}

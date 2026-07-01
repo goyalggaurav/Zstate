@@ -1,9 +1,11 @@
 # Scoring Engine — Component Spec
 
-**Version:** 0.1 (draft)  
-**Status:** Design — no implementation  
+**Version:** 0.2 (draft)  
+**Status:** Design — partial implementation in `benchmark_v0.1/scripts/` and `env_v1/scripts/score_episode.py`  
 **Owner:** Platform Engineering + Domain Experts  
 **Consumers:** Eval Orchestrator, Expert Workbench, Benchmark leaderboard
+
+> **Dual-track scoring:** Track A uses **3-layer** rewards below. Track B (`env_v1/`) uses **4-component** composite — see [Architecture § Scoring](../ARCHITECTURE.md#3-scoring-systems-aligned-not-duplicated). Do not merge implementations without updating this spec.
 
 ---
 
@@ -11,13 +13,15 @@
 
 The Scoring Engine evaluates agent runs against the **three-layer reward model** aligned with Zstate's Task → Trajectory → Reward philosophy:
 
-| Layer | Name | Method | Weight (initial) |
-|-------|------|--------|------------------|
-| **Layer 1** | Technical & Tabular Accuracy | Programmatic | 40% |
-| **Layer 2** | Domain Reasoning & Judgment | Expert rubric + trajectory analysis | 35% |
-| **Layer 3** | Traceability & Enterprise Safety | Automated + compliance | 25% |
+| Layer | Name | Method | Weight (Type F — current MVD) |
+|-------|------|--------|-------------------------------|
+| **Layer 1** | Technical & Tabular Accuracy | Programmatic | **55%** |
+| **Layer 2** | Domain Reasoning & Judgment | Expert rubric + trajectory analysis | **25%** |
+| **Layer 3** | Traceability & Enterprise Safety | Automated + compliance | **20%** |
 
-Plus **FINRA baseline** (hard veto) and **mandate profiles** (score cap or fail).
+Type M weights: 50% / 30% / 20%. Type C (v0.5+): 40% / 35% / 25%. See [Framework v0.2](../ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md).
+
+Plus **FINRA baseline** (Type C only) and **mandate profiles** (score cap or fail).
 
 **Aggregation across 3 runs:** median score; Layer 3 compliance = worst run wins.
 

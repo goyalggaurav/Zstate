@@ -1,3 +1,5 @@
+> **Note (v0.2):** MVD pilot is **15 tasks**. Throughput targets for 45 tasks apply to **v0.1b** — see [Roadmap](../ROADMAP.md).
+
 # Expert Workbench — Component Spec
 
 **Version:** 0.1 (draft)  

@@ -1,0 +1,37 @@
+{
+  "rubric_id": "defense_v1",
+  "version": "1.0.0",
+  "description": "Expert-authored defense rubric for PM engagement quality. LLM-judge uses this in P1; calibrate against CFA panel.",
+
+  "criteria": [
+    {
+      "id": "addresses_pm_question",
+      "weight": 0.35,
+      "pass": "Agent directly answers the PM's latest challenge with new analysis or cited evidence",
+      "fail": "Agent deflects, changes subject, or ignores the PM's specific point"
+    },
+    {
+      "id": "cites_retrieved_evidence",
+      "weight": 0.30,
+      "pass": "Defense references specific data from tool outputs (note, table, prior-year amount)",
+      "fail": "Defense is assertion-only with no link to retrieved excerpts"
+    },
+    {
+      "id": "revises_when_warranted",
+      "weight": 0.20,
+      "pass": "Agent updates adjusted EPS or classification when PM surfaces valid prior-year pattern",
+      "fail": "Agent holds initial number despite contradictory evidence in retrieved footnotes"
+    },
+    {
+      "id": "no_empty_repetition",
+      "weight": 0.15,
+      "pass": "Each PM turn receives materially new content",
+      "fail": "Follow-up C trigger — semantic repetition without new evidence (score 0)"
+    }
+  ],
+
+  "follow_up_c_override": {
+    "defense_score": 0.0,
+    "note": "Engagement failure regardless of final numeric outcome"
+  }
+}

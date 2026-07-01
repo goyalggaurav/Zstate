@@ -18,7 +18,9 @@ The Task Registry is the **authoritative catalog of benchmark tasks** for the eq
 - Gold trajectory (expert-defined optimal tool path)
 - Mandate profile attachment (client constraint overlay)
 
-**MVD target:** 45 tasks = 15 companies × 3 archetypes.
+**MVD target (v0.2):** **15 tasks** = 5 companies × 3 archetypes. Scale to 45 at v0.1b per [Roadmap](../ROADMAP.md).
+
+**Dual-control episodes (Track B):** See `env_v1/` — not stored in Task Registry; separate episode catalog.
 
 ---
 

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://zstate.ai/schemas/trajectory_v1.json",
+  "title": "ZstateAgentTrajectory",
+  "description": "Shared trajectory contract for Track A (benchmark) and Track B (env_v1).",
+  "type": "object",
+  "required": ["trajectory_id", "episode_or_task_id", "track", "termination", "steps"],
+  "properties": {
+    "trajectory_id": { "type": "string" },
+    "episode_or_task_id": { "type": "string" },
+    "track": { "enum": ["benchmark", "env"] },
+    "model_id": { "type": "string" },
+    "run_index": { "type": "integer", "minimum": 1 },
+    "termination": { "enum": ["submit", "timeout", "error"] },
+    "turns_used": { "type": "integer" },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "enum": ["tool_call", "send_message_to_pm", "pm_turn", "submit_recommendation", "agent_message"]
+          },
+          "tool": { "type": "string" },
+          "input": { "type": "object" },
+          "output": { "type": "string" },
+          "doc_id": { "type": ["string", "null"] },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "submission": { "type": "object" },
+    "reward": {
+      "type": "object",
+      "description": "Track A: layer1/layer2/layer3. Track B: outcome/grounding/defense/hallucination/composite_reward",
+      "additionalProperties": true
+    },
+    "pm_flags": { "type": "array", "items": { "type": "string" } },
+    "fractures": { "type": "array", "items": { "type": "string" } }
+  }
+}

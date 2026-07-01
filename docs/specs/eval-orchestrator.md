@@ -1,3 +1,5 @@
+> **Note (v0.2):** MVD pilot is **15 tasks** (5 companies). Sections referencing 45 tasks describe **v0.1b scale** — see [Roadmap](../ROADMAP.md).
+
 # Eval Orchestrator — Component Spec
 
 **Version:** 0.1 (draft)  

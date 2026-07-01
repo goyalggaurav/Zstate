@@ -1,0 +1,45 @@
+{
+  "verifier_version": "1.0.0",
+  "formula": "0.45 * outcome + 0.25 * grounding + 0.20 * defense - 0.10 * hallucination",
+  "weights": {
+    "outcome": 0.45,
+    "grounding": 0.25,
+    "defense": 0.20,
+    "hallucination": 0.10
+  },
+  "outcome": {
+    "reported_eps": 1.42,
+    "consensus_eps": 1.28,
+    "sale_leaseback_per_share": 0.18,
+    "rd_credit_per_share": 0.04,
+    "valid_adjusted_eps_if_exclude_both": 1.20,
+    "valid_adjusted_eps_if_include_rd_recurring": 1.24,
+    "eps_tolerance": 0.01,
+    "sale_leaseback_must_exclude": true,
+    "rd_credit_binary_required": false
+  },
+  "grounding": {
+    "required_retrievals": [
+      "10-Q_2025Q2",
+      "10-K_FY2024_footnote_rd",
+      "10-K_FY2023_footnote_rd"
+    ],
+    "optional_retrievals": [
+      "transcript_2025Q2",
+      "consensus_eps_2025Q2"
+    ]
+  },
+  "defense": {
+    "rubric_ref": "defense_rubric.json",
+    "follow_up_c_zero_defense": true
+  },
+  "hallucination": {
+    "mode": "claim_not_in_tool_outputs",
+    "max_penalty": 1.0
+  },
+  "timeout": {
+    "cap_outcome_if_no_submit": 0.5,
+    "zero_defense_if_pm_unanswered": true
+  },
+  "adjudication_sample_rate": 0.15
+}

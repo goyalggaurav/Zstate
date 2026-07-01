@@ -1,0 +1,51 @@
+flowchart TD
+    Start(["Episode start"]) --> Init["Load filing, transcript, consensus,<br/>and prior-year footnotes into tool backend<br/>(gold key withheld from agent)"]
+    Init --> Brief["Agent receives task brief:<br/>Q2 EPS beat, determine adjusted EPS,<br/>brief the PM"]
+    Brief --> ToolLoop["Agent calls tools:<br/>get_filing / get_transcript /<br/>get_consensus / calculator"]
+    ToolLoop --> Decision1{"Ready to brief PM?"}
+    Decision1 -->|"No, needs more data"| ToolLoop
+    Decision1 -->|"Yes"| SendPM["Agent: send_message_to_pm<br/>(initial brief + recommendation)"]
+    SendPM --> PMTurn["PM simulator turn<br/>(separate LLM, conditioned on<br/>gold key + persona script)"]
+    PMTurn --> Decision2{"Agent's next move"}
+    Decision2 -->|"Re-query data"| ToolLoop
+    Decision2 -->|"Defend or revise position"| SendPM
+    Decision2 -->|"submit_recommendation"| Terminal(["Episode terminates,<br/>full trace captured"])
+    Decision2 -->|"8-turn budget exhausted"| Timeout(["Forced termination,<br/>scored as partial-credit timeout"])
+
+    Terminal --> RewardStart
+    Timeout --> RewardStart
+
+    subgraph RewardGen["REWARD SIGNAL GENERATION"]
+        direction TB
+        RewardStart["Full episode trace handed to verifier"]
+        Outcome["Outcome correctness — weight 0.45<br/>Deterministic check: sale-leaseback excluded (binary)<br/>LLM-judge: R&D credit reasoning vs expert rubric"]
+        Grounding["Grounding quality — weight 0.25<br/>Every claim cross-checked against<br/>actual tool call outputs"]
+        Defense["Defense quality — weight 0.20<br/>LLM-judge scores engagement with<br/>each PM follow-up, not just final answer"]
+        Hallucination["Hallucination penalty — weight -0.10<br/>Flags any fact not present<br/>in retrieved documents"]
+        RewardStart --> Outcome
+        RewardStart --> Grounding
+        RewardStart --> Defense
+        RewardStart --> Hallucination
+        Outcome --> Composite["Composite reward =<br/>0.45·Outcome + 0.25·Grounding<br/>+ 0.20·Defense − 0.10·Hallucination"]
+        Grounding --> Composite
+        Defense --> Composite
+        Hallucination --> Composite
+    end
+
+    Composite --> RLSignal["Scalar reward fed back into<br/>the RL training loop for this trajectory"]
+    Composite --> SampleCheck{"Sampled for human review?<br/>(10-20% of episodes)"}
+    SampleCheck -->|"Yes"| Adjudication["CFA-credentialed expert checks<br/>LLM-judge scoring on Outcome<br/>(judgment half) and Defense quality"]
+    Adjudication --> Calibrate["Calibration feedback loop:<br/>adjust judge prompts / rubric thresholds"]
+    Calibrate -.->|"recalibrates"| Outcome
+    Calibrate -.->|"recalibrates"| Defense
+    SampleCheck -->|"No"| RLSignal
+
+    classDef rewardNode fill:#FFF3CD,stroke:#B8860B,stroke-width:1.5px
+    classDef compositeNode fill:#2C5F3F,stroke:#1a3d28,stroke-width:2px,color:#ffffff
+    classDef terminalNode fill:#F7F2EA,stroke:#2C5F3F,stroke-width:1.5px
+    classDef signalNode fill:#2C5F3F,stroke:#1a3d28,stroke-width:1.5px,color:#ffffff
+
+    class Outcome,Grounding,Defense,Hallucination rewardNode
+    class Composite compositeNode
+    class Terminal,Timeout terminalNode
+    class RLSignal,Adjudication,Calibrate signalNode

@@ -1,0 +1,60 @@
+{
+  "episode_id": "solaris_adj_eps_dispute_v1",
+  "version": "1.0.0",
+  "status": "example_template",
+  "note": "Copy to gold_keys/ locally. Do not commit gold_keys/ — gitignored.",
+
+  "reported_eps": 1.42,
+  "consensus_eps": 1.28,
+
+  "items": {
+    "sale_leaseback": {
+      "per_share": 0.18,
+      "treatment": "exclude",
+      "grading": "binary_strict",
+      "citation_required": "Note 7"
+    },
+    "rd_tax_credit": {
+      "per_share": 0.04,
+      "treatment": "contested",
+      "grading": "judgment_rubric",
+      "valid_treatments": ["exclude_one_time", "include_quasi_recurring"],
+      "requires_prior_year_disclosure": true,
+      "prior_year_evidence": ["10-K_FY2024_footnote_rd", "10-K_FY2023_footnote_rd"]
+    }
+  },
+
+  "valid_adjusted_eps": [1.20, 1.24],
+  "valid_adjusted_eps_rules": {
+    "1.20": "Exclude sale-leaseback ($0.18) and R&D credit ($0.04): 1.42 - 0.18 - 0.04 = 1.20",
+    "1.24": "Exclude sale-leaseback only: 1.42 - 0.18 = 1.24; R&D treated as recurring with disclosed pattern"
+  },
+
+  "outcome_judgment_rubric": {
+    "full_credit_if": [
+      "Retrieved FY2024 and FY2023 R&D footnotes",
+      "Explicitly disclosed prior-year pattern in PM messages or final rationale",
+      "Reached defensible conclusion with cited evidence"
+    ],
+    "partial_credit_if": [
+      "Correct binary sale-leaseback exclusion but weak R&D disclosure"
+    ],
+    "zero_outcome_if": [
+      "Failed to exclude sale-leaseback",
+      "Included sale-leaseback without acknowledgment"
+    ]
+  },
+
+  "minimal_retrieval_set": [
+    "10-Q_2025Q2",
+    "10-K_FY2024_footnote_rd",
+    "10-K_FY2023_footnote_rd"
+  ],
+
+  "anti_patterns": [
+    "include_sale_leaseback_in_adjusted_eps",
+    "omit_prior_year_footnote_retrieval",
+    "assert_rd_credit_magnitude_without_tool_retrieval",
+    "repeat_same_pm_answer_without_new_evidence"
+  ]
+}
