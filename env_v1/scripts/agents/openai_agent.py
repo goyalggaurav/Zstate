@@ -9,7 +9,14 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from agents.tool_specs import TOOL_DEFINITIONS
+from agents.tool_specs import CORPUS_TOOLS, TOOL_DEFINITIONS
+
+
+def _order_tool_calls(calls: list[dict]) -> list[dict]:
+    """Run corpus retrievals before PM/submit tools when the model batches parallel calls."""
+    corpus = [c for c in calls if c["name"] in CORPUS_TOOLS]
+    episode = [c for c in calls if c["name"] not in CORPUS_TOOLS]
+    return corpus + episode
 
 
 def _ssl_context() -> ssl.SSLContext:
@@ -121,7 +128,7 @@ class OpenAICompatAgent:
 
         tool_calls = self._parse_tool_calls(choice)
         if tool_calls:
-            self.pending_tool_calls = tool_calls
+            self.pending_tool_calls = _order_tool_calls(tool_calls)
             self._pending_index = 0
             return self.next_action(context)
 
@@ -145,10 +152,15 @@ class OpenAICompatAgent:
         self._last_tool_name = name
 
         if name == "send_message_to_pm":
-            return {"type": "send_message_to_pm", "text": args.get("message", "")}
+            return {
+                "type": "send_message_to_pm",
+                "text": args.get("message", ""),
+                "_tool_call_id": call.get("id"),
+            }
         if name == "submit_recommendation":
             action = {"type": "submit_recommendation", **args}
             action.setdefault("submitted", True)
+            action["_tool_call_id"] = call.get("id")
             return action
         return {"type": "tool_call", "tool": name, "input": args, "_tool_call_id": call.get("id")}
 

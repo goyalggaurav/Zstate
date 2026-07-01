@@ -127,6 +127,10 @@ def run_agent_episode(
             continue
 
         if action["type"] == "send_message_to_pm":
+            if hasattr(agent, "record_tool_result") and action.get("_tool_call_id"):
+                agent.record_tool_result(
+                    action["_tool_call_id"], "send_message_to_pm", "Message delivered to PM."
+                )
             steps.append({"type": "send_message_to_pm", "text": action["text"]})
             pm_msg, flags, branch_id = pm_respond(policy, pm_turn_count, steps, backend.log)
             pm_turn_count += 1
@@ -144,7 +148,11 @@ def run_agent_episode(
             continue
 
         if action["type"] == "submit_recommendation":
-            sub = {k: v for k, v in action.items() if k != "type"}
+            if hasattr(agent, "record_tool_result") and action.get("_tool_call_id"):
+                agent.record_tool_result(
+                    action["_tool_call_id"], "submit_recommendation", "Recommendation submitted."
+                )
+            sub = {k: v for k, v in action.items() if k not in ("type", "_tool_call_id")}
             sub.setdefault("submitted", True)
             steps.append({"type": "submit_recommendation", **sub})
             submission = sub
