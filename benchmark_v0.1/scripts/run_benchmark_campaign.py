@@ -32,6 +32,7 @@ from agent_output_contract import (  # noqa: E402
     load_json,
     model_slug,
 )
+from score_benchmark_run import score_run  # noqa: E402
 
 
 def published_tasks(manifest: dict) -> dict[str, dict]:
@@ -184,7 +185,6 @@ def score_campaign(campaign: dict, manifest: dict) -> dict:
         for task_id in campaign["tasks"]:
             if task_id not in pub:
                 continue
-            task_entry = pub[task_id]
             for run in range(1, campaign["runs_per_task"] + 1):
                 agent_path = runs_dir / model_slug(model_id) / f"{task_id}_run{run:02d}.json"
                 try:
@@ -202,12 +202,27 @@ def score_campaign(campaign: dict, manifest: dict) -> dict:
                     rec["status"] = "missing"
                     run_records.append(rec)
                     continue
-                report = run_verify(task_entry, agent_path)
-                rec["verify"] = report
-                rec["l1_all_pass"] = report.get("all_pass")
-                rec["l1_pass"] = report.get("l1_pass", report.get("all_pass"))
-                rec["failure_modes"] = report.get("failure_modes", [])
-                rec["fracture_codes"] = report.get("fracture_codes", [])
+                trace_path = agent_path.with_name(f"{task_id}_run{run:02d}_trace.json")
+                submission_path = agent_path.with_name(f"{task_id}_run{run:02d}_submission.json")
+                composite_report = score_run(
+                    task_id,
+                    agent_path,
+                    trace_path=trace_path if trace_path.exists() else None,
+                    submission_path=submission_path if submission_path.exists() else None,
+                    manifest=manifest,
+                )
+                l1_report = composite_report["l1"]["report"]
+                rec["composite"] = composite_report
+                rec["composite_score"] = composite_report["composite_score"]
+                rec["l2_pass"] = composite_report["l2"].get("l2_pass")
+                rec["l2_score"] = composite_report["l2"].get("l2_score")
+                rec["l3_pass"] = composite_report["l3"].get("l3_pass")
+                rec["l3_score"] = composite_report["l3"].get("l3_score")
+                rec["verify"] = l1_report
+                rec["l1_all_pass"] = composite_report["l1"].get("all_pass")
+                rec["l1_pass"] = composite_report["l1"].get("l1_pass")
+                rec["failure_modes"] = composite_report.get("failure_modes", [])
+                rec["fracture_codes"] = composite_report.get("fracture_codes", [])
                 rec["status"] = "scored"
                 run_records.append(rec)
 
@@ -216,15 +231,21 @@ def score_campaign(campaign: dict, manifest: dict) -> dict:
         1.0 if r.get("l1_all_pass") else (0.5 if r.get("l1_pass") else 0.0)
         for r in scored
     ]
+    composite_scores = [r["composite_score"] for r in scored if r.get("composite_score") is not None]
+    l2_scores = [r["l2_score"] for r in scored if r.get("l2_score") is not None]
+    l3_scores = [r["l3_score"] for r in scored if r.get("l3_score") is not None]
     fractures: dict[str, int] = {}
     for r in scored:
         for code in r.get("fracture_codes") or []:
             fractures[code] = fractures.get(code, 0) + 1
 
     by_task: dict[str, list[float]] = {}
+    by_task_composite: dict[str, list[float]] = {}
     for r in scored:
         rate = 1.0 if r.get("l1_all_pass") else (0.5 if r.get("l1_pass") else 0.0)
         by_task.setdefault(r["task_id"], []).append(rate)
+        if r.get("composite_score") is not None:
+            by_task_composite.setdefault(r["task_id"], []).append(r["composite_score"])
 
     return {
         "campaign_id": campaign["campaign_id"],
@@ -240,8 +261,14 @@ def score_campaign(campaign: dict, manifest: dict) -> dict:
             "missing": sum(1 for r in run_records if r.get("status") == "missing"),
             "l1_all_pass_count": sum(1 for r in scored if r.get("l1_all_pass")),
             "l1_pass_rate_median": median(l1_rates) if l1_rates else None,
+            "l2_score_median": median(l2_scores) if l2_scores else None,
+            "l3_score_median": median(l3_scores) if l3_scores else None,
+            "composite_score_median": median(composite_scores) if composite_scores else None,
             "by_task_l1_pass_rate_median": {
                 tid: median(rates) if rates else None for tid, rates in by_task.items()
+            },
+            "by_task_composite_median": {
+                tid: median(rates) if rates else None for tid, rates in by_task_composite.items()
             },
             "fracture_counts": fractures,
         },

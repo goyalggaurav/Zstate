@@ -464,6 +464,59 @@ def check_campaign_execute_scripted() -> None:
         assert any(r.get("status") == "executed" for r in result["execution"])
 
 
+def check_composite_scoring() -> None:
+    """P2-04e — L1+L2+L3 composite via score_benchmark_run.py."""
+    import tempfile
+
+    plan = ROOT / "benchmark_v0.1" / "examples" / "agents" / "googl_good_plan.json"
+    with tempfile.TemporaryDirectory() as tmp:
+        out_dir = Path(tmp)
+        proc = subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/benchmark_agent_loop.py",
+                "--agent", "scripted",
+                "--task", "GOOGL_footnote_reconciliation",
+                "--plan", str(plan),
+                "--out-dir", str(out_dir),
+                "--run-index", "1",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert proc.returncode == 0, proc.stderr or proc.stdout
+
+        agent_out = out_dir / "GOOGL_footnote_reconciliation_run01.json"
+        trace_out = out_dir / "GOOGL_footnote_reconciliation_run01_trace.json"
+        submission_out = out_dir / "GOOGL_footnote_reconciliation_run01_submission.json"
+
+        full = run([
+            sys.executable,
+            "benchmark_v0.1/scripts/score_benchmark_run.py",
+            "--task", "GOOGL_footnote_reconciliation",
+            "--agent-output", str(agent_out),
+            "--trace", str(trace_out),
+            "--submission", str(submission_out),
+        ])
+        assert full["composite_score"] >= 0.95, full
+        assert full["l1"]["all_pass"] is True
+        assert full["l2"]["l2_pass"] is True
+        assert full["l3"]["l3_pass"] is True
+
+        l1_only = run([
+            sys.executable,
+            "benchmark_v0.1/scripts/score_benchmark_run.py",
+            "--task", "GOOGL_footnote_reconciliation",
+            "--agent-output", str(agent_out),
+        ])
+        assert l1_only["l1"]["all_pass"] is True
+        assert l1_only["l2"]["l2_score"] == 0.0
+        assert l1_only["l3"]["l3_score"] == 0.0
+        assert l1_only["composite_score"] < full["composite_score"]
+
+
 def check_agent_submission_validator() -> None:
     """P2-04d — L3 submission validator + gold/trap contract fixtures."""
     report = run([
@@ -537,6 +590,7 @@ def main() -> int:
         ("Mock LLM agent loop", check_mock_agent),
         ("Benchmark agent loop", check_benchmark_agent_loop),
         ("Agent submission L3 validator", check_agent_submission_validator),
+        ("Composite run scoring", check_composite_scoring),
         ("Campaign execute scripted", check_campaign_execute_scripted),
     ]
     failed = 0

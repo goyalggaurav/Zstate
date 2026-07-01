@@ -69,7 +69,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-04b | Track A agent loop (scripted + mock) | done | `benchmark_agent_loop.py`; A2 gate passes L1 |
 | P2-04c | Corpus bundles v1.1 + sectional retrieval | done | `section_registry`, `policy_notes`, canonical slug enforcement |
 | P2-04d | Agent submission + L3 citation validator | done | `validate_agent_submission.py`; `_submission.json` contract fixtures |
-| P2-04e | `score_benchmark_run.py` — L2/L3 v0 | todo | Section recall from trace; composite median in campaign |
+| P2-04e | `score_benchmark_run.py` — L2/L3 v0 | done | Section recall from trace; composite median in campaign |
 | P2-04f | OpenAI adapter + `--execute` on campaign | done | `agents/openai_benchmark_agent.py`; `--execute --agent scripted|openai` |
 | P2-04g | **Live eval** — 2 models × 2 tasks × 3 runs | blocked | Blocked on P2-04g API keys + Anthropic adapter |
 
@@ -121,7 +121,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 15 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 16 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 
 ---
@@ -178,6 +178,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-25 | P2-04b/c Track A runtime + corpus v1.1 + sectional retrieval | Jul 2026 |
 | DONE-26 | P2-04f OpenAI adapter + campaign `--execute` | Jul 2026 |
 | DONE-27 | P2-04d L3 submission validator + citation fixtures | Jul 2026 |
+| DONE-28 | P2-04e composite run scoring (L1+L2+L3) | Jul 2026 |
 
 ---
 

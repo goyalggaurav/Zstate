@@ -57,7 +57,17 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --execute --agent opena
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py
 ```
 
-Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json)
+Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json) — includes `composite_score_median` per campaign.
+
+Single-run composite (L1 verify + L2 section recall + L3 submission):
+
+```bash
+python3 benchmark_v0.1/scripts/score_benchmark_run.py \
+  --task GOOGL_footnote_reconciliation \
+  --agent-output path/to/run.json \
+  --trace path/to/run_trace.json \
+  --submission path/to/run_submission.json
+```
 
 `--execute` runs the Track A agent loop for each model×task×run slot and writes structured output + trace under `runs_dir`. Use `--models`, `--tasks`, or `--skip-existing` to narrow or resume runs.
 
