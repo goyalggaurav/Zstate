@@ -1,0 +1,18 @@
+{
+  "campaign_id": "pilot_eval_1x1x1",
+  "backlog_ref": "P2-04g",
+  "description": "Minimal live pilot — 1 model × 1 task × 1 run before full 2×2×3 grid.",
+  "status": "pilot",
+  "orchestrator_note": "Requires OPENAI_API_KEY. Default task GOOGL; override with --tasks.",
+  "models": ["gpt-4o-mini"],
+  "tasks": ["GOOGL_footnote_reconciliation"],
+  "runs_per_task": 1,
+  "aggregation": {
+    "l1_all_pass": "median_boolean",
+    "composite_score": "median",
+    "fracture_codes": "union",
+    "layer3_citation": "worst_run_wins"
+  },
+  "manifest_ref": "../manifest.json",
+  "runs_dir": "runs/pilot_eval_1x1x1"
+}

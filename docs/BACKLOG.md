@@ -71,7 +71,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-04d | Agent submission + L3 citation validator | done | `validate_agent_submission.py`; `_submission.json` contract fixtures |
 | P2-04e | `score_benchmark_run.py` — L2/L3 v0 | done | Section recall from trace; composite median in campaign |
 | P2-04f | OpenAI adapter + `--execute` on campaign | done | `agents/openai_benchmark_agent.py`; `--execute --agent scripted|openai` |
-| P2-04g | **Live eval** — 2 models × 2 tasks × 3 runs | blocked | Blocked on P2-04g API keys + Anthropic adapter |
+| P2-04g | **Live eval** — 2 models × 2 tasks × 3 runs | blocked | OpenAI submit+L3 ready; 1×1×1 pilot + API keys + Anthropic |
 
 ---
 
@@ -121,7 +121,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 16 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 17 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 
 ---

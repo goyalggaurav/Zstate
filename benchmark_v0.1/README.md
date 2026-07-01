@@ -118,7 +118,20 @@ python3 benchmark_v0.1/scripts/benchmark_agent_loop.py \
 
 Modes: `scripted`, `mock`, `openai`. No PM — tools + structured submit only.
 
-OpenAI mode uses `OPENAI_API_KEY` (optional `OPENAI_MODEL`, default `gpt-4o-mini`). Campaign `--execute --agent openai` writes the same contract paths as scripted replay.
+OpenAI mode uses `OPENAI_API_KEY` (optional `OPENAI_MODEL`, default `gpt-4o-mini`). Submit tool requires `metrics` + `citations` + policy acks (PEP).
+
+**1×1×1 live pilot** (before full 2×2×3):
+
+```bash
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_1x1x1.json \
+  --execute --agent openai
+
+# PEP pilot slot
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_1x1x1.json \
+  --execute --agent openai --tasks PEP_fx_organic_growth
+```
 
 ---
 

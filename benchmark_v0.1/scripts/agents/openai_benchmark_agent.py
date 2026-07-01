@@ -12,7 +12,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from agents.benchmark_tool_specs import CORPUS_TOOLS, build_tool_definitions
+from agents.benchmark_tool_specs import CORPUS_TOOLS, SUBMIT_TOOL, build_tool_definitions, parse_submission_args
 
 
 def _ssl_context() -> ssl.SSLContext:
@@ -33,14 +33,19 @@ def _system_prompt(task: dict, bundle: dict) -> str:
     policy_lines = ""
     for note in bundle.get("policy_notes", []):
         if note.get("agent_ack_required"):
-            policy_lines += f"\n- Acknowledge policy {note['policy_id']}: {note['statement']}"
+            policy_lines += f"\n- REQUIRED policy ack `{note['policy_id']}`: {note['statement']}"
+        else:
+            policy_lines += f"\n- Policy note `{note['policy_id']}`: {note['statement']}"
 
     return (
         "You are an equity research analyst agent in a controlled benchmark evaluation.\n"
         "Use ONLY the provided tools against the fixed corpus — no external data.\n"
         "For Search_Filing, pass exact section_slug tokens (lowercase, underscores).\n"
         "Retrieve evidence before stating numbers. Use Python_Interpreter to verify arithmetic.\n"
-        "When ready, call submit_structured_output with all required numeric fields.\n\n"
+        "When ready, call submit_structured_output with:\n"
+        "  - metrics: all required numeric fields\n"
+        "  - citations: one entry per metric with verbatim snippet from the retrieved excerpt\n"
+        "  - policy_acknowledgements: required policy_id tokens listed below\n\n"
         f"TASK:\n{task['prompt']['text']}\n\n"
         f"ALLOWED SECTION SLUGS:\n{slug_lines or '  (see tool enum)'}"
         f"{policy_lines}"
@@ -65,7 +70,10 @@ class OpenAIBenchmarkAgent:
         self.tools = build_tool_definitions(task, bundle)
         self.messages: list[dict[str, Any]] = [
             {"role": "system", "content": _system_prompt(task, bundle)},
-            {"role": "user", "content": "Begin the task. Use tools to retrieve filing sections, then submit structured output."},
+            {"role": "user", "content": (
+                "Begin the task. Retrieve filing sections with tools, verify arithmetic, then submit "
+                "metrics + verbatim citations + any required policy acknowledgements."
+            )},
         ]
         self.pending_tool_calls: list[dict] | None = None
         self._pending_index = 0
@@ -148,7 +156,7 @@ class OpenAIBenchmarkAgent:
         tool_calls = self._parse_tool_calls(choice)
         if tool_calls:
             corpus_first = [c for c in tool_calls if c["name"] in CORPUS_TOOLS]
-            submit_last = [c for c in tool_calls if c["name"] == "submit_structured_output"]
+            submit_last = [c for c in tool_calls if c["name"] == SUBMIT_TOOL]
             other = [c for c in tool_calls if c not in corpus_first and c not in submit_last]
             self.pending_tool_calls = corpus_first + other + submit_last
             self._pending_index = 0
@@ -170,12 +178,16 @@ class OpenAIBenchmarkAgent:
     def _tool_call_to_action(self, call: dict) -> dict:
         name = call["name"]
         args = call["arguments"]
-        if name == "submit_structured_output":
-            return {
+        if name == SUBMIT_TOOL:
+            metrics, submission = parse_submission_args(args, self.task)
+            action: dict = {
                 "type": "submit_structured_output",
-                "structured_output": args,
+                "structured_output": metrics,
                 "_tool_call_id": call.get("id"),
             }
+            if submission is not None:
+                action["submission"] = submission
+            return action
         if name in CORPUS_TOOLS:
             backend_tool = "Python_Interpreter" if name == "Python_Interpreter" else name
             inp = args if name == "Python_Interpreter" else {

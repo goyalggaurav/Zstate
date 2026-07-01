@@ -517,6 +517,82 @@ def check_composite_scoring() -> None:
         assert l1_only["composite_score"] < full["composite_score"]
 
 
+def check_openai_submit_schema() -> None:
+    """OpenAI submit tool exposes agent_submission_v1 wrapper (metrics + citations)."""
+    import os
+
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from agents.benchmark_tool_specs import SUBMIT_TOOL, build_tool_definitions, parse_submission_args  # noqa: E402
+    from benchmark_tool_backend import load_bundle  # noqa: E402
+
+    googl_task = json.loads(
+        (ROOT / "benchmark_v0.1" / "tasks" / "GOOGL_footnote_reconciliation.json").read_text()
+    )
+    pep_task = json.loads((ROOT / "benchmark_v0.1" / "tasks" / "PEP_fx_organic_growth.json").read_text())
+
+    for task in (googl_task, pep_task):
+        bundle = load_bundle(task["task_id"])
+        tools = build_tool_definitions(task, bundle)
+        submit = next(t for t in tools if t["function"]["name"] == SUBMIT_TOOL)
+        params = submit["function"]["parameters"]
+        assert "metrics" in params["properties"], params
+        assert "citations" in params["properties"], params
+        assert "metrics" in params["required"] and "citations" in params["required"]
+
+    googl_bundle = load_bundle("GOOGL_footnote_reconciliation")
+    gold_sub = json.loads(
+        (ROOT / "benchmark_v0.1" / "contract_fixtures" / "GOOGL_footnote_reconciliation_submission_gold.json").read_text()
+    )
+    metrics, submission = parse_submission_args(
+        {
+            "metrics": gold_sub["metrics"],
+            "citations": gold_sub["citations"],
+            "policy_acknowledgements": gold_sub.get("policy_acknowledgements", []),
+        },
+        googl_task,
+    )
+    assert submission is not None
+    assert submission["schema_version"] == "agent_submission_v1"
+    assert metrics == gold_sub["metrics"]
+
+    if not os.environ.get("OPENAI_API_KEY"):
+        return
+
+    import tempfile
+
+    campaign = json.loads(
+        (ROOT / "benchmark_v0.1" / "campaigns" / "pilot_eval_1x1x1.json").read_text()
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        mini = {**campaign, "campaign_id": "smoke_openai_pilot", "runs_dir": tmp}
+        mini_path = Path(tmp) / "pilot.json"
+        mini_path.write_text(json.dumps(mini), encoding="utf-8")
+        proc = subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/run_benchmark_campaign.py",
+                "--campaign", str(mini_path),
+                "--execute", "--agent", "openai",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+        assert proc.returncode == 0, proc.stderr or proc.stdout
+        agent_path = Path(tmp) / "gpt-4o-mini" / "GOOGL_footnote_reconciliation_run01.json"
+        submission_path = agent_path.with_name("GOOGL_footnote_reconciliation_run01_submission.json")
+        assert agent_path.exists(), agent_path
+        assert submission_path.exists(), submission_path
+        l3 = run([
+            sys.executable,
+            "benchmark_v0.1/scripts/validate_agent_submission.py",
+            "--task", "GOOGL_footnote_reconciliation",
+            "--submission", str(submission_path),
+        ])
+        assert "l3_pass" in l3
+
+
 def check_agent_submission_validator() -> None:
     """P2-04d — L3 submission validator + gold/trap contract fixtures."""
     report = run([
@@ -591,6 +667,7 @@ def main() -> int:
         ("Benchmark agent loop", check_benchmark_agent_loop),
         ("Agent submission L3 validator", check_agent_submission_validator),
         ("Composite run scoring", check_composite_scoring),
+        ("OpenAI submit schema", check_openai_submit_schema),
         ("Campaign execute scripted", check_campaign_execute_scripted),
     ]
     failed = 0

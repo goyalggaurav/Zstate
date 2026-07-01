@@ -5,6 +5,7 @@ from __future__ import annotations
 from agent_output_contract import googl_gold_values, pep_gold_values
 
 CORPUS_TOOLS = frozenset({"Search_Filing", "PDF_Parser", "Python_Interpreter"})
+SUBMIT_TOOL = "submit_structured_output"
 
 
 def _metric_properties(task_id: str) -> dict[str, dict]:
@@ -20,12 +21,45 @@ def _metric_properties(task_id: str) -> dict[str, dict]:
     return props
 
 
+def metric_keys(task_id: str) -> set[str]:
+    return set(_metric_properties(task_id).keys())
+
+
+def parse_submission_args(args: dict, task: dict) -> tuple[dict, dict | None]:
+    """Parse submit tool args into (metrics, agent_submission_v1 | None)."""
+    task_id = task["task_id"]
+    keys = metric_keys(task_id)
+
+    if "metrics" in args:
+        metrics = args["metrics"]
+        if not isinstance(metrics, dict):
+            raise ValueError("submit metrics must be an object")
+        submission = {
+            "schema_version": "agent_submission_v1",
+            "metrics": metrics,
+            "citations": args.get("citations") or [],
+            "policy_acknowledgements": args.get("policy_acknowledgements") or [],
+        }
+        return metrics, submission
+
+    if keys.intersection(args.keys()):
+        metrics = {k: args[k] for k in keys if k in args}
+        return metrics, None
+
+    raise ValueError(f"submit_structured_output missing metrics for {task_id!r}")
+
+
 def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
     task_id = task["task_id"]
     ticker = task["ticker"]
     period = task["required_documents"][0]["fiscal_period"]
+    doc_ids = [doc["doc_id"] for doc in task.get("required_documents", []) if doc.get("doc_id")]
     section_slugs = [entry["section_slug"] for entry in bundle.get("section_registry", [])]
     section_enum = section_slugs or ["note_1"]
+    policy_ids = [note["policy_id"] for note in bundle.get("policy_notes", [])]
+    required_policy_ids = [
+        note["policy_id"] for note in bundle.get("policy_notes", []) if note.get("agent_ack_required")
+    ]
 
     search_params = {
         "type": "object",
@@ -39,6 +73,54 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
             },
         },
         "required": ["ticker", "period", "section"],
+    }
+
+    metric_props = _metric_properties(task_id)
+    citation_item = {
+        "type": "object",
+        "properties": {
+            "metric_id": {"type": "string", "enum": sorted(metric_props.keys())},
+            "doc_id": {"type": "string", "enum": doc_ids or ["UNKNOWN"]},
+            "section_slug": {"type": "string", "enum": section_enum},
+            "snippet": {
+                "type": "string",
+                "description": "Verbatim substring copied from the retrieved section excerpt.",
+            },
+            "note": {"type": "string"},
+            "table_title": {"type": "string"},
+            "column": {"type": "string"},
+        },
+        "required": ["metric_id", "doc_id", "section_slug", "snippet"],
+    }
+
+    policy_schema: dict = {"type": "array", "items": {"type": "string"}}
+    if policy_ids:
+        policy_schema["items"] = {"type": "string", "enum": policy_ids}
+    policy_desc = "policy_id tokens from bundle policy_notes[]"
+    if required_policy_ids:
+        policy_desc += f"; required: {', '.join(required_policy_ids)}"
+
+    submit_params = {
+        "type": "object",
+        "properties": {
+            "metrics": {
+                "type": "object",
+                "description": "Flat L1 numeric fields for verify scripts.",
+                "properties": metric_props,
+                "required": list(metric_props.keys()),
+            },
+            "citations": {
+                "type": "array",
+                "description": "One citation per metric — verbatim snippet from corpus excerpt.",
+                "minItems": 1,
+                "items": citation_item,
+            },
+            "policy_acknowledgements": {
+                **policy_schema,
+                "description": policy_desc,
+            },
+        },
+        "required": ["metrics", "citations"],
     }
 
     tools: list[dict] = [
@@ -72,19 +154,15 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
                 },
             },
         },
-    ]
-
-    metric_props = _metric_properties(task_id)
-    tools.append({
-        "type": "function",
-        "function": {
-            "name": "submit_structured_output",
-            "description": "Submit final structured numeric output for Layer 1 scoring. Ends the task.",
-            "parameters": {
-                "type": "object",
-                "properties": metric_props,
-                "required": list(metric_props.keys()),
+        {
+            "type": "function",
+            "function": {
+                "name": SUBMIT_TOOL,
+                "description": (
+                    "Submit final agent_submission_v1: metrics + verbatim citations + policy acks. Ends the task."
+                ),
+                "parameters": submit_params,
             },
         },
-    })
+    ]
     return tools
