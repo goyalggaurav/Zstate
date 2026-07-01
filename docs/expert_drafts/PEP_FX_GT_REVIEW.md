@@ -96,9 +96,13 @@ Two independent gates — **do not block data sign-off on METHOD_ALT eng work**:
 |------|-------|--------|------|
 | **A — Methodology** | CFA | Nothing downstream | Approve tolerance policy + task design in this doc (can happen now) |
 | **B — Data finality** | CFA | `expert_reviewed` | Filing-verified numbers in GT JSON + verify self-test passes |
-| **C — Publish** | Eng + CFA | `published` / external demo | Gate B complete **and** verify script reads JSON + emits `METHOD_ALT` |
+| **C — Publish** | Eng + CFA | `published` / external demo | Gate B complete; JSON-driven verify with `METHOD_ALT` support |
 
-**Answer:** CFA signs off **data (Gate B)** as soon as JSON is filing-verified and self-test passes. **Do not wait** for Gate C to approve numbers. Gate C is eng confirmation before external publish — **done** as of JSON-driven verify script.
+**Policy:** CFA signs off **data (Gate B)** as soon as JSON is filing-verified and self-test passes. **Do not wait** for Gate C to approve numbers.
+
+**Gate C (standing rule):** Engineering confirms verify infrastructure is publish-ready before any external demo or `published` status.
+
+**Gate C status (eng):** Met as of 2026-07-01 — verify script reads GT JSON and emits `METHOD_ALT`.
 
 Until Gate B: leave status **`draft_pending_expert_review`**.
 
@@ -123,7 +127,7 @@ Until step 5: leave status **`draft_pending_expert_review`**; do not mark P2-02 
 ## Expert checklist (P2-02)
 
 - [ ] **Methodology:** Task requires independent Python computation **and** MD&A cross-check — not MD&A extract alone
-- [ ] All FY2025 figures match PepsiCo 10-K — correct columns (2025 vs 2024) *(verify via SEC filing; GT placeholders below are eng-authored until checked)*
+- [ ] All FY2025 figures match PepsiCo 10-K — correct columns (2025 vs 2024) *(verify via SEC filing; see **FY2025 numbers** section above — placeholders are eng-authored until checked)*
 - [ ] Europe and AMESA geographic definitions match company disclosure (not LATAM / North America)
 - [ ] Weighted-average FX table cited correctly (not spot / year-end)
 - [ ] MD&A organic CC percentages align with ground truth after independent calc
