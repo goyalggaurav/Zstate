@@ -125,16 +125,30 @@ Until step 5: keep `review_status` as `pending_expert_review`; do not set `publi
 
 ---
 
-## Expert checklist
+## Expert checklist (P2-02)
 
-- [ ] **Methodology (agent scoring intent):** Task requires independent Python computation **and** MD&A cross-check — not MD&A extract alone
-- [ ] All FY2025 figures match PepsiCo 10-K — correct columns (2025 vs 2024) *(verify via SEC filing; see **FY2025 numbers** section above — placeholders are eng-authored until checked)*
-- [ ] Europe and AMESA geographic definitions match company disclosure (not LATAM / North America)
-- [ ] Weighted-average FX table cited correctly (not spot / year-end)
-- [ ] **MD&A organic CC (your GT verification):** You manually compute CC from filing inputs and confirm the result matches MD&A disclosed Europe/AMESA organic % *and* the values in GT JSON `computed_values` *(validates ground truth — separate from agent scoring path above)*
-- [ ] Trap design is fair (`spot_rate_method`, `reported_only`, `wrong_region`)
-- [ ] No investment recommendation required (Type M modeling / forensics)
-- [ ] Verify script self-test passes on approved ground truth JSON *(run verify command; no code review)*
+**How to use:** Section **I** and **II** (data rows) are **Gate B** — filing-verified before sign-off. Section **II** (design rows) and **III** are **Gate A / task design** — confirm scoring intent; can approve before filing numbers are final. Items marked *(agent runtime)* are encoded in prompt/grader/verify — you validate design, not individual agent runs.
+
+### I. Source integrity & data *(Gate B — you verify against 10-K)*
+
+- [ ] **10-K anchoring:** All FY2025/FY2024 revenue figures in GT JSON match Note 1 exactly (correct fiscal-year columns). *(See **FY2025 numbers** above; update `extracted_values` only.)*
+- [ ] **Geographic scope:** Europe/AMESA boundaries match 10-K disclosure — not LATAM, North America, or Corporate eliminations. **If FY2025 reports EMEA only, stop and re-scope task before signing off.**
+- [ ] **WAE rate integrity:** Weighted-average EUR/USD in GT JSON match Note 1 FX table — not spot or year-end rates.
+- [ ] **MD&A organic CC (your manual calc):** You compute CC from filing inputs; result matches MD&A disclosed Europe/AMESA organic % *and* GT JSON `computed_values`.
+
+### II. Methodology & logic *(Gate A — task design; Gate B — traps after data locked)*
+
+- [ ] **Agent scoring intent *(task design)*:** Prompt requires independent Python computation **and** MD&A cross-check — MD&A extract alone is an auto-fail (L1 methodology gate).
+- [ ] **Trap design *(task design)*:** `spot_rate_method`, `reported_only`, `wrong_region`, and `wrong_period` signatures are fair and documented in GT JSON `failure_modes`.
+- [ ] **Trap wiring *(eng — spot-check)*:** Verify script classifies spot/year-end WAE and reported-only CC as hard fails; you do not review Python source — run a self-test only.
+- [ ] **Tolerance policy *(task design)*:** `verification_policy` bands in GT JSON match the Edge-case tolerance section (±0.2 pp strict, ±0.75 pp alternative / `METHOD_ALT`).
+
+### III. Auditability & traceability *(task design — agent runtime)*
+
+- [ ] **Assumption log *(agent runtime, L2)*:** Grader brief requires agents to list (a) WAE rates used, (b) reported revenue base, (c) FX impact derivation.
+- [ ] **MD&A reconciliation *(agent runtime, L2)*:** Agent’s computed organic CC must reconcile to MD&A disclosed % within ±0.2 pp strict or ±0.75 pp alternative band with citation.
+- [ ] **Type M scope *(task design)*:** No investment recommendation required — modeling / forensics only.
+- [ ] **Script validation *(Gate B)*:** `verify_pep_fx_organic_growth.py` reports `all_pass: true` on approved GT JSON *(run command below; no code review)*.
 
 ---
 
