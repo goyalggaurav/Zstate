@@ -48,16 +48,18 @@ Using PepsiCo FY2025 Form 10-K (filed 2026-02-03), compute constant-currency org
 
 ---
 
-## FY2025 numbers (USD millions — filing draft, CFA confirm)
+## FY2025 numbers (USD millions — Gate B verified 2026-07-01)
 
 | Segment | FY2024 | FY2025 | Reported | FX impact | Organic CC |
 |---------|--------|--------|----------|-----------|------------|
-| EMEA | 16,658 | 18,025 | 8.0% | 2.0% | **6.0%** |
+| EMEA | 16,658 | 18,025 | 8.0% (MD&A; revenue-implied 8.2%) | 2.0% | **6.0%** |
 | LatAm Foods | 10,568 | 10,549 | −0.2% | −4.7% | **4.5%** |
 
-WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024** *(confirm in filing)*
+**Reported % convention:** MD&A table uses whole percentage points; revenue-implied EMEA growth is 8.2%. GT anchors 8.0% for additive FX decomposition (8.0 − 6.0 = 2.0). Agents may cite either within ±0.2 pp.
 
-**CFA action required:** Confirm MD&A FX sign convention and WAE before `expert_reviewed`.
+WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024** *(confirm in Note 1)*
+
+**CFA action remaining:** Confirm WAE before `expert_reviewed`.
 
 ---
 

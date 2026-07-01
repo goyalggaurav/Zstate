@@ -162,12 +162,19 @@
       "wrong_period"
     ],
     "data_finality": {
-      "status": "filing_draft_eng",
-      "verified_against_filing": false,
-      "reviewer_signoff_blocked": true,
+      "status": "gate_b_verified",
+      "verified_against_filing": true,
+      "reviewer_signoff_blocked": false,
       "reviewer_edits": "ground_truth_json_only",
       "verify_script_reads_json": true,
-      "note": "Segment table anchored to SEC accession 0000077476-26-000007; MD&A organic % and WAE require CFA confirmation"
+      "verified_at": "2026-07-01",
+      "sec_accession": "0000077476-26-000007",
+      "note": "Note 1 revenues and MD&A organic % verified; WAE EUR/USD still require Note 1 confirmation"
+    },
+    "reported_growth_anchor": {
+      "convention": "mdna_table_whole_pct",
+      "explanation": "MD&A Net Revenue and Organic Revenue Performance publishes whole percentage points. Dollar-implied growth may differ by up to ~0.2 pp; GT anchors reported % to MD&A table for FX decomposition.",
+      "revenue_implied_tolerance_pp": 0.2
     }
   },
 
@@ -175,14 +182,17 @@
     {
       "metric_id": "emea_reported_growth_pct",
       "value": 8.0,
-      "formula": "(emea_fy2025 / emea_fy2024 - 1) * 100; MD&A table rounds to 8%",
-      "tolerance": 0.1
+      "revenue_implied_pct": 8.2,
+      "formula": "(18025/16658 - 1) * 100 ≈ 8.2%; MD&A table anchor 8% (whole pct)",
+      "anchor_source": "MD&A — Net Revenue and Organic Revenue Performance",
+      "tolerance": 0.2
     },
     {
       "metric_id": "emea_fx_impact_pct",
       "value": 2.0,
-      "label": "FX translation impact on EMEA net revenue growth — MD&A organic revenue table (CFA confirm sign vs 2.5pp favorable narrative)",
+      "label": "FX translation impact — additive: MD&A reported 8.0% − organic 6.0%",
       "source": "MD&A — Net Revenue and Organic Revenue Performance",
+      "formula": "reported_growth_pct - organic_cc_growth_pct",
       "tolerance": 0.1
     },
     {
@@ -203,8 +213,9 @@
     {
       "metric_id": "latam_foods_fx_impact_pct",
       "value": -4.7,
-      "label": "FX translation impact on LatAm Foods net revenue growth",
+      "label": "FX translation impact — additive: reported −0.2% − organic 4.5%",
       "source": "MD&A — Net Revenue and Organic Revenue Performance",
+      "formula": "reported_growth_pct - organic_cc_growth_pct",
       "tolerance": 0.1
     },
     {
