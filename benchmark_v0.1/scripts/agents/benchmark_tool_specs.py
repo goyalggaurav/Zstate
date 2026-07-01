@@ -56,7 +56,8 @@ def citation_guidance_for_task(task_id: str, *, eval_mode: bool | None = None) -
     if task_id == "AMZN_footnote_reconciliation":
         return (
             "CITATION RULES (AMZN):\n"
-            "- Follow gold path order: segment_reporting_policy → note_10_segments → income_statement → mdna_international_fx.\n"
+            "- Follow gold path order: segment_reporting_policy → stock_compensation_note → note_10_segments → income_statement → mdna_international_fx.\n"
+            "- Use note_10_segments for FY2025 segment net sales — not note_10_prior_year (FY2024 decoy).\n"
             "- Each metric MUST use a distinct verbatim snippet — never reuse the same substring.\n"
             "- Segment net sales from Note 10; consolidated from income statement; International growth from MD&A.\n"
             "- Include policy_acknowledgements: [\"sbc_not_in_segment_oi\"]."

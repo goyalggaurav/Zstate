@@ -1,6 +1,6 @@
 {
   "task_id": "AMZN_footnote_reconciliation",
-  "version": "1.0.0-pilot",
+  "version": "1.1.0-pilot",
   "task_type": "F",
   "fiscal_period": "FY2025",
 
@@ -10,6 +10,12 @@
       "name": "Item 1 — Segment reporting overview",
       "required": true,
       "reason": "Segment definitions and SBC non-allocation policy before extracting numbers"
+    },
+    {
+      "section_id": "AMZN_10K_2025_stock_comp",
+      "name": "Note 8 — Stock-Based Compensation",
+      "required": true,
+      "reason": "Corporate SBC treatment before segment net sales extraction"
     },
     {
       "section_id": "AMZN_10K_2025_note_10",
@@ -52,24 +58,30 @@
     },
     {
       "step": 2,
+      "action": "Read stock-based compensation note",
+      "tool": "Search_Filing",
+      "target": "Note 8 — corporate SBC not allocated to segment results"
+    },
+    {
+      "step": 3,
       "action": "Extract FY2025 segment net sales",
       "tool": "Search_Filing",
       "target": "Note 10 — North America, International, AWS — Year Ended December 31, 2025"
     },
     {
-      "step": 3,
+      "step": 4,
       "action": "Cross-check consolidated net sales",
       "tool": "Search_Filing",
       "target": "Consolidated Statements of Operations — Net sales 2025 column"
     },
     {
-      "step": 4,
+      "step": 5,
       "action": "Extract International FX growth disclosure",
       "tool": "Search_Filing",
       "target": "MD&A International — 13% reported vs 10% excluding FX"
     },
     {
-      "step": 5,
+      "step": 6,
       "action": "Verify segment sum equals consolidated",
       "tool": "Python_Interpreter",
       "target": "426305 + 161894 + 128725 == 716924"
@@ -78,7 +90,9 @@
 
   "anti_patterns": [
     "use_fy2024_column_instead_of_fy2025",
+    "use_decoy_note_10_prior_year_slug",
     "skip_segment_policy_and_jump_to_note_10",
+    "skip_stock_compensation_note",
     "treat_sbc_as_segment_line_item",
     "swap_international_reported_and_cc_growth",
     "produce_buy_hold_sell_recommendation"
@@ -91,6 +105,11 @@
       "fracture_code": "HALLUC_FILL"
     },
     {
+      "failure_mode_id": "wrong_period",
+      "anti_pattern": "use_decoy_note_10_prior_year_slug",
+      "fracture_code": "HALLUC_FILL"
+    },
+    {
       "failure_mode_id": "intl_fx_swap",
       "anti_pattern": "swap_international_reported_and_cc_growth",
       "fracture_code": "CC_OMIT"
@@ -98,6 +117,11 @@
     {
       "failure_mode_id": "policy_skip",
       "anti_pattern": "skip_segment_policy_and_jump_to_note_10",
+      "fracture_code": "SECTION_MISS"
+    },
+    {
+      "failure_mode_id": "sbc_note_skip",
+      "anti_pattern": "skip_stock_compensation_note",
       "fracture_code": "SECTION_MISS"
     }
   ],
@@ -114,6 +138,7 @@
     },
     "expected_section_order": [
       "segment_reporting_policy",
+      "stock_compensation_note",
       "note_10_segments",
       "income_statement",
       "mdna_international_fx"

@@ -340,6 +340,14 @@ def check_section_retrieval_contract() -> None:
     assert NOT_FOUND_PREFIX not in amzn_policy, amzn_policy
     assert amzn.log[-1].get("section_slug") == "segment_reporting_policy"
 
+    amzn_sbc = amzn.call("Search_Filing", ticker="AMZN", period="FY2025", section="stock_compensation_note")
+    assert NOT_FOUND_PREFIX not in amzn_sbc, amzn_sbc
+    assert amzn.log[-1].get("section_slug") == "stock_compensation_note"
+
+    amzn_decoy = amzn.call("Search_Filing", ticker="AMZN", period="FY2025", section="note_10_prior_year")
+    assert NOT_FOUND_PREFIX not in amzn_decoy, amzn_decoy
+    assert "637,959" in amzn_decoy
+
     wrong_period = googl.call("Search_Filing", ticker="GOOGL", period="FY2025", section="note_15")
     assert wrong_period.startswith(NOT_FOUND_PREFIX), wrong_period
 
@@ -879,13 +887,56 @@ def check_amzn_l2_path() -> None:
         )
         assert l2["l2_score"] >= 0.95, l2
         assert l2["components"]["section_order"] == 1.0, l2
-        assert len(l2["required_sections"]) == 4, l2
+        assert len(l2["required_sections"]) == 5, l2
+
+        skip_sbc_plan = {
+            **json.loads(plan.read_text()),
+            "actions": [
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_reporting_policy"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "note_10_segments"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "income_statement"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "mdna_international_fx"}},
+                {"type": "tool_call", "tool": "Python_Interpreter", "input": {"expression": "426305 + 161894 + 128725"}},
+                {"type": "submit_structured_output", "structured_output": {
+                    "north_america_net_sales": 426305,
+                    "international_net_sales": 161894,
+                    "aws_net_sales": 128725,
+                    "consolidated_net_sales": 716924,
+                    "international_reported_growth_pct": 13.0,
+                    "international_cc_growth_pct": 10.0,
+                }},
+            ],
+        }
+        skip_path = out_dir / "skip_sbc_plan.json"
+        skip_path.write_text(json.dumps(skip_sbc_plan), encoding="utf-8")
+        subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/benchmark_agent_loop.py",
+                "--agent", "scripted",
+                "--task", "AMZN_footnote_reconciliation",
+                "--plan", str(skip_path),
+                "--out-dir", str(out_dir),
+                "--run-index", "3",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        skip_trace = json.loads((out_dir / "AMZN_footnote_reconciliation_run03_trace.json").read_text())
+        skip_l2 = score_l2_section_recall(
+            skip_trace, task_id="AMZN_footnote_reconciliation", gold_path=gold_path, bundle=bundle
+        )
+        assert "stock_compensation_note" in skip_l2.get("missing_sections", []), skip_l2
+        assert skip_l2["l2_score"] < l2["l2_score"], (skip_l2, l2)
 
         wrong_order_plan = {
             **json.loads(plan.read_text()),
             "actions": [
                 {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "note_10_segments"}},
                 {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_reporting_policy"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "stock_compensation_note"}},
                 {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "income_statement"}},
                 {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "mdna_international_fx"}},
                 {"type": "tool_call", "tool": "Python_Interpreter", "input": {"expression": "426305 + 161894 + 128725"}},

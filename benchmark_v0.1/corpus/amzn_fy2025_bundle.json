@@ -1,6 +1,6 @@
 {
   "bundle_id": "amzn_fy2025_bundle",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "task_id": "AMZN_footnote_reconciliation",
   "documents": {
     "segment_reporting_policy": {
@@ -10,12 +10,26 @@
       "name": "Item 1 — Segment reporting overview",
       "excerpt": "Item 1. Business\n\nWe have organized our operations into three segments: North America, International, and Amazon Web Services (\"AWS\"). These segments reflect the way the Company evaluates its business performance and manages its operations.\n\nInformation on our net sales is contained in Item 8 of Part II, \"Financial Statements and Supplementary Data — Note 10 — Segment Information.\"\n\nCertain operating expense line items, including stock-based compensation, are not allocated to segment results when measuring segment operating performance."
     },
+    "stock_compensation_note": {
+      "doc_id": "AMZN_10K_2025",
+      "doc_type": "10-K",
+      "section": "stock_compensation_note",
+      "name": "Note 8 — Stock-Based Compensation",
+      "excerpt": "Note 8 — Stock-Based Compensation\n\nStock-based compensation expense was $22.4 billion for the year ended December 31, 2025.\n\nWe measure segment operating performance before stock-based compensation expense; these amounts are not allocated to North America, International, or AWS segment results."
+    },
     "note_10_segments": {
       "doc_id": "AMZN_10K_2025",
       "doc_type": "10-K",
       "section": "note_10",
       "name": "Note 10 — Segment Information",
       "excerpt": "Note 10 — Segment Information\n\nYear Ended December 31, 2025\n\nNorth America\nNet sales $ 426,305\nOperating income $ 29,619\n\nInternational\nNet sales $ 161,894\nOperating income $ 4,750\n\nAWS\nNet sales $ 128,725\nOperating income $ 45,606\n\nConsolidated\nNet sales $ 716,924\nOperating income $ 79,975"
+    },
+    "note_10_prior_year": {
+      "doc_id": "AMZN_10K_2025",
+      "doc_type": "10-K",
+      "section": "note_10_prior_year",
+      "name": "Note 10 — Segment Information (FY2024 column only)",
+      "excerpt": "Note 10 — Segment Information\n\nYear Ended December 31, 2024\n\nNorth America\nNet sales $ 387,497\nOperating income $ 24,967\n\nInternational\nNet sales $ 142,906\nOperating income $ 2,746\n\nAWS\nNet sales $ 107,556\nOperating income $ 39,834\n\nConsolidated\nNet sales $ 637,959\nOperating income $ 67,547"
     },
     "income_statement": {
       "doc_id": "AMZN_10K_2025",
@@ -43,12 +57,30 @@
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
+      "section_slug": "stock_compensation_note",
+      "section_id": "AMZN_10K_2025_stock_comp",
+      "doc_id": "AMZN_10K_2025",
+      "document_key": "stock_compensation_note",
+      "name": "Note 8 — Stock-Based Compensation",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
       "section_slug": "note_10_segments",
       "section_id": "AMZN_10K_2025_note_10",
       "doc_id": "AMZN_10K_2025",
       "document_key": "note_10_segments",
       "name": "Note 10 — Segment Information",
       "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
+      "section_slug": "note_10_prior_year",
+      "section_id": "AMZN_10K_2025_note_10_py",
+      "doc_id": "AMZN_10K_2025",
+      "document_key": "note_10_prior_year",
+      "name": "Note 10 — Segment Information (FY2024 column only)",
+      "required": false,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
@@ -83,7 +115,9 @@
   "retrieval_keys": {
     "Search_Filing": {
       "AMZN:FY2025:segment_reporting_policy": "segment_reporting_policy",
+      "AMZN:FY2025:stock_compensation_note": "stock_compensation_note",
       "AMZN:FY2025:note_10_segments": "note_10_segments",
+      "AMZN:FY2025:note_10_prior_year": "note_10_prior_year",
       "AMZN:FY2025:income_statement": "income_statement",
       "AMZN:FY2025:mdna_international_fx": "mdna_international_fx"
     }

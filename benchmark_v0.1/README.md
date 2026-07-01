@@ -83,6 +83,8 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
   --campaign benchmark_v0.1/campaigns/pilot_eval_discrimination_v2.json
 ```
 
+**AMZN path hardening (P2-12):** Five-section gold path adds required `stock_compensation_note` (Note 8) between policy and Note 10, plus optional decoy slug `note_10_prior_year` (FY2024 column only). Prior live runs that skipped Note 8 score lower on L2 section recall when rescored — discrimination v2 weighted composite shifts to **gpt-4o 0.885 vs claude 0.953** (was 0.932 vs 1.0).
+
 ```bash
 export BENCHMARK_RUN_DELAY_SECONDS=3
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \

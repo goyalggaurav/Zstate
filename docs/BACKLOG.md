@@ -75,7 +75,8 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-04h | Anthropic adapter + `--agent auto` routing | done | `claude-sonnet-4-5`; live 12/12 in `pilot_eval_campaign_v1` |
 | P2-09 | **Discrimination eval** — eval_mode + L2 gold-path + L3 partial | done | Live 12/12; PEP composite 0.966; `CITE_HALLUC`×5; GOOGL still 1.0 — scorer validated, ranking deferred |
 | P2-10 | **Harder L3 + 3rd task** — PEP distinct snippets; AMZN 4-section path | done | Live 18/18; PEP task median 0.881; `pilot_eval_3task_v1` |
-| P2-11 | **Discrimination v2** — drop GOOGL headline; weighted per-model composite | done | `pilot_eval_discrimination_v2`; rescores 3-task runs; AMZN `strict_first_section` |
+| P2-11 | **Discrimination v2** — drop GOOGL headline; weighted per-model composite | done | `pilot_eval_discrimination_v2`; gpt-4o 0.932 vs claude 1.0 |
+| P2-12 | **AMZN path hardening** — Note 8 required + FY2024 decoy slug | done | 5-section path; `stock_compensation_note`; `note_10_prior_year` decoy |
 
 ---
 
@@ -138,7 +139,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | LATER-02 | Track A — transcript API + NFLX guidance task | A | P2-08 + P2-01; blocked on vendor + IR fallback runbook |
 | LATER-03 | Track A — eval orchestrator (SH-07) | A | done | Adapters + `pilot_eval_campaign_v1` live run complete |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
-| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | PEP L3 separates gpt-4o vs claude; AMZN path still 1.0 — add 5th section or decoy |
+| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | PEP L3 separates models; AMZN L2 recall tightened (P2-12) — re-run live for fresh signal |
 
 ---
 
@@ -189,6 +190,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-31 | P2-09 discrimination eval — eval_mode, L2 gold-path, L3 partial; live 12/12 | Jul 2026 |
 | DONE-32 | P2-10 PEP distinct L3 + AMZN third task (4-section L2 path) | Jul 2026 |
 | DONE-33 | P2-11 discrimination v2 + live 3-task eval (PEP separates models) | Jul 2026 |
+| DONE-34 | P2-12 AMZN 5-section path + FY2024 decoy slug | Jul 2026 |
 
 ---
 

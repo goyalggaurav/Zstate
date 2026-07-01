@@ -1,11 +1,16 @@
 {
   "plan_id": "amzn_good_v1",
-  "description": "Reference scripted agent — policy → Note 10 → income statement → MD&A FX, Python sum check",
+  "description": "Reference scripted agent — policy → Note 8 SBC → Note 10 → income statement → MD&A FX, Python sum check",
   "actions": [
     {
       "type": "tool_call",
       "tool": "Search_Filing",
       "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_reporting_policy"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "stock_compensation_note"}
     },
     {
       "type": "tool_call",
