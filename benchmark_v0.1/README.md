@@ -47,6 +47,26 @@ Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_e
 
 Live agent runs require **LATER-03** (SH-07 eval orchestrator). This pipeline scores structured `--agent-output` JSON via task verify scripts.
 
+### Agent output contract (SH-07 stub)
+
+Schema: [schemas/agent_output_v1.json](./schemas/agent_output_v1.json)
+
+Path pattern: `runs/{campaign_id}/{model_slug}/{task_id}_run{NN}.json`
+
+```bash
+# Reference trap fixtures (checked in smoke_test.py)
+python3 benchmark_v0.1/scripts/mock_agent_stub.py --write-contract-fixtures
+
+# Write one slot (same path SH-07 must use)
+python3 benchmark_v0.1/scripts/mock_agent_stub.py \
+  --mode trap_googl_sign \
+  --slot gpt-4o/GOOGL_footnote_reconciliation_run01
+```
+
+Trap modes: `gold`, `trap_googl_sign`, `trap_googl_blind_sum`, `trap_pep_reported_only`, `trap_pep_wrong_region`, `malformed`, `missing`.
+
+Fixtures: [contract_fixtures/](./contract_fixtures/)
+
 ---
 
 ## Planned next (P2)

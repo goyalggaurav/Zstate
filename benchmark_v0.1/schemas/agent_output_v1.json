@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "benchmark_v0.1/schemas/agent_output_v1.json",
+  "title": "Benchmark agent structured output v1",
+  "description": "Flat JSON object passed to task verify scripts via --agent-output. SH-07 writes one file per run at runs/{campaign}/{model_slug}/{task_id}_run{NN}.json.",
+  "oneOf": [
+    { "$ref": "#/$defs/footnote_reconciliation" },
+    { "$ref": "#/$defs/fx_organic_growth" }
+  ],
+  "$defs": {
+    "footnote_reconciliation": {
+      "type": "object",
+      "title": "Type F — footnote_reconciliation (GOOGL Q1 2026)",
+      "additionalProperties": false,
+      "required": [
+        "google_services_revenue",
+        "google_cloud_revenue",
+        "other_bets_revenue",
+        "hedging_gains_losses",
+        "consolidated_total_revenue"
+      ],
+      "properties": {
+        "google_services_revenue": { "type": "integer", "description": "USD millions" },
+        "google_cloud_revenue": { "type": "integer", "description": "USD millions" },
+        "other_bets_revenue": { "type": "integer", "description": "USD millions" },
+        "hedging_gains_losses": { "type": "integer", "description": "USD millions; loss is negative" },
+        "consolidated_total_revenue": { "type": "integer", "description": "USD millions" }
+      },
+      "examples": [
+        {
+          "google_services_revenue": 89637,
+          "google_cloud_revenue": 20028,
+          "other_bets_revenue": 411,
+          "hedging_gains_losses": -180,
+          "consolidated_total_revenue": 109896
+        }
+      ]
+    },
+    "fx_organic_growth": {
+      "type": "object",
+      "title": "Type M — fx_organic_growth (PEP FY2025)",
+      "description": "Metric IDs match ground_truth extracted_values + computed_values (numeric only).",
+      "required": [
+        "emea_net_revenue_fy2024",
+        "emea_net_revenue_fy2025",
+        "emea_reported_growth_pct",
+        "emea_fx_impact_pct",
+        "emea_organic_cc_growth_pct",
+        "latam_foods_net_revenue_fy2024",
+        "latam_foods_net_revenue_fy2025",
+        "latam_foods_reported_growth_pct",
+        "latam_foods_fx_impact_pct",
+        "latam_foods_organic_cc_growth_pct"
+      ],
+      "properties": {
+        "emea_net_revenue_fy2024": { "type": "number" },
+        "emea_net_revenue_fy2025": { "type": "number" },
+        "emea_reported_growth_pct": { "type": "number" },
+        "emea_fx_impact_pct": { "type": "number" },
+        "emea_organic_cc_growth_pct": { "type": "number" },
+        "latam_foods_net_revenue_fy2024": { "type": "number" },
+        "latam_foods_net_revenue_fy2025": { "type": "number" },
+        "latam_foods_reported_growth_pct": { "type": "number" },
+        "latam_foods_fx_impact_pct": { "type": "number" },
+        "latam_foods_organic_cc_growth_pct": { "type": "number" }
+      }
+    }
+  },
+  "directory_contract": {
+    "runs_root": "benchmark_v0.1/runs/{campaign_id}/",
+    "agent_output_pattern": "{model_slug}/{task_id}_run{run_index:02d}.json",
+    "model_slug_rule": "model_id with / and . replaced by _",
+    "reference_implementation": "benchmark_v0.1/scripts/mock_agent_stub.py"
+  }
+}

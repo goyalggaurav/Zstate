@@ -163,11 +163,115 @@ def check_frontier_v2_rescore() -> None:
     assert scores["composite_reward"] <= 0.55
 
 
+def check_benchmark_agent_contract() -> None:
+    """Directory contract + trap payloads propagate fracture codes through verify scripts."""
+    contract_dir = ROOT / "benchmark_v0.1" / "contract_fixtures"
+
+    trap_specs = [
+        ("GOOGL_footnote_reconciliation_trap_googl_sign.json", [
+            sys.executable,
+            "benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py",
+            "--period", "q1_2026",
+            "--agent-output", str(contract_dir / "GOOGL_footnote_reconciliation_trap_googl_sign.json"),
+        ], ["SIGN_ERR"], ["sign_error"]),
+        ("GOOGL_footnote_reconciliation_trap_googl_blind_sum.json", [
+            sys.executable,
+            "benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py",
+            "--period", "q1_2026",
+            "--agent-output", str(contract_dir / "GOOGL_footnote_reconciliation_trap_googl_blind_sum.json"),
+        ], ["RECON_OMIT"], ["blind_sum"]),
+        ("PEP_fx_organic_growth_trap_pep_reported_only.json", [
+            sys.executable,
+            "benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py",
+            "--agent-output", str(contract_dir / "PEP_fx_organic_growth_trap_pep_reported_only.json"),
+        ], ["CC_OMIT"], ["reported_only"]),
+        ("PEP_fx_organic_growth_trap_pep_wrong_region.json", [
+            sys.executable,
+            "benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py",
+            "--agent-output", str(contract_dir / "PEP_fx_organic_growth_trap_pep_wrong_region.json"),
+        ], ["SCOPE_ERR"], ["wrong_region"]),
+    ]
+
+    if not contract_dir.exists():
+        subprocess.run(
+            [sys.executable, "benchmark_v0.1/scripts/mock_agent_stub.py", "--write-contract-fixtures"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+        )
+
+    for filename, cmd, expect_fractures, expect_failures in trap_specs:
+        path = contract_dir / filename
+        assert path.exists(), f"missing contract fixture {path}"
+        report = run(cmd)
+        assert report.get("all_pass") is False or report.get("l1_pass") is False, report
+        for code in expect_fractures:
+            assert code in report.get("fracture_codes", []), report
+        for mode_id in expect_failures:
+            assert mode_id in report.get("failure_modes", []), report
+
+    gold_googl = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py",
+        "--period", "q1_2026",
+        "--agent-output", str(contract_dir / "GOOGL_footnote_reconciliation_gold.json"),
+    ])
+    assert gold_googl["all_pass"] is True
+    assert gold_googl["fracture_codes"] == []
+
+    gold_pep = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py",
+        "--agent-output", str(contract_dir / "PEP_fx_organic_growth_gold.json"),
+    ])
+    assert gold_pep["all_pass"] is True
+    assert gold_pep["fracture_codes"] == []
+
+    import tempfile
+
+    campaign = json.loads(
+        (ROOT / "benchmark_v0.1" / "campaigns" / "pilot_eval_campaign_v1.json").read_text()
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        mini = {
+            **campaign,
+            "runs_dir": tmp,
+            "models": ["gpt-4o"],
+            "tasks": ["GOOGL_footnote_reconciliation"],
+            "runs_per_task": 2,
+        }
+        mini_path = Path(tmp) / "mini_campaign.json"
+        mini_path.write_text(json.dumps(mini), encoding="utf-8")
+        runs_root = Path(tmp)
+        slot_dir = runs_root / "gpt-4o"
+        slot_dir.mkdir(parents=True)
+        (slot_dir / "GOOGL_footnote_reconciliation_run01.json").write_text("{bad json", encoding="utf-8")
+        proc = subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/run_benchmark_campaign.py",
+                "--campaign",
+                str(mini_path),
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        assert proc.returncode == 1, proc.stderr or proc.stdout
+        result = json.loads((runs_root / f"{mini['campaign_id']}.json").read_text())
+        assert result["summary"]["missing"] == 1
+        assert result["summary"]["scored"] == 1
+        malformed = next(r for r in result["runs"] if r["run_index"] == 1)
+        assert malformed["status"] == "scored"
+        assert "error" in malformed["verify"]
+
+
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
         ("PEP FX ground truth L1", check_pep_fx_gt),
         ("Corpus manifest", check_corpus_manifest),
+        ("Benchmark agent output contract", check_benchmark_agent_contract),
         ("PM FSM fallback escalation", check_pm_fsm_fallback_escalation),
         ("Env demo traces + schema", check_env_traces),
         ("Frontier v2 rescore traps", check_frontier_v2_rescore),

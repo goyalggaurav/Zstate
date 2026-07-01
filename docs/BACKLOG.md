@@ -119,7 +119,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 |----|------|-------|-------|
 | LATER-01 | **Track A — EDGAR corpus full ingest** | A | SH-06: download 10-K/10-Q text, section index, checksum lock. Pilot manifest (`corpus_manifest_v1.json`) is metadata-only; explore after 2+ published eval tasks or lab demo shipped. |
 | LATER-02 | Track A — transcript API + NFLX guidance task | A | P2-08 + P2-01; blocked on vendor + IR fallback runbook |
-| LATER-03 | Track A — eval orchestrator (SH-07) | A | Shared model adapters for P2-04 campaign |
+| LATER-03 | Track A — eval orchestrator (SH-07) | A | in_progress | Directory contract stub + campaign scorer done; model adapters pending |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
 
 ---

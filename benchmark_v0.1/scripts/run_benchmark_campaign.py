@@ -23,13 +23,13 @@ from statistics import median
 BENCH = Path(__file__).resolve().parent.parent
 SCRIPTS = BENCH / "scripts"
 
+sys.path.insert(0, str(SCRIPTS))
 
-def load_json(path: Path) -> dict:
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def model_slug(model_id: str) -> str:
-    return model_id.replace("/", "_").replace(".", "_")
+from agent_output_contract import (  # noqa: E402
+    bootstrap_fixtures,
+    load_json,
+    model_slug,
+)
 
 
 def published_tasks(manifest: dict) -> dict[str, dict]:
@@ -38,48 +38,6 @@ def published_tasks(manifest: dict) -> dict[str, dict]:
         for t in manifest.get("pilot_tasks", [])
         if t.get("status") == "published"
     }
-
-
-def googl_gold_values() -> dict:
-    return {
-        "google_services_revenue": 89_637,
-        "google_cloud_revenue": 20_028,
-        "other_bets_revenue": 411,
-        "hedging_gains_losses": -180,
-        "consolidated_total_revenue": 109_896,
-    }
-
-
-def pep_gold_values(gt: dict) -> dict:
-    values: dict = {}
-    for section in ("extracted_values", "computed_values"):
-        for item in gt.get(section, []):
-            if isinstance(item.get("value"), bool):
-                continue
-            values[item["metric_id"]] = item["value"]
-    return values
-
-
-def bootstrap_fixtures(campaign: dict) -> list[Path]:
-    runs_dir = (BENCH / campaign["runs_dir"]).resolve()
-    pep_gt = load_json(BENCH / "ground_truth" / "PEP_fx_organic_growth_gt.json")
-    written: list[Path] = []
-
-    for model_id in campaign["models"]:
-        mdir = runs_dir / model_slug(model_id)
-        mdir.mkdir(parents=True, exist_ok=True)
-        for task_id in campaign["tasks"]:
-            if task_id == "GOOGL_footnote_reconciliation":
-                payload = googl_gold_values()
-            elif task_id == "PEP_fx_organic_growth":
-                payload = pep_gold_values(pep_gt)
-            else:
-                continue
-            for run in range(1, campaign["runs_per_task"] + 1):
-                path = mdir / f"{task_id}_run{run:02d}.json"
-                path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-                written.append(path)
-    return written
 
 
 def verify_cmd(task_entry: dict, agent_path: Path) -> list[str]:
@@ -137,11 +95,15 @@ def score_campaign(campaign: dict, manifest: dict) -> dict:
             task_entry = pub[task_id]
             for run in range(1, campaign["runs_per_task"] + 1):
                 agent_path = runs_dir / model_slug(model_id) / f"{task_id}_run{run:02d}.json"
+                try:
+                    agent_rel = str(agent_path.relative_to(BENCH.parent))
+                except ValueError:
+                    agent_rel = str(agent_path)
                 rec = {
                     "model_id": model_id,
                     "task_id": task_id,
                     "run_index": run,
-                    "agent_output": str(agent_path.relative_to(BENCH.parent)),
+                    "agent_output": agent_rel,
                     "agent_output_exists": agent_path.exists(),
                 }
                 if not agent_path.exists():

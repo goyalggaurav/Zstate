@@ -3,7 +3,7 @@
 # Eval Orchestrator — Component Spec
 
 **Version:** 0.1 (draft)  
-**Status:** Design — no implementation  
+**Status:** Partial — directory contract + mock stub implemented; full orchestrator pending (LATER-03)  
 **Owner:** Platform Engineering  
 **Consumers:** Model adapters, Trajectory Logger, Scoring Engine, Task Registry
 
@@ -119,6 +119,21 @@ interface TrajectoryCallbacks {
 | **Tier C — Ablations** | No-tools / no-code / no-compliance variants |
 
 No vendor lock-in — `model_id` + `adapter_version` + `run_config` documented per campaign.
+
+### Implemented stub (P2-04)
+
+Track A ships a **contract verification stub** before the full orchestrator:
+
+| Artifact | Role |
+|----------|------|
+| `benchmark_v0.1/schemas/agent_output_v1.json` | Structured output schema (Type F + Type M) |
+| `benchmark_v0.1/scripts/mock_agent_stub.py` | Writes agent JSON to campaign run paths |
+| `benchmark_v0.1/scripts/run_benchmark_campaign.py` | Scores outputs via task verify scripts |
+| `benchmark_v0.1/contract_fixtures/` | Gold + trap reference payloads |
+
+**Directory contract:** `{runs_dir}/{model_slug}/{task_id}_run{01..N}.json` where `model_slug = model_id` with `/` and `.` → `_`.
+
+SH-07 must write the same paths; smoke tests assert trap fracture codes propagate.
 
 ---
 
