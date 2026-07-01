@@ -1,11 +1,12 @@
-# CFA Review — PEP FX Organic Growth Ground Truth
+# Expert Review — PEP FX Organic Growth Ground Truth
 
+**Reviewer:** Gaurav Goyal (CFA Level III candidate)  
 **Artifact:** `benchmark_v0.1/ground_truth/PEP_fx_organic_growth_gt.json`  
 **Task:** `PEP_fx_organic_growth` (Type M)  
 **Scored period:** FY2025 (10-K filed 2026-02-18)  
-**Status:** `draft_pending_cfa`  
+**Status:** `draft_pending_expert_review`  
 **Eng draft date:** 2026-07-01  
-**CFA review date:** _pending_
+**Expert review date:** _pending_
 
 ---
 
@@ -24,7 +25,7 @@ WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024**
 
 ---
 
-## CFA checklist
+## Expert checklist
 
 - [ ] All FY2025 figures match PepsiCo 10-K — correct columns (2025 vs 2024)
 - [ ] Europe and AMESA geographic definitions match company disclosure

@@ -1,11 +1,13 @@
-# CFA Review — Solaris Earnings Quality Gold Key
+# Expert Review — Solaris Earnings Quality Gold Key
+
+**Reviewer:** Gaurav Goyal (CFA Level III candidate)  
 
 **Artifact:** `env_v1/gold_keys.example/solaris_adj_eps_v1.json`  
 **Episode:** `solaris_adj_eps_dispute_v1` (Track B — dual-control)  
-**Status:** `approved`  
+**Status:** `expert_reviewed`  
 **Version published:** v1.0  
 **Eng draft date:** 2026-07-01  
-**CFA review date:** 2026-07-01
+**Expert review date:** 2026-07-01
 
 ---
 
@@ -65,7 +67,7 @@ Partial credit: Correct binary exclusion + weak prior-year disclosure.
 
 ---
 
-## CFA checklist
+## Expert checklist
 
 - [x] $0.18 / $0.04 decomposition matches corpus excerpts
 - [x] $1.20 and $1.24 are both acceptable outcomes with good reasoning
@@ -87,7 +89,7 @@ python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_timeout
 
 ---
 
-## CFA verdict
+## Expert verdict
 
 **Verdict:** approve
 
@@ -109,7 +111,7 @@ python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_timeout
 - **Pushover branch:** `follow_up_pushover` when agent cites history without FY footnotes; `pushover` flag if agent capitulates without new retrieval.
 - **Demo traces:** `sample_trace_pushover.json`, `sample_trace_rhetoric.json`.
 
-CFA re-review optional for v1.1 wording; structural traps approved in principle at v1.0 deferral.
+Expert re-review optional for v1.1 wording; structural traps approved in principle at v1.0 deferral.
 
 ### v1.1.2 scorer tightenings (2026-07-01)
 

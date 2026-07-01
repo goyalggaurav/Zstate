@@ -1,10 +1,11 @@
-# CFA Review — Defense Rubric (REV-04)
+# Expert Review — Defense Rubric (REV-04)
 
+**Reviewer:** Gaurav Goyal (CFA Level III candidate)  
 **Artifact:** `env_v1/verifier/defense_rubric.json` v1.1.1  
 **Verifier weights:** `env_v1/verifier/weights.json` → `defense` section  
-**Status:** `cfa_approved`  
+**Status:** `expert_reviewed`  
 **Eng draft date:** 2026-07-01  
-**CFA review date:** 2026-07-01
+**Expert review date:** 2026-07-01
 
 ---
 
@@ -119,7 +120,7 @@ This is the hero failure for lab demos — not Run #005 (which illustrates ortho
 
 ---
 
-## CFA checklist (P1-07)
+## Expert checklist (P1-07)
 
 - [x] **Weights (35/30/20/15): Approved** — Epistemic Baseline 65%; Thesis Recalibration + Semantic Progression 35%.
 - [x] **Conflict Resolution:** Run #004 fails — filing recap without prior-year address.
@@ -136,5 +137,5 @@ This is the hero failure for lab demos — not Run #005 (which illustrates ortho
 
 | Reviewer | Date | Status |
 |----------|------|--------|
-| CFA | 2026-07-01 | **approved** |
+| Finance expert | 2026-07-01 | **expert_reviewed** |
 | Eng | 2026-07-01 | rubric v1.1.1 — stack diagram + naming polish |

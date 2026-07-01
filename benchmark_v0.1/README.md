@@ -18,7 +18,7 @@ Manifest: [corpus/corpus_manifest_v1.json](./corpus/corpus_manifest_v1.json)
 
 | Task | Type | Period | Status |
 |------|------|--------|--------|
-| [GOOGL_footnote_reconciliation](./tasks/GOOGL_footnote_reconciliation.json) | F — Forensics | **Q1 2026** (10-Q filed 2026-04-30) | **Published** (CFA approved 2026-07-01) |
+| [GOOGL_footnote_reconciliation](./tasks/GOOGL_footnote_reconciliation.json) | F — Forensics | **Q1 2026** (10-Q filed 2026-04-30) | **Published** (expert-reviewed 2026-07-01) |
 
 ### What this task tests
 
@@ -30,7 +30,7 @@ Reconcile **Q1 2026** reportable segment revenues to consolidated total revenue.
 
 | Task | Type | Period | Status |
 |------|------|--------|--------|
-| [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-18) | **Draft** (CFA review pending) |
+| [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-18) | **Draft** (expert review pending) |
 
 ### What this task tests
 
@@ -40,7 +40,7 @@ Constant-currency organic revenue growth for **Europe** and **AMESA** using **we
 python3 benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py
 ```
 
-CFA review: [docs/expert_drafts/PEP_FX_GT_REVIEW.md](../docs/expert_drafts/PEP_FX_GT_REVIEW.md)
+Expert review: [docs/expert_drafts/PEP_FX_GT_REVIEW.md](../docs/expert_drafts/PEP_FX_GT_REVIEW.md)
 
 ---
 
@@ -62,6 +62,6 @@ python3 benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py
 python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 ```
 
-## CFA sign-off (published)
+## Expert sign-off (published)
 
 See [docs/expert_drafts/GOOGL_GT_REVIEW.md](../docs/expert_drafts/GOOGL_GT_REVIEW.md).

@@ -13,14 +13,14 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 
 | ID | Item | Track | Status | Owner | Notes |
 |----|------|-------|--------|-------|-------|
-| P0-01 | GOOGL footnote pilot — expert sign-off | A | done | CFA | Approved 2026-07-01; see `GOOGL_GT_REVIEW.md` + `rubrics/GOOGL_footnote_reconciliation_grader.md` |
+| P0-01 | GOOGL footnote pilot — expert sign-off | A | done | Finance expert | Expert-reviewed 2026-07-01; see `GOOGL_GT_REVIEW.md` |
 | P0-02 | env_v1 scaffold (tool backend, episode, PM FSM, scorer) | B | done | Eng | See `env_v1/` |
 | P0-03 | Copy dual-control spec + flow diagram into repo | B | done | Eng | `env_v1/docs/` |
 | P0-04 | gitignore `gold_keys/` + example template | B | done | Eng | `gold_keys.example/` |
-| P0-05 | Solaris gold key (expert-authored) | B | done | CFA | v1.0 approved 2026-07-01; `SOLARIS_GOLD_KEY_REVIEW.md` |
+| P0-05 | Solaris gold key (expert-authored) | B | done | Finance expert | Expert-reviewed 2026-07-01; `SOLARIS_GOLD_KEY_REVIEW.md` |
 | P0-06 | Corpus manifest for 5 pilot tickers (EDGAR) | A | done | Eng | `benchmark_v0.1/corpus/corpus_manifest_v1.json` |
 | P0-07 | Roadmap + backlog (this file) | Both | done | Eng | Unified planning |
-| P0-08 | Name CFA lead + associate | Both | todo | Product | Binding constraint |
+| P0-08 | Name finance expert + associate | Both | done | Product | Gaurav Goyal (CFA L3 candidate) — lead + associate; see `EXPERT_CREDENTIALS.md` |
 
 ---
 
@@ -34,7 +34,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P1-04 | `score_episode.py` — 4-component verifier | B | in_progress | Eng | Deterministic done; LLM-judge pending |
 | P1-05 | Outcome checker — sale-leaseback binary exclude | B | done | Eng | In `score_episode.py` |
 | P1-06 | Grounding checker — claims vs tool log | B | done | Eng | Doc ID hits in `score_episode.py` |
-| P1-07 | Defense rubric + Follow-up C engagement flag | B | done | CFA + Eng | REV-04 approved 2026-07-01; `defense_rubric.json` v1.1.0 |
+| P1-07 | Defense rubric + Follow-up C engagement flag | B | done | Finance expert + Eng | REV-04 expert-reviewed 2026-07-01 |
 | P1-08 | Hallucination detector — facts not in tool outputs | B | done | Eng | Unsupported prior-year narrative without FY footnotes → `HALLUC_FILL` |
 | P1-09 | Timeout rule — cap Outcome / zero Defense if no submit | B | done | Eng | In `score_episode.py` |
 | P1-10 | 3 demo trajectories (good / partial / timeout) | B | done | Eng | `run_episode.py --mode all` |
@@ -159,6 +159,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-19 | Pilot corpus manifest (5 tickers) + PEP FX task draft (P0-06, P2-02) | Jul 2026 |
 | DONE-20 | Frontier v3 live campaign + v1.1.3 FSM + OpenAI retry hardening | Jul 2026 |
 | DONE-21 | Lab package: METHODOLOGY v1.0, FRACTURE_REPORT v0, REV-04 draft | Jul 2026 |
+| DONE-22 | Expert credentials policy + Gaurav Goyal named (P0-08) | Jul 2026 |
 
 ---
 

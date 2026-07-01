@@ -4,7 +4,7 @@
 **Canonical prompt:** `benchmark_v0.1/tasks/GOOGL_footnote_reconciliation.json` → `prompt.text`  
 **Ground truth:** `benchmark_v0.1/ground_truth/GOOGL_footnote_reconciliation_gt.json`  
 **Verify script:** `benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py`  
-**CFA sign-off:** `docs/expert_drafts/GOOGL_GT_REVIEW.md` (approved 2026-07-01)
+**Expert sign-off:** `docs/expert_drafts/GOOGL_GT_REVIEW.md` (expert-reviewed 2026-07-01, Gaurav Goyal, CFA L3 candidate)
 
 ---
 

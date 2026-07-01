@@ -1,11 +1,12 @@
-# CFA Review — GOOGL Footnote Reconciliation Ground Truth
+# Expert Review — GOOGL Footnote Reconciliation Ground Truth
 
+**Reviewer:** Gaurav Goyal (CFA Level III candidate)  
 **Artifact:** `benchmark_v0.1/ground_truth/GOOGL_footnote_reconciliation_gt.json`  
 **Task:** `GOOGL_footnote_reconciliation` (Type F)  
 **Scored period:** Q1 2026 (10-Q filed 2026-04-30)  
-**Status:** `approved`  
+**Status:** `expert_reviewed`  
 **Eng draft date:** 2026-07-01  
-**CFA review date:** 2026-07-01
+**Expert review date:** 2026-07-01
 
 ---
 
@@ -33,7 +34,7 @@ Reconcile Q1 2026 reportable segment revenues to consolidated total. Agent must 
 
 ---
 
-## CFA checklist
+## Expert checklist
 
 - [x] All Q1 2026 figures match [Alphabet 10-Q](https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm) — correct column (2026, not 2025)
 - [x] Hedging line is **(180)** not +180
@@ -54,7 +55,7 @@ Expected: `all_pass: true`
 
 ---
 
-## CFA verdict
+## Expert verdict
 
 **Verdict:** approve
 

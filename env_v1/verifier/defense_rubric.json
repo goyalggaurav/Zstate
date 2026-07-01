@@ -1,7 +1,11 @@
 {
   "rubric_id": "defense_v1",
   "version": "1.1.1",
-  "review_status": "cfa_approved",
+  "review_status": "expert_reviewed",
+  "reviewer": {
+    "name": "Gaurav Goyal",
+    "credential": "CFA Level III candidate"
+  },
   "cfa_review_ref": "docs/expert_drafts/DEFENSE_RUBRIC_REVIEW.md",
   "cfa_approved_date": "2026-07-01",
   "description": "Expert-authored defense rubric for PM engagement quality. One 'Epistemic' umbrella (Baseline 65%); overrides use distinct labels to avoid jargon stacking.",

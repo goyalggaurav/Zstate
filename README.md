@@ -9,14 +9,14 @@ Design-phase repository for **AlphaNote-Bench**: credentialed-expert equity rese
 | **Everyone** | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 | **Planning** | [docs/ROADMAP.md](docs/ROADMAP.md) · [docs/BACKLOG.md](docs/BACKLOG.md) |
 | **Product / scope** | [Framework v0.2](docs/ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md) |
-| **CFA expert review** | [docs/EXPERT_REVIEW_WORKFLOW.md](docs/EXPERT_REVIEW_WORKFLOW.md) |
+| **CFA expert review** | [docs/EXPERT_REVIEW_WORKFLOW.md](docs/EXPERT_REVIEW_WORKFLOW.md) · [credentials](docs/EXPERT_CREDENTIALS.md) |
 | **Full docs index** | [docs/README.md](docs/README.md) |
 
 ## Implemented artifacts
 
 | Track | Path | Status |
 |-------|------|--------|
-| **A — Eval benchmark** | [benchmark_v0.1/](benchmark_v0.1/) | GOOGL published (CFA approved 2026-07-01) |
+| **A — Eval benchmark** | [benchmark_v0.1/](benchmark_v0.1/) | GOOGL published (expert-reviewed 2026-07-01) |
 | **B — RL environment** | [env_v1/](env_v1/) | Solaris v1.0 published + agent loop |
 
 ## Quick commands
