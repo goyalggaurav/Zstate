@@ -20,6 +20,13 @@ python3 env_v1/scripts/run_episode.py --mode all
 python3 env_v1/scripts/agent_loop.py --agent scripted \
   --plan env_v1/examples/agents/solaris_good_plan.json
 
+# Mock weak agent (offline — no API key)
+python3 env_v1/scripts/agent_loop.py --agent mock
+
+# Frontier model (OpenAI-compatible — see docs/AGENT_ADAPTERS.md)
+# export OPENAI_API_KEY=...
+# python3 env_v1/scripts/agent_loop.py --agent openai --model-id gpt-4o
+
 # Interactive manual agent (REPL)
 python3 env_v1/scripts/agent_loop.py --agent repl
 ```

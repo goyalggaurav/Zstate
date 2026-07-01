@@ -2,11 +2,11 @@
 """
 Agent loop for env_v1 dual-control episodes.
 
-Modes:
-  scripted  — replay actions from a JSON plan (for P1-12 adapter testing)
-  repl      — interactive stdin loop (manual tool calls + PM messages)
-
-Demo trajectories (sample/partial/timeout) remain in run_episode.py.
+Agent modes:
+  scripted  — replay JSON plan (regression / gold path)
+  repl      — interactive stdin
+  mock      — deterministic weak agent (offline, no API key)
+  openai    — OpenAI-compatible chat + tools (OPENAI_API_KEY required)
 """
 
 from __future__ import annotations
@@ -16,12 +16,12 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from pm_features import extract_pm_hints, infer_submission_fields  # noqa: E402
+from pm_features import infer_submission_fields  # noqa: E402
 from tool_backend import ToolBackend, load_corpus  # noqa: E402
 
 
@@ -29,12 +29,15 @@ def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def pm_respond(policy: dict, pm_turn_count: int, steps: list[dict], tool_log: list[dict]) -> tuple[str, list[str], str]:
-    """Select PM branch from extracted agent features."""
-    hints = extract_pm_hints(steps, tool_log)
-    flags: list[str] = []
-    branch_id = "fallback_ood"
+class StepAgent(Protocol):
+    def next_action(self, context: dict[str, Any]) -> dict | None: ...
 
+
+def pm_respond(policy: dict, pm_turn_count: int, steps: list[dict], tool_log: list[dict]) -> tuple[str, list[str], str]:
+    from pm_features import extract_pm_hints
+
+    hints = extract_pm_hints(steps, tool_log)
+    branch_id = "fallback_ood"
     if pm_turn_count == 0:
         branch_id = "opening_pushback"
     elif hints.get("engagement_failure"):
@@ -45,8 +48,7 @@ def pm_respond(policy: dict, pm_turn_count: int, steps: list[dict], tool_log: li
         branch_id = "follow_up_a"
 
     branch = next(b for b in policy["branches"] if b["branch_id"] == branch_id)
-    flags = list(branch.get("flags", []))
-    return branch["message"], flags, branch_id
+    return branch["message"], list(branch.get("flags", [])), branch_id
 
 
 def build_trace(
@@ -81,61 +83,48 @@ def build_trace(
     }
 
 
-def execute_action(action: dict, backend: ToolBackend, steps: list[dict]) -> bool:
-    """Execute one agent action. Returns False if episode should stop (submit)."""
-    atype = action["type"]
-    if atype == "tool_call":
-        out = backend.call(action["tool"], **action.get("input", {}))
-        doc_id = backend.log[-1].get("doc_id") if backend.log else None
-        steps.append({
-            "type": "tool_call",
-            "tool": action["tool"],
-            "input": action.get("input", {}),
-            "output": out,
-            "doc_id": doc_id,
-        })
-        return True
-    if atype == "send_message_to_pm":
-        steps.append({"type": "send_message_to_pm", "text": action["text"]})
-        return True
-    if atype == "submit_recommendation":
-        sub = {k: v for k, v in action.items() if k != "type"}
-        sub.setdefault("submitted", True)
-        steps.append({"type": "submit_recommendation", **sub})
-        return False
-    raise ValueError(f"Unknown action type: {atype}")
-
-
-def run_scripted_episode(
+def run_agent_episode(
     episode_id: str,
-    plan_path: Path,
+    agent: StepAgent,
     *,
+    agent_mode: str,
     model_id: str | None = None,
+    plan_id: str | None = None,
 ) -> dict:
     ep_path = ROOT / "episodes" / f"{episode_id}.json"
     ep = load_json(ep_path)
     policy = load_json((ep_path.parent / ep["pm_policy_ref"]).resolve())
-    plan = load_json(plan_path)
     backend = ToolBackend(load_corpus(episode_id))
+    max_steps = ep.get("execution_limits", {}).get("max_turns", 8) * 3
 
-    max_turns = ep.get("execution_limits", {}).get("max_turns", 8)
     steps: list[dict] = []
     pm_flags: list[str] = []
     pm_turn_count = 0
-    termination = "error"
-    submission: dict = {}
+    termination = "timeout"
+    submission: dict = {"submitted": False}
+    context: dict[str, Any] = {"episode": ep, "steps": steps}
 
-    actions = list(plan["actions"])
-    i = 0
-    while i < len(actions):
-        if len(steps) >= max_turns * 3:
-            termination = "timeout"
-            submission = infer_submission_fields(steps, backend.log)
-            submission["submitted"] = False
+    while len(steps) < max_steps:
+        action = agent.next_action(context)
+        if action is None:
             break
 
-        action = actions[i]
-        i += 1
+        if action["type"] == "tool_call":
+            tool = action["tool"]
+            inp = action.get("input", {})
+            out = backend.call(tool, **inp)
+            doc_id = backend.log[-1].get("doc_id") if backend.log else None
+            steps.append({
+                "type": "tool_call",
+                "tool": tool,
+                "input": inp,
+                "output": out,
+                "doc_id": doc_id,
+            })
+            if hasattr(agent, "record_tool_result"):
+                agent.record_tool_result(action.get("_tool_call_id"), tool, out)
+            context["steps"] = steps
+            continue
 
         if action["type"] == "send_message_to_pm":
             steps.append({"type": "send_message_to_pm", "text": action["text"]})
@@ -149,6 +138,9 @@ def run_scripted_episode(
                     "text": policy["acceptance"]["message"],
                     "branch_id": "acceptance",
                 })
+            if hasattr(agent, "record_pm_message"):
+                agent.record_pm_message(pm_msg)
+            context["steps"] = steps
             continue
 
         if action["type"] == "submit_recommendation":
@@ -159,106 +151,133 @@ def run_scripted_episode(
             termination = "submit"
             break
 
-        cont = execute_action(action, backend, steps)
-        if not cont:
-            submission = infer_submission_fields(steps, backend.log)
-            termination = "submit"
-            break
-    else:
-        if termination == "error":
-            submission = infer_submission_fields(steps, backend.log)
-            if submission.get("submitted"):
-                termination = "submit"
-            else:
-                termination = "timeout"
+        raise ValueError(f"Unknown action: {action}")
+
+    if termination != "submit":
+        submission = infer_submission_fields(steps, backend.log)
+        submission["submitted"] = False
 
     return build_trace(
         episode_id,
-        "scripted",
+        agent_mode,
         termination,
         steps,
         submission,
         backend.log,
         pm_flags,
+        model_id=model_id,
+        plan_id=plan_id,
+    )
+
+
+def run_scripted_episode(episode_id: str, plan_path: Path, *, model_id: str | None = None) -> dict:
+    plan = load_json(plan_path)
+
+    class _PlanAgent:
+        def __init__(self) -> None:
+            self.i = 0
+            self.actions = plan["actions"]
+
+        def next_action(self, _context: dict) -> dict | None:
+            if self.i >= len(self.actions):
+                return None
+            action = self.actions[self.i]
+            self.i += 1
+            return action
+
+    return run_agent_episode(
+        episode_id,
+        _PlanAgent(),
+        agent_mode="scripted",
         model_id=model_id or plan.get("plan_id"),
         plan_id=plan.get("plan_id"),
     )
 
 
 def run_repl_episode(episode_id: str) -> dict:
-    """Interactive loop — type JSON actions, one per line. Empty line to finish."""
     ep_path = ROOT / "episodes" / f"{episode_id}.json"
     ep = load_json(ep_path)
-    policy = load_json((ep_path.parent / ep["pm_policy_ref"]).resolve())
-    backend = ToolBackend(load_corpus(episode_id))
     max_turns = ep.get("execution_limits", {}).get("max_turns", 8)
+    print(f"Episode: {episode_id} | REPL | max_steps≈{max_turns * 3}")
+    print('Actions: {"type":"tool_call",...} | send_message_to_pm | submit_recommendation\n')
 
-    print(f"Episode: {episode_id} | REPL mode | max_turns≈{max_turns}")
-    print("Action JSON (one line). Examples:")
-    print('  {"type":"tool_call","tool":"get_filing","input":{"doc_type":"10-Q","period":"2025Q2"}}')
-    print('  {"type":"send_message_to_pm","text":"Adjusted EPS $1.20 ..."}')
-    print('  {"type":"submit_recommendation","adjusted_eps":1.2,"sale_leaseback_excluded":true,"submitted":true}')
-    print("Empty line → end episode (timeout if no submit).\n")
+    class _ReplAgent:
+        def next_action(self, _context: dict) -> dict | None:
+            try:
+                line = input("agent> ").strip()
+            except EOFError:
+                return None
+            if not line:
+                return None
+            return json.loads(line)
 
-    steps: list[dict] = []
-    pm_flags: list[str] = []
-    pm_turn_count = 0
-    termination = "timeout"
-    submission: dict = {"submitted": False}
+    return run_agent_episode(episode_id, _ReplAgent(), agent_mode="repl")
 
-    while len(steps) < max_turns * 3:
-        try:
-            line = input("agent> ").strip()
-        except EOFError:
-            break
-        if not line:
-            break
-        action = json.loads(line)
 
-        if action["type"] == "send_message_to_pm":
-            steps.append({"type": "send_message_to_pm", "text": action["text"]})
-            pm_msg, flags, branch_id = pm_respond(policy, pm_turn_count, steps, backend.log)
-            pm_turn_count += 1
-            pm_flags.extend(flags)
-            steps.append({"type": "pm_turn", "text": pm_msg, "branch_id": branch_id})
-            print(f"pm> {pm_msg}")
-            continue
+def run_mock_episode(episode_id: str) -> dict:
+    from agents.mock_agent import MockWeakAgent
 
-        if action["type"] == "submit_recommendation":
-            sub = {k: v for k, v in action.items() if k != "type"}
-            sub.setdefault("submitted", True)
-            steps.append({"type": "submit_recommendation", **sub})
-            submission = sub
-            termination = "submit"
-            break
+    agent = MockWeakAgent()
+    return run_agent_episode(
+        episode_id,
+        agent,
+        agent_mode="mock",
+        model_id="mock_weak_v1",
+        plan_id=agent.plan_id,
+    )
 
-        execute_action(action, backend, steps)
-        if backend.log:
-            preview = backend.log[-1].get("output_preview", "")[:120]
-            print(f"tool> {preview}...")
 
-    if termination != "submit":
-        submission = infer_submission_fields(steps, backend.log)
-        submission["submitted"] = False
+def run_openai_episode(episode_id: str, *, model: str | None = None) -> dict:
+    from agents.openai_agent import OpenAICompatAgent
 
-    return build_trace(episode_id, "repl", termination, steps, submission, backend.log, pm_flags)
+    ep = load_json(ROOT / "episodes" / f"{episode_id}.json")
+    agent = OpenAICompatAgent(ep, model=model)
+
+    class _OpenAIWrapper:
+        def __init__(self, inner: OpenAICompatAgent) -> None:
+            self.inner = inner
+
+        def next_action(self, context: dict) -> dict | None:
+            return self.inner.next_action(context)
+
+        def record_tool_result(self, tool_call_id: str | None, name: str, output: str) -> None:
+            self.inner.record_tool_result(tool_call_id, name, output)
+
+        def record_pm_message(self, text: str) -> None:
+            self.inner.messages.append({"role": "user", "content": f"Portfolio Manager: {text}"})
+
+    wrapped = _OpenAIWrapper(agent)
+    return run_agent_episode(
+        episode_id,
+        wrapped,
+        agent_mode="openai",
+        model_id=agent.model,
+    )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run env_v1 agent loop")
     parser.add_argument("--episode", default="solaris_adj_eps_dispute_v1")
-    parser.add_argument("--agent", choices=("scripted", "repl"), required=True)
+    parser.add_argument(
+        "--agent",
+        choices=("scripted", "repl", "mock", "openai"),
+        required=True,
+    )
     parser.add_argument("--plan", type=Path, help="JSON plan for scripted agent")
     parser.add_argument("--out", type=Path, help="Output trace path")
-    parser.add_argument("--model-id", default=None)
+    parser.add_argument("--model-id", default=None, help="LLM model id (openai agent)")
     args = parser.parse_args()
 
     if args.agent == "scripted":
         if not args.plan:
             parser.error("--plan required for scripted agent")
         trace = run_scripted_episode(args.episode, args.plan, model_id=args.model_id)
-    else:
+    elif args.agent == "repl":
         trace = run_repl_episode(args.episode)
+    elif args.agent == "mock":
+        trace = run_mock_episode(args.episode)
+    else:
+        trace = run_openai_episode(args.episode, model=args.model_id)
 
     from run_episode import write_trace
 

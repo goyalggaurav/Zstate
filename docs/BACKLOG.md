@@ -30,7 +30,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 |----|------|-------|--------|-------|-------|
 | P1-01 | Solaris corpus bundle JSON (10-Q, transcript, consensus, prior 10-K) | B | done | Eng | `corpus/solaris_bundle_v1.json` — CFA review REV-03 |
 | P1-02 | PM policy FSM v1 (opening, follow-up A/B/C) | B | done | Eng | `pm_policies/pm_v1.json` |
-| P1-03 | `run_episode.py` + `agent_loop.py` — scripted/REPL agent | B | in_progress | Eng | Demo modes + PM heuristics; API adapter next (P1-12) |
+| P1-03 | `agent_loop.py` — scripted / mock / openai agents | B | done | Eng | See `env_v1/docs/AGENT_ADAPTERS.md` |
 | P1-04 | `score_episode.py` — 4-component verifier | B | in_progress | Eng | Deterministic done; LLM-judge pending |
 | P1-05 | Outcome checker — sale-leaseback binary exclude | B | done | Eng | In `score_episode.py` |
 | P1-06 | Grounding checker — claims vs tool log | B | done | Eng | Doc ID hits in `score_episode.py` |
@@ -39,7 +39,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P1-09 | Timeout rule — cap Outcome / zero Defense if no submit | B | done | Eng | In `score_episode.py` |
 | P1-10 | 3 demo trajectories (good / partial / timeout) | B | done | Eng | `run_episode.py --mode all` |
 | P1-11 | `METHODOLOGY_RL_ENV.md` — anti-hacking, calibration | B | in_progress | Eng | Draft exists; finalize for lab |
-| P1-12 | One frontier model end-to-end run | B | todo | Eng | First fracture data from env |
+| P1-12 | One frontier model end-to-end run | B | in_progress | Eng | `OPENAI_API_KEY` + `--agent openai` |
 | P1-13 | Expert adjudication protocol (10–20% sample) | Both | todo | CFA | κ ≥ 0.7 on Outcome (judgment) + Defense |
 | P1-14 | Solaris episode v1.1 — transcript distractor + pushover branch | B | todo | CFA + Eng | CEO rhetoric vs Note 12; `follow_up_pushover`; failure modes `pushover`, `rhetoric_over_filing`. Forward P/E out of scope — separate task |
 

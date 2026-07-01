@@ -1,0 +1,12 @@
+# Agent adapter — P1-12 frontier model runs
+#
+# Install: optional — uses stdlib urllib for OpenAI-compatible APIs.
+#
+# Environment:
+#   OPENAI_API_KEY     Required for --agent openai
+#   OPENAI_MODEL       Default model (default: gpt-4o-mini)
+#   OPENAI_BASE_URL    Compatible API base (default: https://api.openai.com/v1)
+#
+# Examples:
+#   python3 env_v1/scripts/agent_loop.py --agent mock
+#   OPENAI_API_KEY=sk-... python3 env_v1/scripts/agent_loop.py --agent openai --model-id gpt-4o

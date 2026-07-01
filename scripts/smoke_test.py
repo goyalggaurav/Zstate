@@ -81,11 +81,34 @@ def check_scripted_agent() -> None:
     out.with_name(out.stem + "_scores.json").unlink(missing_ok=True)
 
 
+def check_mock_agent() -> None:
+    out = ROOT / "env_v1" / "runs" / "_smoke_mock.json"
+    subprocess.run(
+        [
+            sys.executable,
+            "env_v1/scripts/agent_loop.py",
+            "--agent", "mock",
+            "--out", str(out),
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    trace = json.loads(out.read_text())
+    assert trace["termination"] == "submit"
+    assert "SECTION_MISS" in trace.get("fractures", []) or "omit_prior_year" in str(
+        trace.get("reward", {})
+    )
+    out.unlink(missing_ok=True)
+    out.with_name(out.stem + "_scores.json").unlink(missing_ok=True)
+
+
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
         ("Env demo traces + schema", check_env_traces),
         ("Scripted agent loop", check_scripted_agent),
+        ("Mock LLM agent loop", check_mock_agent),
     ]
     failed = 0
     for name, fn in checks:
