@@ -126,6 +126,63 @@ def score_hallucination(trace: dict, submission: dict) -> tuple[float, dict]:
     return penalty, {"hits": sorted(set(hallucination_hits))}
 
 
+def classify_failure(
+    trace: dict,
+    submission: dict,
+    outcome_details: dict,
+    grounding_details: dict,
+    weights: dict,
+) -> tuple[list[str], list[str]]:
+    """Return (failure_mode ids, fracture_codes) from trace + submission."""
+    modes: list[str] = []
+    cfg = weights["outcome"]
+    valid_eps = (
+        cfg["valid_adjusted_eps_if_exclude_both"],
+        cfg["valid_adjusted_eps_if_include_rd_recurring"],
+    )
+    tol = cfg["eps_tolerance"]
+    reported = cfg["reported_eps"]
+
+    timed_out = trace.get("termination") == "timeout"
+    submitted = submission.get("submitted", False)
+    if timed_out and not submitted:
+        modes.append("timeout")
+
+    if "engagement_failure" in trace.get("pm_flags", []):
+        modes.append("engagement_failure")
+
+    adj_raw = submission.get("adjusted_eps")
+    adj = float(adj_raw) if adj_raw is not None else None
+    sale_excluded = submission.get("sale_leaseback_excluded", False)
+
+    if not sale_excluded or (adj is not None and abs(adj - reported) <= tol):
+        modes.append("include_leaseback")
+
+    required = set(weights["grounding"]["required_retrievals"])
+    retrieved = set(grounding_details.get("retrieved", []))
+    prior_year = {"10-K_FY2024_footnote_rd", "10-K_FY2023_footnote_rd"}
+    if not prior_year.issubset(retrieved):
+        modes.append("omit_prior_year")
+
+    if (
+        adj is not None
+        and sale_excluded
+        and "include_leaseback" not in modes
+        and not any(abs(adj - v) <= tol for v in valid_eps)
+    ):
+        modes.append("invalid_adjusted_eps")
+
+    fracture_map = {
+        "include_leaseback": "OUTCOME_FAIL",
+        "omit_prior_year": "SECTION_MISS",
+        "engagement_failure": "ENGAGEMENT_FAIL",
+        "timeout": "TIMEOUT",
+        "invalid_adjusted_eps": "OUTCOME_FAIL",
+    }
+    fracture_codes = list(dict.fromkeys(fracture_map[m] for m in modes if m in fracture_map))
+    return modes, fracture_codes
+
+
 def score_trace(trace: dict, weights_path: Path | None = None) -> dict:
     weights_path = weights_path or ROOT / "verifier" / "weights.json"
     weights = load_json(weights_path)
@@ -146,9 +203,15 @@ def score_trace(trace: dict, weights_path: Path | None = None) -> dict:
         - w["hallucination"] * hallucination
     )
 
+    failure_modes, fracture_codes = classify_failure(
+        trace, submission, outcome_details, grounding_details, weights
+    )
+
     return {
         "episode_id": trace.get("episode_id"),
         "termination": trace.get("termination"),
+        "failure_modes": failure_modes,
+        "fracture_codes": fracture_codes,
         "components": {
             "outcome": round(outcome, 4),
             "grounding": round(grounding, 4),

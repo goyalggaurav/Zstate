@@ -8,7 +8,9 @@
       "corpus_ref": "corpus/solaris_bundle_v1.json",
       "pm_policy_ref": "pm_policies/pm_v1.json",
       "gold_key_ref": "gold_keys/solaris_adj_eps_v1.json",
-      "status": "pilot"
+      "gold_key_example_ref": "gold_keys.example/solaris_adj_eps_v1.json",
+      "grader_rubric_ref": "rubrics/solaris_adj_eps_grader.md",
+      "status": "pending_cfa_review"
     }
   ],
   "verifier_ref": "verifier/weights.json",

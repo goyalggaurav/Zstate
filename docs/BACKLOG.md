@@ -17,7 +17,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P0-02 | env_v1 scaffold (tool backend, episode, PM FSM, scorer) | B | done | Eng | See `env_v1/` |
 | P0-03 | Copy dual-control spec + flow diagram into repo | B | done | Eng | `env_v1/docs/` |
 | P0-04 | gitignore `gold_keys/` + example template | B | done | Eng | `gold_keys.example/` |
-| P0-05 | Solaris gold key (expert-authored) | B | pending_cfa_review | CFA | See `docs/expert_drafts/SOLARIS_GOLD_KEY_REVIEW.md` |
+| P0-05 | Solaris gold key (expert-authored) | B | pending_cfa_review | CFA | Eng scaffold v1.1 done — `SOLARIS_GOLD_KEY_REVIEW.md` + `rubrics/solaris_adj_eps_grader.md` |
 | P0-06 | Corpus manifest for 5 pilot tickers (EDGAR) | A | todo | Eng | Feeds Track A tasks |
 | P0-07 | Roadmap + backlog (this file) | Both | done | Eng | Unified planning |
 | P0-08 | Name CFA lead + associate | Both | todo | Product | Binding constraint |

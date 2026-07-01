@@ -1,8 +1,11 @@
 {
   "episode_id": "solaris_adj_eps_dispute_v1",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "example_template",
   "note": "Copy to gold_keys/ locally. Do not commit gold_keys/ — gitignored.",
+
+  "agent_brief_ref": "../episodes/solaris_adj_eps_dispute_v1.json",
+  "grader_rubric_ref": "../rubrics/solaris_adj_eps_grader.md",
 
   "reported_eps": 1.42,
   "consensus_eps": 1.28,
@@ -12,7 +15,11 @@
       "per_share": 0.18,
       "treatment": "exclude",
       "grading": "binary_strict",
-      "citation_required": "Note 7"
+      "citation": {
+        "doc_id": "10-Q_2025Q2",
+        "note": "Note 7 — Sale-leaseback",
+        "snippet": "gain of $24.3 million ($0.18 per diluted share)"
+      }
     },
     "rd_tax_credit": {
       "per_share": 0.04,
@@ -20,7 +27,23 @@
       "grading": "judgment_rubric",
       "valid_treatments": ["exclude_one_time", "include_quasi_recurring"],
       "requires_prior_year_disclosure": true,
-      "prior_year_evidence": ["10-K_FY2024_footnote_rd", "10-K_FY2023_footnote_rd"]
+      "citation": {
+        "doc_id": "10-Q_2025Q2",
+        "note": "Note 12 — Income taxes",
+        "snippet": "$5.4 million ($0.04 per diluted share) benefit related to a true-up of R&D tax credits"
+      },
+      "prior_year_evidence": [
+        {
+          "doc_id": "10-K_FY2024_footnote_rd",
+          "note": "Note 14 — Income taxes",
+          "snippet": "$3.1 million ($0.02 per diluted share) benefit from an R&D tax credit true-up"
+        },
+        {
+          "doc_id": "10-K_FY2023_footnote_rd",
+          "note": "Note 14 — Income taxes",
+          "snippet": "No material R&D tax credit true-up was recorded in fiscal 2023"
+        }
+      ]
     }
   },
 
@@ -51,10 +74,67 @@
     "10-K_FY2023_footnote_rd"
   ],
 
+  "optional_retrieval_set": [
+    "transcript_2025Q2",
+    "consensus_eps_2025Q2"
+  ],
+
   "anti_patterns": [
     "include_sale_leaseback_in_adjusted_eps",
     "omit_prior_year_footnote_retrieval",
     "assert_rd_credit_magnitude_without_tool_retrieval",
     "repeat_same_pm_answer_without_new_evidence"
-  ]
+  ],
+
+  "failure_modes": [
+    {
+      "id": "include_leaseback",
+      "label": "Include lease gain",
+      "description": "Agent leaves sale-leaseback in adjusted EPS or sets sale_leaseback_excluded false",
+      "wrong_signatures": {
+        "adjusted_eps": 1.42,
+        "sale_leaseback_excluded": false
+      },
+      "fracture_code": "OUTCOME_FAIL",
+      "anti_pattern": "include_sale_leaseback_in_adjusted_eps",
+      "outcome_estimate": 0.15
+    },
+    {
+      "id": "omit_prior_year",
+      "label": "Omit prior-year footnotes",
+      "description": "Agent does not retrieve FY2024 and/or FY2023 R&D tax footnotes via tools",
+      "fracture_code": "SECTION_MISS",
+      "anti_pattern": "omit_prior_year_footnote_retrieval",
+      "grounding_impact": "partial_or_zero"
+    },
+    {
+      "id": "engagement_failure",
+      "label": "PM engagement failure",
+      "description": "Follow-up C — agent repeats without new evidence",
+      "fracture_code": "ENGAGEMENT_FAIL",
+      "anti_pattern": "repeat_same_pm_answer_without_new_evidence",
+      "defense_score": 0.0
+    },
+    {
+      "id": "timeout",
+      "label": "Timeout without submit",
+      "description": "Agent exhausts turn budget without submit_recommendation",
+      "fracture_code": "TIMEOUT",
+      "outcome_cap": 0.5
+    },
+    {
+      "id": "invalid_adjusted_eps",
+      "label": "Invalid adjusted EPS",
+      "description": "Lease excluded but adjusted EPS not in valid set {1.20, 1.24}",
+      "fracture_code": "OUTCOME_FAIL",
+      "outcome_estimate": 0.35
+    }
+  ],
+
+  "expert_sign_off": {
+    "status": "pending",
+    "reviewer": null,
+    "review_doc": "docs/expert_drafts/SOLARIS_GOLD_KEY_REVIEW.md",
+    "notes": "Eng scaffold v1.1 — failure modes and citations added; awaiting CFA review (P0-05)."
+  }
 }
