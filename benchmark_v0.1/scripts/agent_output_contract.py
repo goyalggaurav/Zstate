@@ -17,6 +17,18 @@ def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def resolve_bench_path(path: Path) -> Path:
+    """Resolve config paths from repo root, benchmark_v0.1/, or cwd."""
+    if path.is_absolute():
+        return path
+    for candidate in (Path.cwd() / path, BENCH / path, BENCH.parent / path):
+        if candidate.exists():
+            return candidate.resolve()
+    if path.parts and path.parts[0] == BENCH.name:
+        return (BENCH.parent / path).resolve()
+    return (BENCH / path).resolve()
+
+
 def model_slug(model_id: str) -> str:
     return model_id.replace("/", "_").replace(".", "_")
 

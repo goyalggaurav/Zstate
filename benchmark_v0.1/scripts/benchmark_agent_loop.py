@@ -24,7 +24,7 @@ SCRIPTS = Path(__file__).resolve().parent
 BENCH = SCRIPTS.parent
 sys.path.insert(0, str(SCRIPTS))
 
-from agent_output_contract import agent_output_path, googl_gold_submission, load_json, pep_gold_submission  # noqa: E402
+from agent_output_contract import agent_output_path, googl_gold_submission, load_json, pep_gold_submission, resolve_bench_path  # noqa: E402
 from benchmark_tool_backend import BenchmarkToolBackend, load_bundle  # noqa: E402
 
 
@@ -337,8 +337,7 @@ def main() -> int:
 
     campaign = None
     if args.campaign:
-        campaign_path = args.campaign if args.campaign.is_absolute() else BENCH / args.campaign
-        campaign = load_json(campaign_path)
+        campaign = load_json(resolve_bench_path(args.campaign))
 
     agent_submission: dict | None = None
     if args.agent == "scripted":

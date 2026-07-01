@@ -26,6 +26,7 @@ from agent_output_contract import (
     agent_output_path,
     load_json,
     parse_slot,
+    resolve_bench_path,
     write_agent_output,
     write_contract_submission_fixtures,
 )
@@ -101,7 +102,7 @@ def main() -> int:
     if not args.mode or not args.slot:
         parser.error("--mode and --slot are required unless --write-contract-fixtures")
 
-    campaign_path = args.campaign if args.campaign.is_absolute() else BENCH / args.campaign
+    campaign_path = resolve_bench_path(args.campaign)
     campaign = load_json(campaign_path)
     model_id, task_id, run_index = parse_slot(args.slot, campaign)
     pep_gt = load_json(BENCH / "ground_truth" / "PEP_fx_organic_growth_gt.json") if task_id == "PEP_fx_organic_growth" else None

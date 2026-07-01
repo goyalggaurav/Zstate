@@ -31,6 +31,7 @@ from agent_output_contract import (  # noqa: E402
     bootstrap_fixtures,
     load_json,
     model_slug,
+    resolve_bench_path,
 )
 from score_benchmark_run import score_run  # noqa: E402
 
@@ -314,7 +315,10 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    campaign_path = args.campaign if args.campaign.is_absolute() else BENCH / args.campaign
+    campaign_path = resolve_bench_path(args.campaign)
+    if not campaign_path.exists():
+        print(f"ERROR: campaign config not found: {campaign_path}", file=sys.stderr)
+        return 1
     campaign = load_json(campaign_path)
     manifest = load_json(BENCH / "manifest.json")
 
