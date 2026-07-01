@@ -1,0 +1,23 @@
+{
+  "campaign_id": "pilot_eval_3task_v1",
+  "backlog_ref": "P2-10",
+  "description": "Three-task eval — GOOGL + PEP + AMZN; eval_mode on; AMZN adds 4-section L2 path variance.",
+  "status": "execute_ready",
+  "eval_mode": true,
+  "models": [
+    "gpt-4o",
+    "claude-sonnet-4-5"
+  ],
+  "tasks": [
+    "GOOGL_footnote_reconciliation",
+    "PEP_fx_organic_growth",
+    "AMZN_footnote_reconciliation"
+  ],
+  "runs_per_task": 3,
+  "aggregation": {
+    "composite_score": "median",
+    "fracture_codes": "union"
+  },
+  "manifest_ref": "../manifest.json",
+  "runs_dir": "runs/pilot_eval_3task_v1"
+}

@@ -71,6 +71,17 @@ def googl_gold_values() -> dict:
     }
 
 
+def amzn_gold_values() -> dict:
+    return {
+        "north_america_net_sales": 426_305,
+        "international_net_sales": 161_894,
+        "aws_net_sales": 128_725,
+        "consolidated_net_sales": 716_924,
+        "international_reported_growth_pct": 13.0,
+        "international_cc_growth_pct": 10.0,
+    }
+
+
 def pep_gold_values(gt: dict | None = None) -> dict:
     doc = gt if gt is not None else load_json(PEP_GT_PATH)
     values: dict = {}
@@ -195,6 +206,53 @@ def pep_gold_submission(gt: dict | None = None) -> dict:
     }
 
 
+def amzn_gold_submission() -> dict:
+    metrics = amzn_gold_values()
+    return {
+        "schema_version": "agent_submission_v1",
+        "metrics": metrics,
+        "citations": [
+            {
+                "metric_id": "north_america_net_sales",
+                "doc_id": "AMZN_10K_2025",
+                "section_slug": "note_10_segments",
+                "snippet": "North America\nNet sales $ 426,305",
+            },
+            {
+                "metric_id": "international_net_sales",
+                "doc_id": "AMZN_10K_2025",
+                "section_slug": "note_10_segments",
+                "snippet": "International\nNet sales $ 161,894",
+            },
+            {
+                "metric_id": "aws_net_sales",
+                "doc_id": "AMZN_10K_2025",
+                "section_slug": "note_10_segments",
+                "snippet": "AWS\nNet sales $ 128,725",
+            },
+            {
+                "metric_id": "consolidated_net_sales",
+                "doc_id": "AMZN_10K_2025",
+                "section_slug": "income_statement",
+                "snippet": "Net sales $ 716,924",
+            },
+            {
+                "metric_id": "international_reported_growth_pct",
+                "doc_id": "AMZN_10K_2025",
+                "section_slug": "mdna_international_fx",
+                "snippet": "International segment sales increased 13%",
+            },
+            {
+                "metric_id": "international_cc_growth_pct",
+                "doc_id": "AMZN_10K_2025",
+                "section_slug": "mdna_international_fx",
+                "snippet": "increased 10% excluding changes in foreign exchange rates",
+            },
+        ],
+        "policy_acknowledgements": ["sbc_not_in_segment_oi"],
+    }
+
+
 SUBMISSION_TRAP_MODES: dict[str, dict] = {
     "submission_gold": {"expect_l3_pass": True},
     "trap_l3_fake_snippet": {
@@ -217,6 +275,11 @@ SUBMISSION_TRAP_MODES: dict[str, dict] = {
         "expect_fractures": ["CITE_HALLUC"],
         "expect_failure_modes": ["cite_halluc"],
     },
+    "trap_l3_duplicate_snippet": {
+        "tasks": ["PEP_fx_organic_growth"],
+        "expect_fractures": ["CITE_BROAD"],
+        "expect_failure_modes": ["cite_duplicate_snippet"],
+    },
 }
 
 
@@ -226,6 +289,8 @@ def submission_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict
             return googl_gold_submission()
         if task_id == "PEP_fx_organic_growth":
             return pep_gold_submission(gt)
+        if task_id == "AMZN_footnote_reconciliation":
+            return amzn_gold_submission()
         raise ValueError(f"No gold submission for task {task_id!r}")
 
     if mode == "trap_l3_fake_snippet":
@@ -246,6 +311,18 @@ def submission_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict
     if mode == "trap_l3_halluc_snippet":
         sub = pep_gold_submission(gt)
         sub["citations"][-1]["snippet"] = "Bloomberg spot EUR/USD 1.12"
+        return sub
+
+    if mode == "trap_l3_duplicate_snippet":
+        sub = pep_gold_submission(gt)
+        dup = "EMEA                            8%"
+        for cite in sub["citations"]:
+            if cite["metric_id"] in (
+                "emea_reported_growth_pct",
+                "emea_fx_impact_pct",
+                "emea_organic_cc_growth_pct",
+            ):
+                cite["snippet"] = dup
         return sub
 
     raise ValueError(f"Unknown submission mode {mode!r}")
@@ -269,6 +346,8 @@ def write_contract_submission_fixtures() -> list[Path]:
         ("GOOGL_footnote_reconciliation", "trap_l3_wrong_slug", "GOOGL_footnote_reconciliation_submission_trap_wrong_slug.json"),
         ("PEP_fx_organic_growth", "trap_l3_missing_policy", "PEP_fx_organic_growth_submission_trap_missing_policy.json"),
         ("PEP_fx_organic_growth", "trap_l3_halluc_snippet", "PEP_fx_organic_growth_submission_trap_halluc_snippet.json"),
+        ("PEP_fx_organic_growth", "trap_l3_duplicate_snippet", "PEP_fx_organic_growth_submission_trap_duplicate_snippet.json"),
+        ("AMZN_footnote_reconciliation", "submission_gold", "AMZN_footnote_reconciliation_submission_gold.json"),
     ]
     for task_id, mode, filename in specs:
         path = contract_dir / filename
@@ -288,6 +367,8 @@ def payload_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict | 
             return googl_gold_values()
         if task_id == "PEP_fx_organic_growth":
             return pep_gold_values(gt)
+        if task_id == "AMZN_footnote_reconciliation":
+            return amzn_gold_values()
         raise ValueError(f"No gold payload for task {task_id!r}")
 
     if mode == "trap_googl_sign":
@@ -332,7 +413,7 @@ def payload_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict | 
 
 
 CONTRACT_MODES: dict[str, dict] = {
-    "gold": {"tasks": ["GOOGL_footnote_reconciliation", "PEP_fx_organic_growth"], "expect_fractures": []},
+    "gold": {"tasks": ["GOOGL_footnote_reconciliation", "PEP_fx_organic_growth", "AMZN_footnote_reconciliation"], "expect_fractures": []},
     "trap_googl_sign": {
         "tasks": ["GOOGL_footnote_reconciliation"],
         "expect_fractures": ["SIGN_ERR"],

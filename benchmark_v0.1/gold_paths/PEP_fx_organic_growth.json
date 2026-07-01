@@ -101,5 +101,9 @@
     },
     "expected_section_order": ["note_1", "mdna_organic"],
     "required_tools": ["Search_Filing", "Python_Interpreter"]
+  },
+
+  "l3_citation_rules": {
+    "distinct_snippets_required": true
   }
 }

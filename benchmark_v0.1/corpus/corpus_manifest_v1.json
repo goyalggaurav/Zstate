@@ -79,7 +79,7 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000008/amzn-20251231.htm",
       "ingest_status": "metadata_only",
       "checksum_sha256": null,
-      "task_refs": []
+      "task_refs": ["AMZN_footnote_reconciliation"]
     },
     {
       "doc_id": "NFLX_10K_2025",

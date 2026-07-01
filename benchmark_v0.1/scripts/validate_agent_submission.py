@@ -27,6 +27,7 @@ from benchmark_tool_backend import load_bundle  # noqa: E402
 TASK_BUNDLES = {
     "GOOGL_footnote_reconciliation": "corpus/googl_q1_2026_bundle.json",
     "PEP_fx_organic_growth": "corpus/pep_fy2025_bundle.json",
+    "AMZN_footnote_reconciliation": "corpus/amzn_fy2025_bundle.json",
 }
 
 FAILURE_FRACTURE = {
@@ -36,6 +37,7 @@ FAILURE_FRACTURE = {
     "cite_orphan_metric": "CITE_BROAD",
     "cite_incomplete": "CITE_BROAD",
     "cite_missing": "CITE_BROAD",
+    "cite_duplicate_snippet": "CITE_BROAD",
     "policy_omit": "POLICY_OMIT",
     "schema_invalid": "CITE_BROAD",
 }
@@ -93,9 +95,31 @@ def required_policy_ids(bundle: dict) -> list[str]:
     ]
 
 
+def required_policy_ids(bundle: dict) -> list[str]:
+    return [
+        note["policy_id"]
+        for note in bundle.get("policy_notes", [])
+        if note.get("agent_ack_required")
+    ]
+
+
+def load_gold_path(task_id: str) -> dict:
+    manifest = load_json(BENCH / "manifest.json")
+    for entry in manifest.get("pilot_tasks", []):
+        if entry["task_id"] == task_id:
+            return load_json(BENCH / entry["paths"]["gold_path"])
+    return {}
+
+
+def l3_citation_rules(task_id: str, gold_path: dict | None = None) -> dict:
+    gold_path = gold_path if gold_path is not None else load_gold_path(task_id)
+    return dict(gold_path.get("l3_citation_rules") or {})
+
+
 def validate_submission(submission: dict, *, task_id: str, task: dict | None = None, bundle: dict | None = None) -> dict:
     task = task or load_task(task_id)
     bundle = bundle or load_bundle(task_id)
+    l3_rules = l3_citation_rules(task_id)
     checks: list[dict] = []
     failure_modes: list[str] = []
 
@@ -176,6 +200,35 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
         if metric_id:
             metric_citation_ok[metric_id] = metric_citation_ok.get(metric_id, True) and cite_ok
 
+    if l3_rules.get("distinct_snippets_required") and citations:
+        norm_by_metric: dict[str, str] = {}
+        for cite in citations:
+            metric_id = cite.get("metric_id")
+            snippet = cite.get("snippet")
+            if not metric_id or not snippet:
+                continue
+            norm = normalize(snippet)
+            norm_by_metric[metric_id] = norm
+        seen: dict[str, str] = {}
+        for metric_id, norm in norm_by_metric.items():
+            if norm in seen:
+                failure_modes.append("cite_duplicate_snippet")
+                checks.append({
+                    "check": f"metric_cited.{metric_id}.distinct_snippet",
+                    "pass": False,
+                    "duplicate_of": seen[norm],
+                    "snippet_norm": norm[:80],
+                })
+                metric_citation_ok[metric_id] = False
+                if seen[norm] in metric_citation_ok:
+                    metric_citation_ok[seen[norm]] = False
+            else:
+                seen[norm] = metric_id
+                checks.append({
+                    "check": f"metric_cited.{metric_id}.distinct_snippet",
+                    "pass": True,
+                })
+
     for metric_id in metrics:
         if metric_id not in cited_metrics:
             failure_modes.append("cite_incomplete")
@@ -247,12 +300,14 @@ def validate_all_fixtures() -> dict:
     expected_gold = {
         "GOOGL_footnote_reconciliation_submission_gold.json",
         "PEP_fx_organic_growth_submission_gold.json",
+        "AMZN_footnote_reconciliation_submission_gold.json",
     }
     expected_traps = {
         "GOOGL_footnote_reconciliation_submission_trap_fake_snippet.json",
         "GOOGL_footnote_reconciliation_submission_trap_wrong_slug.json",
         "PEP_fx_organic_growth_submission_trap_missing_policy.json",
         "PEP_fx_organic_growth_submission_trap_halluc_snippet.json",
+        "PEP_fx_organic_growth_submission_trap_duplicate_snippet.json",
     }
     found = {Path(r["submission_path"]).name for r in results}
     missing = (expected_gold | expected_traps) - found
@@ -260,7 +315,7 @@ def validate_all_fixtures() -> dict:
     traps_ok = expected_traps <= {Path(r["submission_path"]).name for r in traps}
 
     return {
-        "all_pass": not missing and gold_ok and traps_ok and len(gold) >= 2 and len(traps) >= 4,
+        "all_pass": not missing and gold_ok and traps_ok and len(gold) >= 3 and len(traps) >= 5,
         "fixtures_checked": len(results),
         "gold_pass_count": len([r for r in results if Path(r["submission_path"]).name in expected_gold and r["l3_pass"]]),
         "trap_fail_count": len([r for r in results if Path(r["submission_path"]).name in expected_traps and not r["l3_pass"]]),

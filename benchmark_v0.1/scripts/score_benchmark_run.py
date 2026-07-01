@@ -62,6 +62,14 @@ def run_l1_verify(task_id: str, agent_path: Path, manifest: dict) -> dict:
                 "--agent-output",
                 str(agent_path),
             ]
+        elif task_id == "AMZN_footnote_reconciliation":
+            script = BENCH / paths["verify_script"]
+            cmd = [
+                sys.executable,
+                str(script),
+                "--agent-output",
+                str(agent_path),
+            ]
         elif task_id == "PEP_fx_organic_growth":
             script = BENCH / paths.get("verify_script_task_entry", paths["verify_script"])
             gt = BENCH / paths["ground_truth"]

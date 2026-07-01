@@ -24,7 +24,7 @@ SCRIPTS = Path(__file__).resolve().parent
 BENCH = SCRIPTS.parent
 sys.path.insert(0, str(SCRIPTS))
 
-from agent_output_contract import agent_output_path, googl_gold_submission, load_json, pep_gold_submission, resolve_bench_path  # noqa: E402
+from agent_output_contract import agent_output_path, amzn_gold_submission, googl_gold_submission, load_json, pep_gold_submission, resolve_bench_path  # noqa: E402
 from benchmark_tool_backend import BenchmarkToolBackend, load_bundle  # noqa: E402
 
 
@@ -184,6 +184,7 @@ def _ensure_plan_submission(task_id: str, plan: dict) -> None:
     builders = {
         "GOOGL_footnote_reconciliation": googl_gold_submission,
         "PEP_fx_organic_growth": pep_gold_submission,
+        "AMZN_footnote_reconciliation": amzn_gold_submission,
     }
     builder = builders.get(task_id)
     if builder:
@@ -342,6 +343,7 @@ def run_live_task(
 TASK_SCRIPTED_PLANS: dict[str, Path] = {
     "GOOGL_footnote_reconciliation": BENCH / "examples/agents/googl_good_plan.json",
     "PEP_fx_organic_growth": BENCH / "examples/agents/pep_good_plan.json",
+    "AMZN_footnote_reconciliation": BENCH / "examples/agents/amzn_good_plan.json",
 }
 
 

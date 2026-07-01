@@ -1,0 +1,42 @@
+{
+  "plan_id": "amzn_good_v1",
+  "description": "Reference scripted agent — policy → Note 10 → income statement → MD&A FX, Python sum check",
+  "actions": [
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_reporting_policy"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "note_10_segments"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "income_statement"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "AMZN", "period": "FY2025", "section": "mdna_international_fx"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Python_Interpreter",
+      "input": {"expression": "426305 + 161894 + 128725"}
+    },
+    {
+      "type": "submit_structured_output",
+      "structured_output": {
+        "north_america_net_sales": 426305,
+        "international_net_sales": 161894,
+        "aws_net_sales": 128725,
+        "consolidated_net_sales": 716924,
+        "international_reported_growth_pct": 13.0,
+        "international_cc_growth_pct": 10.0
+      }
+    }
+  ]
+}

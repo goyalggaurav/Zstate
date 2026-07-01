@@ -1,0 +1,91 @@
+{
+  "bundle_id": "amzn_fy2025_bundle",
+  "version": "1.0.0",
+  "task_id": "AMZN_footnote_reconciliation",
+  "documents": {
+    "segment_reporting_policy": {
+      "doc_id": "AMZN_10K_2025",
+      "doc_type": "10-K",
+      "section": "segment_reporting_policy",
+      "name": "Item 1 — Segment reporting overview",
+      "excerpt": "Item 1. Business\n\nWe have organized our operations into three segments: North America, International, and Amazon Web Services (\"AWS\"). These segments reflect the way the Company evaluates its business performance and manages its operations.\n\nInformation on our net sales is contained in Item 8 of Part II, \"Financial Statements and Supplementary Data — Note 10 — Segment Information.\"\n\nCertain operating expense line items, including stock-based compensation, are not allocated to segment results when measuring segment operating performance."
+    },
+    "note_10_segments": {
+      "doc_id": "AMZN_10K_2025",
+      "doc_type": "10-K",
+      "section": "note_10",
+      "name": "Note 10 — Segment Information",
+      "excerpt": "Note 10 — Segment Information\n\nYear Ended December 31, 2025\n\nNorth America\nNet sales $ 426,305\nOperating income $ 29,619\n\nInternational\nNet sales $ 161,894\nOperating income $ 4,750\n\nAWS\nNet sales $ 128,725\nOperating income $ 45,606\n\nConsolidated\nNet sales $ 716,924\nOperating income $ 79,975"
+    },
+    "income_statement": {
+      "doc_id": "AMZN_10K_2025",
+      "doc_type": "10-K",
+      "section": "income_statement",
+      "name": "Consolidated Statements of Operations",
+      "excerpt": "CONSOLIDATED STATEMENTS OF OPERATIONS\n(in millions, except per share data)\n\nYear Ended December 31, 2025\n\nNet sales $ 716,924\nOperating income 79,975\nNet income $ 77,670"
+    },
+    "mdna_international_fx": {
+      "doc_id": "AMZN_10K_2025",
+      "doc_type": "10-K",
+      "section": "mdna_international_fx",
+      "name": "MD&A — International net sales and FX",
+      "excerpt": "Management's Discussion and Analysis of Financial Condition and Results of Operations\n\nInternational Segment\n\nInternational segment sales increased 13% year-over-year to $161.9 billion in 2025, or increased 10% excluding changes in foreign exchange rates.\n\nNorth America segment sales increased 10% year-over-year to $426.3 billion.\n\nAWS segment sales increased 20% year-over-year to $128.7 billion."
+    }
+  },
+  "section_registry": [
+    {
+      "section_slug": "segment_reporting_policy",
+      "section_id": "AMZN_10K_2025_segment_policy",
+      "doc_id": "AMZN_10K_2025",
+      "document_key": "segment_reporting_policy",
+      "name": "Item 1 — Segment reporting overview",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
+      "section_slug": "note_10_segments",
+      "section_id": "AMZN_10K_2025_note_10",
+      "doc_id": "AMZN_10K_2025",
+      "document_key": "note_10_segments",
+      "name": "Note 10 — Segment Information",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
+      "section_slug": "income_statement",
+      "section_id": "AMZN_10K_2025_income_statement",
+      "doc_id": "AMZN_10K_2025",
+      "document_key": "income_statement",
+      "name": "Consolidated Statements of Operations",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
+      "section_slug": "mdna_international_fx",
+      "section_id": "AMZN_10K_2025_mdna_intl",
+      "doc_id": "AMZN_10K_2025",
+      "document_key": "mdna_international_fx",
+      "name": "MD&A — International net sales and FX",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    }
+  ],
+  "policy_notes": [
+    {
+      "policy_id": "sbc_not_in_segment_oi",
+      "doc_id": "AMZN_10K_2025",
+      "statement": "Certain operating expense line items, including stock-based compensation, are not allocated to segment results when measuring segment operating performance.",
+      "agent_ack_required": true,
+      "gold_path_key": "reference_workflow",
+      "anti_pattern": "treat_sbc_as_segment_line_item"
+    }
+  ],
+  "retrieval_keys": {
+    "Search_Filing": {
+      "AMZN:FY2025:segment_reporting_policy": "segment_reporting_policy",
+      "AMZN:FY2025:note_10_segments": "note_10_segments",
+      "AMZN:FY2025:income_statement": "income_statement",
+      "AMZN:FY2025:mdna_international_fx": "mdna_international_fx"
+    }
+  }
+}

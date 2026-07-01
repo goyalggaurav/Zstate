@@ -52,7 +52,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 |----|------|-------|--------|-------|-------|
 | P2-01 | NFLX guidance drift task (Type F) | A | todo | Associate | Maps to env Scenario #2 later |
 | P2-02 | PEP or KO FX organic growth task (Type M) | A | done | Associate | `PEP_fx_organic_growth` expert-reviewed 2026-07-01; see `PEP_FX_GT_REVIEW.md` |
-| P2-03 | AMZN footnote task (Type F) | A | deferred | Associate | After 3 core tasks |
+| P2-03 | AMZN footnote task (Type F) | A | done | Eng | `AMZN_footnote_reconciliation` — 4-section L2 path; pilot draft |
 | P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | done | Eng | `gpt-4o` + `claude-sonnet-4-5` × GOOGL + PEP × 3; 12/12 composite 1.0; see `runs/pilot_eval_campaign_v1/` |
 | P2-05 | Fracture report v0 | Both | done | Eng | `docs/FRACTURE_REPORT_v0.md` — frontier v1–v3 |
 | P2-06 | Leaderboard v0 publish | A | todo | Product | Not the lab headline |
@@ -74,6 +74,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-04g | **Live eval** — OpenAI mini 2×3 grid | done | `gpt-4o-mini` × GOOGL + PEP × 3 runs; 6/6 composite 1.0; `runs/pilot_eval_openai_mini_v1/` |
 | P2-04h | Anthropic adapter + `--agent auto` routing | done | `claude-sonnet-4-5`; live 12/12 in `pilot_eval_campaign_v1` |
 | P2-09 | **Discrimination eval** — eval_mode + L2 gold-path + L3 partial | done | Live 12/12; PEP composite 0.966; `CITE_HALLUC`×5; GOOGL still 1.0 — scorer validated, ranking deferred |
+| P2-10 | **Harder L3 + 3rd task** — PEP distinct snippets; AMZN 4-section path | done | `l3_citation_rules.distinct_snippets_required`; `pilot_eval_3task_v1` |
 
 ---
 
@@ -123,7 +124,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 20 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 22 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 
 ---
@@ -185,6 +186,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-29 | P2-04g OpenAI mini live eval (6/6, composite 1.0) + PEP L3 citation fix | Jul 2026 |
 | DONE-30 | P2-04 live campaign — gpt-4o + claude-sonnet-4-5, 12/12 composite 1.0 | Jul 2026 |
 | DONE-31 | P2-09 discrimination eval — eval_mode, L2 gold-path, L3 partial; live 12/12 | Jul 2026 |
+| DONE-32 | P2-10 PEP distinct L3 + AMZN third task (4-section L2 path) | Jul 2026 |
 
 ---
 

@@ -1,0 +1,52 @@
+{
+  "schema_version": "agent_submission_v1",
+  "metrics": {
+    "north_america_net_sales": 426305,
+    "international_net_sales": 161894,
+    "aws_net_sales": 128725,
+    "consolidated_net_sales": 716924,
+    "international_reported_growth_pct": 13.0,
+    "international_cc_growth_pct": 10.0
+  },
+  "citations": [
+    {
+      "metric_id": "north_america_net_sales",
+      "doc_id": "AMZN_10K_2025",
+      "section_slug": "note_10_segments",
+      "snippet": "North America\nNet sales $ 426,305"
+    },
+    {
+      "metric_id": "international_net_sales",
+      "doc_id": "AMZN_10K_2025",
+      "section_slug": "note_10_segments",
+      "snippet": "International\nNet sales $ 161,894"
+    },
+    {
+      "metric_id": "aws_net_sales",
+      "doc_id": "AMZN_10K_2025",
+      "section_slug": "note_10_segments",
+      "snippet": "AWS\nNet sales $ 128,725"
+    },
+    {
+      "metric_id": "consolidated_net_sales",
+      "doc_id": "AMZN_10K_2025",
+      "section_slug": "income_statement",
+      "snippet": "Net sales $ 716,924"
+    },
+    {
+      "metric_id": "international_reported_growth_pct",
+      "doc_id": "AMZN_10K_2025",
+      "section_slug": "mdna_international_fx",
+      "snippet": "International segment sales increased 13%"
+    },
+    {
+      "metric_id": "international_cc_growth_pct",
+      "doc_id": "AMZN_10K_2025",
+      "section_slug": "mdna_international_fx",
+      "snippet": "increased 10% excluding changes in foreign exchange rates"
+    }
+  ],
+  "policy_acknowledgements": [
+    "sbc_not_in_segment_oi"
+  ]
+}

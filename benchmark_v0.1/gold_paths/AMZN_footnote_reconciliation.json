@@ -1,0 +1,127 @@
+{
+  "task_id": "AMZN_footnote_reconciliation",
+  "version": "1.0.0-pilot",
+  "task_type": "F",
+  "fiscal_period": "FY2025",
+
+  "minimal_section_set": [
+    {
+      "section_id": "AMZN_10K_2025_segment_policy",
+      "name": "Item 1 — Segment reporting overview",
+      "required": true,
+      "reason": "Segment definitions and SBC non-allocation policy before extracting numbers"
+    },
+    {
+      "section_id": "AMZN_10K_2025_note_10",
+      "name": "Note 10 — Segment Information",
+      "required": true,
+      "reason": "FY2025 net sales by North America, International, AWS"
+    },
+    {
+      "section_id": "AMZN_10K_2025_income_statement",
+      "name": "Consolidated Statements of Operations",
+      "required": true,
+      "reason": "Cross-check consolidated net sales"
+    },
+    {
+      "section_id": "AMZN_10K_2025_mdna_intl",
+      "name": "MD&A — International FX disclosure",
+      "required": true,
+      "reason": "Reported vs FX-neutral International growth"
+    }
+  ],
+
+  "required_tool_classes": [
+    "Search_Filing",
+    "PDF_Parser",
+    "Python_Interpreter"
+  ],
+
+  "required_outputs": [
+    "reconciliation_table",
+    "international_fx_summary",
+    "citations"
+  ],
+
+  "reference_workflow": [
+    {
+      "step": 1,
+      "action": "Read segment reporting policy",
+      "tool": "Search_Filing",
+      "target": "Item 1 — three segments; SBC not allocated to segment OI"
+    },
+    {
+      "step": 2,
+      "action": "Extract FY2025 segment net sales",
+      "tool": "Search_Filing",
+      "target": "Note 10 — North America, International, AWS — Year Ended December 31, 2025"
+    },
+    {
+      "step": 3,
+      "action": "Cross-check consolidated net sales",
+      "tool": "Search_Filing",
+      "target": "Consolidated Statements of Operations — Net sales 2025 column"
+    },
+    {
+      "step": 4,
+      "action": "Extract International FX growth disclosure",
+      "tool": "Search_Filing",
+      "target": "MD&A International — 13% reported vs 10% excluding FX"
+    },
+    {
+      "step": 5,
+      "action": "Verify segment sum equals consolidated",
+      "tool": "Python_Interpreter",
+      "target": "426305 + 161894 + 128725 == 716924"
+    }
+  ],
+
+  "anti_patterns": [
+    "use_fy2024_column_instead_of_fy2025",
+    "skip_segment_policy_and_jump_to_note_10",
+    "treat_sbc_as_segment_line_item",
+    "swap_international_reported_and_cc_growth",
+    "produce_buy_hold_sell_recommendation"
+  ],
+
+  "failure_mode_map": [
+    {
+      "failure_mode_id": "wrong_period",
+      "anti_pattern": "use_fy2024_column_instead_of_fy2025",
+      "fracture_code": "HALLUC_FILL"
+    },
+    {
+      "failure_mode_id": "intl_fx_swap",
+      "anti_pattern": "swap_international_reported_and_cc_growth",
+      "fracture_code": "CC_OMIT"
+    },
+    {
+      "failure_mode_id": "policy_skip",
+      "anti_pattern": "skip_segment_policy_and_jump_to_note_10",
+      "fracture_code": "SECTION_MISS"
+    }
+  ],
+
+  "section_recall_scoring": {
+    "pass_if_all_required_accessed": true
+  },
+
+  "l2_gold_path": {
+    "weights": {
+      "section_recall": 0.35,
+      "section_order": 0.40,
+      "tool_coverage": 0.25
+    },
+    "expected_section_order": [
+      "segment_reporting_policy",
+      "note_10_segments",
+      "income_statement",
+      "mdna_international_fx"
+    ],
+    "required_tools": ["Search_Filing", "Python_Interpreter"]
+  },
+
+  "l3_citation_rules": {
+    "distinct_snippets_required": true
+  }
+}

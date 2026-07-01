@@ -37,6 +37,15 @@ def check_pep_fx_gt() -> None:
     assert report["fracture_codes"] == []
 
 
+def check_amzn_gt() -> None:
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_amzn_footnote_reconciliation.py",
+    ])
+    assert report["all_pass"] is True, report
+    assert report["fracture_codes"] == []
+
+
 def check_fracture_taxonomy_registry() -> None:
     """Benchmark verify scripts must only emit codes registered in fracture_taxonomy_v1.json."""
     taxonomy = json.loads((ROOT / "schemas" / "fracture_taxonomy_v1.json").read_text())
@@ -47,8 +56,14 @@ def check_fracture_taxonomy_registry() -> None:
     from verify_fx_organic_growth import FAILURE_FRACTURE as pep_fractures  # noqa: E402
     from verify_googl_footnote_reconciliation import FAILURE_FRACTURE as googl_fractures  # noqa: E402
     from validate_agent_submission import FAILURE_FRACTURE as l3_fractures  # noqa: E402
+    from verify_amzn_footnote_reconciliation import FAILURE_FRACTURE as amzn_fractures  # noqa: E402
 
-    emitted = set(googl_fractures.values()) | set(pep_fractures.values()) | set(l3_fractures.values())
+    emitted = (
+        set(googl_fractures.values())
+        | set(pep_fractures.values())
+        | set(amzn_fractures.values())
+        | set(l3_fractures.values())
+    )
     missing = emitted - registry
     assert not missing, f"Fracture codes not in registry: {sorted(missing)}"
 
@@ -252,6 +267,14 @@ def check_benchmark_agent_contract() -> None:
     assert gold_pep["all_pass"] is True
     assert gold_pep["fracture_codes"] == []
 
+    gold_amzn = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_amzn_footnote_reconciliation.py",
+        "--agent-output", str(contract_dir / "AMZN_footnote_reconciliation_gold.json"),
+    ])
+    assert gold_amzn["all_pass"] is True
+    assert gold_amzn["fracture_codes"] == []
+
     import tempfile
 
     campaign = json.loads(
@@ -298,6 +321,7 @@ def check_section_retrieval_contract() -> None:
 
     googl = BenchmarkToolBackend(load_bundle("GOOGL_footnote_reconciliation"))
     pep = BenchmarkToolBackend(load_bundle("PEP_fx_organic_growth"))
+    amzn = BenchmarkToolBackend(load_bundle("AMZN_footnote_reconciliation"))
 
     ok = googl.call("Search_Filing", ticker="GOOGL", period="2026Q1", section="note_15")
     assert NOT_FOUND_PREFIX not in ok, ok
@@ -311,6 +335,10 @@ def check_section_retrieval_contract() -> None:
     drift = googl.call("Search_Filing", ticker="GOOGL", period="2026Q1", section="Note 15")
     assert drift.startswith(NOT_FOUND_PREFIX), drift
     assert "unknown section slug" in drift
+
+    amzn_policy = amzn.call("Search_Filing", ticker="AMZN", period="FY2025", section="segment_reporting_policy")
+    assert NOT_FOUND_PREFIX not in amzn_policy, amzn_policy
+    assert amzn.log[-1].get("section_slug") == "segment_reporting_policy"
 
     wrong_period = googl.call("Search_Filing", ticker="GOOGL", period="FY2025", section="note_15")
     assert wrong_period.startswith(NOT_FOUND_PREFIX), wrong_period
@@ -529,8 +557,11 @@ def check_openai_submit_schema() -> None:
         (ROOT / "benchmark_v0.1" / "tasks" / "GOOGL_footnote_reconciliation.json").read_text()
     )
     pep_task = json.loads((ROOT / "benchmark_v0.1" / "tasks" / "PEP_fx_organic_growth.json").read_text())
+    amzn_task = json.loads(
+        (ROOT / "benchmark_v0.1" / "tasks" / "AMZN_footnote_reconciliation.json").read_text()
+    )
 
-    for task in (googl_task, pep_task):
+    for task in (googl_task, pep_task, amzn_task):
         bundle = load_bundle(task["task_id"])
         tools = build_tool_definitions(task, bundle)
         submit = next(t for t in tools if t["function"]["name"] == SUBMIT_TOOL)
@@ -654,8 +685,8 @@ def check_agent_submission_validator() -> None:
         "--all",
     ])
     assert report["all_pass"] is True, report
-    assert report["gold_pass_count"] == 2
-    assert report["trap_fail_count"] == 4
+    assert report["gold_pass_count"] == 3
+    assert report["trap_fail_count"] == 5
 
     fixture_dir = ROOT / "benchmark_v0.1" / "contract_fixtures"
     trap_specs = [
@@ -678,6 +709,11 @@ def check_agent_submission_validator() -> None:
             "PEP_fx_organic_growth_submission_trap_halluc_snippet.json",
             ["CITE_HALLUC"],
             ["cite_halluc"],
+        ),
+        (
+            "PEP_fx_organic_growth_submission_trap_duplicate_snippet.json",
+            ["CITE_BROAD"],
+            ["cite_duplicate_snippet"],
         ),
     ]
     for filename, expect_fractures, expect_failures in trap_specs:
@@ -788,10 +824,91 @@ def check_discrimination_scoring() -> None:
     assert campaign.get("eval_mode") is True
 
 
+def check_amzn_l2_path() -> None:
+    """AMZN third task — four-section gold path with order-weighted L2."""
+    import tempfile
+
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from score_benchmark_run import score_l2_section_recall, score_run  # noqa: E402
+    from benchmark_tool_backend import load_bundle  # noqa: E402
+    from agent_output_contract import load_json  # noqa: E402
+
+    plan = ROOT / "benchmark_v0.1" / "examples" / "agents" / "amzn_good_plan.json"
+    with tempfile.TemporaryDirectory() as tmp:
+        out_dir = Path(tmp)
+        subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/benchmark_agent_loop.py",
+                "--agent", "scripted",
+                "--task", "AMZN_footnote_reconciliation",
+                "--plan", str(plan),
+                "--out-dir", str(out_dir),
+                "--run-index", "1",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        trace = json.loads((out_dir / "AMZN_footnote_reconciliation_run01_trace.json").read_text())
+        bundle = load_bundle("AMZN_footnote_reconciliation")
+        gold_path = load_json(ROOT / "benchmark_v0.1" / "gold_paths" / "AMZN_footnote_reconciliation.json")
+        l2 = score_l2_section_recall(
+            trace, task_id="AMZN_footnote_reconciliation", gold_path=gold_path, bundle=bundle
+        )
+        assert l2["l2_score"] >= 0.95, l2
+        assert l2["components"]["section_order"] == 1.0, l2
+        assert len(l2["required_sections"]) == 4, l2
+
+        wrong_order_plan = {
+            **json.loads(plan.read_text()),
+            "actions": [
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "note_10_segments"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "segment_reporting_policy"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "income_statement"}},
+                {"type": "tool_call", "tool": "Search_Filing", "input": {"ticker": "AMZN", "period": "FY2025", "section": "mdna_international_fx"}},
+                {"type": "tool_call", "tool": "Python_Interpreter", "input": {"expression": "426305 + 161894 + 128725"}},
+                {"type": "submit_structured_output", "structured_output": {
+                    "north_america_net_sales": 426305,
+                    "international_net_sales": 161894,
+                    "aws_net_sales": 128725,
+                    "consolidated_net_sales": 716924,
+                    "international_reported_growth_pct": 13.0,
+                    "international_cc_growth_pct": 10.0,
+                }},
+            ],
+        }
+        wrong_path = out_dir / "wrong_plan.json"
+        wrong_path.write_text(json.dumps(wrong_order_plan), encoding="utf-8")
+        subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/benchmark_agent_loop.py",
+                "--agent", "scripted",
+                "--task", "AMZN_footnote_reconciliation",
+                "--plan", str(wrong_path),
+                "--out-dir", str(out_dir),
+                "--run-index", "2",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        bad_trace = json.loads((out_dir / "AMZN_footnote_reconciliation_run02_trace.json").read_text())
+        bad_l2 = score_l2_section_recall(
+            bad_trace, task_id="AMZN_footnote_reconciliation", gold_path=gold_path, bundle=bundle
+        )
+        assert bad_l2["components"]["section_order"] < 1.0, bad_l2
+        assert bad_l2["l2_score"] < l2["l2_score"], (bad_l2, l2)
+
+
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
         ("PEP FX ground truth L1", check_pep_fx_gt),
+        ("AMZN footnote ground truth L1", check_amzn_gt),
         ("Fracture taxonomy registry", check_fracture_taxonomy_registry),
         ("Corpus manifest", check_corpus_manifest),
         ("Corpus bundles", check_corpus_bundles),
@@ -809,6 +926,7 @@ def main() -> int:
         ("Anthropic adapter", check_anthropic_adapter),
         ("Eval mode prompts", check_eval_mode_prompts),
         ("Discrimination scoring", check_discrimination_scoring),
+        ("AMZN L2 path variance", check_amzn_l2_path),
         ("Campaign execute scripted", check_campaign_execute_scripted),
     ]
     failed = 0

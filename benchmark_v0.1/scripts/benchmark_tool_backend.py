@@ -23,6 +23,7 @@ OPS = {
 TASK_BUNDLE: dict[str, str] = {
     "GOOGL_footnote_reconciliation": "googl_q1_2026_bundle.json",
     "PEP_fx_organic_growth": "pep_fy2025_bundle.json",
+    "AMZN_footnote_reconciliation": "amzn_fy2025_bundle.json",
 }
 
 NOT_FOUND_PREFIX = "NOT FOUND:"

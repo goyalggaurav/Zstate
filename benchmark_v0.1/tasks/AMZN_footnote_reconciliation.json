@@ -1,0 +1,81 @@
+{
+  "task_id": "AMZN_footnote_reconciliation",
+  "version": "1.0.0-pilot",
+  "status": "published",
+  "benchmark_version": "benchmark_v0.1",
+
+  "ticker": "AMZN",
+  "cik": "0001018724",
+  "sector": "tech",
+  "archetype": "footnote_reconciliation",
+  "task_type": "F",
+  "difficulty_tier": "L3",
+
+  "prompt": {
+    "text": "Using Amazon.com, Inc.'s Form 10-K for the fiscal year ended December 31, 2025 (filed February 6, 2026), reconcile reportable segment net sales to consolidated net sales for FY2025 and summarize International FX effects.\n\n1. Read Item 1 segment reporting overview — identify the three reportable segments and how stock-based compensation is treated in segment performance measurement.\n2. Extract FY2025 net sales for North America, International, and AWS from Note 10 — Segment Information.\n3. Cross-check consolidated net sales on the Consolidated Statements of Operations.\n4. From MD&A, extract International reported growth % and growth % excluding foreign exchange.\n5. Use Python to verify segment net sales sum equals consolidated net sales.\n6. Produce a reconciliation table (USD millions) and short narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Every numeric value must include a citation (document, section, table).\n- Each citation must use a distinct verbatim snippet — do not reuse the same substring for multiple metrics.\n- Python required for segment-sum verification.\n- Acknowledge required policy notes in your submission.",
+    "constraints": [
+      "Document: AMZN 10-K FY2025 only",
+      "Four-section workflow: policy → Note 10 → income statement → MD&A International",
+      "No Buy/Hold/Sell or price target"
+    ]
+  },
+
+  "required_documents": [
+    {
+      "doc_id": "AMZN_10K_2025",
+      "form_type": "10-K",
+      "fiscal_period": "FY2025",
+      "period_end": "2025-12-31",
+      "filing_date": "2026-02-06",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000008/amzn-20251231.htm",
+      "role": "primary"
+    }
+  ],
+
+  "allowed_tools": [
+    "Search_Filing",
+    "PDF_Parser",
+    "Python_Interpreter"
+  ],
+
+  "mandate_profile": null,
+  "compliance_baseline": "citation_only",
+
+  "expected_outputs": {
+    "schema_ref": "forensics_report_v1",
+    "required_sections": [
+      "reconciliation_table",
+      "international_fx_summary",
+      "citations"
+    ],
+    "structured_fields": [
+      "north_america_net_sales",
+      "international_net_sales",
+      "aws_net_sales",
+      "consolidated_net_sales",
+      "international_reported_growth_pct",
+      "international_cc_growth_pct"
+    ]
+  },
+
+  "execution_limits": {
+    "max_tool_calls": 35,
+    "max_tokens": 90000,
+    "timeout_seconds": 720,
+    "required_stages": [1, 2, 3, 4]
+  },
+
+  "scoring": {
+    "task_type_weights": { "layer1": 0.50, "layer2": 0.35, "layer3": 0.15 },
+    "finra_required": false,
+    "layer2_method": "gold_path_automated"
+  },
+
+  "ground_truth_ref": "../ground_truth/AMZN_footnote_reconciliation_gt.json",
+  "gold_path_ref": "../gold_paths/AMZN_footnote_reconciliation.json",
+  "grader_rubric_ref": "../rubrics/AMZN_footnote_reconciliation_grader.md",
+
+  "authored_by": "pilot_template",
+  "review_status": "pilot_draft",
+  "updated_at": "2026-07-02T00:00:00Z"
+}

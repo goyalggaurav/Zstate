@@ -15,6 +15,7 @@ BENCH = ROOT / "benchmark_v0.1"
 TASK_BUNDLES: dict[str, str] = {
     "GOOGL_footnote_reconciliation": "corpus/googl_q1_2026_bundle.json",
     "PEP_fx_organic_growth": "corpus/pep_fy2025_bundle.json",
+    "AMZN_footnote_reconciliation": "corpus/amzn_fy2025_bundle.json",
 }
 
 # Contract §4 required phrases beyond GT citation snippets.
@@ -40,6 +41,16 @@ CONTRACT_PHRASES: dict[str, list[str]] = {
         "(4.7)%",
         "4.5%",
         "does not include a weighted-average FX rate table",
+    ],
+    "AMZN_footnote_reconciliation": [
+        "426,305",
+        "161,894",
+        "128,725",
+        "716,924",
+        "stock-based compensation",
+        "not allocated to segment results",
+        "increased 13%",
+        "increased 10% excluding changes in foreign exchange rates",
     ],
 }
 
@@ -85,7 +96,10 @@ def gt_snippets(ground_truth: dict) -> list[str]:
     return snippets
 
 
-PEP_POLICY_REQUIRED = {"PEP_fx_organic_growth": ["no_wae_fx_table"]}
+PEP_POLICY_REQUIRED = {
+    "PEP_fx_organic_growth": ["no_wae_fx_table"],
+    "AMZN_footnote_reconciliation": ["sbc_not_in_segment_oi"],
+}
 
 
 def validate_section_registry(

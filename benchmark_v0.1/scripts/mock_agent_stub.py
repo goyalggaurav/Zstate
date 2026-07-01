@@ -51,9 +51,11 @@ def write_contract_fixtures() -> list[Path]:
 
     gold_googl = CONTRACT_DIR / "GOOGL_footnote_reconciliation_gold.json"
     gold_pep = CONTRACT_DIR / "PEP_fx_organic_growth_gold.json"
+    gold_amzn = CONTRACT_DIR / "AMZN_footnote_reconciliation_gold.json"
     write_agent_output(gold_googl, "gold", "GOOGL_footnote_reconciliation")
     write_agent_output(gold_pep, "gold", "PEP_fx_organic_growth", pep_gt)
-    written.extend([gold_googl, gold_pep])
+    write_agent_output(gold_amzn, "gold", "AMZN_footnote_reconciliation")
+    written.extend([gold_googl, gold_pep, gold_amzn])
 
     malformed = CONTRACT_DIR / "malformed.json"
     write_agent_output(malformed, "malformed", "GOOGL_footnote_reconciliation")

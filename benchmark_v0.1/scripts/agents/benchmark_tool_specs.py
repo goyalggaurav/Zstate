@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from agent_output_contract import googl_gold_values, pep_gold_values
+from agent_output_contract import amzn_gold_values, googl_gold_values, pep_gold_values
 from benchmark_eval_mode import eval_mode_enabled
 
 CORPUS_TOOLS = frozenset({"Search_Filing", "PDF_Parser", "Python_Interpreter"})
@@ -12,6 +12,7 @@ EVAL_CITATION_GUIDANCE = (
     "CITATION RULES (eval mode):\n"
     "- Each citation snippet must be a verbatim substring copied from Search_Filing/PDF_Parser output.\n"
     "- Do not paraphrase headers, column labels, or table titles.\n"
+    "- Each metric must use a distinct snippet — never reuse the same substring for multiple metrics.\n"
     "- Include every required policy_acknowledgements token listed below."
 )
 
@@ -21,6 +22,8 @@ def _metric_properties(task_id: str) -> dict[str, dict]:
         sample = googl_gold_values()
     elif task_id == "PEP_fx_organic_growth":
         sample = pep_gold_values()
+    elif task_id == "AMZN_footnote_reconciliation":
+        sample = amzn_gold_values()
     else:
         raise ValueError(f"No submit schema for task {task_id!r}")
     props: dict[str, dict] = {}
@@ -47,7 +50,16 @@ def citation_guidance_for_task(task_id: str, *, eval_mode: bool | None = None) -
             "    emea_fx_impact_pct → \"2%\" (from EMEA row in mdna_organic excerpt)\n"
             "    latam_foods_reported_growth_pct → \"(0.2)%\"\n"
             "- For note_1 revenue metrics, cite lines like \"EMEA $ 18,025\" or \"LatAm Foods $ 10,549\".\n"
+            "- Each metric MUST use a distinct verbatim snippet — never reuse the same substring for multiple metrics.\n"
             "- Include policy_acknowledgements: [\"no_wae_fx_table\"]."
+        )
+    if task_id == "AMZN_footnote_reconciliation":
+        return (
+            "CITATION RULES (AMZN):\n"
+            "- Follow gold path order: segment_reporting_policy → note_10_segments → income_statement → mdna_international_fx.\n"
+            "- Each metric MUST use a distinct verbatim snippet — never reuse the same substring.\n"
+            "- Segment net sales from Note 10; consolidated from income statement; International growth from MD&A.\n"
+            "- Include policy_acknowledgements: [\"sbc_not_in_segment_oi\"]."
         )
     if task_id == "GOOGL_footnote_reconciliation":
         return (

@@ -28,6 +28,7 @@ Contract: [docs/CORPUS_BUNDLE_CONTRACT.md](./docs/CORPUS_BUNDLE_CONTRACT.md)
 |------|------|--------|--------|
 | [GOOGL_footnote_reconciliation](./tasks/GOOGL_footnote_reconciliation.json) | F — Forensics | **Q1 2026** (10-Q filed 2026-04-30) | **Published** (expert-reviewed 2026-07-01) |
 | [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-03) | **Published** (expert-reviewed 2026-07-01) |
+| [AMZN_footnote_reconciliation](./tasks/AMZN_footnote_reconciliation.json) | F — Forensics | **FY2025** (10-K filed 2026-02-06) | **Published** (pilot draft) |
 
 ### GOOGL — footnote reconciliation
 
@@ -71,10 +72,12 @@ Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_e
 
 **Discrimination campaign (P2-09):** [campaigns/pilot_eval_discrimination_v1.json](./campaigns/pilot_eval_discrimination_v1.json) sets `"eval_mode": true` (generic citation rules, no task-specific examples) and uses L2 gold-path scoring (section recall + access order + tool coverage) plus L3 partial credit on citations.
 
+**Three-task campaign (P2-10):** [campaigns/pilot_eval_3task_v1.json](./campaigns/pilot_eval_3task_v1.json) adds `AMZN_footnote_reconciliation` with a **4-section ordered gold path** (policy → Note 10 → income statement → MD&A International). PEP L3 now requires **distinct snippets per metric** (`l3_citation_rules.distinct_snippets_required`).
+
 ```bash
 export BENCHMARK_RUN_DELAY_SECONDS=3
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
-  --campaign benchmark_v0.1/campaigns/pilot_eval_discrimination_v1.json \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_3task_v1.json \
   --execute --agent auto
 ```
 

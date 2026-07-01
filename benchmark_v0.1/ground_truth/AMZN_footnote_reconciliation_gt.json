@@ -1,0 +1,103 @@
+{
+  "task_id": "AMZN_footnote_reconciliation",
+  "version": "1.0.0-pilot",
+  "fiscal_period": "FY2025",
+  "period_end": "2025-12-31",
+  "unit": "USD_millions",
+
+  "extracted_values": [
+    {
+      "metric_id": "north_america_net_sales",
+      "value": 426305,
+      "label": "North America net sales — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "AMZN_10K_2025",
+        "note": "Note 10 — Segment Information",
+        "snippet": "North America\nNet sales $ 426,305"
+      }
+    },
+    {
+      "metric_id": "international_net_sales",
+      "value": 161894,
+      "label": "International net sales — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "AMZN_10K_2025",
+        "note": "Note 10 — Segment Information",
+        "snippet": "International\nNet sales $ 161,894"
+      }
+    },
+    {
+      "metric_id": "aws_net_sales",
+      "value": 128725,
+      "label": "AWS net sales — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "AMZN_10K_2025",
+        "note": "Note 10 — Segment Information",
+        "snippet": "AWS\nNet sales $ 128,725"
+      }
+    },
+    {
+      "metric_id": "consolidated_net_sales",
+      "value": 716924,
+      "label": "Consolidated net sales — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "AMZN_10K_2025",
+        "note": "Consolidated Statements of Operations",
+        "snippet": "Net sales $ 716,924"
+      }
+    },
+    {
+      "metric_id": "international_reported_growth_pct",
+      "value": 13.0,
+      "label": "International reported net sales growth — FY2025 vs FY2024",
+      "tolerance": 0.05,
+      "citation": {
+        "doc_id": "AMZN_10K_2025",
+        "note": "MD&A — International",
+        "snippet": "International segment sales increased 13%"
+      }
+    },
+    {
+      "metric_id": "international_cc_growth_pct",
+      "value": 10.0,
+      "label": "International net sales growth excluding FX — FY2025 vs FY2024",
+      "tolerance": 0.05,
+      "citation": {
+        "doc_id": "AMZN_10K_2025",
+        "note": "MD&A — International",
+        "snippet": "increased 10% excluding changes in foreign exchange rates"
+      }
+    }
+  ],
+
+  "computed_values": [
+    {
+      "metric_id": "segment_net_sales_sum",
+      "value": 716924,
+      "label": "Sum of reportable segment net sales",
+      "formula": "north_america + international + aws"
+    }
+  ],
+
+  "failure_modes": [
+    {
+      "id": "wrong_period",
+      "description": "Uses FY2024 consolidated or segment column",
+      "wrong_signatures": {
+        "consolidated_net_sales": 637959
+      }
+    },
+    {
+      "id": "intl_fx_swap",
+      "description": "Swaps reported and FX-neutral International growth",
+      "wrong_signatures": {
+        "international_reported_growth_pct": 10.0,
+        "international_cc_growth_pct": 13.0
+      }
+    }
+  ]
+}
