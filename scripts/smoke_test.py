@@ -703,6 +703,91 @@ def check_agent_submission_validator() -> None:
             assert mode in one.get("failure_modes", []), one
 
 
+def check_eval_mode_prompts() -> None:
+    """P2-09 — eval_mode strips task-specific citation cheat-sheets."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from agents.benchmark_tool_specs import build_system_prompt, citation_guidance_for_task  # noqa: E402
+    from benchmark_eval_mode import eval_mode_enabled  # noqa: E402
+    from benchmark_tool_backend import load_bundle  # noqa: E402
+
+    assert eval_mode_enabled(True) is True
+    assert eval_mode_enabled(False) is False
+
+    task = json.loads(
+        (ROOT / "benchmark_v0.1" / "tasks" / "PEP_fx_organic_growth.json").read_text()
+    )
+    bundle = load_bundle(task["task_id"])
+    dev_guidance = citation_guidance_for_task("PEP_fx_organic_growth", eval_mode=False)
+    eval_guidance = citation_guidance_for_task("PEP_fx_organic_growth", eval_mode=True)
+    assert "Reported growth" in dev_guidance
+    assert "Reported growth" not in eval_guidance
+    assert "eval mode" in eval_guidance.lower()
+
+    dev_prompt = build_system_prompt(task, bundle, eval_mode=False)
+    eval_prompt = build_system_prompt(task, bundle, eval_mode=True)
+    assert "Reported growth" in dev_prompt
+    assert "Reported growth" not in eval_prompt
+
+
+def check_discrimination_scoring() -> None:
+    """P2-09 — L2 gold-path components + L3 partial credit."""
+    import tempfile
+
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from score_benchmark_run import score_l2_section_recall, score_run  # noqa: E402
+    from benchmark_tool_backend import load_bundle  # noqa: E402
+    from agent_output_contract import load_json  # noqa: E402
+
+    plan = ROOT / "benchmark_v0.1" / "examples" / "agents" / "googl_good_plan.json"
+    with tempfile.TemporaryDirectory() as tmp:
+        out_dir = Path(tmp)
+        subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/benchmark_agent_loop.py",
+                "--agent", "scripted",
+                "--task", "GOOGL_footnote_reconciliation",
+                "--plan", str(plan),
+                "--out-dir", str(out_dir),
+                "--run-index", "1",
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        trace = json.loads((out_dir / "GOOGL_footnote_reconciliation_run01_trace.json").read_text())
+        bundle = load_bundle("GOOGL_footnote_reconciliation")
+        gold_path = load_json(ROOT / "benchmark_v0.1" / "gold_paths" / "GOOGL_footnote_reconciliation.json")
+        l2 = score_l2_section_recall(trace, task_id="GOOGL_footnote_reconciliation", gold_path=gold_path, bundle=bundle)
+        assert l2["l2_score"] >= 0.95, l2
+        assert l2["components"]["section_recall"] == 1.0
+        assert l2["components"]["section_order"] == 1.0
+        assert l2["components"]["tool_coverage"] == 1.0
+
+        full = score_run(
+            "GOOGL_footnote_reconciliation",
+            out_dir / "GOOGL_footnote_reconciliation_run01.json",
+            trace_path=out_dir / "GOOGL_footnote_reconciliation_run01_trace.json",
+            submission_path=out_dir / "GOOGL_footnote_reconciliation_run01_submission.json",
+        )
+        assert full["composite_score"] >= 0.95
+
+    trap = ROOT / "benchmark_v0.1" / "contract_fixtures" / "PEP_fx_organic_growth_submission_trap_missing_policy.json"
+    trap_report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/validate_agent_submission.py",
+        "--task", "PEP_fx_organic_growth",
+        "--submission", str(trap),
+    ])
+    assert trap_report["l3_pass"] is False
+    assert 0.0 < trap_report["l3_score"] < 1.0, trap_report
+
+    campaign_path = ROOT / "benchmark_v0.1" / "campaigns" / "pilot_eval_discrimination_v1.json"
+    campaign = json.loads(campaign_path.read_text())
+    assert campaign.get("eval_mode") is True
+
+
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
@@ -722,6 +807,8 @@ def main() -> int:
         ("Composite run scoring", check_composite_scoring),
         ("OpenAI submit schema", check_openai_submit_schema),
         ("Anthropic adapter", check_anthropic_adapter),
+        ("Eval mode prompts", check_eval_mode_prompts),
+        ("Discrimination scoring", check_discrimination_scoring),
         ("Campaign execute scripted", check_campaign_execute_scripted),
     ]
     failed = 0

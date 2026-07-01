@@ -113,5 +113,15 @@
     "note_2_required": true,
     "pass_if_all_required_accessed": true,
     "partial_credit_if_note_15_only": 0.5
+  },
+
+  "l2_gold_path": {
+    "weights": {
+      "section_recall": 0.5,
+      "section_order": 0.25,
+      "tool_coverage": 0.25
+    },
+    "expected_section_order": ["note_15", "note_2"],
+    "required_tools": ["Search_Filing", "Python_Interpreter"]
   }
 }

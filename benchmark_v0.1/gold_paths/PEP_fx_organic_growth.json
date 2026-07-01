@@ -91,5 +91,15 @@
     "mdna_cross_check_required": true,
     "wae_absence_acknowledged": true,
     "pass_if_all_required_accessed": true
+  },
+
+  "l2_gold_path": {
+    "weights": {
+      "section_recall": 0.5,
+      "section_order": 0.25,
+      "tool_coverage": 0.25
+    },
+    "expected_section_order": ["note_1", "mdna_organic"],
+    "required_tools": ["Search_Filing", "Python_Interpreter"]
   }
 }

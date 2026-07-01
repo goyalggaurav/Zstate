@@ -1,0 +1,26 @@
+{
+  "campaign_id": "pilot_eval_discrimination_v1",
+  "backlog_ref": "P2-09",
+  "description": "Discrimination eval — eval_mode prompts (no citation cheat-sheets), L2 gold-path + L3 partial credit scoring.",
+  "status": "execute_ready",
+  "eval_mode": true,
+  "orchestrator_note": "run_benchmark_campaign.py --execute --agent auto. Set BENCHMARK_RUN_DELAY_SECONDS=3 for TPM headroom.",
+  "models": [
+    "gpt-4o",
+    "claude-sonnet-4-5"
+  ],
+  "tasks": [
+    "GOOGL_footnote_reconciliation",
+    "PEP_fx_organic_growth"
+  ],
+  "runs_per_task": 3,
+  "aggregation": {
+    "l1_all_pass": "median_boolean",
+    "l1_pass_rate": "median",
+    "composite_score": "median",
+    "fracture_codes": "union",
+    "layer3_citation": "worst_run_wins"
+  },
+  "manifest_ref": "../manifest.json",
+  "runs_dir": "runs/pilot_eval_discrimination_v1"
+}

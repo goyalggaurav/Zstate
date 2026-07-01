@@ -280,12 +280,17 @@ def run_mock_task(task_id: str) -> tuple[dict, dict, dict | None]:
     )
 
 
-def run_openai_task(task_id: str, *, model_id: str | None = None) -> tuple[dict, dict, dict | None]:
+def run_openai_task(
+    task_id: str,
+    *,
+    model_id: str | None = None,
+    eval_mode: bool | None = None,
+) -> tuple[dict, dict, dict | None]:
     from agents.openai_benchmark_agent import OpenAIBenchmarkAgent
 
     task = load_task(task_id)
     bundle = load_bundle(task_id)
-    agent = OpenAIBenchmarkAgent(task, bundle, model=model_id)
+    agent = OpenAIBenchmarkAgent(task, bundle, model=model_id, eval_mode=eval_mode)
     return run_benchmark_task(
         task_id,
         agent,
@@ -295,12 +300,17 @@ def run_openai_task(task_id: str, *, model_id: str | None = None) -> tuple[dict,
     )
 
 
-def run_anthropic_task(task_id: str, *, model_id: str | None = None) -> tuple[dict, dict, dict | None]:
+def run_anthropic_task(
+    task_id: str,
+    *,
+    model_id: str | None = None,
+    eval_mode: bool | None = None,
+) -> tuple[dict, dict, dict | None]:
     from agents.anthropic_benchmark_agent import AnthropicBenchmarkAgent
 
     task = load_task(task_id)
     bundle = load_bundle(task_id)
-    agent = AnthropicBenchmarkAgent(task, bundle, model=model_id)
+    agent = AnthropicBenchmarkAgent(task, bundle, model=model_id, eval_mode=eval_mode)
     return run_benchmark_task(
         task_id,
         agent,
@@ -310,13 +320,22 @@ def run_anthropic_task(task_id: str, *, model_id: str | None = None) -> tuple[di
     )
 
 
-def run_live_task(task_id: str, *, model_id: str | None = None) -> tuple[dict, dict, dict | None, str]:
+def run_live_task(
+    task_id: str,
+    *,
+    model_id: str | None = None,
+    eval_mode: bool | None = None,
+) -> tuple[dict, dict, dict | None, str]:
     from agents.benchmark_tool_specs import is_anthropic_model
 
     if model_id and is_anthropic_model(model_id):
-        trace, structured_output, agent_submission = run_anthropic_task(task_id, model_id=model_id)
+        trace, structured_output, agent_submission = run_anthropic_task(
+            task_id, model_id=model_id, eval_mode=eval_mode
+        )
         return trace, structured_output, agent_submission, "anthropic"
-    trace, structured_output, agent_submission = run_openai_task(task_id, model_id=model_id)
+    trace, structured_output, agent_submission = run_openai_task(
+        task_id, model_id=model_id, eval_mode=eval_mode
+    )
     return trace, structured_output, agent_submission, "openai"
 
 

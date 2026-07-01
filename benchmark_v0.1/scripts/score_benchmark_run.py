@@ -30,6 +30,8 @@ from validate_agent_submission import validate_submission  # noqa: E402
 L2_FAILURE_FRACTURE = {
     "section_miss": "SECTION_MISS",
     "section_partial": "SECTION_MISS",
+    "section_order": "PATH_INEFF",
+    "tool_miss": "PATH_INEFF",
 }
 
 
@@ -124,6 +126,87 @@ def sections_accessed_from_trace(trace: dict) -> set[str]:
     return accessed
 
 
+def tools_used_from_trace(trace: dict) -> set[str]:
+    used: set[str] = set()
+    for entry in trace.get("tool_log", []):
+        tool = entry.get("tool")
+        if tool:
+            used.add(tool)
+    for step in trace.get("steps", []):
+        if step.get("type") == "tool_call" and step.get("tool"):
+            used.add(step["tool"])
+    return used
+
+
+def first_section_access_order(trace: dict, expected: list[str]) -> list[str]:
+    """Return subset of expected slugs in order of first trace access."""
+    if not trace or not expected:
+        return []
+    order: list[str] = []
+    seen: set[str] = set()
+    for step in trace.get("steps", []):
+        if step.get("type") != "tool_call":
+            continue
+        if step.get("tool") not in ("Search_Filing", "PDF_Parser"):
+            continue
+        if str(step.get("output", "")).startswith("NOT FOUND"):
+            continue
+        slug = step.get("section_slug")
+        if not slug:
+            section = step.get("input", {}).get("section")
+            if section:
+                slug = normalize_section_slug(section)
+        if not slug or slug not in expected or slug in seen:
+            continue
+        seen.add(slug)
+        order.append(slug)
+    return order
+
+
+def score_section_order(trace: dict | None, expected_order: list[str]) -> tuple[float, list[str]]:
+    if trace is None or len(expected_order) < 2:
+        return 1.0, []
+    observed = first_section_access_order(trace, expected_order)
+    if len(observed) < 2:
+        return 0.0, ["section_order"]
+    correct = 0
+    total = len(expected_order) - 1
+    positions = {slug: idx for idx, slug in enumerate(observed)}
+    for i in range(total):
+        a, b = expected_order[i], expected_order[i + 1]
+        if a in positions and b in positions and positions[a] < positions[b]:
+            correct += 1
+    score = correct / total if total else 1.0
+    failure_modes = [] if score >= 1.0 else ["section_order"]
+    return score, failure_modes
+
+
+def score_tool_coverage(trace: dict | None, required_tools: list[str]) -> tuple[float, list[str]]:
+    if not required_tools:
+        return 1.0, []
+    if trace is None:
+        return 0.0, ["tool_miss"]
+    used = tools_used_from_trace(trace)
+    missing = [t for t in required_tools if t not in used]
+    score = (len(required_tools) - len(missing)) / len(required_tools)
+    failure_modes = ["tool_miss"] if missing else []
+    return score, failure_modes
+
+
+def l2_gold_path_config(gold_path: dict) -> dict:
+    cfg = gold_path.get("l2_gold_path") or {}
+    weights = cfg.get("weights") or {}
+    return {
+        "weights": {
+            "section_recall": float(weights.get("section_recall", 0.5)),
+            "section_order": float(weights.get("section_order", 0.25)),
+            "tool_coverage": float(weights.get("tool_coverage", 0.25)),
+        },
+        "expected_section_order": list(cfg.get("expected_section_order") or []),
+        "required_tools": list(cfg.get("required_tools") or gold_path.get("required_tool_classes") or []),
+    }
+
+
 def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict, bundle: dict) -> dict:
     required = required_section_slugs(bundle)
     if not required:
@@ -135,6 +218,7 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
             "failure_modes": [],
             "fracture_codes": [],
             "status": "skipped",
+            "components": {},
         }
     if trace is None:
         return {
@@ -145,6 +229,7 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
             "failure_modes": ["section_miss"],
             "fracture_codes": ["SECTION_MISS"],
             "status": "missing_trace",
+            "components": {"section_recall": 0.0, "section_order": 0.0, "tool_coverage": 0.0},
         }
 
     accessed = sorted(sections_accessed_from_trace(trace))
@@ -153,20 +238,36 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
     recall_cfg = gold_path.get("section_recall_scoring", {})
 
     if not missing:
-        l2_score = 1.0
-        failure_modes: list[str] = []
+        recall_score = 1.0
+        recall_failures: list[str] = []
     elif (
         len(missing) == len(required) - 1
         and "note_15" in accessed_set
         and recall_cfg.get("partial_credit_if_note_15_only") is not None
         and "note_15" in required
     ):
-        l2_score = float(recall_cfg["partial_credit_if_note_15_only"])
-        failure_modes = ["section_partial"]
+        recall_score = float(recall_cfg["partial_credit_if_note_15_only"])
+        recall_failures = ["section_partial"]
     else:
-        l2_score = (len(required) - len(missing)) / len(required)
-        failure_modes = ["section_miss"] if missing else []
+        recall_score = (len(required) - len(missing)) / len(required)
+        recall_failures = ["section_miss"] if missing else []
 
+    gp = l2_gold_path_config(gold_path)
+    order_score, order_failures = score_section_order(trace, gp["expected_section_order"])
+    tool_score, tool_failures = score_tool_coverage(trace, gp["required_tools"])
+
+    weights = gp["weights"]
+    total_w = weights["section_recall"] + weights["section_order"] + weights["tool_coverage"]
+    if total_w <= 0:
+        l2_score = recall_score
+    else:
+        l2_score = (
+            weights["section_recall"] * recall_score
+            + weights["section_order"] * order_score
+            + weights["tool_coverage"] * tool_score
+        ) / total_w
+
+    failure_modes = list(dict.fromkeys(recall_failures + order_failures + tool_failures))
     l2_pass = l2_score >= 1.0
     fracture_codes = list(dict.fromkeys(
         L2_FAILURE_FRACTURE[m] for m in failure_modes if m in L2_FAILURE_FRACTURE
@@ -181,6 +282,12 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
         "failure_modes": failure_modes,
         "fracture_codes": fracture_codes,
         "status": "scored",
+        "components": {
+            "section_recall": round(recall_score, 4),
+            "section_order": round(order_score, 4),
+            "tool_coverage": round(tool_score, 4),
+        },
+        "l2_weights": weights,
     }
 
 
@@ -194,10 +301,10 @@ def score_l3_submission(submission: dict | None, *, task_id: str) -> dict:
             "status": "missing_submission",
         }
     report = validate_submission(submission, task_id=task_id)
-    l3_score = 1.0 if report["l3_pass"] else 0.0
+    l3_score = float(report.get("l3_score", 1.0 if report["l3_pass"] else 0.0))
     return {
         "l3_pass": report["l3_pass"],
-        "l3_score": l3_score,
+        "l3_score": round(l3_score, 4),
         "failure_modes": report.get("failure_modes", []),
         "fracture_codes": report.get("fracture_codes", []),
         "status": "scored",

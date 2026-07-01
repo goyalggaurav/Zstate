@@ -39,6 +39,7 @@ from agent_output_contract import (  # noqa: E402
 )
 from score_benchmark_run import score_run  # noqa: E402
 from agents.benchmark_tool_specs import is_anthropic_model  # noqa: E402
+from benchmark_eval_mode import eval_mode_enabled  # noqa: E402
 
 
 def published_tasks(manifest: dict) -> dict[str, dict]:
@@ -118,6 +119,7 @@ def execute_campaign(
     runs_dir.mkdir(parents=True, exist_ok=True)
     exec_records: list[dict] = []
     run_delay = float(os.environ.get("BENCHMARK_RUN_DELAY_SECONDS", "0"))
+    eval_mode = eval_mode_enabled(campaign.get("eval_mode"))
 
     model_list = models or campaign["models"]
     task_list = tasks or campaign["tasks"]
@@ -161,15 +163,15 @@ def execute_campaign(
                         )
                     elif agent_mode == "openai":
                         trace, structured_output, agent_submission = run_openai_task(
-                            task_id, model_id=model_id
+                            task_id, model_id=model_id, eval_mode=eval_mode
                         )
                     elif agent_mode == "anthropic":
                         trace, structured_output, agent_submission = run_anthropic_task(
-                            task_id, model_id=model_id
+                            task_id, model_id=model_id, eval_mode=eval_mode
                         )
                     elif agent_mode == "auto":
                         trace, structured_output, agent_submission, routed = run_live_task(
-                            task_id, model_id=model_id
+                            task_id, model_id=model_id, eval_mode=eval_mode
                         )
                         rec["agent_mode"] = routed
                     elif agent_mode == "mock":

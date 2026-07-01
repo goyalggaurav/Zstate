@@ -6,7 +6,6 @@ import json
 import os
 import socket
 import ssl
-import sys
 import time
 import urllib.error
 import urllib.request
@@ -21,6 +20,7 @@ from agents.benchmark_tool_specs import (
     build_tool_definitions,
     parse_submission_args,
 )
+from benchmark_eval_mode import eval_mode_enabled
 
 
 def _ssl_context() -> ssl.SSLContext:
@@ -32,10 +32,6 @@ def _ssl_context() -> ssl.SSLContext:
         return ssl.create_default_context()
 
 
-def _system_prompt(task: dict, bundle: dict) -> str:
-    return build_system_prompt(task, bundle)
-
-
 class OpenAIBenchmarkAgent:
     def __init__(
         self,
@@ -45,15 +41,17 @@ class OpenAIBenchmarkAgent:
         model: str | None = None,
         api_key: str | None = None,
         base_url: str | None = None,
+        eval_mode: bool | None = None,
     ) -> None:
         self.task = task
         self.bundle = bundle
+        self.eval_mode = eval_mode_enabled(eval_mode)
         self.model = model or os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY", "")
         self.base_url = (base_url or os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")).rstrip("/")
-        self.tools = build_tool_definitions(task, bundle)
+        self.tools = build_tool_definitions(task, bundle, eval_mode=self.eval_mode)
         self.messages: list[dict[str, Any]] = [
-            {"role": "system", "content": _system_prompt(task, bundle)},
+            {"role": "system", "content": build_system_prompt(task, bundle, eval_mode=self.eval_mode)},
             {"role": "user", "content": (
                 "Begin the task. Retrieve filing sections with tools, verify arithmetic, then submit "
                 "metrics + verbatim citations (copy-paste from tool output, never paraphrase headers) "

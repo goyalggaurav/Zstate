@@ -124,6 +124,7 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
     doc_ids = allowed_doc_ids(task)
     slugs = registry_slugs(bundle)
     cited_metrics: set[str] = set()
+    metric_citation_ok: dict[str, bool] = {}
 
     for idx, cite in enumerate(citations):
         prefix = f"citation[{idx}]"
@@ -131,10 +132,12 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
         doc_id = cite.get("doc_id")
         section_slug = cite.get("section_slug")
         snippet = cite.get("snippet")
+        cite_ok = True
 
         if metric_id and metric_id not in metrics:
             failure_modes.append("cite_orphan_metric")
             checks.append({"check": f"{prefix}.metric_id", "pass": False, "metric_id": metric_id})
+            cite_ok = False
         elif metric_id:
             cited_metrics.add(metric_id)
             checks.append({"check": f"{prefix}.metric_id", "pass": True, "metric_id": metric_id})
@@ -142,6 +145,7 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
         if doc_id not in doc_ids:
             failure_modes.append("cite_doc_err")
             checks.append({"check": f"{prefix}.doc_id", "pass": False, "doc_id": doc_id})
+            cite_ok = False
         else:
             checks.append({"check": f"{prefix}.doc_id", "pass": True, "doc_id": doc_id})
 
@@ -149,6 +153,7 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
             failure_modes.append("cite_slug_err")
             checks.append({"check": f"{prefix}.section_slug", "pass": False, "section_slug": section_slug})
             excerpt = None
+            cite_ok = False
         else:
             checks.append({"check": f"{prefix}.section_slug", "pass": True, "section_slug": section_slug})
             excerpt = excerpt_for_slug(bundle, section_slug)
@@ -156,43 +161,67 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
         if not snippet:
             failure_modes.append("cite_halluc")
             checks.append({"check": f"{prefix}.snippet", "pass": False, "reason": "missing snippet"})
+            cite_ok = False
         elif excerpt is None:
             failure_modes.append("cite_halluc")
             checks.append({"check": f"{prefix}.snippet", "pass": False, "reason": "no excerpt for slug"})
+            cite_ok = False
         elif not snippet_present(excerpt, snippet):
             failure_modes.append("cite_halluc")
             checks.append({"check": f"{prefix}.snippet", "pass": False, "reason": "not in section excerpt"})
+            cite_ok = False
         else:
             checks.append({"check": f"{prefix}.snippet", "pass": True})
+
+        if metric_id:
+            metric_citation_ok[metric_id] = metric_citation_ok.get(metric_id, True) and cite_ok
 
     for metric_id in metrics:
         if metric_id not in cited_metrics:
             failure_modes.append("cite_incomplete")
             checks.append({"check": f"metric_cited.{metric_id}", "pass": False})
+            metric_citation_ok[metric_id] = False
 
     acks = submission.get("policy_acknowledgements") or []
     if not isinstance(acks, list):
         acks = []
-    for policy_id in required_policy_ids(bundle):
+    required_policies = required_policy_ids(bundle)
+    policy_pass = 0
+    for policy_id in required_policies:
         ok = policy_id in acks
         checks.append({"check": f"policy_ack.{policy_id}", "pass": ok, "required": True})
-        if not ok:
+        if ok:
+            policy_pass += 1
+        else:
             failure_modes.append("policy_omit")
 
     failure_modes = list(dict.fromkeys(failure_modes))
     fracture_codes = list(dict.fromkeys(FAILURE_FRACTURE[m] for m in failure_modes if m in FAILURE_FRACTURE))
     l3_pass = not failure_modes
 
+    metric_ids = list(metrics.keys())
+    citation_pass = sum(1 for mid in metric_ids if metric_citation_ok.get(mid)) if metric_ids else 0
+    citation_fraction = citation_pass / len(metric_ids) if metric_ids else 0.0
+    policy_fraction = policy_pass / len(required_policies) if required_policies else 1.0
+    l3_score = round(0.85 * citation_fraction + 0.15 * policy_fraction, 4)
+
     return {
         "task_id": task_id,
         "layer": "L3",
         "l3_pass": l3_pass,
+        "l3_score": l3_score,
         "all_pass": l3_pass,
         "failure_modes": failure_modes,
         "fracture_codes": fracture_codes,
         "checks": checks,
         "citation_count": len(citations),
         "metrics_cited": sorted(cited_metrics),
+        "components": {
+            "citation_fraction": round(citation_fraction, 4),
+            "policy_fraction": round(policy_fraction, 4),
+            "metrics_with_valid_citation": citation_pass,
+            "metric_count": len(metric_ids),
+        },
     }
 
 

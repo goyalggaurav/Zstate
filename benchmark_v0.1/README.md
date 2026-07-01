@@ -69,7 +69,16 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py
 
 Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json) — includes `composite_score_median` per campaign.
 
-Single-run composite (L1 verify + L2 section recall + L3 submission):
+**Discrimination campaign (P2-09):** [campaigns/pilot_eval_discrimination_v1.json](./campaigns/pilot_eval_discrimination_v1.json) sets `"eval_mode": true` (generic citation rules, no task-specific examples) and uses L2 gold-path scoring (section recall + access order + tool coverage) plus L3 partial credit on citations.
+
+```bash
+export BENCHMARK_RUN_DELAY_SECONDS=3
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_discrimination_v1.json \
+  --execute --agent auto
+```
+
+Single-run composite (L1 verify + L2 gold-path + L3 submission):
 
 ```bash
 python3 benchmark_v0.1/scripts/score_benchmark_run.py \
@@ -129,6 +138,15 @@ python3 benchmark_v0.1/scripts/benchmark_agent_loop.py \
 Modes: `scripted`, `mock`, `openai`. No PM — tools + structured submit only.
 
 OpenAI mode uses `OPENAI_API_KEY` (optional `OPENAI_MODEL`, default `gpt-4o-mini`). Submit tool requires `metrics` + `citations` + policy acks (PEP).
+
+### API keys (local only)
+
+Do **not** paste keys into shell history or commit them. Recommended:
+
+1. Create repo-root `.env` (already gitignored): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, optional `BENCHMARK_RUN_DELAY_SECONDS=3`.
+2. Load once per session: `set -a && source .env && set +a`
+3. Verify Anthropic format: `python3 -c "import os; k=os.environ.get('ANTHROPIC_API_KEY',''); print('ok' if k.startswith('sk-ant-') and 'ANTHROPIC_API_KEY=' not in k else 'bad')"`
+4. **Rotate** any key that appeared in terminal logs, chat, or screenshots — revoke the old key in the provider console after creating a replacement.
 
 **1×1×1 live pilot** (before full 2×2×3):
 

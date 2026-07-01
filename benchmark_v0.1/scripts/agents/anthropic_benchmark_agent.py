@@ -20,6 +20,7 @@ from agents.benchmark_tool_specs import (
     to_anthropic_tools,
 )
 from agents.llm_retry import retry_sleep_seconds
+from benchmark_eval_mode import eval_mode_enabled
 
 USER_START = (
     "Begin the task. Retrieve filing sections with tools, verify arithmetic, then submit "
@@ -46,14 +47,16 @@ class AnthropicBenchmarkAgent:
         model: str | None = None,
         api_key: str | None = None,
         base_url: str | None = None,
+        eval_mode: bool | None = None,
     ) -> None:
         self.task = task
         self.bundle = bundle
+        self.eval_mode = eval_mode_enabled(eval_mode)
         self.model = model or os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-5")
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
         self.base_url = (base_url or os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com/v1")).rstrip("/")
-        self.system = build_system_prompt(task, bundle)
-        self.tools = to_anthropic_tools(build_tool_definitions(task, bundle))
+        self.system = build_system_prompt(task, bundle, eval_mode=self.eval_mode)
+        self.tools = to_anthropic_tools(build_tool_definitions(task, bundle, eval_mode=self.eval_mode))
         self.messages: list[dict[str, Any]] = [
             {"role": "user", "content": USER_START},
         ]

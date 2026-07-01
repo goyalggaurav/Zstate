@@ -3,9 +3,17 @@
 from __future__ import annotations
 
 from agent_output_contract import googl_gold_values, pep_gold_values
+from benchmark_eval_mode import eval_mode_enabled
 
 CORPUS_TOOLS = frozenset({"Search_Filing", "PDF_Parser", "Python_Interpreter"})
 SUBMIT_TOOL = "submit_structured_output"
+
+EVAL_CITATION_GUIDANCE = (
+    "CITATION RULES (eval mode):\n"
+    "- Each citation snippet must be a verbatim substring copied from Search_Filing/PDF_Parser output.\n"
+    "- Do not paraphrase headers, column labels, or table titles.\n"
+    "- Include every required policy_acknowledgements token listed below."
+)
 
 
 def _metric_properties(task_id: str) -> dict[str, dict]:
@@ -25,8 +33,10 @@ def metric_keys(task_id: str) -> set[str]:
     return set(_metric_properties(task_id).keys())
 
 
-def citation_guidance_for_task(task_id: str) -> str:
+def citation_guidance_for_task(task_id: str, *, eval_mode: bool | None = None) -> str:
     """Task-specific L3 citation rules for system prompt and tool descriptions."""
+    if eval_mode_enabled(eval_mode):
+        return EVAL_CITATION_GUIDANCE
     if task_id == "PEP_fx_organic_growth":
         return (
             "CITATION RULES (PEP — critical):\n"
@@ -48,11 +58,13 @@ def citation_guidance_for_task(task_id: str) -> str:
     return "CITATION RULES: each snippet must be a verbatim substring from a retrieved section excerpt."
 
 
-def snippet_field_description(task_id: str) -> str:
+def snippet_field_description(task_id: str, *, eval_mode: bool | None = None) -> str:
     base = (
         "Verbatim substring from the Search_Filing/PDF_Parser tool output for this section_slug. "
         "Copy-paste exactly; do not rephrase column headers or labels."
     )
+    if eval_mode_enabled(eval_mode):
+        return base
     if task_id == "PEP_fx_organic_growth":
         return (
             base
@@ -62,8 +74,9 @@ def snippet_field_description(task_id: str) -> str:
     return base
 
 
-def build_system_prompt(task: dict, bundle: dict) -> str:
+def build_system_prompt(task: dict, bundle: dict, *, eval_mode: bool | None = None) -> str:
     """Shared system prompt for OpenAI and Anthropic benchmark agents."""
+    task_id = task["task_id"]
     registry = bundle.get("section_registry", [])
     slug_lines = "\n".join(
         f"  - {e['section_slug']}: {e.get('name', e['section_id'])}"
@@ -76,7 +89,7 @@ def build_system_prompt(task: dict, bundle: dict) -> str:
         else:
             policy_lines += f"\n- Policy note `{note['policy_id']}`: {note['statement']}"
 
-    ids = sorted(metric_keys(task["task_id"]))
+    ids = sorted(metric_keys(task_id))
     metric_list = ", ".join(ids)
 
     return (
@@ -89,7 +102,7 @@ def build_system_prompt(task: dict, bundle: dict) -> str:
         f"  - citations: exactly one entry per metrics key ({metric_list}) — no omissions\n"
         "  - each citation snippet must be a verbatim substring from a section you retrieved\n"
         "  - policy_acknowledgements: include every REQUIRED policy_id listed below\n\n"
-        f"{citation_guidance_for_task(task['task_id'])}\n\n"
+        f"{citation_guidance_for_task(task_id, eval_mode=eval_mode)}\n\n"
         f"TASK:\n{task['prompt']['text']}\n\n"
         f"ALLOWED SECTION SLUGS:\n{slug_lines or '  (see tool enum)'}"
         f"{policy_lines}"
@@ -138,7 +151,7 @@ def parse_submission_args(args: dict, task: dict) -> tuple[dict, dict | None]:
     raise ValueError(f"submit_structured_output missing metrics for {task_id!r}")
 
 
-def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
+def build_tool_definitions(task: dict, bundle: dict, *, eval_mode: bool | None = None) -> list[dict]:
     task_id = task["task_id"]
     ticker = task["ticker"]
     period = task["required_documents"][0]["fiscal_period"]
@@ -175,7 +188,7 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
             "section_slug": {"type": "string", "enum": section_enum},
             "snippet": {
                 "type": "string",
-                "description": snippet_field_description(task_id),
+                "description": snippet_field_description(task_id, eval_mode=eval_mode),
             },
             "note": {"type": "string"},
             "table_title": {"type": "string"},
@@ -261,7 +274,7 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
                 "description": (
                     f"Submit final agent_submission_v1 with all {n_metrics} metrics, "
                     f"{n_metrics} citations (one per metric_id), and required policy acks. "
-                    f"{citation_guidance_for_task(task_id).split(chr(10))[0]}. Ends the task."
+                    f"{citation_guidance_for_task(task_id, eval_mode=eval_mode).split(chr(10))[0]}. Ends the task."
                 ),
                 "parameters": submit_params,
             },
