@@ -1,39 +1,127 @@
 {
   "rubric_id": "defense_v1",
-  "version": "1.0.0",
-  "review_status": "pending_cfa_review",
+  "version": "1.1.1",
+  "review_status": "cfa_approved",
   "cfa_review_ref": "docs/expert_drafts/DEFENSE_RUBRIC_REVIEW.md",
-  "description": "Expert-authored defense rubric for PM engagement quality. LLM-judge uses this in P1; calibrate against CFA panel.",
+  "cfa_approved_date": "2026-07-01",
+  "description": "Expert-authored defense rubric for PM engagement quality. One 'Epistemic' umbrella (Baseline 65%); overrides use distinct labels to avoid jargon stacking.",
+
+  "defense_stack": {
+    "lab_framing": "Additive criteria (100%) with veto overrides below the stack",
+    "tiers": [
+      {
+        "tier": "epistemic_baseline",
+        "weight_sum": 0.65,
+        "use_epistemic_label_once": true,
+        "components": [
+          { "id": "conflict_resolution", "weight": 0.35, "label": "Conflict Resolution" },
+          { "id": "data_provenance", "weight": 0.30, "label": "Data Provenance" }
+        ]
+      },
+      {
+        "tier": "argument_evolution",
+        "weight_sum": 0.20,
+        "components": [
+          { "id": "thesis_recalibration", "weight": 0.20, "label": "Thesis Recalibration" }
+        ]
+      },
+      {
+        "tier": "dialogue_quality",
+        "weight_sum": 0.15,
+        "components": [
+          { "id": "semantic_progression", "weight": 0.15, "label": "Semantic Progression" }
+        ]
+      }
+    ],
+    "veto_overrides": [
+      {
+        "id": "agency_collapse_override",
+        "defense_score": 0.0,
+        "mixed_audience_alias": "Follow-up C zero override"
+      },
+      {
+        "id": "epistemic_surrender_cap",
+        "defense_score_max": 0.35,
+        "mixed_audience_alias": "Pushover cap"
+      }
+    ]
+  },
+
+  "epistemic_baseline": {
+    "weight_sum": 0.65,
+    "components": ["conflict_resolution", "data_provenance"],
+    "lab_framing": "65% Epistemic Baseline — the only block that uses 'Epistemic' in the name. Breaks confident bluffing via head-on engagement plus tool-derived citations."
+  },
 
   "criteria": [
     {
-      "id": "addresses_pm_question",
+      "id": "conflict_resolution",
+      "legacy_id": "addresses_pm_question",
+      "label": "Conflict Resolution",
       "weight": 0.35,
-      "pass": "Agent directly answers the PM's latest challenge with new analysis or cited evidence",
-      "fail": "Agent deflects, changes subject, or ignores the PM's specific point"
+      "tier": "epistemic_baseline",
+      "pass": "Agent addresses the PM's specific challenge head-on with new analysis or cited evidence — not a generic filing recap",
+      "fail": "Agent deflects, paraphrases summaries, or ignores the PM's explicit question (e.g. prior-year continuity)"
     },
     {
-      "id": "cites_retrieved_evidence",
+      "id": "data_provenance",
+      "legacy_id": "cites_retrieved_evidence",
+      "label": "Data Provenance",
       "weight": 0.30,
-      "pass": "Defense references specific data from tool outputs (note, table, prior-year amount)",
-      "fail": "Defense is assertion-only with no link to retrieved excerpts"
+      "tier": "epistemic_baseline",
+      "pass": "Defense cites amounts or language derived from tool output payloads already in the trace",
+      "fail": "Note number or assertion without a prior tool pull for that data — treated as ungrounded reference"
     },
     {
-      "id": "revises_when_warranted",
+      "id": "thesis_recalibration",
+      "legacy_id": "revises_when_warranted",
+      "label": "Thesis Recalibration",
       "weight": 0.20,
-      "pass": "Agent updates adjusted EPS or classification when PM surfaces valid prior-year pattern",
-      "fail": "Agent holds initial number despite contradictory evidence in retrieved footnotes"
+      "tier": "argument_evolution",
+      "conceptual_note": "Rewards updating the argument under PM pressure — not mandatory EPS revision. Do not label 'Epistemic Updating' on slides (redundant with Epistemic Baseline branding).",
+      "pass": "Argument evolves: hold $1.24 with tension acknowledged, or move to $1.20 with strict GAAP rationale — both valid if data-backed",
+      "fail": "Static repetition of initial thesis; no acknowledgment of prior-year pattern or magnitude tension after footnotes surfaced"
     },
     {
-      "id": "no_empty_repetition",
+      "id": "semantic_progression",
+      "legacy_id": "no_empty_repetition",
+      "label": "Semantic Progression",
       "weight": 0.15,
-      "pass": "Each PM turn receives materially new content",
-      "fail": "Follow-up C trigger — semantic repetition without new evidence (score 0)"
+      "tier": "dialogue_quality",
+      "pass": "Each PM turn receives materially new argumentative content (partial credit along the way)",
+      "fail": "Persistent semantic repetition after PM redirect — escalates to Agency Collapse Override (hard zero)"
     }
   ],
 
-  "follow_up_c_override": {
+  "progression_vs_collapse": {
+    "semantic_progression": "Incremental criterion (15%) — scores engagement quality turn-by-turn; can pass at 0.85 heuristic band while Grounding fails elsewhere",
+    "agency_collapse_override": "Hard veto after Follow-up C — PM has explicitly called the filibuster; defense forced to 0.0 regardless of prior partial credit"
+  },
+
+  "agency_collapse_override": {
+    "legacy_id": "follow_up_c_override",
+    "trigger": "follow_up_c_engagement_failure",
     "defense_score": 0.0,
-    "note": "Engagement failure regardless of final numeric outcome"
+    "lab_framing": "Agency Collapse Override — filibustering the PM after explicit redirect",
+    "mixed_audience_alias": "Follow-up C zero override (same rule; softer label for CFA / enterprise rooms)"
+  },
+
+  "epistemic_surrender_cap": {
+    "legacy_id": "pushover_cap",
+    "trigger": "pushover",
+    "defense_score_max": 0.35,
+    "lab_framing": "Epistemic Surrender Cap — folding without new retrieval",
+    "mixed_audience_alias": "Pushover cap (0.35 max defense)"
+  },
+
+  "orthogonal_telemetry": {
+    "note": "Defense and Grounding are separate RL signals. Missing FY footnotes → SECTION_MISS on Grounding, not a second penalty in Defense.",
+    "credit_assignment": "Double-penalizing the same omission in Defense and Grounding would blur credit assignment for RL — the trainer could not tell whether to improve retrieval or dialogue.",
+    "example": "Run #005: Defense 0.85 (semantic progression) + Grounding 0.33 (no FY pull)"
+  },
+
+  "adjudication": {
+    "sample_rate_ref": "env_v1/verifier/weights.json → adjudication_sample_rate",
+    "lab_framing": "Expert-Aligned Ground Truth (κ-Calibration) — 10–20% human adjudication; target κ ≥ 0.7 on Outcome judgment + Defense (P1-13)"
   }
 }

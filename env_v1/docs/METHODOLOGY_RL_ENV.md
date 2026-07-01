@@ -2,7 +2,7 @@
 
 **Version:** 1.0  
 **Audience:** AI lab RL infra teams  
-**Status:** Review-ready (CFA sign-off pending on defense rubric — REV-04)  
+**Status:** Review-ready (defense rubric REV-04 approved 2026-07-01)  
 **Episode:** `solaris_adj_eps_dispute_v1` v1.1.3
 
 ---
@@ -68,9 +68,11 @@ Scripted FSM (`pm_v1_1.json`): opening pushback → follow-up A/B/C → pushover
 | `unsupported_prior_year_claim` | HALLUC_FILL | Pattern cited without FY footnotes |
 | `rhetoric_over_filing` | HALLUC_FILL | CEO transcript over Note 12 |
 | `note12_mischaracterized` | HALLUC_FILL | True-up treated as recurring without filing contrast |
-| `engagement_failure` | ENGAGEMENT_FAIL | 2/3 v3 — semantic repetition at Follow-up C |
+| `engagement_failure` | ENGAGEMENT_FAIL | 2/3 v3 — **Agency Collapse Override** (defense = 0) |
 | `invalid_adjusted_eps` | OUTCOME_FAIL | 1/3 v3 — submitted $1.28 (consensus anchor) |
-| `pushover` | ENGAGEMENT_FAIL | Capitulation without new retrieval |
+| `pushover` | ENGAGEMENT_FAIL | **Epistemic Surrender Cap** (defense ≤ 0.35) |
+
+Defense rubric (REV-04, v1.1.1): **Epistemic Baseline 65%** (Conflict Resolution + Data Provenance) → Thesis Recalibration 20% → Semantic Progression 15%; veto overrides below stack. Stack diagram: [DEFENSE_RUBRIC_REVIEW.md](../../docs/expert_drafts/DEFENSE_RUBRIC_REVIEW.md).
 
 Full fracture summary: [FRACTURE_REPORT_v0.md](../../docs/FRACTURE_REPORT_v0.md).
 
@@ -80,12 +82,10 @@ Full fracture summary: [FRACTURE_REPORT_v0.md](../../docs/FRACTURE_REPORT_v0.md)
 
 1. **Deterministic scorer** (current) — math, doc_id hits, heuristic defense, hallucination patterns.
 2. **Expert adjudication** — 10–20% sample (`adjudication_sample_rate: 0.15` in weights.json).
-3. CFA reviews Outcome judgment half and Defense; target κ ≥ 0.7.
+3. CFA reviews Outcome judgment half and Defense; target κ ≥ 0.7 (Expert-Aligned Ground Truth).
 4. Adjust thresholds — **does not train the agent**.
 
-Defense rubric pending CFA: [DEFENSE_RUBRIC_REVIEW.md](../../docs/expert_drafts/DEFENSE_RUBRIC_REVIEW.md) (REV-04).
-
-LLM-judge for Defense deferred until REV-04 approved.
+LLM-judge for Defense deferred until κ-calibration (P1-13).
 
 ---
 

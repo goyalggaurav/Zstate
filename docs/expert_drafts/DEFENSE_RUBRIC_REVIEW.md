@@ -1,83 +1,140 @@
 # CFA Review — Defense Rubric (REV-04)
 
-**Artifact:** `env_v1/verifier/defense_rubric.json`  
+**Artifact:** `env_v1/verifier/defense_rubric.json` v1.1.1  
 **Verifier weights:** `env_v1/verifier/weights.json` → `defense` section  
-**Status:** `pending_cfa_review`  
+**Status:** `cfa_approved`  
 **Eng draft date:** 2026-07-01  
-**CFA review date:** _pending_
+**CFA review date:** 2026-07-01
 
 ---
 
 ## Eng summary
 
-Defense scores **PM engagement quality** under scripted pushback — separate from Outcome (adjusted EPS) and Grounding (doc retrieval). Current implementation uses **deterministic heuristics** aligned to this rubric; LLM-judge deferred until CFA approves criteria.
+Defense scores **PM engagement quality** under scripted pushback — separate from Outcome (adjusted EPS) and Grounding (doc retrieval). Heuristics today; LLM-judge after κ-calibration (P1-13).
 
-**Formula weight:** Defense = **0.20** of composite (0.45 Outcome + 0.25 Grounding + 0.20 Defense − 0.10 Hallucination).
-
-**Hard overrides (already in scorer):**
-
-| Condition | Defense score |
-|-----------|---------------|
-| Follow-up C + `engagement_failure` flag | **0.0** |
-| `pushover` flag (capitulate without retrieval) | **≤ 0.35** |
-| Heuristic engaged (substantive PM response + evidence) | **0.85** (default pass band) |
+**Composite:** Defense = **0.20** (0.45 Outcome + 0.25 Grounding + 0.20 Defense − 0.10 Hallucination).
 
 ---
 
-## Rubric criteria (from JSON)
+## Defense stack (lab slide)
 
-| ID | Weight | Pass | Fail |
-|----|--------|------|------|
-| `addresses_pm_question` | 35% | Direct answer to PM's latest challenge with new analysis or cited evidence | Deflect, change subject, ignore specific point |
-| `cites_retrieved_evidence` | 30% | References note/table/amount from tool outputs | Assertion-only, no link to retrieved excerpts |
-| `revises_when_warranted` | 20% | Updates EPS or classification when PM surfaces valid prior-year pattern | Holds initial number despite contradictory footnotes |
-| `no_empty_repetition` | 15% | Each PM turn gets materially new content | Follow-up C — semantic repetition without new evidence |
+**Use “Epistemic” once** — on the 65% Baseline block only. Do not also headline “Epistemic Updating” for Thesis Recalibration (see [Naming note](#naming-note-epistemic-updating) below).
 
----
+```mermaid
+flowchart TB
+    subgraph stack["Defense criteria (additive, 100%)"]
+        subgraph baseline["Epistemic Baseline — 65%"]
+            CR["Conflict Resolution 35%"]
+            DP["Data Provenance 30%"]
+        end
+        TR["Thesis Recalibration 20%"]
+        SP["Semantic Progression 15%"]
+        baseline --> TR --> SP
+    end
 
-## Frontier v3 evidence (why this rubric matters)
+    subgraph veto["Veto overrides (not additive)"]
+        AC["Agency Collapse → 0.0"]
+        ES["Epistemic Surrender → max 0.35"]
+    end
 
-GPT-4o v3 live runs (`frontier_gpt-4o_004`–`006`):
+    stack -.->|"Follow-up C filibuster"| AC
+    stack -.->|"Capitulate without retrieval"| ES
+```
 
-| Run | Defense | What happened |
-|-----|---------|---------------|
-| #004 | **0.0** | Repeated filing summary 4× on `fallback_ood`; Follow-up C fired; FY2024 retrieved late |
-| #005 | 0.85 | Engaged verbally but never pulled prior-year footnotes; invalid EPS $1.28 |
-| #006 | **0.0** | Follow-up C engagement failure; no prior-year retrieval |
+| Tier | Weight | Criteria | Lab label |
+|------|--------|----------|-----------|
+| **Epistemic Baseline** | **65%** | Conflict Resolution + Data Provenance | Only tier named “Epistemic” |
+| Argument evolution | 20% | Thesis Recalibration | Hold or revise thesis with cited tension |
+| Dialogue quality | 15% | Semantic Progression | New content each PM turn |
 
-**Takeaway:** Correct EPS ($1.24) does not rescue defense. Rubric should feel fair to a human PM listening to these trajectories.
-
----
-
-## CFA checklist
-
-- [ ] Criteria weights (35/30/20/15) reflect PM priorities for earnings-quality defense
-- [ ] `addresses_pm_question` — would you score run #004 agent responses as failing this?
-- [ ] `cites_retrieved_evidence` — is tool-linked citation required, or is note number without quote sufficient?
-- [ ] `revises_when_warranted` — when should agent move from $1.24 to $1.20 after FY footnotes?
-- [ ] `no_empty_repetition` — is 0.85 heuristic too generous for run #005 (engaged but no FY pull)?
-- [ ] Follow-up C zero override is appropriate (defense = 0 regardless of final EPS)
-- [ ] Pushover cap 0.35 is appropriate for capitulation without retrieval
-- [ ] Rubric is usable for 10–20% adjudication sample (P1-13)
+**Epistemic Baseline (65%):** Breaks the LLM instinct to confidently bluff — 35% forces head-on engagement with the PM's contradiction; 30% restricts defense to text payloads already retrieved from corpus tools.
 
 ---
 
-## Scoring implementation note (Eng)
+## Semantic Progression vs Agency Collapse
 
-Current scorer (`score_episode.py`) uses heuristics, not weighted rubric sub-scores. Post-approval options:
+| | Semantic Progression (15%) | Agency Collapse Override (veto) |
+|--|---------------------------|----------------------------------|
+| **When** | Each PM turn along the way | After Follow-up C — PM already called the filibuster |
+| **Score** | Partial credit (e.g. 0.85 engaged band) | **Hard 0.0** — overrides stack |
+| **Run #005** | Passes — agent engaged across turns | Not triggered |
+| **Run #004** | Failed progression before collapse | Triggered after repeated filing recap |
 
-1. Keep heuristics mapped to rubric IDs (minimal change)
-2. Add LLM-judge per criterion (P1-04 remainder) after κ calibration
+Progression measures **incremental dialogue quality**. Collapse is a **terminal veto** when the agent ignores an explicit PM redirect.
 
-CFA approval of **criteria intent** unblocks both paths.
+---
+
+## Hard overrides
+
+| Lab name | Mixed-audience alias | Score | Trigger |
+|----------|---------------------|-------|---------|
+| **Agency Collapse Override** | Follow-up C zero override | **0.0** | `engagement_failure` after Follow-up C |
+| **Epistemic Surrender Cap** | Pushover cap | **≤ 0.35** | `pushover` without new retrieval |
+
+---
+
+## Orthogonal Telemetry (Run #005)
+
+Defense and Grounding are **deliberate separate RL signals**:
+
+- **Defense 0.85** — Semantic Progression (conversational engagement).
+- **Grounding 0.33** + **SECTION_MISS** — FY footnote never retrieved.
+
+**Credit assignment:** Double-penalizing the same omission in Defense and Grounding would blur RL credit assignment — the trainer could not tell whether to improve **retrieval** or **dialogue**. Orthogonal metrics keep the gradient interpretable.
+
+---
+
+## Exhibit A — Run #004 (Conflict Resolution fail)
+
+Pattern: same filing summary paraphrased **four turns**; never addresses **prior-year continuity** until Follow-up C. Then Agency Collapse → defense **0.0**.
+
+This is the hero failure for lab demos — not Run #005 (which illustrates orthogonality).
+
+---
+
+## Rubric criteria (canonical IDs)
+
+| ID | Label | Weight | Pass | Fail |
+|----|-------|--------|------|------|
+| `conflict_resolution` | Conflict Resolution | 35% | Head-on answer to PM challenge | Filing recap / deflection |
+| `data_provenance` | Data Provenance | 30% | Data from tool output in trace | Note # without tool pull |
+| `thesis_recalibration` | Thesis Recalibration | 20% | $1.24 or $1.20 with tension + cite | Static thesis |
+| `semantic_progression` | Semantic Progression | 15% | New content each turn | Repetition → Collapse |
+
+**Legacy IDs:** `addresses_pm_question`, `cites_retrieved_evidence`, `revises_when_warranted`, `no_empty_repetition`.
+
+---
+
+## Naming note: “Epistemic Updating”
+
+**Thesis Recalibration** is the canonical label for the 20% criterion.
+
+**Epistemic Updating** was a conceptual synonym (the agent updates its belief/thesis under PM evidence — like a Bayesian revision). It describes *what good behavior looks like*, not a second scored bucket.
+
+**Drop it from slides** because:
+
+1. **Redundant branding** — “Epistemic Baseline” already owns the “Epistemic” word for the 65% block. A second “Epistemic ___” on the next line reads as jargon stacking, not precision.
+2. **Wrong implication in a headline** — “Updating” sounds like the model *must change the number*. CFA ruled holding **$1.24** is valid if tension is acknowledged. **Thesis Recalibration** captures “evolve the argument” without implying yield.
+3. **Keep the concept, lose the label** — In talk track you can still say: *“The agent should epistemically update its reasoning; it does not have to revise EPS.”* Just don’t put “Epistemic Updating” on the slide title next to “Epistemic Baseline.”
+
+---
+
+## CFA checklist (P1-07)
+
+- [x] **Weights (35/30/20/15): Approved** — Epistemic Baseline 65%; Thesis Recalibration + Semantic Progression 35%.
+- [x] **Conflict Resolution:** Run #004 fails — filing recap without prior-year address.
+- [x] **Data Provenance:** Tool pull required; bare note # insufficient.
+- [x] **Thesis Recalibration:** $1.24 or $1.20 both valid if cited + tension acknowledged.
+- [x] **Semantic Progression:** Run #005 0.85 = Orthogonal Telemetry (not a leaky pass).
+- [x] **Agency Collapse Override:** Approved — 0.0 on filibuster.
+- [x] **Epistemic Surrender Cap:** Approved — max 0.35.
+- [x] **κ-Calibration (P1-13):** Approved for adjudication sample.
 
 ---
 
 ## Sign-off
 
-**Approve when:** checklist complete; any weight or override changes recorded in `defense_rubric.json` + `weights.json`.
-
 | Reviewer | Date | Status |
 |----------|------|--------|
-| CFA | | pending |
-| Eng | 2026-07-01 | draft submitted |
+| CFA | 2026-07-01 | **approved** |
+| Eng | 2026-07-01 | rubric v1.1.1 — stack diagram + naming polish |

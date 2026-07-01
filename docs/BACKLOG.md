@@ -34,7 +34,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P1-04 | `score_episode.py` — 4-component verifier | B | in_progress | Eng | Deterministic done; LLM-judge pending |
 | P1-05 | Outcome checker — sale-leaseback binary exclude | B | done | Eng | In `score_episode.py` |
 | P1-06 | Grounding checker — claims vs tool log | B | done | Eng | Doc ID hits in `score_episode.py` |
-| P1-07 | Defense rubric + Follow-up C engagement flag | B | pending_cfa_review | CFA + Eng | REV-04 → `DEFENSE_RUBRIC_REVIEW.md` |
+| P1-07 | Defense rubric + Follow-up C engagement flag | B | done | CFA + Eng | REV-04 approved 2026-07-01; `defense_rubric.json` v1.1.0 |
 | P1-08 | Hallucination detector — facts not in tool outputs | B | done | Eng | Unsupported prior-year narrative without FY footnotes → `HALLUC_FILL` |
 | P1-09 | Timeout rule — cap Outcome / zero Defense if no submit | B | done | Eng | In `score_episode.py` |
 | P1-10 | 3 demo trajectories (good / partial / timeout) | B | done | Eng | `run_episode.py --mode all` |
