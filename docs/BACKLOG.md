@@ -51,7 +51,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | ID | Item | Track | Status | Owner | Notes |
 |----|------|-------|--------|-------|-------|
 | P2-01 | NFLX guidance drift task (Type F) | A | todo | Associate | Maps to env Scenario #2 later |
-| P2-02 | PEP or KO FX organic growth task (Type M) | A | in_progress | Associate | Draft package `PEP_fx_organic_growth` — CFA sign-off pending |
+| P2-02 | PEP or KO FX organic growth task (Type M) | A | done | Associate | `PEP_fx_organic_growth` expert-reviewed 2026-07-01; see `PEP_FX_GT_REVIEW.md` |
 | P2-03 | AMZN footnote task (Type F) | A | deferred | Associate | After 3 core tasks |
 | P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | todo | Eng | Median aggregation |
 | P2-05 | Fracture report v0 | Both | done | Eng | `docs/FRACTURE_REPORT_v0.md` — frontier v1–v3 |

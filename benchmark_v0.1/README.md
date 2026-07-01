@@ -30,7 +30,7 @@ Reconcile **Q1 2026** reportable segment revenues to consolidated total revenue.
 
 | Task | Type | Period | Status |
 |------|------|--------|--------|
-| [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-18) | **Draft** (expert review pending) |
+| [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-03) | **Expert-reviewed** (2026-07-01) — publish pending |
 
 ### What this task tests
 

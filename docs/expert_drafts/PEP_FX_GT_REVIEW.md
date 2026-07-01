@@ -5,9 +5,9 @@
 **Task:** `PEP_fx_organic_growth` (Type M)  
 **Backlog ref:** P2-02 *(eng tracking only — not a lifecycle status)*  
 **Scored period:** FY2025 (10-K filed 2026-02-03)  
-**Status:** `pending_expert_review`  
+**Status:** `expert_reviewed`  
 **Eng draft date:** 2026-07-01  
-**Expert review date:** _pending_
+**Expert review date:** 2026-07-01
 
 ---
 
@@ -183,28 +183,28 @@ Two independent gates — **do not block data sign-off on METHOD_ALT eng work**:
 
 ### I. Source & baseline audit *(Gate B)*
 
-- [ ] **Revenue (Note 1):** EMEA and LatAm Foods FY2025/FY2024 net revenue match Note 1 segment table exactly.
-- [ ] **MD&A % (organic table):** Reported growth, FX translation impact, and organic CC match MD&A *Net Revenue and Organic Revenue Performance* for both segments.
-- [ ] **Additive identity:** `reported − fx = organic` holds for EMEA and LatAm Foods.
-- [ ] **Reported % convention:** MD&A whole-percentage anchor (e.g. EMEA **8.0%**) vs revenue-implied (e.g. **8.2%**) — revenue-implied acceptable within ±0.2 pp for L1 reported %; **FX decomposition must use MD&A table reported %**, not revenue-implied.
-- [ ] **Geographic scope:** Scored segments are EMEA + LatAm Foods only — not PFNA, PBNA, or Asia Pacific.
-- [ ] **WAE absence:** Confirm filing has no WAE rate table; GT contains no placeholder rates.
+- [x] **Revenue (Note 1):** EMEA and LatAm Foods FY2025/FY2024 net revenue match Note 1 segment table exactly.
+- [x] **MD&A % (organic table):** Reported growth, FX translation impact, and organic CC match MD&A *Net Revenue and Organic Revenue Performance* for both segments.
+- [x] **Additive identity:** `reported − fx = organic` holds for EMEA and LatAm Foods.
+- [x] **Reported % convention:** MD&A whole-percentage anchor (e.g. EMEA **8.0%**) vs revenue-implied (e.g. **8.2%**) — revenue-implied acceptable within ±0.2 pp for L1 reported %; **FX decomposition must use MD&A table reported %**, not revenue-implied.
+- [x] **Geographic scope:** Scored segments are EMEA + LatAm Foods only — not PFNA, PBNA, or Asia Pacific.
+- [x] **WAE absence:** Confirm filing has no WAE rate table; GT contains no placeholder rates.
 
 ### II. Trap & methodology audit *(Gate A design; Gate B after data locked)*
 
-- [ ] **Trap signatures:** `reported_only`, `wrong_region`, `wrong_period` documented in GT `failure_modes`.
-- [ ] **Formula integrity:** Additive formula matches GT `verification_policy`; FX impact matches MD&A translation column and reconciles as `reported − organic`.
-- [ ] **Tolerance policy:** ±0.2 pp strict (L1 pass); ±0.75 pp multiplicative alternative → `METHOD_ALT` (partial credit).
-- [ ] **Trap wiring *(eng spot-check)*:** Self-test validates GT JSON only; trap classification (`reported_only`, etc.) applies at agent eval time.
-- [ ] **Script self-test:** `verify_pep_fx_organic_growth.py` reports `all_pass: true` on approved GT JSON.
+- [x] **Trap signatures:** `reported_only`, `wrong_region`, `wrong_period` documented in GT `failure_modes`.
+- [x] **Formula integrity:** Additive formula matches GT `verification_policy`; FX impact matches MD&A translation column and reconciles as `reported − organic`.
+- [x] **Tolerance policy:** ±0.2 pp strict (L1 pass); ±0.75 pp multiplicative alternative → `METHOD_ALT` (partial credit).
+- [x] **Trap wiring *(eng spot-check)*:** Self-test validates GT JSON only; trap classification (`reported_only`, etc.) applies at agent eval time.
+- [x] **Script self-test:** `verify_pep_fx_organic_growth.py` reports `all_pass: true` on approved GT JSON.
 
 ### III. Auditability & traceability *(agent runtime — design check)*
 
-- [ ] **Assumption log:** Grader requires agent list: (a) Note 1 revenue citations, (b) MD&A reported/FX/organic % citations, (c) additive derivation shown.
-- [ ] **WAE handling:** If agent searches for FX rates, must state filing does not disclose them — no external/invented rates.
-- [ ] **L2 reconcile:** Agent organic CC within ±0.2 pp strict (or ±0.75 pp with `METHOD_ALT` if multiplicative shown + MD&A cited).
-- [ ] **L3 citation design:** Material-claim inventory (10–11 claims) and citation schema match **Scoring intent → Layer 3**; ≥90% table-level cite bar documented.
-- [ ] **Type M scope:** No Buy/Hold/Sell or price target.
+- [x] **Assumption log:** Grader requires agent list: (a) Note 1 revenue citations, (b) MD&A reported/FX/organic % citations, (c) additive derivation shown.
+- [x] **WAE handling:** If agent searches for FX rates, must state filing does not disclose them — no external/invented rates.
+- [x] **L2 reconcile:** Agent organic CC within ±0.2 pp strict (or ±0.75 pp with `METHOD_ALT` if multiplicative shown + MD&A cited).
+- [x] **L3 citation design:** Material-claim inventory (10–11 claims) and citation schema match **Scoring intent → Layer 3**; ≥90% table-level cite bar documented.
+- [x] **Type M scope:** No Buy/Hold/Sell or price target.
 
 ---
 
@@ -385,12 +385,20 @@ python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 
 ## Sign-off
 
-**CFA approve when (Gate B only):** Checklist complete, filing-verified GT JSON updated, and verify self-test reports `all_pass: true`.
+**Gate B (CFA):** Complete 2026-07-01 — audit ledger §2 checked against PEP FY2025 10-K; verify self-test `all_pass: true`.
 
-**Gate C (eng — not your action):** Already met as of 2026-07-01.
-
-**Before `published`:** Both Gate B (your sign-off) and Gate C (eng confirmation) must be complete.
+**Gate C (eng):** Met as of 2026-07-01 — JSON-driven verify + `METHOD_ALT`. **`published`** in `manifest.json` remains eng action.
 
 | Reviewer | Date | Status |
 |----------|------|--------|
-| Gaurav Goyal (CFA L3 candidate) | | pending |
+| Gaurav Goyal (CFA L3 candidate) | 2026-07-01 | **expert_reviewed** |
+
+### Expert verdict
+
+**Verdict:** approve (Gate B)
+
+- **Note 1 revenues:** EMEA / LatAm Foods FY2025/FY2024 match segment table.
+- **MD&A anchors:** Reported %, FX translation, organic CC match *Net Revenue and Organic Revenue Performance*; additive identity holds.
+- **WAE re-scope:** No rate table in filing; GT and task correctly anchored on MD&A decomposition only.
+- **Trap / tolerance design:** `reported_only`, `wrong_region`, `wrong_period` fair; ±0.2 pp strict / ±0.75 pp `METHOD_ALT` documented.
+- **Verify self-test:** `all_pass: true` (12 checks).

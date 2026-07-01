@@ -132,6 +132,7 @@
       "reviewer_edits": "ground_truth_json_only",
       "verify_script_reads_json": true,
       "verified_at": "2026-07-01",
+      "expert_reviewed_at": "2026-07-01",
       "sec_accession": "0000077476-26-000007",
       "note": "Note 1 revenues and MD&A organic/FX decomposition verified; no WAE rate table in filing (task re-scoped to MD&A additive path)"
     },
@@ -248,6 +249,6 @@
     }
   ],
 
-  "review_status": "pending_expert_review",
+  "review_status": "expert_reviewed",
   "cfa_review_ref": "docs/expert_drafts/PEP_FX_GT_REVIEW.md"
 }
