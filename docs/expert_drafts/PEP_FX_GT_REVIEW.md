@@ -3,8 +3,9 @@
 **Reviewer:** Gaurav Goyal (CFA Level III candidate)  
 **Artifact:** `benchmark_v0.1/ground_truth/PEP_fx_organic_growth_gt.json`  
 **Task:** `PEP_fx_organic_growth` (Type M)  
+**Backlog ref:** P2-02 *(eng tracking only — not a lifecycle status)*  
 **Scored period:** FY2025 (10-K filed 2026-02-18)  
-**Status:** `draft_pending_expert_review`  
+**Status:** `pending_expert_review`  
 **Eng draft date:** 2026-07-01  
 **Expert review date:** _pending_
 
@@ -104,7 +105,7 @@ Two independent gates — **do not block data sign-off on METHOD_ALT eng work**:
 
 **Gate C status (eng):** Met as of 2026-07-01 — verify script reads GT JSON and emits `METHOD_ALT`.
 
-Until Gate B: leave status **`draft_pending_expert_review`**.
+Until Gate B: keep `review_status` as `pending_expert_review` in this doc and GT JSON.
 
 ---
 
@@ -120,17 +121,17 @@ The table above is **eng-authored placeholder** on the synthetic FY2025 / 2026-0
 4. Re-run `verify_pep_fx_organic_growth.py` — must report `all_pass: true`
 5. Complete checklist and set `review_status` → `expert_reviewed`
 
-Until step 5: leave status **`draft_pending_expert_review`**; do not mark P2-02 published.
+Until step 5: keep `review_status` as `pending_expert_review`; do not set `published`.
 
 ---
 
-## Expert checklist (P2-02)
+## Expert checklist
 
-- [ ] **Methodology:** Task requires independent Python computation **and** MD&A cross-check — not MD&A extract alone
+- [ ] **Methodology (agent scoring intent):** Task requires independent Python computation **and** MD&A cross-check — not MD&A extract alone
 - [ ] All FY2025 figures match PepsiCo 10-K — correct columns (2025 vs 2024) *(verify via SEC filing; see **FY2025 numbers** section above — placeholders are eng-authored until checked)*
 - [ ] Europe and AMESA geographic definitions match company disclosure (not LATAM / North America)
 - [ ] Weighted-average FX table cited correctly (not spot / year-end)
-- [ ] MD&A organic CC percentages align with ground truth after independent calc
+- [ ] **MD&A organic CC (your GT verification):** You manually compute CC from filing inputs and confirm the result matches MD&A disclosed Europe/AMESA organic % *and* the values in GT JSON `computed_values` *(validates ground truth — separate from agent scoring path above)*
 - [ ] Trap design is fair (`spot_rate_method`, `reported_only`, `wrong_region`)
 - [ ] No investment recommendation required (Type M modeling / forensics)
 - [ ] Verify script self-test passes on approved ground truth JSON *(run verify command; no code review)*
