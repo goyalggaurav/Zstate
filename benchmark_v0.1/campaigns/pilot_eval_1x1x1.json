@@ -5,7 +5,10 @@
   "status": "pilot",
   "orchestrator_note": "Requires OPENAI_API_KEY. Default task GOOGL; override with --tasks.",
   "models": ["gpt-4o-mini"],
-  "tasks": ["GOOGL_footnote_reconciliation"],
+  "tasks": [
+    "GOOGL_footnote_reconciliation",
+    "PEP_fx_organic_growth"
+  ],
   "runs_per_task": 1,
   "aggregation": {
     "l1_all_pass": "median_boolean",

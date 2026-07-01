@@ -177,13 +177,22 @@ def execute_campaign(
     return exec_records
 
 
-def score_campaign(campaign: dict, manifest: dict) -> dict:
+def score_campaign(
+    campaign: dict,
+    manifest: dict,
+    *,
+    models: list[str] | None = None,
+    tasks: list[str] | None = None,
+) -> dict:
     pub = published_tasks(manifest)
     runs_dir = (BENCH / campaign["runs_dir"]).resolve()
     run_records: list[dict] = []
 
-    for model_id in campaign["models"]:
-        for task_id in campaign["tasks"]:
+    model_list = models or campaign["models"]
+    task_list = tasks or campaign["tasks"]
+
+    for model_id in model_list:
+        for task_id in task_list:
             if task_id not in pub:
                 continue
             for run in range(1, campaign["runs_per_task"] + 1):
@@ -252,8 +261,8 @@ def score_campaign(campaign: dict, manifest: dict) -> dict:
         "campaign_id": campaign["campaign_id"],
         "created_at": datetime.now(timezone.utc).isoformat(),
         "status": campaign.get("status"),
-        "models": campaign["models"],
-        "tasks": campaign["tasks"],
+        "models": model_list,
+        "tasks": task_list,
         "runs_per_task": campaign["runs_per_task"],
         "execution": campaign.get("_execution"),
         "summary": {
@@ -322,6 +331,9 @@ def main() -> int:
     campaign = load_json(campaign_path)
     manifest = load_json(BENCH / "manifest.json")
 
+    model_filter = [m.strip() for m in args.models.split(",")] if args.models else None
+    task_filter = [t.strip() for t in args.tasks.split(",")] if args.tasks else None
+
     if args.bootstrap_fixtures:
         paths = bootstrap_fixtures(campaign)
         print(f"Wrote {len(paths)} fixture agent outputs under {campaign['runs_dir']}")
@@ -330,8 +342,6 @@ def main() -> int:
         if args.agent == "openai" and not __import__("os").environ.get("OPENAI_API_KEY"):
             print("ERROR: OPENAI_API_KEY not set for --execute --agent openai", file=sys.stderr)
             return 1
-        model_filter = [m.strip() for m in args.models.split(",")] if args.models else None
-        task_filter = [t.strip() for t in args.tasks.split(",")] if args.tasks else None
         exec_records = execute_campaign(
             campaign,
             manifest,
@@ -349,7 +359,12 @@ def main() -> int:
         if errors:
             return 1
 
-    result = score_campaign(campaign, manifest)
+    result = score_campaign(
+        campaign,
+        manifest,
+        models=model_filter,
+        tasks=task_filter,
+    )
     out_dir = (BENCH / campaign["runs_dir"]).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{campaign['campaign_id']}.json"
