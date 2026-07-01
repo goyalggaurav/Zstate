@@ -1,6 +1,8 @@
 {
   "rubric_id": "defense_v1",
   "version": "1.0.0",
+  "review_status": "pending_cfa_review",
+  "cfa_review_ref": "docs/expert_drafts/DEFENSE_RUBRIC_REVIEW.md",
   "description": "Expert-authored defense rubric for PM engagement quality. LLM-judge uses this in P1; calibrate against CFA panel.",
 
   "criteria": [

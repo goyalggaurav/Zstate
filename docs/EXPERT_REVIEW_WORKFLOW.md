@@ -81,7 +81,7 @@ Files: `status` field in task JSON, episode JSON, or gold key.
 | REV-01 | GOOGL Q1 2026 ground truth | [expert_drafts/GOOGL_GT_REVIEW.md](./expert_drafts/GOOGL_GT_REVIEW.md) | **Approved** (2026-07-01) | Published; grader rubric + failure classifier live |
 | REV-02 | Solaris gold key | [expert_drafts/SOLARIS_GOLD_KEY_REVIEW.md](./expert_drafts/SOLARIS_GOLD_KEY_REVIEW.md) | **Approved** (v1.0, 2026-07-01) | v1.1 enhancements → P1-14 |
 | REV-03 | Solaris corpus narrative | `env_v1/corpus/solaris_bundle_v1.json` | Draft | Disclosure realism, internal consistency |
-| REV-04 | Defense rubric | `env_v1/verifier/defense_rubric.json` | Draft | PM engagement criteria |
+| REV-04 | Defense rubric | [expert_drafts/DEFENSE_RUBRIC_REVIEW.md](./expert_drafts/DEFENSE_RUBRIC_REVIEW.md) | **Pending CFA** (2026-07-01) | PM engagement criteria; v3 evidence attached |
 
 ---
 

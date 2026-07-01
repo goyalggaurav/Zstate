@@ -34,11 +34,11 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P1-04 | `score_episode.py` — 4-component verifier | B | in_progress | Eng | Deterministic done; LLM-judge pending |
 | P1-05 | Outcome checker — sale-leaseback binary exclude | B | done | Eng | In `score_episode.py` |
 | P1-06 | Grounding checker — claims vs tool log | B | done | Eng | Doc ID hits in `score_episode.py` |
-| P1-07 | Defense rubric + Follow-up C engagement flag | B | pending_cfa_review | CFA + Eng | `defense_rubric.json` + REV-04 |
+| P1-07 | Defense rubric + Follow-up C engagement flag | B | pending_cfa_review | CFA + Eng | REV-04 → `DEFENSE_RUBRIC_REVIEW.md` |
 | P1-08 | Hallucination detector — facts not in tool outputs | B | done | Eng | Unsupported prior-year narrative without FY footnotes → `HALLUC_FILL` |
 | P1-09 | Timeout rule — cap Outcome / zero Defense if no submit | B | done | Eng | In `score_episode.py` |
 | P1-10 | 3 demo trajectories (good / partial / timeout) | B | done | Eng | `run_episode.py --mode all` |
-| P1-11 | `METHODOLOGY_RL_ENV.md` — anti-hacking, calibration | B | in_progress | Eng | Draft exists; finalize for lab |
+| P1-11 | `METHODOLOGY_RL_ENV.md` — anti-hacking, calibration | B | done | Eng | v1.0 review-ready; lab demo package |
 | P1-12 | One frontier model end-to-end run | B | done | Eng | GPT-4o run #001 — composite 0.59, `SECTION_MISS`; see `env_v1/runs/frontier/` |
 | P1-12b | Frontier campaign — 3 seeds + summary | B | done | Eng | 4/4 gpt-4o runs; composite 0.5408 constant; see `frontier_campaign_v1.json` |
 | P1-13 | Expert adjudication protocol (10–20% sample) | Both | todo | CFA | κ ≥ 0.7 on Outcome (judgment) + Defense |
@@ -54,7 +54,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-02 | PEP or KO FX organic growth task (Type M) | A | in_progress | Associate | Draft package `PEP_fx_organic_growth` — CFA sign-off pending |
 | P2-03 | AMZN footnote task (Type F) | A | deferred | Associate | After 3 core tasks |
 | P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | todo | Eng | Median aggregation |
-| P2-05 | Fracture report v0 | Both | todo | Eng | ≥8 codes; include `PM_OOD` |
+| P2-05 | Fracture report v0 | Both | done | Eng | `docs/FRACTURE_REPORT_v0.md` — frontier v1–v3 |
 | P2-06 | Leaderboard v0 publish | A | todo | Product | Not the lab headline |
 | P2-07 | Trajectory JSONL schema — align A + B | Both | done | Eng | `schemas/trajectory_v1.json` |
 | P2-08 | Transcript API trial (5 pilot names) | A | todo | Eng | Guidance tasks |
@@ -103,13 +103,24 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-03 | L1 Python verification pattern | done | Reuse in Outcome checker |
 | SH-04 | Component specs (corpus, registry, eval, scoring) | done | Target architecture; implement lightweight first |
 | SH-05 | Word/PDF export generator | done | Stakeholder docs |
-| SH-06 | Corpus service implementation | todo | EDGAR + section index |
+| SH-06 | Corpus service implementation | deferred | **Explore later** — see BACKLOG LATER-01 (EDGAR full ingest) |
 | SH-07 | Eval orchestrator (model adapters) | todo | Shared by A and B |
 | SH-08 | Calibration dataset (5 tasks, dual-rater) | todo | Both benchmark L2 and env Defense |
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
 | SH-12 | Smoke test harness | done | `scripts/smoke_test.py` |
+
+---
+
+## Explore later (explicitly not P0–P2)
+
+| ID | Item | Track | Notes |
+|----|------|-------|-------|
+| LATER-01 | **Track A — EDGAR corpus full ingest** | A | SH-06: download 10-K/10-Q text, section index, checksum lock. Pilot manifest (`corpus_manifest_v1.json`) is metadata-only; explore after 2+ published eval tasks or lab demo shipped. |
+| LATER-02 | Track A — transcript API + NFLX guidance task | A | P2-08 + P2-01; blocked on vendor + IR fallback runbook |
+| LATER-03 | Track A — eval orchestrator (SH-07) | A | Shared model adapters for P2-04 campaign |
+| LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
 
 ---
 
@@ -146,6 +157,8 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-17 | Solaris v1.1 — transcript distractor + pushover PM branch (P1-14) | Jul 2026 |
 | DONE-18 | Solaris v1.1.2 scorer tightenings + frontier v2 rescore | Jul 2026 |
 | DONE-19 | Pilot corpus manifest (5 tickers) + PEP FX task draft (P0-06, P2-02) | Jul 2026 |
+| DONE-20 | Frontier v3 live campaign + v1.1.3 FSM + OpenAI retry hardening | Jul 2026 |
+| DONE-21 | Lab package: METHODOLOGY v1.0, FRACTURE_REPORT v0, REV-04 draft | Jul 2026 |
 
 ---
 
