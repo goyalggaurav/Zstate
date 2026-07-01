@@ -19,6 +19,12 @@
   "verifier_ref": "verifier/weights.json",
   "turn_budget": 8,
   "timeout_outcome_cap": 0.5,
+  "frontier_campaign": {
+    "id": "frontier_campaign_v1",
+    "index": "runs/frontier/frontier_campaign_v1.json",
+    "doc": "runs/frontier/FRONTIER_RUNS.md",
+    "batch_script": "../scripts/run_frontier_batch.py"
+  },
   "planned_v1_1": {
     "backlog_id": "P1-14",
     "items": ["transcript_distractor", "pushover_pm_branch"]

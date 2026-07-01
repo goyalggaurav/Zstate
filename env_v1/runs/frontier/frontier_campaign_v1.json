@@ -1,0 +1,35 @@
+{
+  "campaign_id": "frontier_campaign_v1",
+  "episode_id": "solaris_adj_eps_dispute_v1",
+  "corpus_version": "solaris_bundle_v1",
+  "status": "in_progress",
+  "target_runs": 3,
+  "completed_runs": 1,
+  "runs": [
+    {
+      "run_index": 1,
+      "trace_path": "env_v1/runs/frontier_gpt4o_001.json",
+      "scores_path": "env_v1/runs/frontier_gpt4o_001_scores.json",
+      "model_id": "gpt-4o",
+      "run_date": "2026-07-01",
+      "composite_reward": 0.5908,
+      "fracture_codes": ["SECTION_MISS"],
+      "failure_modes": ["omit_prior_year"],
+      "adjusted_eps": 1.24,
+      "termination": "submit",
+      "components": {
+        "outcome": 0.75,
+        "grounding": 0.3333,
+        "defense": 0.85,
+        "hallucination_penalty": 0.0
+      },
+      "notes": "First frontier run. Strong PM defense; omitted FY2024/FY2023 footnote retrieval."
+    }
+  ],
+  "summary": {
+    "composite_median": 0.5908,
+    "fracture_counts": {
+      "SECTION_MISS": 1
+    }
+  }
+}

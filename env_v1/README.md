@@ -25,7 +25,11 @@ python3 env_v1/scripts/agent_loop.py --agent mock
 
 # Frontier model (OpenAI-compatible — see docs/AGENT_ADAPTERS.md)
 # export OPENAI_API_KEY=...
-# python3 env_v1/scripts/agent_loop.py --agent openai --model-id gpt-4o
+# python3 env_v1/scripts/agent_loop.py --agent openai --model-id gpt-4o \
+#   --out env_v1/runs/frontier/frontier_gpt4o_002.json
+
+# Batch frontier campaign (3 seeds → frontier_campaign_v1.json)
+# python3 scripts/run_frontier_batch.py --model-id gpt-4o --seeds 3 --start-index 2
 
 # Interactive manual agent (REPL)
 python3 env_v1/scripts/agent_loop.py --agent repl
@@ -61,6 +65,7 @@ env_v1/
 │   └── score_episode.py
 ├── examples/agents/        # Scripted agent plans
 └── runs/                            # Episode traces + scores
+    └── frontier/                    # Frontier campaign index + FRONTIER_RUNS.md
 ```
 
 ## Gold keys (private)

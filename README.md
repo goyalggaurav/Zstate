@@ -38,6 +38,6 @@ python3 env_v1/scripts/agent_loop.py --agent scripted \
 # Track B — mock weak agent (offline, no API key)
 python3 env_v1/scripts/agent_loop.py --agent mock
 
-# Track B — frontier model (requires OPENAI_API_KEY)
-# python3 env_v1/scripts/agent_loop.py --agent openai --model-id gpt-4o
+# Track B — frontier model batch (requires OPENAI_API_KEY)
+python3 scripts/run_frontier_batch.py --model-id gpt-4o --seeds 3 --start-index 2
 ```

@@ -78,5 +78,7 @@ All four sub-scores exported per episode. See [dual_control_spec_v1.md](./dual_c
 - [x] `runs/sample_trace_partial.json` + score breakdown
 - [x] `runs/sample_trace_timeout.json` + score breakdown
 - [x] One-command: `python3 env_v1/scripts/run_episode.py --mode all`
+- [x] Agent loop: scripted / mock / openai — see [AGENT_ADAPTERS.md](./AGENT_ADAPTERS.md)
+- [x] First frontier run: GPT-4o composite **0.59**, fracture `SECTION_MISS` — [FRONTIER_RUNS.md](../runs/frontier/FRONTIER_RUNS.md)
 
 See [ROADMAP.md](../../docs/ROADMAP.md) Phase P1.
