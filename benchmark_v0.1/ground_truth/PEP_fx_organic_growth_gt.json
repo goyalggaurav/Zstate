@@ -16,7 +16,7 @@
         "note": "Note 1 — Our Business (Net Revenue by Segment / Geographic Area)",
         "table_title": "Net revenue by segment — Europe",
         "column": "Year ended December 27, 2025",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
         "snippet": "Europe $ 12,354"
       }
     },
@@ -30,7 +30,7 @@
         "note": "Note 1 — Our Business",
         "table_title": "Net revenue by segment — Europe",
         "column": "Year ended December 28, 2024",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
         "snippet": "Europe $ 11,892"
       }
     },
@@ -44,7 +44,7 @@
         "note": "Note 1 — Our Business",
         "table_title": "Net revenue by segment — AMESA",
         "column": "Year ended December 27, 2025",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
         "snippet": "AMESA $ 5,670"
       }
     },
@@ -58,7 +58,7 @@
         "note": "Note 1 — Our Business",
         "table_title": "Net revenue by segment — AMESA",
         "column": "Year ended December 28, 2024",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
         "snippet": "AMESA $ 5,240"
       }
     },
@@ -72,7 +72,7 @@
         "note": "Note 1 — Our Business (Financial Instruments / Foreign Currency)",
         "table_title": "Weighted-average exchange rates",
         "column": "Year ended December 27, 2025",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
         "snippet": "Euro 1.024"
       }
     },
@@ -86,7 +86,7 @@
         "note": "Note 1 — Our Business (Financial Instruments / Foreign Currency)",
         "table_title": "Weighted-average exchange rates",
         "column": "Year ended December 28, 2024",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
         "snippet": "Euro 1.081"
       }
     }
@@ -131,7 +131,7 @@
       "reviewer_signoff_blocked": true,
       "reviewer_edits": "ground_truth_json_only",
       "verify_script_reads_json": true,
-      "note": "FY2025 figures are internally consistent eng placeholders on the synthetic 2026 filing timeline until manually checked against the SEC URL in corpus_manifest_v1.json"
+      "note": "FY2025 figures are eng placeholders until manually checked against SEC accession 0000077476-26-000007"
     }
   },
 

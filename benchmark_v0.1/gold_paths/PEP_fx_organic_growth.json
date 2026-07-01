@@ -9,7 +9,7 @@
       "section_id": "PEP_10K_2025_note_1_segments",
       "name": "Note 1 — Our Business (Net Revenue by Geographic Area)",
       "table_title": "Net revenue by segment",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
       "required": true,
       "reason": "Europe and AMESA reported net revenue FY2025 vs FY2024"
     },
@@ -17,7 +17,7 @@
       "section_id": "PEP_10K_2025_note_1_fx",
       "name": "Note 1 — Financial Instruments / Foreign Currency",
       "table_title": "Weighted-average exchange rates",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
       "required": true,
       "reason": "EUR/USD weighted-average rates — not spot"
     },

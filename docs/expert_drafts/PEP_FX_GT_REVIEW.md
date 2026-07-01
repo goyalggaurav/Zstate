@@ -4,7 +4,7 @@
 **Artifact:** `benchmark_v0.1/ground_truth/PEP_fx_organic_growth_gt.json`  
 **Task:** `PEP_fx_organic_growth` (Type M)  
 **Backlog ref:** P2-02 *(eng tracking only — not a lifecycle status)*  
-**Scored period:** FY2025 (10-K filed 2026-02-18)  
+**Scored period:** FY2025 (10-K filed 2026-02-03)  
 **Status:** `pending_expert_review`  
 **Eng draft date:** 2026-07-01  
 **Expert review date:** _pending_
@@ -51,7 +51,7 @@ Preferred formula path for verify script (align GT to filing disclosure):
 
 WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024**
 
-**Verification today:** SEC URL in `corpus_manifest_v1.json` + manual 10-K review. Full EDGAR text index (LATER-01) not required to sign off GT numbers.
+**Verification today:** SEC accession `0000077476-26-000007` — [PEP FY2025 10-K](https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm) (filed 2026-02-03). Full EDGAR text index (LATER-01) not required to sign off GT numbers.
 
 ---
 
@@ -113,7 +113,7 @@ Until Gate B: keep `review_status` as `pending_expert_review` in this doc and GT
 
 **These figures are NOT filing-verified yet.** [Certain]
 
-The table above is **eng-authored placeholder** on the synthetic FY2025 / 2026-02-18 filing timeline (same pattern as GOOGL Q1 2026 draft). You **cannot** complete Gate B until:
+The table above is **eng-authored placeholder** until checked against the live SEC filing (see **FY2025 numbers** section). You **cannot** complete Gate B until:
 
 1. Open PEP 10-K URL from `benchmark_v0.1/corpus/corpus_manifest_v1.json`
 2. Verify Note 1 revenues, WAE table, MD&A Europe/AMESA organic %

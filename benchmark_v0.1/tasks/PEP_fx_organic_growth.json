@@ -27,8 +27,8 @@
       "form_type": "10-K",
       "fiscal_period": "FY2025",
       "period_end": "2025-12-27",
-      "filing_date": "2026-02-18",
-      "sec_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+      "filing_date": "2026-02-03",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
       "role": "primary"
     }
   ],
@@ -40,7 +40,7 @@
       "fiscal_period": "FY2024",
       "period_end": "2024-12-28",
       "filing_date": "2025-02-13",
-      "sec_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747625000010/pep-20241228.htm",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747625000007/pep-20241228.htm",
       "role": "context_only",
       "note": "Prior-year filing for cross-check only — scored period is FY2025 10-K"
     }
