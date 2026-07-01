@@ -34,7 +34,7 @@ Reconcile **Q1 2026** reportable segment revenues to consolidated total revenue.
 
 ### What this task tests
 
-Constant-currency organic revenue growth for **Europe** and **AMESA** using **weighted-average FX** from the 10-K — not spot rates. Traps: reporting GAAP growth as organic CC, or using year-end EUR/USD instead of WAE.
+Constant-currency organic revenue growth for **EMEA** and **LatAm Foods** via MD&A additive decomposition (`reported − FX = organic`) — not WAE rebuild (FY2025 10-K has no FX rate table). Traps: reporting GAAP growth as organic CC, wrong segment, wrong period.
 
 ```bash
 python3 benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py

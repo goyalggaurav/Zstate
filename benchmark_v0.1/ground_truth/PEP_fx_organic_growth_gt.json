@@ -1,6 +1,6 @@
 {
   "task_id": "PEP_fx_organic_growth",
-  "version": "0.2.0-draft",
+  "version": "0.3.0-draft",
   "fiscal_period": "FY2025",
   "period_end": "2025-12-27",
   "unit": "USD_millions",
@@ -35,17 +35,7 @@
         }
       }
     ],
-    "fx_instruments": [
-      {
-        "slug": "eur_usd",
-        "label": "EUR/USD weighted-average",
-        "critical": true,
-        "metrics": {
-          "fy2024": "wae_eur_usd_fy2024",
-          "fy2025": "wae_eur_usd_fy2025"
-        }
-      }
-    ]
+    "fx_instruments": []
   },
 
   "extracted_values": [
@@ -104,34 +94,6 @@
         "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
         "snippet": "LatAm Foods $ 10,568"
       }
-    },
-    {
-      "metric_id": "wae_eur_usd_fy2025",
-      "value": 1.024,
-      "label": "Weighted-average EUR/USD — FY2025",
-      "tolerance": 0.001,
-      "citation": {
-        "doc_id": "PEP_10K_2025",
-        "note": "Note 1 — Financial Instruments / Foreign Currency",
-        "table_title": "Weighted-average exchange rates",
-        "column": "Year ended December 27, 2025",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
-        "snippet": "Euro — verify in filing"
-      }
-    },
-    {
-      "metric_id": "wae_eur_usd_fy2024",
-      "value": 1.081,
-      "label": "Weighted-average EUR/USD — FY2024",
-      "tolerance": 0.001,
-      "citation": {
-        "doc_id": "PEP_10K_2025",
-        "note": "Note 1 — Financial Instruments / Foreign Currency",
-        "table_title": "Weighted-average exchange rates",
-        "column": "Year ended December 28, 2024",
-        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
-        "snippet": "Euro — verify in filing"
-      }
     }
   ],
 
@@ -139,6 +101,10 @@
     "primary_anchor": "mdna_disclosed_organic_cc",
     "canonical_formula": "additive_percentage_points",
     "formula_definition": "organic_cc_pct = reported_growth_pct - fx_impact_pct (fx_impact signed per MD&A; favorable translation is positive)",
+    "fx_rate_disclosure": {
+      "wae_table_in_filing": false,
+      "note": "FY2025 10-K does not publish weighted-average EUR/USD (or any currency-pair rate table). CC organic growth is verified via MD&A Net Revenue and Organic Revenue Performance — not WAE rebuild."
+    },
     "alternative_formulas": [
       {
         "id": "multiplicative",
@@ -149,7 +115,6 @@
     ],
     "tolerances": {
       "revenue_usd_millions": 0,
-      "wae_fx_rate": 0.001,
       "reported_growth_pct": 0.1,
       "fx_impact_pct": 0.1,
       "organic_cc_pct_strict": 0.2,
@@ -157,7 +122,6 @@
     },
     "hard_fail": [
       "reported_only",
-      "spot_rate_method",
       "wrong_region",
       "wrong_period"
     ],
@@ -169,7 +133,7 @@
       "verify_script_reads_json": true,
       "verified_at": "2026-07-01",
       "sec_accession": "0000077476-26-000007",
-      "note": "Note 1 revenues and MD&A organic % verified; WAE EUR/USD still require Note 1 confirmation"
+      "note": "Note 1 revenues and MD&A organic/FX decomposition verified; no WAE rate table in filing (task re-scoped to MD&A additive path)"
     },
     "reported_growth_anchor": {
       "convention": "mdna_table_whole_pct",
@@ -237,7 +201,7 @@
   "qualitative_anchors": [
     {
       "dimension": "fx_methodology",
-      "expected_behavior": "Agent uses weighted-average exchange rates from the 10-K, not spot or year-end rates",
+      "expected_behavior": "Agent derives FX translation impact from MD&A organic revenue performance table (additive decomposition); does not invent WAE rates absent from filing",
       "score_anchor": 5
     },
     {
@@ -250,22 +214,10 @@
   "required_narrative_points": [
     "EMEA reported net revenue growth vs organic constant-currency growth differ due to FX translation",
     "LatAm Foods organic CC growth exceeds reported growth after FX adjustment",
-    "Weighted-average EUR/USD rates sourced from filing — not spot rates"
+    "Filing does not disclose weighted-average FX rate tables — MD&A organic % and FX translation impact are the auditable anchors"
   ],
 
   "failure_modes": [
-    {
-      "id": "spot_rate_method",
-      "label": "Spot rate method",
-      "description": "Agent uses year-end or spot FX instead of weighted-average rates from Note 1",
-      "wrong_signatures": {
-        "wae_eur_usd_fy2025": 1.058,
-        "wae_eur_usd_fy2024": 1.104
-      },
-      "fracture_code": "FX_METHOD_ERR",
-      "anti_pattern": "use_spot_or_year_end_fx_instead_of_weighted_average",
-      "layer1_estimate": 0.35
-    },
     {
       "id": "wrong_region",
       "label": "Wrong segment",

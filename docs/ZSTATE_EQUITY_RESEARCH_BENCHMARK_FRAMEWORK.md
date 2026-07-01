@@ -186,7 +186,7 @@ Reconcile Q1 2026 segment revenues to consolidated total ($109,896M). Segment su
 Compare Q2 management commentary on content spend/amortization to actuals in Q3/Q4 10-Q. Output: guidance vs actuals table with transcript quotes cited.
 
 **PEP — FX organic growth (Type M):**  
-Build constant-currency organic revenue growth for Europe and AMESA using weighted-average FX from 10-K disclosure — not spot rates. Output: growth table + Python verification script result.
+Build constant-currency organic revenue growth for **EMEA** and **LatAm Foods** via MD&A additive decomposition (`reported − FX = organic`). FY2025 10-K has no WAE rate table. Output: growth table + Python verification script result.
 
 ---
 

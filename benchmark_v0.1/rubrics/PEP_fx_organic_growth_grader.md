@@ -13,7 +13,7 @@
 
 ## Agent prompt (summary)
 
-Using PepsiCo FY2025 Form 10-K (filed 2026-02-03), compute constant-currency organic net revenue growth for **EMEA** and **LatAm Foods** vs FY2024. Extract segment revenues from Note 1, **weighted-average FX** from Note 1, Python-verify CC growth, cross-check MD&A organic revenue performance table. No investment recommendation.
+Using PepsiCo FY2025 Form 10-K (filed 2026-02-03), compute constant-currency organic net revenue growth for **EMEA** and **LatAm Foods** vs FY2024. Extract segment revenues from Note 1; extract reported %, FX translation impact %, and organic % from MD&A **Net Revenue and Organic Revenue Performance**; Python-verify additive identity `organic ≈ reported − fx`. The filing does **not** publish weighted-average FX rate tables — do not invent or import external rates. No investment recommendation.
 
 ---
 
@@ -21,7 +21,7 @@ Using PepsiCo FY2025 Form 10-K (filed 2026-02-03), compute constant-currency org
 
 | Layer | Weight | What it measures |
 |-------|--------|------------------|
-| **L1** | 50% | Revenue extraction + CC growth math |
+| **L1** | 50% | Revenue extraction + MD&A CC decomposition math |
 | **L2** | 30% | Assumption log + MD&A cross-check |
 | **L3** | 20% | Citation quality (table-level, auditable) |
 
@@ -31,7 +31,6 @@ Using PepsiCo FY2025 Form 10-K (filed 2026-02-03), compute constant-currency org
 
 | ID | Label | Wrong output signature | Fracture code |
 |----|-------|------------------------|---------------|
-| `spot_rate_method` | Spot rate method | Uses year-end EUR/USD 1.058 / 1.104 instead of WAE | `FX_METHOD_ERR` |
 | `reported_only` | Reported growth only | EMEA CC = 8.0% or LatAm CC = −0.2% (reported, not organic) | `CC_OMIT` |
 | `wrong_region` | Wrong segment | PFNA / PBNA / Asia Pacific substituted for scored segments | `SCOPE_ERR` |
 | `wrong_period` | Wrong fiscal year | FY2024 10-K as primary or quarterly slice | `HALLUC_FILL` |
@@ -43,8 +42,9 @@ Using PepsiCo FY2025 Form 10-K (filed 2026-02-03), compute constant-currency org
 | Metric | Section | Column |
 |--------|---------|--------|
 | EMEA / LatAm Foods net revenue | Note 1 — Segment Reporting | FY2025 vs FY2024 |
-| Weighted-average EUR/USD | Note 1 — Financial Instruments | FY2025 vs FY2024 |
-| Organic revenue growth | MD&A — Net Revenue and Organic Revenue Performance | EMEA, LatAm Foods |
+| Reported growth / FX translation / organic % | MD&A — Net Revenue and Organic Revenue Performance | EMEA, LatAm Foods |
+
+**Not in filing:** Weighted-average EUR/USD (or any currency-pair rate table). Task re-scoped 2026-07-01 to MD&A additive decomposition.
 
 ---
 
@@ -57,9 +57,7 @@ Using PepsiCo FY2025 Form 10-K (filed 2026-02-03), compute constant-currency org
 
 **Reported % convention:** MD&A table uses whole percentage points; revenue-implied EMEA growth is 8.2%. GT anchors 8.0% for additive FX decomposition (8.0 − 6.0 = 2.0). Agents may cite either within ±0.2 pp.
 
-WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024** *(confirm in Note 1)*
-
-**CFA action remaining:** Confirm WAE before `expert_reviewed`.
+**CFA action remaining:** Complete checklist → set `review_status: expert_reviewed` in GT JSON.
 
 ---
 

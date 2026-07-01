@@ -3,8 +3,7 @@
   "description": "Archetype schema for fx_organic_growth L1 verification. Task GT JSON embeds a task-specific verification_schema block conforming to this shape.",
   "schema_version": "1.0",
   "required_top_level": [
-    "segments",
-    "fx_instruments"
+    "segments"
   ],
   "segment_shape": {
     "slug": "stable key, e.g. emea",
@@ -21,6 +20,8 @@
   "fx_instrument_shape": {
     "slug": "e.g. eur_usd",
     "label": "e.g. EUR/USD weighted-average",
+    "optional": true,
+    "note": "Omit fx_instruments or use empty array when filing does not disclose WAE rate tables (e.g. PEP FY2025). Verify script skips instrument checks when absent.",
     "metrics": {
       "fy2024": "metric_id",
       "fy2025": "metric_id"
@@ -31,7 +32,6 @@
     "cc_formula_additive"
   ],
   "failure_mode_ids": [
-    "spot_rate_method",
     "reported_only",
     "wrong_region",
     "wrong_period",

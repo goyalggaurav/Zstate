@@ -1,6 +1,6 @@
 {
   "task_id": "PEP_fx_organic_growth",
-  "version": "0.1.0-draft",
+  "version": "0.2.0-draft",
   "status": "draft",
   "benchmark_version": "benchmark_v0.1",
 
@@ -12,10 +12,10 @@
   "difficulty_tier": "L3",
 
   "prompt": {
-    "text": "Using PepsiCo, Inc.'s Form 10-K for the fiscal year ended December 27, 2025 (filed February 3, 2026), compute constant-currency organic net revenue growth for FY2025 vs FY2024 for **EMEA** and **LatAm Foods**.\n\n1. Extract reported net revenue for EMEA and LatAm Foods for FY2025 and FY2024 from the segment reporting table (Note 1 — Segment Reporting).\n2. Extract **weighted-average exchange rates** disclosed in Note 1 (EUR/USD at minimum for EMEA) — do not use spot or year-end rates.\n3. Using Python, compute constant-currency organic growth for each segment. Cross-check your result against the organic revenue growth percentages disclosed in MD&A (Net Revenue and Organic Revenue Performance).\n4. Produce a growth table (USD millions and %) and a short assumption log citing note/section for every input.\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Every numeric value must include a citation (document, note/section, table, column).\n- Python required to verify CC growth arithmetic.\n- No Buy/Hold/Sell or price target.\n- If a value cannot be verified, mark it unverified — do not interpolate.",
+    "text": "Using PepsiCo, Inc.'s Form 10-K for the fiscal year ended December 27, 2025 (filed February 3, 2026), compute constant-currency organic net revenue growth for FY2025 vs FY2024 for **EMEA** and **LatAm Foods**.\n\n1. Extract reported net revenue for EMEA and LatAm Foods for FY2025 and FY2024 from the segment reporting table (Note 1 — Segment Reporting).\n2. From MD&A (**Net Revenue and Organic Revenue Performance**), extract for each segment: reported growth %, foreign exchange translation impact %, and disclosed organic revenue growth %.\n3. Using Python, verify the additive identity `organic_cc ≈ reported_growth − fx_impact` for each segment and reconcile to MD&A disclosed organic %. If the filing does not provide weighted-average FX rate tables, state that explicitly — do not use external or spot rates.\n4. Produce a growth table (USD millions and %) and a short assumption log citing note/section for every input.\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Every numeric value must include a citation (document, note/section, table, column).\n- Python required to verify CC growth arithmetic.\n- No Buy/Hold/Sell or price target.\n- If a value cannot be verified, mark it unverified — do not interpolate.",
     "constraints": [
       "Document: PEP 10-K FY2025 only",
-      "Weighted-average FX from filing — not spot rates",
+      "MD&A organic revenue performance table is the FX decomposition anchor",
       "Python required for CC growth verification",
       "No investment recommendation"
     ]
@@ -73,8 +73,6 @@
       "latam_foods_reported_growth_pct",
       "latam_foods_fx_impact_pct",
       "latam_foods_organic_cc_growth_pct",
-      "wae_eur_usd_fy2025",
-      "wae_eur_usd_fy2024",
       "cc_growth_verified"
     ]
   },
