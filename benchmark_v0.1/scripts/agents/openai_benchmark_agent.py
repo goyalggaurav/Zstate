@@ -12,7 +12,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from agents.benchmark_tool_specs import CORPUS_TOOLS, SUBMIT_TOOL, build_tool_definitions, parse_submission_args
+from agents.benchmark_tool_specs import CORPUS_TOOLS, SUBMIT_TOOL, build_tool_definitions, metric_keys, parse_submission_args
 
 
 def _ssl_context() -> ssl.SSLContext:
@@ -37,15 +37,19 @@ def _system_prompt(task: dict, bundle: dict) -> str:
         else:
             policy_lines += f"\n- Policy note `{note['policy_id']}`: {note['statement']}"
 
+    ids = sorted(metric_keys(task["task_id"]))
+    metric_list = ", ".join(ids)
+
     return (
         "You are an equity research analyst agent in a controlled benchmark evaluation.\n"
         "Use ONLY the provided tools against the fixed corpus — no external data.\n"
         "For Search_Filing, pass exact section_slug tokens (lowercase, underscores).\n"
         "Retrieve evidence before stating numbers. Use Python_Interpreter to verify arithmetic.\n"
         "When ready, call submit_structured_output with:\n"
-        "  - metrics: all required numeric fields\n"
-        "  - citations: one entry per metric with verbatim snippet from the retrieved excerpt\n"
-        "  - policy_acknowledgements: required policy_id tokens listed below\n\n"
+        f"  - metrics: all {len(ids)} required fields ({metric_list})\n"
+        f"  - citations: exactly one entry per metrics key ({metric_list}) — no omissions\n"
+        "  - each citation snippet must be a verbatim substring from a section you retrieved\n"
+        "  - policy_acknowledgements: include every REQUIRED policy_id listed below\n\n"
         f"TASK:\n{task['prompt']['text']}\n\n"
         f"ALLOWED SECTION SLUGS:\n{slug_lines or '  (see tool enum)'}"
         f"{policy_lines}"

@@ -76,10 +76,12 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
     }
 
     metric_props = _metric_properties(task_id)
+    metric_ids = sorted(metric_props.keys())
+    n_metrics = len(metric_ids)
     citation_item = {
         "type": "object",
         "properties": {
-            "metric_id": {"type": "string", "enum": sorted(metric_props.keys())},
+            "metric_id": {"type": "string", "enum": metric_ids},
             "doc_id": {"type": "string", "enum": doc_ids or ["UNKNOWN"]},
             "section_slug": {"type": "string", "enum": section_enum},
             "snippet": {
@@ -100,19 +102,28 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
     if required_policy_ids:
         policy_desc += f"; required: {', '.join(required_policy_ids)}"
 
+    submit_required = ["metrics", "citations"]
+    if required_policy_ids:
+        submit_required.append("policy_acknowledgements")
+
     submit_params = {
         "type": "object",
         "properties": {
             "metrics": {
                 "type": "object",
-                "description": "Flat L1 numeric fields for verify scripts.",
+                "description": f"Flat L1 numeric fields ({n_metrics} required keys).",
                 "properties": metric_props,
-                "required": list(metric_props.keys()),
+                "required": metric_ids,
+                "additionalProperties": False,
             },
             "citations": {
                 "type": "array",
-                "description": "One citation per metric — verbatim snippet from corpus excerpt.",
-                "minItems": 1,
+                "description": (
+                    f"Exactly {n_metrics} citations — one per metrics key: {', '.join(metric_ids)}. "
+                    "Each snippet must be copied verbatim from a retrieved section excerpt."
+                ),
+                "minItems": n_metrics,
+                "maxItems": n_metrics,
                 "items": citation_item,
             },
             "policy_acknowledgements": {
@@ -120,7 +131,7 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
                 "description": policy_desc,
             },
         },
-        "required": ["metrics", "citations"],
+        "required": submit_required,
     }
 
     tools: list[dict] = [
@@ -159,7 +170,8 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
             "function": {
                 "name": SUBMIT_TOOL,
                 "description": (
-                    "Submit final agent_submission_v1: metrics + verbatim citations + policy acks. Ends the task."
+                    f"Submit final agent_submission_v1 with all {n_metrics} metrics, "
+                    f"{n_metrics} citations (one per metric_id), and required policy acks. Ends the task."
                 ),
                 "parameters": submit_params,
             },

@@ -538,6 +538,9 @@ def check_openai_submit_schema() -> None:
         assert "metrics" in params["properties"], params
         assert "citations" in params["properties"], params
         assert "metrics" in params["required"] and "citations" in params["required"]
+        n_metrics = len(submit["function"]["parameters"]["properties"]["metrics"]["required"])
+        cite = params["properties"]["citations"]
+        assert cite["minItems"] == n_metrics and cite.get("maxItems") == n_metrics
 
     googl_bundle = load_bundle("GOOGL_footnote_reconciliation")
     gold_sub = json.loads(
