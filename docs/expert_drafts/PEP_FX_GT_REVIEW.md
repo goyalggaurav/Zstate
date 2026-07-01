@@ -157,11 +157,9 @@ Two independent gates — **do not block data sign-off on METHOD_ALT eng work**:
 
 **Gate B complete 2026-07-01.** See **Data finality report** above.
 
-**Before `expert_reviewed`:**
+**Gate B complete (2026-07-01).** Expert audit ledger §2 signed off; `review_status: expert_reviewed` in GT JSON.
 
-1. Complete checklist below
-2. Re-run `verify_pep_fx_organic_growth.py` (should report `all_pass: true`)
-3. Set `review_status` → `expert_reviewed` in GT JSON
+**Eng follow-up for `published`:** Set `manifest.json` PEP task `status: published` and increment `published_tasks`.
 
 ---
 
