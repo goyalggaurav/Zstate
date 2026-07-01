@@ -61,6 +61,15 @@ def check_corpus_manifest() -> None:
     assert report["pilot_tickers"] == 5
 
 
+def check_corpus_bundles() -> None:
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/validate_corpus_bundle.py",
+        "--all",
+    ])
+    assert report["all_pass"] is True, report
+
+
 def check_pm_fsm_fallback_escalation() -> None:
     sys.path.insert(0, str(ROOT / "env_v1" / "scripts"))
     from pm_fsm import pm_respond  # noqa: E402
@@ -281,18 +290,124 @@ def check_benchmark_agent_contract() -> None:
         assert "error" in malformed["verify"]
 
 
+def check_section_retrieval_contract() -> None:
+    """v1.1 — backend rejects unknown section slugs; canonical slugs resolve."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from benchmark_tool_backend import BenchmarkToolBackend, NOT_FOUND_PREFIX, load_bundle  # noqa: E402
+
+    googl = BenchmarkToolBackend(load_bundle("GOOGL_footnote_reconciliation"))
+    pep = BenchmarkToolBackend(load_bundle("PEP_fx_organic_growth"))
+
+    ok = googl.call("Search_Filing", ticker="GOOGL", period="2026Q1", section="note_15")
+    assert NOT_FOUND_PREFIX not in ok, ok
+    assert googl.log[-1].get("doc_id") == "GOOGL_10Q_2026Q1"
+    assert googl.log[-1].get("section_slug") == "note_15"
+
+    ok2 = pep.call("Search_Filing", ticker="PEP", period="FY2025", section="mdna_organic")
+    assert NOT_FOUND_PREFIX not in ok2, ok2
+    assert pep.log[-1].get("section_slug") == "mdna_organic"
+
+    drift = googl.call("Search_Filing", ticker="GOOGL", period="2026Q1", section="Note 15")
+    assert drift.startswith(NOT_FOUND_PREFIX), drift
+    assert "unknown section slug" in drift
+
+    wrong_period = googl.call("Search_Filing", ticker="GOOGL", period="FY2025", section="note_15")
+    assert wrong_period.startswith(NOT_FOUND_PREFIX), wrong_period
+
+    invented = googl.call("Search_Filing", ticker="GOOGL", period="2026Q1", section="note_99")
+    assert invented.startswith(NOT_FOUND_PREFIX), invented
+
+
+def check_benchmark_agent_loop() -> None:
+    """Track A scripted + mock agent loop against corpus bundles (Agent B dependency)."""
+    corpus_dir = ROOT / "benchmark_v0.1" / "corpus"
+    googl_bundle = corpus_dir / "googl_q1_2026_bundle.json"
+    pep_bundle = corpus_dir / "pep_fy2025_bundle.json"
+    if not googl_bundle.exists() or not pep_bundle.exists():
+        print("SKIP  Benchmark agent loop (corpus bundles not yet created)")
+        return
+
+    import tempfile
+
+    plan = ROOT / "benchmark_v0.1" / "examples" / "agents" / "googl_good_plan.json"
+    with tempfile.TemporaryDirectory() as tmp:
+        out_dir = Path(tmp)
+        proc = subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/benchmark_agent_loop.py",
+                "--agent", "scripted",
+                "--task", "GOOGL_footnote_reconciliation",
+                "--plan", str(plan),
+                "--out-dir", str(out_dir),
+                "--run-index", "1",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        assert proc.returncode == 0, proc.stderr or proc.stdout
+
+        agent_out = out_dir / "GOOGL_footnote_reconciliation_run01.json"
+        trace_out = out_dir / "GOOGL_footnote_reconciliation_run01_trace.json"
+        assert agent_out.exists(), agent_out
+        assert trace_out.exists(), trace_out
+
+        trace = json.loads(trace_out.read_text())
+        assert trace["track"] == "benchmark"
+        assert trace["termination"] == "submit"
+        assert not any(s.get("type") in ("pm_turn", "send_message_to_pm") for s in trace["steps"])
+
+        report = run([
+            sys.executable,
+            "benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py",
+            "--period", "q1_2026",
+            "--agent-output", str(agent_out),
+        ])
+        assert report["all_pass"] is True, report
+        assert report["fracture_codes"] == []
+
+        mock_proc = subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/benchmark_agent_loop.py",
+                "--agent", "mock",
+                "--task", "GOOGL_footnote_reconciliation",
+                "--out-dir", str(out_dir),
+                "--run-index", "2",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        assert mock_proc.returncode == 0, mock_proc.stderr or mock_proc.stdout
+
+        mock_out = out_dir / "GOOGL_footnote_reconciliation_run02.json"
+        mock_report = run([
+            sys.executable,
+            "benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py",
+            "--period", "q1_2026",
+            "--agent-output", str(mock_out),
+        ])
+        assert mock_report["all_pass"] is False, mock_report
+        assert "RECON_OMIT" in mock_report.get("fracture_codes", []), mock_report
+
+
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
         ("PEP FX ground truth L1", check_pep_fx_gt),
         ("Fracture taxonomy registry", check_fracture_taxonomy_registry),
         ("Corpus manifest", check_corpus_manifest),
+        ("Corpus bundles", check_corpus_bundles),
+        ("Section retrieval contract", check_section_retrieval_contract),
         ("Benchmark agent output contract", check_benchmark_agent_contract),
         ("PM FSM fallback escalation", check_pm_fsm_fallback_escalation),
         ("Env demo traces + schema", check_env_traces),
         ("Frontier v2 rescore traps", check_frontier_v2_rescore),
         ("Scripted agent loop", check_scripted_agent),
         ("Mock LLM agent loop", check_mock_agent),
+        ("Benchmark agent loop", check_benchmark_agent_loop),
     ]
     failed = 0
     for name, fn in checks:

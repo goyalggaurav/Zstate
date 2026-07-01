@@ -1,0 +1,36 @@
+{
+  "plan_id": "googl_good_v1",
+  "description": "Reference scripted agent — Note 15 + Note 2 retrieval, Python reconciliation, gold structured output",
+  "actions": [
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "GOOGL", "period": "2026Q1", "section": "note_15"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "GOOGL", "period": "2026Q1", "section": "note_2"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Python_Interpreter",
+      "input": {"expression": "89637 + 20028 + 411"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Python_Interpreter",
+      "input": {"expression": "89637 + 20028 + 411 + (-180)"}
+    },
+    {
+      "type": "submit_structured_output",
+      "structured_output": {
+        "google_services_revenue": 89637,
+        "google_cloud_revenue": 20028,
+        "other_bets_revenue": 411,
+        "hedging_gains_losses": -180,
+        "consolidated_total_revenue": 109896
+      }
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "bundle_id": "googl_q1_2026_bundle",
+  "version": "1.1.0",
+  "task_id": "GOOGL_footnote_reconciliation",
+  "documents": {
+    "note_15_segments": {
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "doc_type": "10-Q",
+      "section": "note_15",
+      "name": "Note 15 — Information about Segments and Geographic Areas",
+      "excerpt": "Note 15 — Information about Segments and Geographic Areas\n\nRevenues, traffic acquisition costs (TAC) and monetization metrics by segment\n\nThree Months Ended March 31, 2026\n\nGoogle Services $ 89,637\nGoogle Cloud 20,028\nOther Bets 411\nHedging gains (losses) (180)\nTotal revenues $ 109,896\n\nAdditionally, hedging gains (losses) related to revenue are not allocated to our segments. Hedging gains (losses) related to revenue are not allocated to reportable segments."
+    },
+    "note_2_revenues": {
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "doc_type": "10-Q",
+      "section": "note_2",
+      "name": "Note 2 — Revenues",
+      "excerpt": "Note 2 — Revenues\n\nDisaggregation of revenue by type\n\nThree months ended March 31, 2026\n\nAdvertising revenues $ 66,885\nGoogle subscriptions, platforms, and devices 10,799\nGoogle Cloud 20,028\nOther Bets 411\nHedging gains (losses) (180)\nTotal revenues $ 109,896"
+    }
+  },
+  "section_registry": [
+    {
+      "section_slug": "note_15",
+      "section_id": "GOOGL_10Q_2026Q1_note_15",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "document_key": "note_15_segments",
+      "name": "Note 15 — Information about Segments and Geographic Areas",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
+      "section_slug": "note_2",
+      "section_id": "GOOGL_10Q_2026Q1_note_2",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "document_key": "note_2_revenues",
+      "name": "Note 2 — Revenues",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    }
+  ],
+  "policy_notes": [
+    {
+      "policy_id": "hedging_not_in_segments",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "statement": "Hedging gains (losses) related to revenue are not allocated to reportable segments.",
+      "agent_ack_required": false,
+      "gold_path_key": null,
+      "anti_pattern": null
+    }
+  ],
+  "retrieval_keys": {
+    "Search_Filing": {
+      "GOOGL:2026Q1:note_15": "note_15_segments",
+      "GOOGL:2026Q1:note_2": "note_2_revenues"
+    }
+  }
+}

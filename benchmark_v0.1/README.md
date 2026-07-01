@@ -12,6 +12,14 @@ python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 
 Manifest: [corpus/corpus_manifest_v1.json](./corpus/corpus_manifest_v1.json)
 
+Task bundles (redacted excerpts for agent runs): [corpus/googl_q1_2026_bundle.json](./corpus/googl_q1_2026_bundle.json), [corpus/pep_fy2025_bundle.json](./corpus/pep_fy2025_bundle.json)
+
+```bash
+python3 benchmark_v0.1/scripts/validate_corpus_bundle.py --all
+```
+
+Contract: [docs/CORPUS_BUNDLE_CONTRACT.md](./docs/CORPUS_BUNDLE_CONTRACT.md)
+
 ---
 
 ## Published tasks
@@ -66,6 +74,24 @@ python3 benchmark_v0.1/scripts/mock_agent_stub.py \
 Trap modes: `gold`, `trap_googl_sign`, `trap_googl_blind_sum`, `trap_pep_reported_only`, `trap_pep_wrong_region`, `malformed`, `missing`.
 
 Fixtures: [contract_fixtures/](./contract_fixtures/)
+
+### Benchmark agent loop (Track A runtime)
+
+```bash
+# Scripted gold path — corpus → tools → structured output + trace (A2 gate)
+python3 benchmark_v0.1/scripts/benchmark_agent_loop.py \
+  --agent scripted \
+  --task GOOGL_footnote_reconciliation \
+  --plan benchmark_v0.1/examples/agents/googl_good_plan.json \
+  --out-dir /tmp/bench_googl --run-index 1
+
+# Mock weak agent (blind sum → RECON_OMIT)
+python3 benchmark_v0.1/scripts/benchmark_agent_loop.py \
+  --agent mock --task GOOGL_footnote_reconciliation \
+  --out-dir /tmp/bench_mock --run-index 1
+```
+
+Modes: `scripted`, `mock`. OpenAI deferred. No PM — tools + structured submit only.
 
 ---
 
