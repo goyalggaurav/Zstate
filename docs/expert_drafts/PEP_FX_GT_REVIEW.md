@@ -54,6 +54,41 @@ WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024**
 
 ---
 
+## Edge-case tolerance (additive vs multiplicative)
+
+**Problem:** A strict model may compute Europe CC as **10.6%** (multiplicative) vs **10.0%** (additive MD&A decomposition). Zero-tolerance or point-equality checks create false negatives on valid math.
+
+**Policy (encoded in GT `verification_policy`):**
+
+| Band | Tolerance | Pass rule |
+|------|-----------|-----------|
+| **Strict (L1 pass)** | ±0.2 pp vs MD&A anchor | Canonical additive: `organic_cc = reported_growth − fx_impact` |
+| **Alternative formula** | ±0.75 pp vs anchor | Multiplicative: `(1+g)/(1+fx)−1`; flags `METHOD_ALT`, partial L1 if inputs + MD&A cited |
+| **WAE rebuild** | ±0.5 pp vs anchor | CC revenue at prior-year WAE; strict pass if WAE + revenues correct |
+| **Hard fail** | — | `reported_only`, spot rates, wrong region/period — regardless of tolerance |
+
+**Europe example:** anchor **10.0%** → strict pass [9.8, 10.2]; multiplicative 10.6% → within alternative band, not auto-fail if agent shows work + cites MD&A 10.0% reconciliation.
+
+**Verify script today:** `organic_cc` uses ±0.2 pp (`verify_pep_fx_organic_growth.py` lines 129–130). Eng follow-up: read `verification_policy` from GT JSON and emit `METHOD_ALT` when value is in `acceptable_range_pp` but outside strict band.
+
+---
+
+## Data finality (reviewer action)
+
+**These figures are NOT filing-verified yet.** [Certain]
+
+The table above is **eng-authored placeholder** on the synthetic FY2025 / 2026-02-18 filing timeline (same pattern as GOOGL Q1 2026 draft). You **cannot** complete the checklist or sign off until:
+
+1. Open PEP 10-K URL from `benchmark_v0.1/corpus/corpus_manifest_v1.json`
+2. Verify Note 1 revenues, WAE table, MD&A Europe/AMESA organic %
+3. Replace GT JSON + verify script constants with verified values
+4. Re-run `verify_pep_fx_organic_growth.py`
+5. Then check boxes and set `review_status` → expert-reviewed
+
+Until step 5: leave status **`draft_pending_expert_review`**; do not mark P2-02 published.
+
+---
+
 ## Expert checklist (P2-02)
 
 - [ ] **Methodology:** Task requires independent Python computation **and** MD&A cross-check — not MD&A extract alone

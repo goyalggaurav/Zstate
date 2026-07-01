@@ -92,6 +92,47 @@
     }
   ],
 
+  "verification_policy": {
+    "primary_anchor": "mdna_disclosed_organic_cc",
+    "canonical_formula": "additive_percentage_points",
+    "formula_definition": "organic_cc_pct = reported_growth_pct - fx_impact_pct (fx_impact signed per MD&A; headwind is negative)",
+    "alternative_formulas": [
+      {
+        "id": "multiplicative",
+        "definition": "((1 + reported_growth_pct/100) / (1 + fx_impact_pct/100) - 1) * 100",
+        "example_europe_pct": 10.6,
+        "tolerance_pp": 0.75,
+        "layer1_treatment": "flag_METHOD_ALT — partial credit if inputs correct and MD&A cited; not strict L1 pass"
+      },
+      {
+        "id": "wae_revenue_rebuild",
+        "definition": "CC revenue at prior-year WAE, then YoY growth vs prior-year reported USD revenue",
+        "tolerance_pp": 0.5,
+        "layer1_treatment": "strict_pass_if_within_tolerance_and_wae_cited"
+      }
+    ],
+    "tolerances": {
+      "revenue_usd_millions": 0,
+      "wae_fx_rate": 0.001,
+      "reported_growth_pct": 0.1,
+      "fx_impact_pct": 0.1,
+      "organic_cc_pct_strict": 0.2,
+      "organic_cc_pct_alternative_formula": 0.75
+    },
+    "hard_fail": [
+      "reported_only",
+      "spot_rate_method",
+      "wrong_region",
+      "wrong_period"
+    ],
+    "data_finality": {
+      "status": "eng_placeholder",
+      "verified_against_filing": false,
+      "reviewer_signoff_blocked": true,
+      "note": "FY2025 figures are internally consistent eng placeholders on the synthetic 2026 filing timeline until manually checked against the SEC URL in corpus_manifest_v1.json"
+    }
+  },
+
   "computed_values": [
     {
       "metric_id": "europe_reported_growth_pct",
@@ -109,8 +150,10 @@
     {
       "metric_id": "europe_organic_cc_growth_pct",
       "value": 10.0,
-      "formula": "reported_growth - fx_impact (or CC revenue rebuild using WAE)",
+      "formula": "reported_growth - fx_impact (canonical); MD&A anchor",
       "tolerance": 0.2,
+      "acceptable_range_pp": [9.8, 10.8],
+      "canonical_method": "additive_percentage_points",
       "verification_script_ref": "../scripts/verify_pep_fx_organic_growth.py"
     },
     {
@@ -128,8 +171,10 @@
     {
       "metric_id": "amesa_organic_cc_growth_pct",
       "value": 9.7,
-      "formula": "reported_growth - fx_impact",
-      "tolerance": 0.2
+      "formula": "reported_growth - fx_impact (canonical); MD&A anchor",
+      "tolerance": 0.2,
+      "acceptable_range_pp": [9.5, 10.2],
+      "canonical_method": "additive_percentage_points"
     },
     {
       "metric_id": "cc_growth_verified",
