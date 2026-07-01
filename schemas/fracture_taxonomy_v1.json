@@ -69,6 +69,34 @@
       "label": "Non-auditable citation",
       "tracks": ["benchmark"],
       "severity": "medium"
+    },
+    {
+      "code": "SCOPE_ERR",
+      "label": "Wrong segment or region scope",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "PEP PFNA substituted for EMEA organic growth"
+    },
+    {
+      "code": "CC_OMIT",
+      "label": "Constant-currency adjustment omitted",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "Reported growth recorded as organic CC growth"
+    },
+    {
+      "code": "FX_METHOD_ERR",
+      "label": "Wrong FX translation method",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "Spot rate used instead of MD&A additive decomposition"
+    },
+    {
+      "code": "METHOD_ALT",
+      "label": "Alternate methodology within tolerance",
+      "tracks": ["benchmark"],
+      "severity": "high",
+      "example": "Valid CC derivation path but not ground-truth method"
     }
   ]
 }

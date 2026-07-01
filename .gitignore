@@ -12,3 +12,6 @@ __pycache__/
 env_v1/gold_keys/
 **/gold_keys/*.json
 !**/gold_keys.example/
+
+# Track A — live eval outputs (regenerate: run_benchmark_campaign.py --bootstrap-fixtures)
+benchmark_v0.1/runs/

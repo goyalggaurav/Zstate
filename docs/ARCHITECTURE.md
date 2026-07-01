@@ -2,7 +2,7 @@
 
 **Version:** 1.1  
 **Owner:** Engineering  
-**Status:** Active — P1-12 prep sprint (agent loop, trace normalization)
+**Status:** Active — Week 0 hygiene; 2 published eval tasks (GOOGL, PEP)
 
 Canonical technical map. Product requirements live in [Framework v0.2](./ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md). Priorities live in [Roadmap](./ROADMAP.md) and [Backlog](./BACKLOG.md).
 
@@ -61,16 +61,16 @@ Zstate/
 │   ├── ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md
 │   ├── expert_drafts/               # Eng drafts → CFA review
 │   └── specs/                       # Target platform (post-pilot)
-├── schemas/                       # Cross-track JSON contracts
+├── schemas/                       # Cross-track JSON contracts (trajectory_v1, fracture_taxonomy_v1)
 ├── benchmark_v0.1/                # Track A — implemented pilot
 │   ├── tasks/ ground_truth/ gold_paths/ rubrics/ scripts/
+│   ├── campaigns/ contract_fixtures/
 │   └── manifest.json
 ├── env_v1/                        # Track B — dual-control RL env
 │   ├── episodes/ corpus/ pm_policies/ rubrics/
 │   ├── verifier/ gold_keys.example/ examples/agents/
 │   ├── scripts/ runs/
 │   └── docs/                        # Env spec + methodology
-├── schemas/                       # trajectory_v1.json, fracture_taxonomy_v1.json
 └── scripts/                       # smoke_test.py, export generators
 ```
 
@@ -138,8 +138,8 @@ See [schemas/trajectory_v1.json](../schemas/trajectory_v1.json). Env traces are 
 |----------------------|----------------------|----------------------------|
 | corpus-service | EDGAR JSON + `corpus/` bundles | v0.1b scale (15 cos) |
 | task-registry | `benchmark_v0.1/tasks/*.json` | Expert Workbench |
-| eval-orchestrator | Manual runs + `run_episode.py` | First model campaign |
-| scoring-engine | `verify_*.py` + `score_episode.py` | Automated campaigns |
+| eval-orchestrator | `run_benchmark_campaign.py` + contract stubs (LATER-03) | Model adapters |
+| scoring-engine | `verify_*.py` (L1 only, Track A) + `score_episode.py` | L2/L3 + automated campaigns |
 | expert-workbench | Markdown drafts + sheets | P3 |
 
 Specs describe **target architecture**; `benchmark_v0.1/` and `env_v1/` are **MVD implementations**.

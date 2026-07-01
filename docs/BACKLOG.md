@@ -104,7 +104,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-04 | Component specs (corpus, registry, eval, scoring) | done | Target architecture; implement lightweight first |
 | SH-05 | Word/PDF export generator | done | Stakeholder docs |
 | SH-06 | Corpus service implementation | deferred | **Explore later** — see BACKLOG LATER-01 (EDGAR full ingest) |
-| SH-07 | Eval orchestrator (model adapters) | todo | Shared by A and B |
+| SH-07 | Eval orchestrator (model adapters) | in_progress | Shared by A and B; see LATER-03 |
 | SH-08 | Calibration dataset (5 tasks, dual-rater) | todo | Both benchmark L2 and env Defense |
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |

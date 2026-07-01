@@ -37,6 +37,21 @@ def check_pep_fx_gt() -> None:
     assert report["fracture_codes"] == []
 
 
+def check_fracture_taxonomy_registry() -> None:
+    """Benchmark verify scripts must only emit codes registered in fracture_taxonomy_v1.json."""
+    taxonomy = json.loads((ROOT / "schemas" / "fracture_taxonomy_v1.json").read_text())
+    registry = {entry["code"] for entry in taxonomy["codes"]}
+
+    bench_scripts = ROOT / "benchmark_v0.1" / "scripts"
+    sys.path.insert(0, str(bench_scripts))
+    from verify_fx_organic_growth import FAILURE_FRACTURE as pep_fractures  # noqa: E402
+    from verify_googl_footnote_reconciliation import FAILURE_FRACTURE as googl_fractures  # noqa: E402
+
+    emitted = set(googl_fractures.values()) | set(pep_fractures.values())
+    missing = emitted - registry
+    assert not missing, f"Fracture codes not in registry: {sorted(missing)}"
+
+
 def check_corpus_manifest() -> None:
     report = run([
         sys.executable,
@@ -270,6 +285,7 @@ def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
         ("PEP FX ground truth L1", check_pep_fx_gt),
+        ("Fracture taxonomy registry", check_fracture_taxonomy_registry),
         ("Corpus manifest", check_corpus_manifest),
         ("Benchmark agent output contract", check_benchmark_agent_contract),
         ("PM FSM fallback escalation", check_pm_fsm_fallback_escalation),

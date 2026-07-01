@@ -16,7 +16,7 @@ Design-phase repository for **AlphaNote-Bench**: credentialed-expert equity rese
 
 | Track | Path | Status |
 |-------|------|--------|
-| **A — Eval benchmark** | [benchmark_v0.1/](benchmark_v0.1/) | GOOGL published (expert-reviewed 2026-07-01) |
+| **A — Eval benchmark** | [benchmark_v0.1/](benchmark_v0.1/) | GOOGL + PEP published (expert-reviewed 2026-07-01) |
 | **B — RL environment** | [env_v1/](env_v1/) | Solaris v1.0 published + agent loop |
 
 ## Quick commands
