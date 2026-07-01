@@ -27,6 +27,7 @@ from agent_output_contract import (
     load_json,
     parse_slot,
     write_agent_output,
+    write_contract_submission_fixtures,
 )
 
 DEFAULT_CAMPAIGN = BENCH / "campaigns" / "pilot_eval_campaign_v1.json"
@@ -76,11 +77,25 @@ def main() -> int:
         action="store_true",
         help="Write reference trap + gold JSON under contract_fixtures/",
     )
+    parser.add_argument(
+        "--write-submission-fixtures",
+        action="store_true",
+        help="Write L3 submission gold + trap fixtures under contract_fixtures/",
+    )
     args = parser.parse_args()
+
+    if args.write_submission_fixtures:
+        paths = write_contract_submission_fixtures()
+        print(f"Wrote {len(paths)} submission fixtures under {CONTRACT_DIR.relative_to(BENCH.parent)}")
+        return 0
 
     if args.write_contract_fixtures:
         paths = write_contract_fixtures()
-        print(f"Wrote {len(paths)} contract fixtures under {CONTRACT_DIR.relative_to(BENCH.parent)}")
+        sub_paths = write_contract_submission_fixtures()
+        print(
+            f"Wrote {len(paths)} agent output + {len(sub_paths)} submission fixtures "
+            f"under {CONTRACT_DIR.relative_to(BENCH.parent)}"
+        )
         return 0
 
     if not args.mode or not args.slot:

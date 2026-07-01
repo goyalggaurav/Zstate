@@ -1,0 +1,80 @@
+{
+  "schema_version": "agent_submission_v1",
+  "metrics": {
+    "emea_net_revenue_fy2025": 18025,
+    "emea_net_revenue_fy2024": 16658,
+    "latam_foods_net_revenue_fy2025": 10549,
+    "latam_foods_net_revenue_fy2024": 10568,
+    "emea_reported_growth_pct": 8.0,
+    "emea_fx_impact_pct": 2.0,
+    "emea_organic_cc_growth_pct": 6.0,
+    "latam_foods_reported_growth_pct": -0.2,
+    "latam_foods_fx_impact_pct": -4.7,
+    "latam_foods_organic_cc_growth_pct": 4.5
+  },
+  "citations": [
+    {
+      "metric_id": "emea_net_revenue_fy2025",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "note_1",
+      "snippet": "EMEA $ 18,025"
+    },
+    {
+      "metric_id": "emea_net_revenue_fy2024",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "note_1",
+      "snippet": "EMEA $ 16,658"
+    },
+    {
+      "metric_id": "latam_foods_net_revenue_fy2025",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "note_1",
+      "snippet": "LatAm Foods $ 10,549"
+    },
+    {
+      "metric_id": "latam_foods_net_revenue_fy2024",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "note_1",
+      "snippet": "LatAm Foods $ 10,568"
+    },
+    {
+      "metric_id": "emea_reported_growth_pct",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "mdna_organic",
+      "snippet": "EMEA                            8%"
+    },
+    {
+      "metric_id": "emea_fx_impact_pct",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "mdna_organic",
+      "snippet": "2%"
+    },
+    {
+      "metric_id": "emea_organic_cc_growth_pct",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "mdna_organic",
+      "snippet": "6%"
+    },
+    {
+      "metric_id": "latam_foods_reported_growth_pct",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "mdna_organic",
+      "snippet": "(0.2)%"
+    },
+    {
+      "metric_id": "latam_foods_fx_impact_pct",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "mdna_organic",
+      "snippet": "(4.7)%"
+    },
+    {
+      "metric_id": "latam_foods_organic_cc_growth_pct",
+      "doc_id": "PEP_10K_2025",
+      "section_slug": "mdna_organic",
+      "snippet": "Bloomberg spot EUR/USD 1.12"
+    }
+  ],
+  "policy_acknowledgements": [
+    "no_wae_fx_table"
+  ]
+}

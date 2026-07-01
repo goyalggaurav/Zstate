@@ -216,7 +216,7 @@ For L3 citation audit, agents submit **`schemas/agent_submission_v1.json`** (wra
 
 Campaign scorer and verify scripts unchanged for L1. `validate_agent_submission.py` (planned) reads `_submission.json`.
 
-**Implementation status:** Schema defined; L1 verify still flat-only. Scripted plans do not emit citations yet.
+**Implementation status:** `validate_agent_submission.py` live; scripted agents emit `_submission.json`; OpenAI submit still metrics-only until tool schema extended.
 
 ### Trajectory (L2 prep)
 

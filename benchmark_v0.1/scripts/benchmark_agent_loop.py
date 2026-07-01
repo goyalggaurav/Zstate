@@ -24,7 +24,7 @@ SCRIPTS = Path(__file__).resolve().parent
 BENCH = SCRIPTS.parent
 sys.path.insert(0, str(SCRIPTS))
 
-from agent_output_contract import agent_output_path, load_json  # noqa: E402
+from agent_output_contract import agent_output_path, googl_gold_submission, load_json, pep_gold_submission  # noqa: E402
 from benchmark_tool_backend import BenchmarkToolBackend, load_bundle  # noqa: E402
 
 
@@ -106,6 +106,7 @@ def run_benchmark_task(
     termination = "timeout"
     submission: dict = {"submitted": False}
     structured_output: dict | None = None
+    agent_submission: dict | None = None
     context: dict[str, Any] = {"task": task, "steps": steps}
 
     while len(steps) < max_steps:
@@ -143,8 +144,17 @@ def run_benchmark_task(
                     "Structured output submitted.",
                 )
             structured_output = action.get("structured_output", action.get("values", {}))
+            agent_submission = action.get("submission")
+            if agent_submission and isinstance(agent_submission.get("metrics"), dict):
+                structured_output = agent_submission["metrics"]
             submission = {"submitted": True, "structured_output": structured_output}
-            steps.append({"type": "submit_structured_output", "structured_output": structured_output})
+            if agent_submission:
+                submission["agent_submission"] = agent_submission
+            steps.append({
+                "type": "submit_structured_output",
+                "structured_output": structured_output,
+                "has_submission": agent_submission is not None,
+            })
             termination = "submit"
             break
 
@@ -162,7 +172,22 @@ def run_benchmark_task(
     )
     if structured_output is None:
         structured_output = {}
-    return trace, structured_output
+    return trace, structured_output, agent_submission
+
+
+def _ensure_plan_submission(task_id: str, plan: dict) -> None:
+    actions = plan.get("actions", [])
+    if not actions or actions[-1].get("type") != "submit_structured_output":
+        return
+    if actions[-1].get("submission"):
+        return
+    builders = {
+        "GOOGL_footnote_reconciliation": googl_gold_submission,
+        "PEP_fx_organic_growth": pep_gold_submission,
+    }
+    builder = builders.get(task_id)
+    if builder:
+        actions[-1]["submission"] = builder()
 
 
 def run_scripted_task(
@@ -170,8 +195,9 @@ def run_scripted_task(
     plan_path: Path,
     *,
     model_id: str | None = None,
-) -> tuple[dict, dict]:
+) -> tuple[dict, dict, dict | None]:
     plan = load_json(plan_path)
+    _ensure_plan_submission(task_id, plan)
 
     class _PlanAgent:
         def __init__(self) -> None:
@@ -240,7 +266,7 @@ class MockBlindSumAgent:
         return action
 
 
-def run_mock_task(task_id: str) -> tuple[dict, dict]:
+def run_mock_task(task_id: str) -> tuple[dict, dict, dict | None]:
     if task_id != "GOOGL_footnote_reconciliation":
         raise NotImplementedError(f"mock agent supports GOOGL_footnote_reconciliation only, got {task_id!r}")
     task = load_task(task_id)
@@ -254,7 +280,7 @@ def run_mock_task(task_id: str) -> tuple[dict, dict]:
     )
 
 
-def run_openai_task(task_id: str, *, model_id: str | None = None) -> tuple[dict, dict]:
+def run_openai_task(task_id: str, *, model_id: str | None = None) -> tuple[dict, dict, dict | None]:
     from agents.openai_benchmark_agent import OpenAIBenchmarkAgent
 
     task = load_task(task_id)
@@ -275,12 +301,23 @@ TASK_SCRIPTED_PLANS: dict[str, Path] = {
 }
 
 
-def write_outputs(structured_output: dict, trace: dict, agent_path: Path, trace_path: Path) -> None:
+def write_outputs(
+    structured_output: dict,
+    trace: dict,
+    agent_path: Path,
+    trace_path: Path,
+    *,
+    agent_submission: dict | None = None,
+) -> None:
     agent_path.parent.mkdir(parents=True, exist_ok=True)
     agent_path.write_text(json.dumps(structured_output, indent=2) + "\n", encoding="utf-8")
     trace_path.write_text(json.dumps(trace, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote agent output: {agent_path}")
     print(f"Wrote trace: {trace_path}")
+    if agent_submission is not None:
+        submission_path = agent_path.with_name(f"{agent_path.stem}_submission.json")
+        submission_path.write_text(json.dumps(agent_submission, indent=2) + "\n", encoding="utf-8")
+        print(f"Wrote submission: {submission_path}")
 
 
 def main() -> int:
@@ -303,17 +340,20 @@ def main() -> int:
         campaign_path = args.campaign if args.campaign.is_absolute() else BENCH / args.campaign
         campaign = load_json(campaign_path)
 
+    agent_submission: dict | None = None
     if args.agent == "scripted":
         if not args.plan:
             parser.error("--plan required for scripted agent")
         plan_path = args.plan.resolve() if args.plan.is_absolute() else (
             args.plan.resolve() if args.plan.exists() else (BENCH / args.plan).resolve()
         )
-        trace, structured_output = run_scripted_task(args.task, plan_path, model_id=args.model_id)
+        trace, structured_output, agent_submission = run_scripted_task(
+            args.task, plan_path, model_id=args.model_id
+        )
     elif args.agent == "mock":
-        trace, structured_output = run_mock_task(args.task)
+        trace, structured_output, agent_submission = run_mock_task(args.task)
     else:
-        trace, structured_output = run_openai_task(args.task, model_id=args.model_id)
+        trace, structured_output, agent_submission = run_openai_task(args.task, model_id=args.model_id)
 
     agent_path, trace_path = resolve_output_paths(
         args.task,
@@ -322,7 +362,7 @@ def main() -> int:
         campaign=campaign,
         model_id=args.model_id,
     )
-    write_outputs(structured_output, trace, agent_path, trace_path)
+    write_outputs(structured_output, trace, agent_path, trace_path, agent_submission=agent_submission)
     return 0
 
 

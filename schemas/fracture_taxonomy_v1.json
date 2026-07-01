@@ -71,6 +71,20 @@
       "severity": "medium"
     },
     {
+      "code": "CITE_HALLUC",
+      "label": "Citation snippet not in bundle excerpt",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "Quoted text absent from section excerpt"
+    },
+    {
+      "code": "POLICY_OMIT",
+      "label": "Required policy acknowledgement missing",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "PEP WAE absence not acknowledged"
+    },
+    {
       "code": "SCOPE_ERR",
       "label": "Wrong segment or region scope",
       "tracks": ["benchmark"],

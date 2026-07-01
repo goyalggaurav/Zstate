@@ -46,8 +46,9 @@ def check_fracture_taxonomy_registry() -> None:
     sys.path.insert(0, str(bench_scripts))
     from verify_fx_organic_growth import FAILURE_FRACTURE as pep_fractures  # noqa: E402
     from verify_googl_footnote_reconciliation import FAILURE_FRACTURE as googl_fractures  # noqa: E402
+    from validate_agent_submission import FAILURE_FRACTURE as l3_fractures  # noqa: E402
 
-    emitted = set(googl_fractures.values()) | set(pep_fractures.values())
+    emitted = set(googl_fractures.values()) | set(pep_fractures.values()) | set(l3_fractures.values())
     missing = emitted - registry
     assert not missing, f"Fracture codes not in registry: {sorted(missing)}"
 
@@ -367,6 +368,16 @@ def check_benchmark_agent_loop() -> None:
         assert report["all_pass"] is True, report
         assert report["fracture_codes"] == []
 
+        submission_out = out_dir / "GOOGL_footnote_reconciliation_run01_submission.json"
+        assert submission_out.exists(), submission_out
+        l3 = run([
+            sys.executable,
+            "benchmark_v0.1/scripts/validate_agent_submission.py",
+            "--task", "GOOGL_footnote_reconciliation",
+            "--submission", str(submission_out),
+        ])
+        assert l3["l3_pass"] is True, l3
+
         mock_proc = subprocess.run(
             [
                 sys.executable,
@@ -431,6 +442,8 @@ def check_campaign_execute_scripted() -> None:
         trace_path = Path(tmp) / "gpt-4o" / "GOOGL_footnote_reconciliation_run01_trace.json"
         assert agent_path.exists(), agent_path
         assert trace_path.exists(), trace_path
+        submission_path = Path(tmp) / "gpt-4o" / "GOOGL_footnote_reconciliation_run01_submission.json"
+        assert submission_path.exists(), submission_path
 
         trace = json.loads(trace_path.read_text())
         assert trace["termination"] == "submit"
@@ -451,6 +464,63 @@ def check_campaign_execute_scripted() -> None:
         assert any(r.get("status") == "executed" for r in result["execution"])
 
 
+def check_agent_submission_validator() -> None:
+    """P2-04d — L3 submission validator + gold/trap contract fixtures."""
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/validate_agent_submission.py",
+        "--all",
+    ])
+    assert report["all_pass"] is True, report
+    assert report["gold_pass_count"] == 2
+    assert report["trap_fail_count"] == 4
+
+    fixture_dir = ROOT / "benchmark_v0.1" / "contract_fixtures"
+    trap_specs = [
+        (
+            "GOOGL_footnote_reconciliation_submission_trap_fake_snippet.json",
+            ["CITE_HALLUC"],
+            ["cite_halluc"],
+        ),
+        (
+            "GOOGL_footnote_reconciliation_submission_trap_wrong_slug.json",
+            ["SECTION_MISS"],
+            ["cite_slug_err"],
+        ),
+        (
+            "PEP_fx_organic_growth_submission_trap_missing_policy.json",
+            ["POLICY_OMIT"],
+            ["policy_omit"],
+        ),
+        (
+            "PEP_fx_organic_growth_submission_trap_halluc_snippet.json",
+            ["CITE_HALLUC"],
+            ["cite_halluc"],
+        ),
+    ]
+    for filename, expect_fractures, expect_failures in trap_specs:
+        path = fixture_dir / filename
+        assert path.exists(), path
+        task_id = filename.split("_submission_", 1)[0]
+        proc = subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/validate_agent_submission.py",
+                "--task", task_id,
+                "--submission", str(path),
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        assert proc.returncode == 1, proc.stdout
+        one = json.loads(proc.stdout)
+        for code in expect_fractures:
+            assert code in one.get("fracture_codes", []), one
+        for mode in expect_failures:
+            assert mode in one.get("failure_modes", []), one
+
+
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
@@ -466,6 +536,7 @@ def main() -> int:
         ("Scripted agent loop", check_scripted_agent),
         ("Mock LLM agent loop", check_mock_agent),
         ("Benchmark agent loop", check_benchmark_agent_loop),
+        ("Agent submission L3 validator", check_agent_submission_validator),
         ("Campaign execute scripted", check_campaign_execute_scripted),
     ]
     failed = 0

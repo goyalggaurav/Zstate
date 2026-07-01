@@ -65,7 +65,16 @@ Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_e
 
 Schema: [schemas/agent_output_v1.json](./schemas/agent_output_v1.json)
 
-Path pattern: `runs/{campaign_id}/{model_slug}/{task_id}_run{NN}.json`
+Path pattern: `runs/{campaign_id}/{model_slug}/{task_id}_run{NN}.json` (L1 metrics)
+
+L3 submissions: `{task_id}_run{NN}_submission.json` — validated by `validate_agent_submission.py`.
+
+```bash
+python3 benchmark_v0.1/scripts/validate_agent_submission.py --all
+python3 benchmark_v0.1/scripts/validate_agent_submission.py \
+  --task GOOGL_footnote_reconciliation \
+  --submission benchmark_v0.1/contract_fixtures/GOOGL_footnote_reconciliation_submission_gold.json
+```
 
 ```bash
 # Reference trap fixtures (checked in smoke_test.py)

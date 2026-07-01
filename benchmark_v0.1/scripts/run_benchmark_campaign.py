@@ -146,18 +146,26 @@ def execute_campaign(
                         plan = TASK_SCRIPTED_PLANS.get(task_id)
                         if not plan or not plan.exists():
                             raise FileNotFoundError(f"No scripted plan for {task_id}")
-                        trace, structured_output = run_scripted_task(
+                        trace, structured_output, agent_submission = run_scripted_task(
                             task_id, plan, model_id=model_id
                         )
                     elif agent_mode == "openai":
-                        trace, structured_output = run_openai_task(task_id, model_id=model_id)
+                        trace, structured_output, agent_submission = run_openai_task(
+                            task_id, model_id=model_id
+                        )
                     elif agent_mode == "mock":
                         if task_id != "GOOGL_footnote_reconciliation":
                             raise NotImplementedError("mock execute supports GOOGL only")
-                        trace, structured_output = run_mock_task(task_id)
+                        trace, structured_output, agent_submission = run_mock_task(task_id)
                     else:
                         raise ValueError(f"Unknown agent mode {agent_mode!r}")
-                    write_outputs(structured_output, trace, agent_path, trace_path)
+                    write_outputs(
+                        structured_output,
+                        trace,
+                        agent_path,
+                        trace_path,
+                        agent_submission=agent_submission,
+                    )
                     rec["status"] = "executed"
                     rec["termination"] = trace.get("termination")
                 except Exception as e:

@@ -1,0 +1,44 @@
+{
+  "schema_version": "agent_submission_v1",
+  "metrics": {
+    "google_services_revenue": 89637,
+    "google_cloud_revenue": 20028,
+    "other_bets_revenue": 411,
+    "hedging_gains_losses": -180,
+    "consolidated_total_revenue": 109896
+  },
+  "citations": [
+    {
+      "metric_id": "google_services_revenue",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "section_slug": "note_99",
+      "note": "Note 15 \u2014 Information about Segments and Geographic Areas",
+      "snippet": "Google Services $ 89,637"
+    },
+    {
+      "metric_id": "google_cloud_revenue",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "section_slug": "note_15",
+      "snippet": "Google Cloud 20,028"
+    },
+    {
+      "metric_id": "other_bets_revenue",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "section_slug": "note_15",
+      "snippet": "Other Bets 411"
+    },
+    {
+      "metric_id": "hedging_gains_losses",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "section_slug": "note_15",
+      "snippet": "Hedging gains (losses) (180)"
+    },
+    {
+      "metric_id": "consolidated_total_revenue",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "section_slug": "note_15",
+      "snippet": "Total revenues $ 109,896"
+    }
+  ],
+  "policy_acknowledgements": []
+}
