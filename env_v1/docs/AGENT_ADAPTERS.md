@@ -33,6 +33,8 @@
 ## OpenAI-compatible run
 
 ```bash
+pip3 install -r env_v1/requirements-agent.txt   # certifi — macOS SSL fix
+
 export OPENAI_API_KEY=sk-...
 export OPENAI_MODEL=gpt-4o          # optional
 # export OPENAI_BASE_URL=https://...  # for Azure / compatible hosts
@@ -44,6 +46,15 @@ python3 env_v1/scripts/agent_loop.py \
 ```
 
 Trace is schema-enriched (`trajectory_id`, `fractures`, `reward`) via `write_trace()`.
+
+### macOS SSL error (`CERTIFICATE_VERIFY_FAILED`)
+
+Common with python.org Python on Mac. Fix in order:
+
+1. `pip3 install certifi` (or `pip3 install -r env_v1/requirements-agent.txt`)
+2. Retry the agent command
+3. If still failing: run **Install Certificates.command** from your Python app folder, e.g.  
+   `open "/Applications/Python 3.14/Install Certificates.command"`
 
 ---
 

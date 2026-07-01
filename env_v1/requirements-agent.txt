@@ -1,12 +1,15 @@
 # Agent adapter — P1-12 frontier model runs
 #
-# Install: optional — uses stdlib urllib for OpenAI-compatible APIs.
+# Install CA bundle (recommended on macOS python.org builds):
+#   pip3 install -r env_v1/requirements-agent.txt
+#
+# macOS alternative if SSL still fails:
+#   open "/Applications/Python 3.14/Install Certificates.command"
+#   (adjust version to match: python3 --version)
 #
 # Environment:
 #   OPENAI_API_KEY     Required for --agent openai
 #   OPENAI_MODEL       Default model (default: gpt-4o-mini)
 #   OPENAI_BASE_URL    Compatible API base (default: https://api.openai.com/v1)
-#
-# Examples:
-#   python3 env_v1/scripts/agent_loop.py --agent mock
-#   OPENAI_API_KEY=sk-... python3 env_v1/scripts/agent_loop.py --agent openai --model-id gpt-4o
+
+certifi>=2024.2.2

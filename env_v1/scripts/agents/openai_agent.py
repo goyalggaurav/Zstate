@@ -4,11 +4,22 @@ from __future__ import annotations
 
 import json
 import os
+import ssl
 import urllib.error
 import urllib.request
 from typing import Any
 
 from agents.tool_specs import TOOL_DEFINITIONS
+
+
+def _ssl_context() -> ssl.SSLContext:
+    """Build SSL context with certifi CAs (fixes macOS python.org CERTIFICATE_VERIFY_FAILED)."""
+    try:
+        import certifi
+
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
 
 
 def _system_prompt(episode: dict) -> str:
@@ -59,11 +70,19 @@ class OpenAICompatAgent:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=120) as resp:
+            with urllib.request.urlopen(req, timeout=120, context=_ssl_context()) as resp:
                 return json.loads(resp.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
             detail = e.read().decode("utf-8", errors="replace")
             raise RuntimeError(f"LLM API error {e.code}: {detail}") from e
+        except urllib.error.URLError as e:
+            if "CERTIFICATE_VERIFY_FAILED" in str(e.reason):
+                raise RuntimeError(
+                    "SSL certificate verify failed. Fix: pip3 install certifi "
+                    "(then retry), or run macOS 'Install Certificates.command' "
+                    "for your Python install. See env_v1/docs/AGENT_ADAPTERS.md."
+                ) from e
+            raise RuntimeError(f"LLM network error: {e.reason}") from e
 
     def _parse_tool_calls(self, message: dict) -> list[dict]:
         calls = message.get("tool_calls") or []
