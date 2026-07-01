@@ -69,7 +69,38 @@ WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024**
 
 **Europe example:** anchor **10.0%** → strict pass [9.8, 10.2]; multiplicative 10.6% → within alternative band, not auto-fail if agent shows work + cites MD&A 10.0% reconciliation.
 
-**Verify script today:** `organic_cc` uses ±0.2 pp (`verify_pep_fx_organic_growth.py` lines 129–130). Eng follow-up: read `verification_policy` from GT JSON and emit `METHOD_ALT` when value is in `acceptable_range_pp` but outside strict band.
+**Verify script:** Loads all constants from `PEP_fx_organic_growth_gt.json` — reviewer edits JSON only. Emits `METHOD_ALT` when CC is in `acceptable_range_pp` but outside strict ±0.2 pp band.
+
+---
+
+## Reviewer workflow (JSON-only)
+
+**Separation of concerns:** CFA updates **ground truth JSON only** — never Python.
+
+| Step | Owner | Action |
+|------|-------|--------|
+| 1 | CFA | Open PEP 10-K URL from `corpus_manifest_v1.json` |
+| 2 | CFA | Edit `extracted_values` + `computed_values` in GT JSON; set `verification_policy.data_finality.verified_against_filing: true` |
+| 3 | Eng or CFA | Run `python3 benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py` (self-test against JSON) |
+| 4 | CFA | Complete checklist; set `review_status` → `expert_reviewed` in GT JSON |
+
+No verify-script edits required when numbers change.
+
+---
+
+## Sign-off sequencing (CFA vs Engineering)
+
+Two independent gates — **do not block data sign-off on METHOD_ALT eng work**:
+
+| Gate | Owner | Blocks | When |
+|------|-------|--------|------|
+| **A — Methodology** | CFA | Nothing downstream | Approve tolerance policy + task design in this doc (can happen now) |
+| **B — Data finality** | CFA | `expert_reviewed` | Filing-verified numbers in GT JSON + verify self-test passes |
+| **C — Publish** | Eng + CFA | `published` / external demo | Gate B complete **and** verify script reads JSON + emits `METHOD_ALT` |
+
+**Answer:** CFA signs off **data (Gate B)** as soon as JSON is filing-verified and self-test passes. **Do not wait** for Gate C to approve numbers. Gate C is eng confirmation before external publish — **done** as of JSON-driven verify script.
+
+Until Gate B: leave status **`draft_pending_expert_review`**.
 
 ---
 
@@ -77,13 +108,13 @@ WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024**
 
 **These figures are NOT filing-verified yet.** [Certain]
 
-The table above is **eng-authored placeholder** on the synthetic FY2025 / 2026-02-18 filing timeline (same pattern as GOOGL Q1 2026 draft). You **cannot** complete the checklist or sign off until:
+The table above is **eng-authored placeholder** on the synthetic FY2025 / 2026-02-18 filing timeline (same pattern as GOOGL Q1 2026 draft). You **cannot** complete Gate B until:
 
 1. Open PEP 10-K URL from `benchmark_v0.1/corpus/corpus_manifest_v1.json`
 2. Verify Note 1 revenues, WAE table, MD&A Europe/AMESA organic %
-3. Replace GT JSON + verify script constants with verified values
-4. Re-run `verify_pep_fx_organic_growth.py`
-5. Then check boxes and set `review_status` → expert-reviewed
+3. **Update GT JSON only** with verified values (see Reviewer workflow above)
+4. Re-run `verify_pep_fx_organic_growth.py` — must report `all_pass: true`
+5. Complete checklist and set `review_status` → `expert_reviewed`
 
 Until step 5: leave status **`draft_pending_expert_review`**; do not mark P2-02 published.
 
@@ -125,7 +156,7 @@ python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 
 ## Sign-off
 
-**Approve when:** checklist complete, numbers replaced with filing-verified values, verify script passes.
+**Approve when:** Gate B complete (checklist + filing-verified JSON + verify self-test). Gate C (JSON-driven verify + METHOD_ALT) required before `published`.
 
 | Reviewer | Date | Status |
 |----------|------|--------|

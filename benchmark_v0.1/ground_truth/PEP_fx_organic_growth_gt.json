@@ -129,6 +129,8 @@
       "status": "eng_placeholder",
       "verified_against_filing": false,
       "reviewer_signoff_blocked": true,
+      "reviewer_edits": "ground_truth_json_only",
+      "verify_script_reads_json": true,
       "note": "FY2025 figures are internally consistent eng placeholders on the synthetic 2026 filing timeline until manually checked against the SEC URL in corpus_manifest_v1.json"
     }
   },
