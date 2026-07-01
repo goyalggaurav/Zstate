@@ -209,13 +209,80 @@ Two independent gates — **do not block data sign-off on METHOD_ALT eng work**:
 
 ## Scoring intent (Type M)
 
-| Layer | Weight | What passes |
-|-------|--------|-------------|
-| L1 | 50% | Correct revenues, MD&A % extraction, computed CC % |
-| L2 | 30% | Assumption log + MD&A reconciliation cited |
-| L3 | 20% | Table-level citations auditable |
+**Weights:** L1 **50%** · L2 **30%** · L3 **20%** (from `tasks/PEP_fx_organic_growth.json` → `scoring.task_type_weights`).
 
-Partial credit: correct MD&A extract but no Python → fail L1 methodology gate even if numbers match.
+Report **layer sub-scores**, not a single pass/fail. A `reported_only` trap hit zeroes organic CC on L1 but can still earn partial L2 if Note 1 + MD&A were accessed and cited.
+
+### Layer 1 — Technical & tabular accuracy *(automated + hard gates)*
+
+**Verify script** (`verify_pep_fx_organic_growth.py` with `--agent-output`) scores structured fields against GT JSON:
+
+| Check class | Metrics | Tolerance | Critical |
+|-------------|---------|-----------|----------|
+| Segment revenue | `emea_net_revenue_fy2024/2025`, `latam_foods_net_revenue_fy2024/2025` | Exact (USD M) | No |
+| MD&A % extraction | `*_reported_growth_pct`, `*_fx_impact_pct`, `*_organic_cc_growth_pct` | ±0.1–0.2 pp | Organic **yes** |
+| Additive identity | `*_cc_formula_pct` (= reported − fx) | ±0.2 pp vs organic anchor | No |
+
+**Pass semantics:**
+
+| Script field | Meaning |
+|--------------|---------|
+| `all_pass: true` | Every metric within **strict** tolerance |
+| `l1_pass: true` | Strict pass **or** organic CC within `acceptable_range_pp` → flags `METHOD_ALT` |
+| `critical_fail: true` | Any critical metric (organic CC) failed strict **and** alternative band |
+
+**Hard fails (L1 cap / fracture):** `reported_only` (`CC_OMIT`), `wrong_region` (`SCOPE_ERR`), `wrong_period` (`HALLUC_FILL`) — see GT `failure_modes` and `hard_fail`.
+
+**Type M methodology gate *(not in verify script — grader / expert rule)*:** Agent must show Python verification of additive identity. Correct MD&A % copy with **no Python** → **L1 fail** even if numbers match.
+
+**Reported % edge case:** EMEA revenue-implied **8.2%** vs MD&A table **8.0%** — L1 reported % may pass within ±0.2 pp; **FX decomposition and organic CC must anchor on MD&A table reported %** (see §1 Scope).
+
+### Layer 2 — Domain reasoning *(mostly automated on calibration)*
+
+| Signal | Pass | Fail / penalty |
+|--------|------|----------------|
+| **Section recall** | Note 1 segment table + MD&A organic performance accessed (gold path `minimal_section_set`) | Wrong note or segment table skipped |
+| **Assumption log** | (a) Note 1 revenue cites, (b) MD&A reported/FX/organic cites, (c) additive derivation shown | Missing derivation or uncited % |
+| **WAE handling** | States filing has no WAE table if agent searched for rates | External, spot, or invented EUR/USD rates |
+| **MD&A reconcile** | Computed organic within ±0.2 pp strict of MD&A anchor | Organic off anchor with no cited reconciliation |
+
+`layer2_method: assumption_log_automated` in task JSON — expert spot-check on calibration set only at MVD scale.
+
+### Layer 3 — Traceability & trust
+
+| Signal | Pass | Fail |
+|--------|------|------|
+| **Citation completeness** | Every material number → `{doc_id, note/section, table, column}` | Broad “10-K” cite or missing column |
+| **Uncertainty** | Marks unverified; no interpolation | Hallucinated fill-in |
+| **Task-type compliance** | No Buy/Hold/Sell or price target | Recommendation on Type M forensics task → veto |
+
+**Pilot rule:** If &lt;90% of material claims are table-level auditable → L3 fail (framework default).
+
+### Partial credit examples
+
+| Agent behavior | Typical outcome |
+|----------------|-----------------|
+| Note 1 revenues correct; organic CC = reported (trap) | L1 **~0%** on CC metrics; partial L2 if sections cited |
+| All % correct; multiplicative formula; MD&A cited | L1 **`METHOD_ALT`** partial via ±0.75 pp band; not `all_pass` |
+| Correct table extract; no Python work shown | L1 **methodology fail**; L2/L3 may still score |
+| Both segments correct; one wrong fiscal column | L1 partial; possible `wrong_period` fracture |
+
+### Automation boundary
+
+| Automated (L1 script) | Expert / grader (L2–L3) |
+|-----------------------|-------------------------|
+| Numeric compare vs GT JSON | Assumption log quality |
+| `reported_only` / `wrong_region` classification | Python artifact present |
+| `METHOD_ALT` flag on organic CC | Citation snippet audit |
+| Additive formula self-check | WAE absence acknowledgment |
+
+**Calibration command:**
+
+```bash
+python3 benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py --ground-truth benchmark_v0.1/ground_truth/PEP_fx_organic_growth_gt.json --agent-output agent.json
+```
+
+Expected on approved GT (self-test, no agent file): `all_pass: true`, `failure_modes: []`.
 
 ---
 
