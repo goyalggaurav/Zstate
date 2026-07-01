@@ -1,0 +1,40 @@
+{
+  "$schema": "fx_organic_growth_verification_v1",
+  "description": "Archetype schema for fx_organic_growth L1 verification. Task GT JSON embeds a task-specific verification_schema block conforming to this shape.",
+  "schema_version": "1.0",
+  "required_top_level": [
+    "segments",
+    "fx_instruments"
+  ],
+  "segment_shape": {
+    "slug": "stable key, e.g. emea",
+    "label": "filing segment name, e.g. EMEA",
+    "revenue_bounds_usd_millions": "[min, max] plausibility band for wrong_region trap",
+    "metrics": {
+      "net_revenue_fy2024": "metric_id",
+      "net_revenue_fy2025": "metric_id",
+      "reported_growth_pct": "metric_id",
+      "fx_impact_pct": "metric_id",
+      "organic_cc_growth_pct": "metric_id"
+    }
+  },
+  "fx_instrument_shape": {
+    "slug": "e.g. eur_usd",
+    "label": "e.g. EUR/USD weighted-average",
+    "metrics": {
+      "fy2024": "metric_id",
+      "fy2025": "metric_id"
+    },
+    "critical": true
+  },
+  "derived_check_ids": [
+    "cc_formula_additive"
+  ],
+  "failure_mode_ids": [
+    "spot_rate_method",
+    "reported_only",
+    "wrong_region",
+    "wrong_period",
+    "method_alt"
+  ]
+}

@@ -12,7 +12,7 @@
   "difficulty_tier": "L3",
 
   "prompt": {
-    "text": "Using PepsiCo, Inc.'s Form 10-K for the fiscal year ended December 27, 2025 (filed February 18, 2026), compute constant-currency organic net revenue growth for FY2025 vs FY2024 for **Europe** and **AMESA** (Africa, Middle East and South Asia).\n\n1. Extract reported net revenue for Europe and AMESA for FY2025 and FY2024 from the geographic segment table (Note 1 — Our Business / segment footnote).\n2. Extract the **weighted-average exchange rates** disclosed in the filing for the EUR/USD and GBP/USD (or the basket rates the company cites for these regions) — do not use spot or year-end rates.\n3. Using Python, compute constant-currency organic growth for each region. Cross-check your result against the organic growth percentages disclosed in MD&A for Europe and AMESA.\n4. Produce a growth table (USD millions and %) and a short assumption log citing note/section for every input.\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Every numeric value must include a citation (document, note/section, table, column).\n- Python required to verify CC growth arithmetic.\n- No Buy/Hold/Sell or price target.\n- If a value cannot be verified, mark it unverified — do not interpolate.",
+    "text": "Using PepsiCo, Inc.'s Form 10-K for the fiscal year ended December 27, 2025 (filed February 3, 2026), compute constant-currency organic net revenue growth for FY2025 vs FY2024 for **EMEA** and **LatAm Foods**.\n\n1. Extract reported net revenue for EMEA and LatAm Foods for FY2025 and FY2024 from the segment reporting table (Note 1 — Segment Reporting).\n2. Extract **weighted-average exchange rates** disclosed in Note 1 (EUR/USD at minimum for EMEA) — do not use spot or year-end rates.\n3. Using Python, compute constant-currency organic growth for each segment. Cross-check your result against the organic revenue growth percentages disclosed in MD&A (Net Revenue and Organic Revenue Performance).\n4. Produce a growth table (USD millions and %) and a short assumption log citing note/section for every input.\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Every numeric value must include a citation (document, note/section, table, column).\n- Python required to verify CC growth arithmetic.\n- No Buy/Hold/Sell or price target.\n- If a value cannot be verified, mark it unverified — do not interpolate.",
     "constraints": [
       "Document: PEP 10-K FY2025 only",
       "Weighted-average FX from filing — not spot rates",
@@ -63,16 +63,16 @@
       "citations"
     ],
     "structured_fields": [
-      "europe_net_revenue_fy2025",
-      "europe_net_revenue_fy2024",
-      "europe_reported_growth_pct",
-      "europe_fx_impact_pct",
-      "europe_organic_cc_growth_pct",
-      "amesa_net_revenue_fy2025",
-      "amesa_net_revenue_fy2024",
-      "amesa_reported_growth_pct",
-      "amesa_fx_impact_pct",
-      "amesa_organic_cc_growth_pct",
+      "emea_net_revenue_fy2025",
+      "emea_net_revenue_fy2024",
+      "emea_reported_growth_pct",
+      "emea_fx_impact_pct",
+      "emea_organic_cc_growth_pct",
+      "latam_foods_net_revenue_fy2025",
+      "latam_foods_net_revenue_fy2024",
+      "latam_foods_reported_growth_pct",
+      "latam_foods_fx_impact_pct",
+      "latam_foods_organic_cc_growth_pct",
       "wae_eur_usd_fy2025",
       "wae_eur_usd_fy2024",
       "cc_growth_verified"
@@ -97,6 +97,6 @@
   "grader_rubric_ref": "../rubrics/PEP_fx_organic_growth_grader.md",
 
   "authored_by": "pilot_template",
-  "review_status": "draft_pending_cfa",
+  "review_status": "pending_expert_review",
   "updated_at": "2026-07-01T00:00:00Z"
 }

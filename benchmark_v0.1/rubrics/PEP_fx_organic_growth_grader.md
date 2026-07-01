@@ -1,17 +1,19 @@
 # Grader Brief — PEP FX Organic Growth
 
 **Task ID:** `PEP_fx_organic_growth` (Type M)  
-**Status:** Draft — pending CFA sign-off  
+**Archetype:** `fx_organic_growth`  
+**Status:** Draft — pending expert sign-off  
 **Canonical prompt:** `benchmark_v0.1/tasks/PEP_fx_organic_growth.json` → `prompt.text`  
 **Ground truth:** `benchmark_v0.1/ground_truth/PEP_fx_organic_growth_gt.json`  
-**Verify script:** `benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py`  
+**Verify script:** `benchmark_v0.1/scripts/verify_fx_organic_growth.py` (PEP entry: `verify_pep_fx_organic_growth.py`)  
+**Schema:** `benchmark_v0.1/schemas/fx_organic_growth_verification_v1.json`  
 **CFA review:** `docs/expert_drafts/PEP_FX_GT_REVIEW.md`
 
 ---
 
 ## Agent prompt (summary)
 
-Using PepsiCo FY2025 Form 10-K (filed 2026-02-18), compute constant-currency organic net revenue growth for **Europe** and **AMESA** vs FY2024. Extract geographic revenues, **weighted-average FX** from Note 1, Python-verify CC growth, cross-check MD&A disclosed organic percentages. No investment recommendation.
+Using PepsiCo FY2025 Form 10-K (filed 2026-02-03), compute constant-currency organic net revenue growth for **EMEA** and **LatAm Foods** vs FY2024. Extract segment revenues from Note 1, **weighted-average FX** from Note 1, Python-verify CC growth, cross-check MD&A organic revenue performance table. No investment recommendation.
 
 ---
 
@@ -29,33 +31,33 @@ Using PepsiCo FY2025 Form 10-K (filed 2026-02-18), compute constant-currency org
 
 | ID | Label | Wrong output signature | Fracture code |
 |----|-------|------------------------|---------------|
-| `spot_rate_method` | Spot rate method | Uses year-end EUR/USD 1.058 / 1.104 instead of WAE 1.024 / 1.081 | `FX_METHOD_ERR` |
-| `reported_only` | Reported growth only | Europe CC = 3.9% or AMESA CC = 8.2% (reported, not organic) | `CC_OMIT` |
-| `wrong_region` | Wrong geography | LATAM or North America substituted for AMESA/Europe | `SCOPE_ERR` |
+| `spot_rate_method` | Spot rate method | Uses year-end EUR/USD 1.058 / 1.104 instead of WAE | `FX_METHOD_ERR` |
+| `reported_only` | Reported growth only | EMEA CC = 8.0% or LatAm CC = −0.2% (reported, not organic) | `CC_OMIT` |
+| `wrong_region` | Wrong segment | PFNA / PBNA / Asia Pacific substituted for scored segments | `SCOPE_ERR` |
 | `wrong_period` | Wrong fiscal year | FY2024 10-K as primary or quarterly slice | `HALLUC_FILL` |
 
 ---
 
-## Source anchors (human reviewer — draft)
+## Source anchors (human reviewer)
 
 | Metric | Section | Column |
 |--------|---------|--------|
-| Europe / AMESA net revenue | Note 1 — geographic segment table | FY2025 vs FY2024 |
+| EMEA / LatAm Foods net revenue | Note 1 — Segment Reporting | FY2025 vs FY2024 |
 | Weighted-average EUR/USD | Note 1 — Financial Instruments | FY2025 vs FY2024 |
-| Organic CC growth | MD&A — Results of Operations | Europe, AMESA |
+| Organic revenue growth | MD&A — Net Revenue and Organic Revenue Performance | EMEA, LatAm Foods |
 
 ---
 
-## FY2025 numbers (USD millions, draft)
+## FY2025 numbers (USD millions — filing draft, CFA confirm)
 
-| Region | FY2024 | FY2025 | Reported growth | FX impact | Organic CC |
-|--------|--------|--------|-----------------|-----------|------------|
-| Europe | 11,892 | 12,354 | 3.9% | -6.1% | **10.0%** |
-| AMESA | 5,240 | 5,670 | 8.2% | -1.5% | **9.7%** |
+| Segment | FY2024 | FY2025 | Reported | FX impact | Organic CC |
+|---------|--------|--------|----------|-----------|------------|
+| EMEA | 16,658 | 18,025 | 8.0% | 2.0% | **6.0%** |
+| LatAm Foods | 10,568 | 10,549 | −0.2% | −4.7% | **4.5%** |
 
-WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024**
+WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024** *(confirm in filing)*
 
-**CFA action required:** Verify all figures against actual PEP 10-K before changing status to `published`.
+**CFA action required:** Confirm MD&A FX sign convention and WAE before `expert_reviewed`.
 
 ---
 
@@ -63,4 +65,5 @@ WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024**
 
 ```bash
 python3 benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py
+python3 benchmark_v0.1/scripts/verify_fx_organic_growth.py --ground-truth benchmark_v0.1/ground_truth/PEP_fx_organic_growth_gt.json
 ```

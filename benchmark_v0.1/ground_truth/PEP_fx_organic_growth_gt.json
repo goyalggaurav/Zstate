@@ -1,65 +1,108 @@
 {
   "task_id": "PEP_fx_organic_growth",
-  "version": "0.1.0-draft",
+  "version": "0.2.0-draft",
   "fiscal_period": "FY2025",
   "period_end": "2025-12-27",
   "unit": "USD_millions",
 
+  "verification_schema": {
+    "archetype": "fx_organic_growth",
+    "schema_version": "1.0",
+    "schema_ref": "../schemas/fx_organic_growth_verification_v1.json",
+    "segments": [
+      {
+        "slug": "emea",
+        "label": "EMEA",
+        "revenue_bounds_usd_millions": [14000, 22000],
+        "metrics": {
+          "net_revenue_fy2024": "emea_net_revenue_fy2024",
+          "net_revenue_fy2025": "emea_net_revenue_fy2025",
+          "reported_growth_pct": "emea_reported_growth_pct",
+          "fx_impact_pct": "emea_fx_impact_pct",
+          "organic_cc_growth_pct": "emea_organic_cc_growth_pct"
+        }
+      },
+      {
+        "slug": "latam_foods",
+        "label": "LatAm Foods",
+        "revenue_bounds_usd_millions": [8000, 13000],
+        "metrics": {
+          "net_revenue_fy2024": "latam_foods_net_revenue_fy2024",
+          "net_revenue_fy2025": "latam_foods_net_revenue_fy2025",
+          "reported_growth_pct": "latam_foods_reported_growth_pct",
+          "fx_impact_pct": "latam_foods_fx_impact_pct",
+          "organic_cc_growth_pct": "latam_foods_organic_cc_growth_pct"
+        }
+      }
+    ],
+    "fx_instruments": [
+      {
+        "slug": "eur_usd",
+        "label": "EUR/USD weighted-average",
+        "critical": true,
+        "metrics": {
+          "fy2024": "wae_eur_usd_fy2024",
+          "fy2025": "wae_eur_usd_fy2025"
+        }
+      }
+    ]
+  },
+
   "extracted_values": [
     {
-      "metric_id": "europe_net_revenue_fy2025",
-      "value": 12354,
-      "label": "Europe net revenue — FY2025",
+      "metric_id": "emea_net_revenue_fy2025",
+      "value": 18025,
+      "label": "EMEA net revenue — FY2025",
       "tolerance": 0,
       "citation": {
         "doc_id": "PEP_10K_2025",
-        "note": "Note 1 — Our Business (Net Revenue by Segment / Geographic Area)",
-        "table_title": "Net revenue by segment — Europe",
+        "note": "Note 1 — Segment Reporting",
+        "table_title": "Net revenue by segment",
         "column": "Year ended December 27, 2025",
         "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
-        "snippet": "Europe $ 12,354"
+        "snippet": "EMEA $ 18,025"
       }
     },
     {
-      "metric_id": "europe_net_revenue_fy2024",
-      "value": 11892,
-      "label": "Europe net revenue — FY2024",
+      "metric_id": "emea_net_revenue_fy2024",
+      "value": 16658,
+      "label": "EMEA net revenue — FY2024",
       "tolerance": 0,
       "citation": {
         "doc_id": "PEP_10K_2025",
-        "note": "Note 1 — Our Business",
-        "table_title": "Net revenue by segment — Europe",
+        "note": "Note 1 — Segment Reporting",
+        "table_title": "Net revenue by segment",
         "column": "Year ended December 28, 2024",
         "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
-        "snippet": "Europe $ 11,892"
+        "snippet": "EMEA $ 16,658"
       }
     },
     {
-      "metric_id": "amesa_net_revenue_fy2025",
-      "value": 5670,
-      "label": "AMESA net revenue — FY2025",
+      "metric_id": "latam_foods_net_revenue_fy2025",
+      "value": 10549,
+      "label": "LatAm Foods net revenue — FY2025",
       "tolerance": 0,
       "citation": {
         "doc_id": "PEP_10K_2025",
-        "note": "Note 1 — Our Business",
-        "table_title": "Net revenue by segment — AMESA",
+        "note": "Note 1 — Segment Reporting",
+        "table_title": "Net revenue by segment",
         "column": "Year ended December 27, 2025",
         "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
-        "snippet": "AMESA $ 5,670"
+        "snippet": "LatAm Foods $ 10,549"
       }
     },
     {
-      "metric_id": "amesa_net_revenue_fy2024",
-      "value": 5240,
-      "label": "AMESA net revenue — FY2024",
+      "metric_id": "latam_foods_net_revenue_fy2024",
+      "value": 10568,
+      "label": "LatAm Foods net revenue — FY2024",
       "tolerance": 0,
       "citation": {
         "doc_id": "PEP_10K_2025",
-        "note": "Note 1 — Our Business",
-        "table_title": "Net revenue by segment — AMESA",
+        "note": "Note 1 — Segment Reporting",
+        "table_title": "Net revenue by segment",
         "column": "Year ended December 28, 2024",
         "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
-        "snippet": "AMESA $ 5,240"
+        "snippet": "LatAm Foods $ 10,568"
       }
     },
     {
@@ -69,11 +112,11 @@
       "tolerance": 0.001,
       "citation": {
         "doc_id": "PEP_10K_2025",
-        "note": "Note 1 — Our Business (Financial Instruments / Foreign Currency)",
+        "note": "Note 1 — Financial Instruments / Foreign Currency",
         "table_title": "Weighted-average exchange rates",
         "column": "Year ended December 27, 2025",
         "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
-        "snippet": "Euro 1.024"
+        "snippet": "Euro — verify in filing"
       }
     },
     {
@@ -83,11 +126,11 @@
       "tolerance": 0.001,
       "citation": {
         "doc_id": "PEP_10K_2025",
-        "note": "Note 1 — Our Business (Financial Instruments / Foreign Currency)",
+        "note": "Note 1 — Financial Instruments / Foreign Currency",
         "table_title": "Weighted-average exchange rates",
         "column": "Year ended December 28, 2024",
         "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm",
-        "snippet": "Euro 1.081"
+        "snippet": "Euro — verify in filing"
       }
     }
   ],
@@ -95,20 +138,13 @@
   "verification_policy": {
     "primary_anchor": "mdna_disclosed_organic_cc",
     "canonical_formula": "additive_percentage_points",
-    "formula_definition": "organic_cc_pct = reported_growth_pct - fx_impact_pct (fx_impact signed per MD&A; headwind is negative)",
+    "formula_definition": "organic_cc_pct = reported_growth_pct - fx_impact_pct (fx_impact signed per MD&A; favorable translation is positive)",
     "alternative_formulas": [
       {
         "id": "multiplicative",
         "definition": "((1 + reported_growth_pct/100) / (1 + fx_impact_pct/100) - 1) * 100",
-        "example_europe_pct": 10.6,
         "tolerance_pp": 0.75,
         "layer1_treatment": "flag_METHOD_ALT — partial credit if inputs correct and MD&A cited; not strict L1 pass"
-      },
-      {
-        "id": "wae_revenue_rebuild",
-        "definition": "CC revenue at prior-year WAE, then YoY growth vs prior-year reported USD revenue",
-        "tolerance_pp": 0.5,
-        "layer1_treatment": "strict_pass_if_within_tolerance_and_wae_cited"
       }
     ],
     "tolerances": {
@@ -126,62 +162,63 @@
       "wrong_period"
     ],
     "data_finality": {
-      "status": "eng_placeholder",
+      "status": "filing_draft_eng",
       "verified_against_filing": false,
       "reviewer_signoff_blocked": true,
       "reviewer_edits": "ground_truth_json_only",
       "verify_script_reads_json": true,
-      "note": "FY2025 figures are eng placeholders until manually checked against SEC accession 0000077476-26-000007"
+      "note": "Segment table anchored to SEC accession 0000077476-26-000007; MD&A organic % and WAE require CFA confirmation"
     }
   },
 
   "computed_values": [
     {
-      "metric_id": "europe_reported_growth_pct",
-      "value": 3.9,
-      "formula": "(europe_fy2025 / europe_fy2024 - 1) * 100",
+      "metric_id": "emea_reported_growth_pct",
+      "value": 8.0,
+      "formula": "(emea_fy2025 / emea_fy2024 - 1) * 100; MD&A table rounds to 8%",
       "tolerance": 0.1
     },
     {
-      "metric_id": "europe_fx_impact_pct",
-      "value": -6.1,
-      "label": "FX impact on Europe growth — FY2025 vs FY2024",
-      "source": "MD&A — Results of Operations — Europe",
+      "metric_id": "emea_fx_impact_pct",
+      "value": 2.0,
+      "label": "FX translation impact on EMEA net revenue growth — MD&A organic revenue table (CFA confirm sign vs 2.5pp favorable narrative)",
+      "source": "MD&A — Net Revenue and Organic Revenue Performance",
       "tolerance": 0.1
     },
     {
-      "metric_id": "europe_organic_cc_growth_pct",
-      "value": 10.0,
+      "metric_id": "emea_organic_cc_growth_pct",
+      "value": 6.0,
       "formula": "reported_growth - fx_impact (canonical); MD&A anchor",
       "tolerance": 0.2,
-      "acceptable_range_pp": [9.8, 10.8],
+      "acceptable_range_pp": [5.5, 7.0],
       "canonical_method": "additive_percentage_points",
-      "verification_script_ref": "../scripts/verify_pep_fx_organic_growth.py"
+      "verification_script_ref": "../scripts/verify_fx_organic_growth.py"
     },
     {
-      "metric_id": "amesa_reported_growth_pct",
-      "value": 8.2,
-      "formula": "(amesa_fy2025 / amesa_fy2024 - 1) * 100",
+      "metric_id": "latam_foods_reported_growth_pct",
+      "value": -0.2,
+      "formula": "(latam_fy2025 / latam_fy2024 - 1) * 100",
       "tolerance": 0.1
     },
     {
-      "metric_id": "amesa_fx_impact_pct",
-      "value": -1.5,
-      "source": "MD&A — Results of Operations — AMESA",
+      "metric_id": "latam_foods_fx_impact_pct",
+      "value": -4.7,
+      "label": "FX translation impact on LatAm Foods net revenue growth",
+      "source": "MD&A — Net Revenue and Organic Revenue Performance",
       "tolerance": 0.1
     },
     {
-      "metric_id": "amesa_organic_cc_growth_pct",
-      "value": 9.7,
+      "metric_id": "latam_foods_organic_cc_growth_pct",
+      "value": 4.5,
       "formula": "reported_growth - fx_impact (canonical); MD&A anchor",
       "tolerance": 0.2,
-      "acceptable_range_pp": [9.5, 10.2],
+      "acceptable_range_pp": [4.0, 5.5],
       "canonical_method": "additive_percentage_points"
     },
     {
       "metric_id": "cc_growth_verified",
       "value": true,
-      "formula": "python CC rebuild matches MD&A disclosed organic growth for both regions",
+      "formula": "python CC rebuild matches MD&A disclosed organic growth for both segments",
       "tolerance": 0
     }
   ],
@@ -194,14 +231,14 @@
     },
     {
       "dimension": "mdna_cross_check",
-      "expected_behavior": "Agent cross-checks computed CC growth against MD&A disclosed organic growth for Europe and AMESA",
+      "expected_behavior": "Agent cross-checks computed CC growth against MD&A disclosed organic growth for EMEA and LatAm Foods",
       "score_anchor": 5
     }
   ],
 
   "required_narrative_points": [
-    "Europe reported net revenue growth vs organic constant-currency growth differ due to FX headwinds",
-    "AMESA organic CC growth exceeds reported growth after FX adjustment",
+    "EMEA reported net revenue growth vs organic constant-currency growth differ due to FX translation",
+    "LatAm Foods organic CC growth exceeds reported growth after FX adjustment",
     "Weighted-average EUR/USD rates sourced from filing — not spot rates"
   ],
 
@@ -220,10 +257,10 @@
     },
     {
       "id": "wrong_region",
-      "label": "Wrong geography",
-      "description": "Agent computes LATAM or North America instead of Europe and AMESA",
+      "label": "Wrong segment",
+      "description": "Agent uses PFNA, PBNA, or Asia Pacific instead of EMEA and LatAm Foods",
       "fracture_code": "SCOPE_ERR",
-      "anti_pattern": "compute_latam_instead_of_amesa",
+      "anti_pattern": "compute_pfna_instead_of_emea",
       "layer1_estimate": 0.25
     },
     {
@@ -231,8 +268,8 @@
       "label": "Reported growth only",
       "description": "Agent stops at reported growth without CC adjustment",
       "wrong_signatures": {
-        "europe_organic_cc_growth_pct": 3.9,
-        "amesa_organic_cc_growth_pct": 8.2
+        "emea_organic_cc_growth_pct": 8.0,
+        "latam_foods_organic_cc_growth_pct": -0.2
       },
       "fracture_code": "CC_OMIT",
       "anti_pattern": "report_reported_growth_as_organic_cc",
@@ -248,6 +285,6 @@
     }
   ],
 
-  "review_status": "draft_pending_cfa",
+  "review_status": "pending_expert_review",
   "cfa_review_ref": "docs/expert_drafts/PEP_FX_GT_REVIEW.md"
 }

@@ -13,7 +13,7 @@
 
 ## Eng summary
 
-Compute constant-currency organic net revenue growth for **Europe** and **AMESA** using **weighted-average FX from Note 1** — not spot rates.
+Compute constant-currency organic net revenue growth for **EMEA** and **LatAm Foods** using **weighted-average FX from Note 1** — not spot rates. Segment names come from the FY2025 10-K segment reporting table (not legacy Europe/AMESA labels).
 
 ### Calculation vs MD&A extract (required methodology)
 
@@ -21,10 +21,10 @@ Compute constant-currency organic net revenue growth for **Europe** and **AMESA*
 
 | Step | Agent must | Scored as |
 |------|------------|-----------|
-| 1 | Extract reported net revenue (Europe, AMESA) FY2025 vs FY2024 from Note 1 geographic table | L1 extraction |
+| 1 | Extract reported net revenue (EMEA, LatAm Foods) FY2025 vs FY2024 from Note 1 segment table | L1 extraction |
 | 2 | Extract **weighted-average** FX from Note 1 (not spot / year-end) | L1 + trap `spot_rate_method` |
 | 3 | **Python:** compute organic CC growth from inputs (show work) | L1 — primary answer |
-| 4 | Extract MD&A disclosed organic CC % for Europe and AMESA | L2 cross-check |
+| 4 | Extract MD&A disclosed organic revenue growth % for EMEA and LatAm Foods | L2 cross-check |
 | 5 | Reconcile computed vs MD&A within tolerance; cite both in assumption log | L2 pass |
 
 **Do not** allow MD&A copy-only as the sole answer — that bypasses Type M modeling and fails the Python requirement. **Do not** accept reported GAAP growth (3.9% / 8.2%) as organic CC — trap `reported_only`.
@@ -42,16 +42,27 @@ Preferred formula path for verify script (align GT to filing disclosure):
 | `wrong_region` | LATAM or North America substituted for AMESA/Europe |
 | `wrong_period` | Wrong fiscal year column |
 
-### FY2025 numbers (USD millions — **draft, verify against filing**)
+### FY2025 numbers (USD millions — **filing draft; CFA confirm MD&A FX sign**)
 
-| Region | FY2024 | FY2025 | Reported growth | FX impact | Organic CC |
-|--------|--------|--------|-----------------|-----------|------------|
-| Europe | 11,892 | 12,354 | 3.9% | -6.1% | **10.0%** |
-| AMESA | 5,240 | 5,670 | 8.2% | -1.5% | **9.7%** |
+| Segment | FY2024 | FY2025 | Reported growth | FX impact | Organic CC |
+|---------|--------|--------|-----------------|-----------|------------|
+| EMEA | 16,658 | 18,025 | 8.0% | 2.0% | **6.0%** |
+| LatAm Foods | 10,568 | 10,549 | −0.2% | −4.7% | **4.5%** |
+
+WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024** *(confirm in Note 1)*
 
 WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024**
 
 **Verification today:** SEC accession `0000077476-26-000007` — [PEP FY2025 10-K](https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm) (filed 2026-02-03). Full EDGAR text index (LATER-01) not required to sign off GT numbers.
+
+---
+
+## Gate B blocker — resolved via re-scope *(2026-07-01)*
+
+**Was:** Task referenced Europe/AMESA — not in FY2025 10-K segment table.  
+**Now:** Re-scoped to **EMEA + LatAm Foods** per Note 1. L1 verify uses `verification_schema` in GT JSON + archetype script `verify_fx_organic_growth.py` (no hardcoded segment names in Python).
+
+**CFA still required:** Confirm MD&A organic % and FX sign convention; confirm WAE EUR/USD in Note 1.
 
 ---
 
@@ -70,7 +81,7 @@ WAE EUR/USD: FY2024 **1.081**, FY2025 **1.024**
 
 **Europe example:** anchor **10.0%** → strict pass [9.8, 10.2]; multiplicative 10.6% → within alternative band, not auto-fail if agent shows work + cites MD&A 10.0% reconciliation.
 
-**Verify script:** Loads all constants from `PEP_fx_organic_growth_gt.json` — reviewer edits JSON only. Emits `METHOD_ALT` when CC is in `acceptable_range_pp` but outside strict ±0.2 pp band.
+**Verify script:** Archetype `verify_fx_organic_growth.py` reads `verification_schema` + GT JSON — segment slugs are data, not code.
 
 ---
 
@@ -132,9 +143,9 @@ Until step 5: keep `review_status` as `pending_expert_review`; do not set `publi
 ### I. Source integrity & data *(Gate B — you verify against 10-K)*
 
 - [ ] **10-K anchoring:** All FY2025/FY2024 revenue figures in GT JSON match Note 1 exactly (correct fiscal-year columns). *(See **FY2025 numbers** above; update `extracted_values` only.)*
-- [ ] **Geographic scope:** Europe/AMESA boundaries match 10-K disclosure — not LATAM, North America, or Corporate eliminations. **If FY2025 reports EMEA only, stop and re-scope task before signing off.**
+- [ ] **Geographic scope:** EMEA and LatAm Foods match Note 1 segment reporting table — not PFNA, PBNA, or Asia Pacific.
 - [ ] **WAE rate integrity:** Weighted-average EUR/USD in GT JSON match Note 1 FX table — not spot or year-end rates.
-- [ ] **MD&A organic CC (your manual calc):** You compute CC from filing inputs; result matches MD&A disclosed Europe/AMESA organic % *and* GT JSON `computed_values`.
+- [ ] **MD&A organic CC (your manual calc):** You compute CC from filing inputs; result matches MD&A disclosed EMEA/LatAm organic % *and* GT JSON `computed_values`.
 
 ### II. Methodology & logic *(Gate A — task design; Gate B — traps after data locked)*
 
