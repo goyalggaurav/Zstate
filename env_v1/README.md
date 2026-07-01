@@ -7,13 +7,21 @@ AlphaNote-Bench **Track B**: tau2-bench-style analyst + PM simulator with 4-comp
 ## Quick start
 
 ```bash
+# Smoke test (full repo)
+python3 scripts/smoke_test.py
+
 # Score a sample trace (deterministic components)
 python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_good.json
 
-# Generate demo trajectories (good / partial / timeout)
+# Generate demo trajectories (good / partial / timeout) — schema-enriched
 python3 env_v1/scripts/run_episode.py --mode all
-python3 env_v1/scripts/run_episode.py --mode partial
-python3 env_v1/scripts/run_episode.py --mode timeout
+
+# Scripted agent loop (P1-12 prep — replay JSON plan)
+python3 env_v1/scripts/agent_loop.py --agent scripted \
+  --plan env_v1/examples/agents/solaris_good_plan.json
+
+# Interactive manual agent (REPL)
+python3 env_v1/scripts/agent_loop.py --agent repl
 ```
 
 ## Layout
@@ -39,8 +47,12 @@ env_v1/
 ├── gold_keys/                       # GITIGNORED — expert private artifacts
 ├── scripts/
 │   ├── tool_backend.py
-│   ├── run_episode.py
+│   ├── run_episode.py      # Demo trajectories
+│   ├── agent_loop.py       # Scripted + REPL agent (P1-12 prep)
+│   ├── pm_features.py      # PM FSM hint extraction
+│   ├── trace_utils.py      # trajectory_v1 enrichment
 │   └── score_episode.py
+├── examples/agents/        # Scripted agent plans
 └── runs/                            # Episode traces + scores
 ```
 

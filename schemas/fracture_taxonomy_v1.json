@@ -1,0 +1,74 @@
+{
+  "version": "1.0.0",
+  "description": "Canonical fracture codes for Track A (benchmark) and Track B (env_v1). Scorers should emit codes from this registry.",
+  "codes": [
+    {
+      "code": "RECON_OMIT",
+      "label": "Reconciliation item omitted",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "GOOGL segment sum without hedging line"
+    },
+    {
+      "code": "SIGN_ERR",
+      "label": "Sign inversion",
+      "tracks": ["benchmark", "env"],
+      "severity": "critical",
+      "example": "Hedging loss recorded as gain"
+    },
+    {
+      "code": "HALLUC_FILL",
+      "label": "Wrong period or interpolated data",
+      "tracks": ["benchmark", "env"],
+      "severity": "critical"
+    },
+    {
+      "code": "SECTION_MISS",
+      "label": "Required section or document not retrieved",
+      "tracks": ["benchmark", "env"],
+      "severity": "high"
+    },
+    {
+      "code": "OUTCOME_FAIL",
+      "label": "Incorrect numeric outcome",
+      "tracks": ["env"],
+      "severity": "critical"
+    },
+    {
+      "code": "ENGAGEMENT_FAIL",
+      "label": "PM engagement failure",
+      "tracks": ["env"],
+      "severity": "high"
+    },
+    {
+      "code": "TIMEOUT",
+      "label": "Turn budget exhausted without submit",
+      "tracks": ["env"],
+      "severity": "high"
+    },
+    {
+      "code": "PM_OOD",
+      "label": "Agent outside PM script — fallback branch",
+      "tracks": ["env"],
+      "severity": "medium"
+    },
+    {
+      "code": "LOOP_TOOL",
+      "label": "Repeated tool calls on large tables",
+      "tracks": ["benchmark"],
+      "severity": "medium"
+    },
+    {
+      "code": "BLOAT_CTX",
+      "label": "Full document load vs targeted sections",
+      "tracks": ["benchmark"],
+      "severity": "medium"
+    },
+    {
+      "code": "CITE_BROAD",
+      "label": "Non-auditable citation",
+      "tracks": ["benchmark"],
+      "severity": "medium"
+    }
+  ]
+}

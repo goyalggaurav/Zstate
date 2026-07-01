@@ -30,7 +30,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 |----|------|-------|--------|-------|-------|
 | P1-01 | Solaris corpus bundle JSON (10-Q, transcript, consensus, prior 10-K) | B | done | Eng | `corpus/solaris_bundle_v1.json` — CFA review REV-03 |
 | P1-02 | PM policy FSM v1 (opening, follow-up A/B/C) | B | done | Eng | `pm_policies/pm_v1.json` |
-| P1-03 | `run_episode.py` — agent adapter + 8-turn budget | B | in_progress | Eng | Demo modes done; real agent + turn enforce pending |
+| P1-03 | `run_episode.py` + `agent_loop.py` — scripted/REPL agent | B | in_progress | Eng | Demo modes + PM heuristics; API adapter next (P1-12) |
 | P1-04 | `score_episode.py` — 4-component verifier | B | in_progress | Eng | Deterministic done; LLM-judge pending |
 | P1-05 | Outcome checker — sale-leaseback binary exclude | B | done | Eng | In `score_episode.py` |
 | P1-06 | Grounding checker — claims vs tool log | B | done | Eng | Doc ID hits in `score_episode.py` |
@@ -107,6 +107,8 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-08 | Calibration dataset (5 tasks, dual-rater) | todo | Both benchmark L2 and env Defense |
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
+| SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` |
 
 ---
 

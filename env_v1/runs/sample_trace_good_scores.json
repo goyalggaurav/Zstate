@@ -1,6 +1,8 @@
 {
   "episode_id": "solaris_adj_eps_dispute_v1",
   "termination": "submit",
+  "failure_modes": [],
+  "fracture_codes": [],
   "components": {
     "outcome": 1.0,
     "grounding": 1.0,

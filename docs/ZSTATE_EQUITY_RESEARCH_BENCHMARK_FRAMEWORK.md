@@ -472,7 +472,7 @@ Fracture data feeds **Phase 2 trajectory curation** (which failure modes to over
 | Task catalog (185 indexed) | ✅ Overview |
 | Task definitions (185) | ✅ Partial depth — ~50 fully spec'd |
 | Component specs (5 services) | ✅ Target architecture |
-| Pilot task with real GT | ✅ Draft — [GOOGL footnote](../benchmark_v0.1/tasks/GOOGL_footnote_reconciliation.json) (pending expert sign-off) |
+| Pilot task with real GT | ✅ Published — [GOOGL footnote](../benchmark_v0.1/tasks/GOOGL_footnote_reconciliation.json) (CFA approved 2026-07-01) |
 | Agent fracture run | ⬜ Not started |
 | Code / platform | ⬜ Not started |
 

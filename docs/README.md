@@ -58,5 +58,5 @@ Word/PDF: [docs/export/](./export/)
 
 - **Framework v0.2 (revised MVD):** Complete — 15 tasks, task types, honest timeline
 - **Roadmap + backlog v0.3:** Unified planning (eval + RL env)
-- **env_v1 scaffold:** Dual-control Solaris episode, tool backend, scorer
-- **Pilot task package:** GOOGL footnote reconciliation (draft, pending expert sign-off)
+- **env_v1 scaffold:** Solaris v1.0 published; agent loop + PM heuristics (P1-12 prep)
+- **Pilot task package:** GOOGL footnote reconciliation — **published** (CFA approved 2026-07-01)

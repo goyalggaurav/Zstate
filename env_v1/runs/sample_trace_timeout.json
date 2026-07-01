@@ -1,7 +1,11 @@
 {
+  "trajectory_id": "sample_timeout_20260701T132155Z",
+  "episode_or_task_id": "solaris_adj_eps_dispute_v1",
   "episode_id": "solaris_adj_eps_dispute_v1",
-  "run_id": "sample_timeout_20260701T120308Z",
+  "run_id": "sample_timeout_20260701T132155Z",
+  "track": "env",
   "mode": "timeout",
+  "agent_mode": "timeout",
   "termination": "timeout",
   "turns_used": 8,
   "pm_flags": [],
@@ -60,7 +64,8 @@
     },
     {
       "type": "pm_turn",
-      "text": "Sell-side already backs out the lease gain, that's not new information. Did you treat the R&D credit the same way they did?"
+      "text": "Sell-side already backs out the lease gain, that's not new information. Did you treat the R&D credit the same way they did?",
+      "branch_id": "opening_pushback"
     },
     {
       "type": "tool_call",
@@ -87,7 +92,8 @@
     },
     {
       "type": "pm_turn",
-      "text": "Walk me through the evidence from the filing that supports your adjustment \u2014 which note or table are you relying on?"
+      "text": "Walk me through the evidence from the filing that supports your adjustment \u2014 which note or table are you relying on?",
+      "branch_id": "fallback_ood"
     }
   ],
   "submission": {
@@ -161,5 +167,20 @@
       "output_preview": "1.2",
       "output": "1.2"
     }
+  ],
+  "reward": {
+    "outcome": 0.0,
+    "grounding": 1.0,
+    "defense": 0.0,
+    "hallucination_penalty": 0.0,
+    "composite_reward": 0.25,
+    "failure_modes": [
+      "timeout",
+      "include_leaseback"
+    ]
+  },
+  "fractures": [
+    "TIMEOUT",
+    "OUTCOME_FAIL"
   ]
 }

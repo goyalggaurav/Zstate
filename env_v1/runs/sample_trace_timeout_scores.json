@@ -1,6 +1,14 @@
 {
   "episode_id": "solaris_adj_eps_dispute_v1",
   "termination": "timeout",
+  "failure_modes": [
+    "timeout",
+    "include_leaseback"
+  ],
+  "fracture_codes": [
+    "TIMEOUT",
+    "OUTCOME_FAIL"
+  ],
   "components": {
     "outcome": 0.0,
     "grounding": 1.0,

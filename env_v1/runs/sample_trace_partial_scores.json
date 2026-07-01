@@ -1,6 +1,14 @@
 {
   "episode_id": "solaris_adj_eps_dispute_v1",
   "termination": "submit",
+  "failure_modes": [
+    "engagement_failure",
+    "omit_prior_year"
+  ],
+  "fracture_codes": [
+    "ENGAGEMENT_FAIL",
+    "SECTION_MISS"
+  ],
   "components": {
     "outcome": 0.75,
     "grounding": 0.3333,

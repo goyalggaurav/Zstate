@@ -1,8 +1,8 @@
 # Zstate — System Architecture
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Owner:** Engineering  
-**Status:** Active — reflects implemented pilot + env_v1 scaffold
+**Status:** Active — P1-12 prep sprint (agent loop, trace normalization)
 
 Canonical technical map. Product requirements live in [Framework v0.2](./ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md). Priorities live in [Roadmap](./ROADMAP.md) and [Backlog](./BACKLOG.md).
 
@@ -63,14 +63,15 @@ Zstate/
 │   └── specs/                       # Target platform (post-pilot)
 ├── schemas/                       # Cross-track JSON contracts
 ├── benchmark_v0.1/                # Track A — implemented pilot
-│   ├── tasks/ ground_truth/ gold_paths/ scripts/
+│   ├── tasks/ ground_truth/ gold_paths/ rubrics/ scripts/
 │   └── manifest.json
 ├── env_v1/                        # Track B — dual-control RL env
-│   ├── episodes/ corpus/ pm_policies/
-│   ├── verifier/ gold_keys.example/
+│   ├── episodes/ corpus/ pm_policies/ rubrics/
+│   ├── verifier/ gold_keys.example/ examples/agents/
 │   ├── scripts/ runs/
 │   └── docs/                        # Env spec + methodology
-└── scripts/                       # Export generators (docs/export)
+├── schemas/                       # trajectory_v1.json, fracture_taxonomy_v1.json
+└── scripts/                       # smoke_test.py, export generators
 ```
 
 **Private (gitignored):** `env_v1/gold_keys/` — never commit expert answer keys or LLM-judge prompts.
@@ -127,7 +128,7 @@ Episode JSON → Tool backend (fixed corpus) ↔ Agent ↔ PM FSM → Trace JSON
 
 ### Shared trajectory contract
 
-See [schemas/trajectory_v1.json](../schemas/trajectory_v1.json). Both tracks must log: `tool_calls`, `sections_accessed`, `submission`, `termination`.
+See [schemas/trajectory_v1.json](../schemas/trajectory_v1.json). Env traces are enriched via `env_v1/scripts/trace_utils.py` (`trajectory_id`, `track`, `fractures`, `reward`). Fracture codes: [schemas/fracture_taxonomy_v1.json](../schemas/fracture_taxonomy_v1.json).
 
 ---
 

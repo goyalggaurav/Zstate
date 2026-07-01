@@ -1,12 +1,12 @@
 # benchmark_v0.1 — Pilot Package
 
-Minimum Viable Benchmark pilot: **15 tasks**, starting with **1 complete reference task**.
+Minimum Viable Benchmark pilot: **15 tasks**, starting with **1 published reference task**.
 
-## Pilot task (reference implementation)
+## Published task
 
 | Task | Type | Period | Status |
 |------|------|--------|--------|
-| [GOOGL_footnote_reconciliation](./tasks/GOOGL_footnote_reconciliation.json) | F — Forensics | **Q1 2026** (10-Q filed 2026-04-30) | Pilot — pending expert sign-off |
+| [GOOGL_footnote_reconciliation](./tasks/GOOGL_footnote_reconciliation.json) | F — Forensics | **Q1 2026** (10-Q filed 2026-04-30) | **Published** (CFA approved 2026-07-01) |
 
 ### What this task tests
 
@@ -23,19 +23,6 @@ Reconcile **Q1 2026** reportable segment revenues to consolidated total revenue.
 | **Hedging gains (losses)** | **(180)** |
 | **Consolidated total** | **109,896** |
 
-### Latest annual reference — FY2025 (USD millions)
-
-| Line | FY2025 |
-|------|--------|
-| Google Services | 342,721 |
-| Google Cloud | 58,705 |
-| Other Bets | 1,537 |
-| **Segment sum** | **402,963** |
-| **Hedging gains (losses)** | **(127)** |
-| **Consolidated total** | **402,836** |
-
-Source: [Alphabet 10-K FY2025 — Note 16 (SEC)](https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/R25.htm) (filed 2026-02-05)
-
 ### Files
 
 ```
@@ -43,24 +30,17 @@ benchmark_v0.1/
 ├── tasks/GOOGL_footnote_reconciliation.json
 ├── ground_truth/GOOGL_footnote_reconciliation_gt.json
 ├── gold_paths/GOOGL_footnote_reconciliation.json
+├── rubrics/GOOGL_footnote_reconciliation_grader.md
 ├── scripts/verify_googl_footnote_reconciliation.py
-└── README.md
+└── manifest.json
 ```
 
 ### Verify ground truth
 
 ```bash
-# Scored period — Q1 2026
-python benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py
-
-# Optional — FY2025 annual cross-check
-python benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py --period fy2025
+python3 benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py --period q1_2026
 ```
 
-### Primary source (Q1 2026)
+### CFA sign-off
 
-- [SEC EDGAR — Form 10-Q period ended 2026-03-31](https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm)
-
-### Expert sign-off required
-
-Numbers verified against public SEC filings. **CFA peer review required** before `status: published`.
+See [docs/expert_drafts/GOOGL_GT_REVIEW.md](../docs/expert_drafts/GOOGL_GT_REVIEW.md).
