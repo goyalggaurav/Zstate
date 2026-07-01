@@ -6,7 +6,7 @@
   "orchestrator_note": "Use run_benchmark_campaign.py --execute --agent auto|openai|anthropic. Full 2×2×3 requires OPENAI_API_KEY + ANTHROPIC_API_KEY.",
   "models": [
     "gpt-4o",
-    "claude-sonnet-4-20250514"
+    "claude-sonnet-4-5"
   ],
   "tasks": [
     "GOOGL_footnote_reconciliation",

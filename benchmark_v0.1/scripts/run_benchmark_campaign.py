@@ -18,8 +18,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from statistics import median
@@ -115,6 +117,7 @@ def execute_campaign(
     runs_dir = (BENCH / campaign["runs_dir"]).resolve()
     runs_dir.mkdir(parents=True, exist_ok=True)
     exec_records: list[dict] = []
+    run_delay = float(os.environ.get("BENCHMARK_RUN_DELAY_SECONDS", "0"))
 
     model_list = models or campaign["models"]
     task_list = tasks or campaign["tasks"]
@@ -184,6 +187,8 @@ def execute_campaign(
                     )
                     rec["status"] = "executed"
                     rec["termination"] = trace.get("termination")
+                    if run_delay > 0:
+                        time.sleep(run_delay)
                 except Exception as e:
                     rec["status"] = "error"
                     rec["error"] = str(e)

@@ -19,6 +19,7 @@ from agents.benchmark_tool_specs import (
     parse_submission_args,
     to_anthropic_tools,
 )
+from agents.llm_retry import retry_sleep_seconds
 
 USER_START = (
     "Begin the task. Retrieve filing sections with tools, verify arithmetic, then submit "
@@ -48,7 +49,7 @@ class AnthropicBenchmarkAgent:
     ) -> None:
         self.task = task
         self.bundle = bundle
-        self.model = model or os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+        self.model = model or os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-5")
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
         self.base_url = (base_url or os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com/v1")).rstrip("/")
         self.system = build_system_prompt(task, bundle)
@@ -65,7 +66,7 @@ class AnthropicBenchmarkAgent:
             raise RuntimeError("ANTHROPIC_API_KEY not set. Use --agent scripted/mock for offline runs.")
         body = json.dumps(payload).encode("utf-8")
         timeout = int(os.environ.get("ANTHROPIC_TIMEOUT_SECONDS", "300"))
-        max_retries = int(os.environ.get("ANTHROPIC_MAX_RETRIES", "3"))
+        max_retries = int(os.environ.get("ANTHROPIC_MAX_RETRIES", "5"))
         api_version = os.environ.get("ANTHROPIC_API_VERSION", "2023-06-01")
         last_error: Exception | None = None
 
@@ -86,7 +87,8 @@ class AnthropicBenchmarkAgent:
             except urllib.error.HTTPError as e:
                 detail = e.read().decode("utf-8", errors="replace")
                 if e.code in (429, 500, 502, 503, 504, 529) and attempt < max_retries - 1:
-                    time.sleep(2 ** attempt)
+                    wait = retry_sleep_seconds(e.code, detail, attempt)
+                    time.sleep(wait)
                     last_error = e
                     continue
                 raise RuntimeError(f"Anthropic API error {e.code}: {detail}") from e

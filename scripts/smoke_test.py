@@ -621,7 +621,10 @@ def check_anthropic_adapter() -> None:
     from agents.anthropic_benchmark_agent import AnthropicBenchmarkAgent  # noqa: E402
     from benchmark_tool_backend import load_bundle  # noqa: E402
 
-    assert is_anthropic_model("claude-sonnet-4-20250514") is True
+    from agents.llm_retry import retry_sleep_seconds  # noqa: E402
+
+    assert retry_sleep_seconds(429, "Please try again in 1.148s", 0) >= 1.6
+    assert is_anthropic_model("claude-sonnet-4-5") is True
     assert is_anthropic_model("gpt-4o") is False
 
     task = json.loads(
@@ -638,7 +641,7 @@ def check_anthropic_adapter() -> None:
     prompt = build_system_prompt(task, bundle)
     assert "GOOGL" in prompt or "footnote" in prompt.lower()
 
-    agent = AnthropicBenchmarkAgent(task, bundle, model="claude-sonnet-4-20250514", api_key="test-key")
+    agent = AnthropicBenchmarkAgent(task, bundle, model="claude-sonnet-4-5", api_key="test-key")
     assert agent.tools[0]["name"] == "Search_Filing"
     assert agent.messages[0]["role"] == "user"
 

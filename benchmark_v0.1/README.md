@@ -61,7 +61,7 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
   --execute --agent openai --models gpt-4o
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
-  --execute --agent anthropic --models claude-sonnet-4-20250514
+  --execute --agent anthropic --models claude-sonnet-4-5
 
 # Score existing agent outputs on disk
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py
@@ -79,7 +79,7 @@ python3 benchmark_v0.1/scripts/score_benchmark_run.py \
   --submission path/to/run_submission.json
 ```
 
-`--execute` runs the Track A agent loop for each model×task×run slot and writes structured output + trace under `runs_dir`. Use `--models`, `--tasks`, or `--skip-existing` to narrow or resume runs.
+`--execute` runs the Track A agent loop for each model×task×run slot and writes structured output + trace under `runs_dir`. Use `--models`, `--tasks`, or `--skip-existing` to narrow or resume runs. For live gpt-4o campaigns on low TPM tiers, set `BENCHMARK_RUN_DELAY_SECONDS=3` between slots.
 
 ### Agent output contract (SH-07 stub)
 

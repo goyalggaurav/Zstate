@@ -12,6 +12,8 @@ import urllib.error
 import urllib.request
 from typing import Any
 
+from agents.llm_retry import retry_sleep_seconds
+
 from agents.benchmark_tool_specs import (
     CORPUS_TOOLS,
     SUBMIT_TOOL,
@@ -66,7 +68,7 @@ class OpenAIBenchmarkAgent:
             raise RuntimeError("OPENAI_API_KEY not set. Use --agent scripted/mock for offline runs.")
         body = json.dumps(payload).encode("utf-8")
         timeout = int(os.environ.get("OPENAI_TIMEOUT_SECONDS", "300"))
-        max_retries = int(os.environ.get("OPENAI_MAX_RETRIES", "3"))
+        max_retries = int(os.environ.get("OPENAI_MAX_RETRIES", "5"))
         last_error: Exception | None = None
 
         for attempt in range(max_retries):
@@ -85,7 +87,8 @@ class OpenAIBenchmarkAgent:
             except urllib.error.HTTPError as e:
                 detail = e.read().decode("utf-8", errors="replace")
                 if e.code in (429, 500, 502, 503, 504) and attempt < max_retries - 1:
-                    time.sleep(2 ** attempt)
+                    wait = retry_sleep_seconds(e.code, detail, attempt)
+                    time.sleep(wait)
                     last_error = e
                     continue
                 raise RuntimeError(f"LLM API error {e.code}: {detail}") from e
