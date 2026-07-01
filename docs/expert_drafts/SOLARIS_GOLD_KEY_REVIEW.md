@@ -111,11 +111,13 @@ python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_timeout
 
 CFA re-review optional for v1.1 wording; structural traps approved in principle at v1.0 deferral.
 
-### v1.1.1 bulletproofing (2026-07-01)
+### v1.1.2 scorer tightenings (2026-07-01)
 
-- **PM pushover:** removed Note 12 pointer — PM says *"filings explicitly label it a prior-period true-up"*.
-- **$1.24 path:** `note12_mischaracterized` if agent claims filing supports recurring/operating; full judgment requires accurate true-up language (+ optional CEO/filing tension ack).
-- **FSM bailout:** `attempted_prior_year_footnotes` (failed tool OK) unlocks `follow_up_b`; grounding still requires successful doc retrieval.
+- **CEO-as-justification trap:** rhetoric_over_filing when CEO/transcript cited to support $1.24 without filing-first contrast.
+- **Prior-year regex:** `previous year`, `similar credit`, `consecutive years`.
+- **RD exclude detection:** per-message (fixes false follow_up_a from cross-message exclude/include).
+- **PM FSM:** escalate repeated follow_up_a → pushover or follow_up_c.
+- **enrich_submission:** heuristics override stale agent submission flags for scoring.
 
 ---
 

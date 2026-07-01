@@ -6,6 +6,13 @@ from __future__ import annotations
 from pm_features import extract_pm_hints
 
 
+def _last_pm_branch_id(steps: list[dict]) -> str | None:
+    for step in reversed(steps):
+        if step.get("type") == "pm_turn":
+            return step.get("branch_id")
+    return None
+
+
 def pm_respond(
     policy: dict,
     pm_turn_count: int,
@@ -32,6 +39,15 @@ def pm_respond(
             branch_id = "follow_up_pushover"
     elif hints.get("rd_credit_excluded") and not hints.get("mentions_prior_year_pattern"):
         branch_id = "follow_up_a"
+
+    last_branch = _last_pm_branch_id(steps)
+    if last_branch == branch_id and branch_id in ("follow_up_a", "opening_pushback"):
+        if hints.get("mentions_prior_year_pattern") and hints.get("substantive_reasoning"):
+            branch_id = "follow_up_pushover"
+        else:
+            branch_id = "follow_up_c"
+    elif last_branch == branch_id and branch_id == "follow_up_pushover":
+        branch_id = "follow_up_c"
 
     branch = next(b for b in policy["branches"] if b["branch_id"] == branch_id)
     flags.extend(branch.get("flags", []))

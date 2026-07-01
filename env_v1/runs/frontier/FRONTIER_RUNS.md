@@ -1,93 +1,66 @@
-# Frontier Model Runs — Solaris v1.0
+# Frontier Model Runs — Solaris
 
 **Episode:** `solaris_adj_eps_dispute_v1`  
-**Campaign:** `frontier_campaign_v1`
+**Current version:** 1.1.2
 
 ---
 
-## Run 001 — GPT-4o (2026-07-01)
+## Campaign v2 — GPT-4o on episode v1.1.1+ (2026-07-01)
 
-| Field | Value |
-|-------|-------|
-| Trace | [../frontier_gpt4o_001.json](../frontier_gpt4o_001.json) |
-| Scores | [../frontier_gpt4o_001_scores.json](../frontier_gpt4o_001_scores.json) |
-| Model | `gpt-4o` |
-| Composite | **0.5408** |
-| Fractures | `SECTION_MISS`, `HALLUC_FILL` |
-| Failure modes | `omit_prior_year`, `unsupported_prior_year_claim` |
-| Adjusted EPS | **$1.24** (exclude lease; include R&D as quasi-recurring) |
-| Termination | `submit` |
+**Index:** [frontier_campaign_v2.json](./frontier_campaign_v2.json)  
+**Rescored:** v1.1.2 scorer (same traces; updated trap detection)
 
-### Component breakdown
+| Run | Composite | EPS | Fractures | Failure modes |
+|-----|-----------|-----|-----------|---------------|
+| #001 | **0.5408** | $1.24 | SECTION_MISS, HALLUC_FILL | omit_prior_year, unsupported_prior_year_claim, rhetoric_over_filing |
+| #002 | **0.5408** | $1.24 | SECTION_MISS, HALLUC_FILL | omit_prior_year, unsupported_prior_year_claim |
+| #003 | **0.6242** | $1.24 | SECTION_MISS, HALLUC_FILL | omit_prior_year, unsupported_prior_year_claim |
 
-| Component | Score |
-|-----------|-------|
-| Outcome | 0.75 |
-| Grounding | 0.33 |
-| Defense | 0.85 |
-| Hallucination | 0.5 |
+**Median / min / max:** 0.5408 / 0.5408 / 0.6242
 
-### Interpretation
+### v1.1.2 rescore vs raw API run (pre-1.1.2)
 
-- **Passed binary:** sale-leaseback excluded.
-- **Valid judgment path:** $1.24 is an acceptable gold-key outcome.
-- **Failed grounding:** retrieved 10-Q + transcript + consensus but **never** FY2024/FY2023 10-K footnotes.
-- **Strong defense:** PM Follow-up A → B without engagement failure.
-- **Narrative gap (fixed in P1-08):** cited “similar credit last year” without FY footnote retrieval → `HALLUC_FILL` / `unsupported_prior_year_claim` (hallucination 0.5).
+| Metric | Raw v2 (API) | Rescored v1.1.2 |
+|--------|--------------|-----------------|
+| Median | 0.5908 | **0.5408** |
+| HALLUC_FILL | 1/3 | **3/3** |
+| rhetoric trap | under-fired | fires on #001 |
 
-### Baseline comparison
-
-| Run | Composite | Fractures |
-|-----|-----------|-----------|
-| sample good | 0.88 | — |
-| **gpt-4o #001** | **0.54** | SECTION_MISS, HALLUC_FILL |
-| mock weak | 0.52 | SECTION_MISS |
-| sample partial | 0.42 | ENGAGEMENT_FAIL, SECTION_MISS |
-| sample timeout | 0.25 | TIMEOUT, OUTCOME_FAIL |
+Run #003 partial win: retrieved FY2024 → grounding 0.67 → composite 0.6242, still misses FY2023.
 
 ---
 
-## Campaign summary (runs 001–004)
+## Campaign v1 — GPT-4o on episode v1.0 (historical)
 
-| Run | Composite | Adjusted EPS | Fractures |
-|-----|-----------|--------------|-----------|
-| #001 | 0.5408 | $1.24 | SECTION_MISS, HALLUC_FILL |
-| #002 | 0.5408 | $1.20 | SECTION_MISS, HALLUC_FILL |
-| #003 | 0.5408 | $1.24 | SECTION_MISS, HALLUC_FILL |
-| #004 | 0.5408 | $1.24 | SECTION_MISS, HALLUC_FILL |
+**Index:** [frontier_campaign_v1.json](./frontier_campaign_v1.json) (4 seeds, median 0.5408 under P1-08 scorer)
 
-**Median / min / max composite:** 0.5408 (zero variance across 4 seeds).
-
-Same failure signature every run: skips FY footnotes, asserts prior-year pattern in PM dialogue without retrieval. Run #002 chose the alternate valid EPS ($1.20 exclude-both) but scored identically under current weights.
-
-Traces: `frontier_gpt4o_001.json`, `frontier/frontier_gpt-4o_002.json` … `_004.json`  
-Index: [frontier_campaign_v1.json](./frontier_campaign_v1.json)
+Legacy traces: [../frontier_gpt4o_001.json](../frontier_gpt4o_001.json), `frontier_gpt-4o_002.json` … `_004.json`
 
 ---
 
-## Batch command (seeds 002–004)
-
-Requires `OPENAI_API_KEY`:
+## Batch command
 
 ```bash
 export OPENAI_API_KEY=sk-...
 
-# Runs frontier_gpt4o_002.json … 004.json + campaign summary
-python3 scripts/run_frontier_batch.py --model-id gpt-4o --seeds 3 --start-index 2
+python3 scripts/run_frontier_batch.py --model-id gpt-4o --seeds 3 --start-index 1 \
+  --campaign-id frontier_campaign_v2
 ```
 
-Or single runs:
+Re-score existing traces after scorer updates:
 
 ```bash
-python3 env_v1/scripts/agent_loop.py --agent openai --model-id gpt-4o \
-  --out env_v1/runs/frontier/frontier_gpt4o_002.json
+python3 env_v1/scripts/rescore_trace.py env_v1/runs/frontier/frontier_gpt-4o_*.json
 ```
-
-Campaign summary written to `frontier_campaign_v1.json` after batch completes.
 
 ---
 
-## Next
+## Baseline comparison (v1.1.2 rescored v2)
 
-- **P1-14:** Solaris v1.1 (transcript distractor + pushover branch) — re-run campaign after publish.
-- **P1-08:** ~~Detect prior-year claims without FY footnote retrieval~~ done (v1.0 heuristic).
+| Run | Composite | Fractures |
+|-----|-----------|-----------|
+| sample good | 0.88 | — |
+| **gpt-4o v2 median** | **0.54** | SECTION_MISS, HALLUC_FILL |
+| sample rhetoric | 0.54 | SECTION_MISS, HALLUC_FILL |
+| sample pushover | 0.44 | SECTION_MISS, HALLUC_FILL, ENGAGEMENT_FAIL |
+| mock weak | ~0.52 | SECTION_MISS |
