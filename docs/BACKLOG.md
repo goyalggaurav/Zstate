@@ -71,7 +71,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-04d | Agent submission + L3 citation validator | done | `validate_agent_submission.py`; `_submission.json` contract fixtures |
 | P2-04e | `score_benchmark_run.py` — L2/L3 v0 | done | Section recall from trace; composite median in campaign |
 | P2-04f | OpenAI adapter + `--execute` on campaign | done | `agents/openai_benchmark_agent.py`; `--execute --agent scripted|openai` |
-| P2-04g | **Live eval** — 2 models × 2 tasks × 3 runs | blocked | OpenAI submit+L3 ready; 1×1×1 pilot + API keys + Anthropic |
+| P2-04g | **Live eval** — OpenAI mini 2×3 grid | ready | Re-pilot PEP L3, then `pilot_eval_openai_mini_v1` |
 
 ---
 

@@ -25,6 +25,43 @@ def metric_keys(task_id: str) -> set[str]:
     return set(_metric_properties(task_id).keys())
 
 
+def citation_guidance_for_task(task_id: str) -> str:
+    """Task-specific L3 citation rules for system prompt and tool descriptions."""
+    if task_id == "PEP_fx_organic_growth":
+        return (
+            "CITATION RULES (PEP — critical):\n"
+            "- snippet MUST be a copy-paste substring from the exact Search_Filing tool output you received.\n"
+            "- Do NOT paraphrase column headers (e.g. never use \"Reported growth  8%\" or \"Organic revenue growth  6%\").\n"
+            "- For mdna_organic percentage metrics, cite table cell text from the segment row, e.g.:\n"
+            "    emea_reported_growth_pct → \"EMEA                            8%\"\n"
+            "    emea_fx_impact_pct → \"2%\" (from EMEA row in mdna_organic excerpt)\n"
+            "    latam_foods_reported_growth_pct → \"(0.2)%\"\n"
+            "- For note_1 revenue metrics, cite lines like \"EMEA $ 18,025\" or \"LatAm Foods $ 10,549\".\n"
+            "- Include policy_acknowledgements: [\"no_wae_fx_table\"]."
+        )
+    if task_id == "GOOGL_footnote_reconciliation":
+        return (
+            "CITATION RULES (GOOGL):\n"
+            "- snippet MUST be copy-pasted from Search_Filing output (note_15 or note_2).\n"
+            "- Example: \"Google Services $ 89,637\", \"Hedging gains (losses) (180)\", \"Total revenues $ 109,896\"."
+        )
+    return "CITATION RULES: each snippet must be a verbatim substring from a retrieved section excerpt."
+
+
+def snippet_field_description(task_id: str) -> str:
+    base = (
+        "Verbatim substring from the Search_Filing/PDF_Parser tool output for this section_slug. "
+        "Copy-paste exactly; do not rephrase column headers or labels."
+    )
+    if task_id == "PEP_fx_organic_growth":
+        return (
+            base
+            + " For mdna_organic, use table row/cell text (e.g. \"EMEA                            8%\"), "
+            "not headers like \"Reported growth\"."
+        )
+    return base
+
+
 def parse_submission_args(args: dict, task: dict) -> tuple[dict, dict | None]:
     """Parse submit tool args into (metrics, agent_submission_v1 | None)."""
     task_id = task["task_id"]
@@ -86,7 +123,7 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
             "section_slug": {"type": "string", "enum": section_enum},
             "snippet": {
                 "type": "string",
-                "description": "Verbatim substring copied from the retrieved section excerpt.",
+                "description": snippet_field_description(task_id),
             },
             "note": {"type": "string"},
             "table_title": {"type": "string"},
@@ -171,7 +208,8 @@ def build_tool_definitions(task: dict, bundle: dict) -> list[dict]:
                 "name": SUBMIT_TOOL,
                 "description": (
                     f"Submit final agent_submission_v1 with all {n_metrics} metrics, "
-                    f"{n_metrics} citations (one per metric_id), and required policy acks. Ends the task."
+                    f"{n_metrics} citations (one per metric_id), and required policy acks. "
+                    f"{citation_guidance_for_task(task_id).split(chr(10))[0]}. Ends the task."
                 ),
                 "parameters": submit_params,
             },

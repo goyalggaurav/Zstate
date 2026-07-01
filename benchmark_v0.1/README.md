@@ -127,10 +127,15 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
   --campaign benchmark_v0.1/campaigns/pilot_eval_1x1x1.json \
   --execute --agent openai
 
-# PEP pilot slot
+# PEP re-pilot (after citation tweak — overwrite prior run)
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
   --campaign benchmark_v0.1/campaigns/pilot_eval_1x1x1.json \
   --execute --agent openai --tasks PEP_fx_organic_growth
+
+# Full OpenAI mini grid (2 tasks × 3 runs = 6 slots)
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_openai_mini_v1.json \
+  --execute --agent openai
 ```
 
 ---

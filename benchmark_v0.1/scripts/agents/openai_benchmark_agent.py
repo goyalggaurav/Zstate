@@ -12,7 +12,14 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from agents.benchmark_tool_specs import CORPUS_TOOLS, SUBMIT_TOOL, build_tool_definitions, metric_keys, parse_submission_args
+from agents.benchmark_tool_specs import (
+    CORPUS_TOOLS,
+    SUBMIT_TOOL,
+    build_tool_definitions,
+    citation_guidance_for_task,
+    metric_keys,
+    parse_submission_args,
+)
 
 
 def _ssl_context() -> ssl.SSLContext:
@@ -50,6 +57,7 @@ def _system_prompt(task: dict, bundle: dict) -> str:
         f"  - citations: exactly one entry per metrics key ({metric_list}) — no omissions\n"
         "  - each citation snippet must be a verbatim substring from a section you retrieved\n"
         "  - policy_acknowledgements: include every REQUIRED policy_id listed below\n\n"
+        f"{citation_guidance_for_task(task['task_id'])}\n\n"
         f"TASK:\n{task['prompt']['text']}\n\n"
         f"ALLOWED SECTION SLUGS:\n{slug_lines or '  (see tool enum)'}"
         f"{policy_lines}"
@@ -76,7 +84,8 @@ class OpenAIBenchmarkAgent:
             {"role": "system", "content": _system_prompt(task, bundle)},
             {"role": "user", "content": (
                 "Begin the task. Retrieve filing sections with tools, verify arithmetic, then submit "
-                "metrics + verbatim citations + any required policy acknowledgements."
+                "metrics + verbatim citations (copy-paste from tool output, never paraphrase headers) "
+                "and any required policy acknowledgements."
             )},
         ]
         self.pending_tool_calls: list[dict] | None = None

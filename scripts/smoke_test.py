@@ -542,6 +542,19 @@ def check_openai_submit_schema() -> None:
         cite = params["properties"]["citations"]
         assert cite["minItems"] == n_metrics and cite.get("maxItems") == n_metrics
 
+    from agents.benchmark_tool_specs import citation_guidance_for_task  # noqa: E402
+
+    pep_guidance = citation_guidance_for_task("PEP_fx_organic_growth")
+    assert "Reported growth" in pep_guidance and "EMEA" in pep_guidance
+    pep_gold = ROOT / "benchmark_v0.1" / "contract_fixtures" / "PEP_fx_organic_growth_submission_gold.json"
+    pep_l3 = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/validate_agent_submission.py",
+        "--task", "PEP_fx_organic_growth",
+        "--submission", str(pep_gold),
+    ])
+    assert pep_l3["l3_pass"] is True, pep_l3
+
     googl_bundle = load_bundle("GOOGL_footnote_reconciliation")
     gold_sub = json.loads(
         (ROOT / "benchmark_v0.1" / "contract_fixtures" / "GOOGL_footnote_reconciliation_submission_gold.json").read_text()

@@ -1,0 +1,21 @@
+{
+  "campaign_id": "pilot_eval_openai_mini_v1",
+  "backlog_ref": "P2-04g",
+  "description": "OpenAI mini eval — 1 model × 2 published tasks × 3 runs; L1+L2+L3 composite.",
+  "status": "execute_ready",
+  "orchestrator_note": "Requires OPENAI_API_KEY. Run after PEP citation re-pilot passes L3.",
+  "models": ["gpt-4o-mini"],
+  "tasks": [
+    "GOOGL_footnote_reconciliation",
+    "PEP_fx_organic_growth"
+  ],
+  "runs_per_task": 3,
+  "aggregation": {
+    "l1_all_pass": "median_boolean",
+    "composite_score": "median",
+    "fracture_codes": "union",
+    "layer3_citation": "worst_run_wins"
+  },
+  "manifest_ref": "../manifest.json",
+  "runs_dir": "runs/pilot_eval_openai_mini_v1"
+}
