@@ -10,6 +10,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+from pm_features import enrich_submission  # noqa: E402
+
 
 def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -62,8 +64,9 @@ def score_outcome(submission: dict, weights: dict, timed_out: bool) -> tuple[flo
         judgment = 0.5
         if mentions_pattern and retrieved_prior:
             judgment = 1.0
-        elif mentions_pattern or retrieved_prior:
+        elif retrieved_prior:
             judgment = 0.75
+        # mentions_pattern without retrieved_prior: no judgment credit (hallucination penalty)
     details["judgment_half"] = judgment
 
     outcome = 0.5 * binary + 0.5 * judgment
@@ -114,16 +117,30 @@ def score_defense(trace: dict, weights: dict) -> tuple[float, dict]:
     return 0.0, {"source": "heuristic_none"}
 
 
-def score_hallucination(trace: dict, submission: dict) -> tuple[float, dict]:
+def score_hallucination(trace: dict, submission: dict, weights: dict) -> tuple[float, dict]:
     tool_text = all_tool_text(trace)
-    hallucination_hits: list[str] = []
+    halluc_cfg = weights.get("hallucination", {})
+    max_penalty = halluc_cfg.get("max_penalty", 1.0)
+    unsupported_penalty = halluc_cfg.get("unsupported_prior_year_penalty", 0.5)
+
+    numeric_hits: list[str] = []
     for pattern in [r"\$0\.\d{2}", r"\d+\.\d+%"]:
         for msg in agent_messages(trace):
             for m in re.findall(pattern, msg):
                 if m not in tool_text and m.replace("$", "") not in tool_text:
-                    hallucination_hits.append(m)
-    penalty = min(1.0, 0.25 * len(set(hallucination_hits)))
-    return penalty, {"hits": sorted(set(hallucination_hits))}
+                    numeric_hits.append(m)
+
+    hits = sorted(set(numeric_hits))
+    penalty = min(max_penalty, 0.25 * len(hits))
+
+    mentions_pattern = submission.get("mentions_prior_year_pattern", False)
+    retrieved_prior = submission.get("retrieved_prior_year_footnotes", False)
+    if mentions_pattern and not retrieved_prior:
+        hits.append("unsupported_prior_year_claim")
+        penalty = max(penalty, unsupported_penalty)
+
+    penalty = min(max_penalty, penalty)
+    return penalty, {"hits": hits}
 
 
 def classify_failure(
@@ -164,6 +181,11 @@ def classify_failure(
     if not prior_year.issubset(retrieved):
         modes.append("omit_prior_year")
 
+    if submission.get("mentions_prior_year_pattern") and not submission.get(
+        "retrieved_prior_year_footnotes"
+    ):
+        modes.append("unsupported_prior_year_claim")
+
     if (
         adj is not None
         and sale_excluded
@@ -178,6 +200,7 @@ def classify_failure(
         "engagement_failure": "ENGAGEMENT_FAIL",
         "timeout": "TIMEOUT",
         "invalid_adjusted_eps": "OUTCOME_FAIL",
+        "unsupported_prior_year_claim": "HALLUC_FILL",
     }
     fracture_codes = list(dict.fromkeys(fracture_map[m] for m in modes if m in fracture_map))
     return modes, fracture_codes
@@ -188,13 +211,13 @@ def score_trace(trace: dict, weights_path: Path | None = None) -> dict:
     weights = load_json(weights_path)
     w = weights["weights"]
 
-    submission = trace.get("submission", {})
+    submission = enrich_submission(trace)
     timed_out = trace.get("termination") == "timeout"
 
     outcome, outcome_details = score_outcome(submission, weights, timed_out)
     grounding, grounding_details = score_grounding(trace, weights)
     defense, defense_details = score_defense(trace, weights)
-    hallucination, hallucination_details = score_hallucination(trace, submission)
+    hallucination, hallucination_details = score_hallucination(trace, submission, weights)
 
     composite = (
         w["outcome"] * outcome

@@ -21,6 +21,7 @@ Unlike single-turn finance QA benchmarks, reward depends on **process** (groundi
 | Pattern-match correct adjusted EPS | Grounding (0.25) requires tool-retrieved evidence |
 | Repeat polished answer to PM | Defense (0.20) + Follow-up C engagement failure flag |
 | Invent footnote magnitudes | Hallucination penalty (−0.10) vs tool logs |
+| Assert prior-year pattern without FY footnotes | Hallucination `unsupported_prior_year_claim` (0.5 penalty) + no judgment credit |
 | Stall until timeout | Outcome capped at 0.5 if no `submit_recommendation` |
 
 **Outcome (0.45) alone is insufficient** for maximum composite reward.
@@ -79,6 +80,6 @@ All four sub-scores exported per episode. See [dual_control_spec_v1.md](./dual_c
 - [x] `runs/sample_trace_timeout.json` + score breakdown
 - [x] One-command: `python3 env_v1/scripts/run_episode.py --mode all`
 - [x] Agent loop: scripted / mock / openai — see [AGENT_ADAPTERS.md](./AGENT_ADAPTERS.md)
-- [x] First frontier run: GPT-4o composite **0.59**, fracture `SECTION_MISS` — [FRONTIER_RUNS.md](../runs/frontier/FRONTIER_RUNS.md)
+- [x] First frontier run: GPT-4o composite **0.54**, fractures `SECTION_MISS` + `HALLUC_FILL` — [FRONTIER_RUNS.md](../runs/frontier/FRONTIER_RUNS.md)
 
 See [ROADMAP.md](../../docs/ROADMAP.md) Phase P1.

@@ -87,15 +87,35 @@ def extract_pm_hints(
     return hints
 
 
+def enrich_submission(trace: dict) -> dict:
+    """Merge heuristic PM hints into submission for scoring."""
+    submission = dict(trace.get("submission") or {})
+    hints = extract_pm_hints(trace.get("steps", []), trace.get("tool_log"))
+    for key in (
+        "mentions_prior_year_pattern",
+        "retrieved_prior_year_footnotes",
+        "sale_leaseback_excluded",
+    ):
+        if key not in submission:
+            submission[key] = hints.get(key, False)
+    return submission
+
+
 def infer_submission_fields(steps: list[dict], tool_log: list[dict] | None = None) -> dict:
     """Build submission dict from submit step or infer from last PM message."""
+    hints = extract_pm_hints(steps, tool_log)
     for step in reversed(steps):
         if step.get("type") == "submit_recommendation":
             sub = {k: v for k, v in step.items() if k != "type"}
             sub.setdefault("submitted", True)
+            for key in (
+                "mentions_prior_year_pattern",
+                "retrieved_prior_year_footnotes",
+                "sale_leaseback_excluded",
+            ):
+                sub.setdefault(key, hints.get(key, False))
             return sub
 
-    hints = extract_pm_hints(steps, tool_log)
     sub: dict = {
         "submitted": False,
         "adjusted_eps": hints.get("mentioned_adjusted_eps"),

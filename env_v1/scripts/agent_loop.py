@@ -21,7 +21,7 @@ from typing import Any, Protocol
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from pm_features import infer_submission_fields  # noqa: E402
+from pm_features import extract_pm_hints, infer_submission_fields  # noqa: E402
 from tool_backend import ToolBackend, load_corpus  # noqa: E402
 
 
@@ -164,6 +164,14 @@ def run_agent_episode(
     if termination != "submit":
         submission = infer_submission_fields(steps, backend.log)
         submission["submitted"] = False
+    else:
+        hints = extract_pm_hints(steps, backend.log)
+        for key in (
+            "mentions_prior_year_pattern",
+            "retrieved_prior_year_footnotes",
+            "sale_leaseback_excluded",
+        ):
+            submission.setdefault(key, hints.get(key, False))
 
     return build_trace(
         episode_id,

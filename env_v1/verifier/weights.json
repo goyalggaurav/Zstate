@@ -35,7 +35,8 @@
   },
   "hallucination": {
     "mode": "claim_not_in_tool_outputs",
-    "max_penalty": 1.0
+    "max_penalty": 1.0,
+    "unsupported_prior_year_penalty": 0.5
   },
   "timeout": {
     "cap_outcome_if_no_submit": 0.5,

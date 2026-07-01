@@ -103,10 +103,23 @@ def check_mock_agent() -> None:
     out.with_name(out.stem + "_scores.json").unlink(missing_ok=True)
 
 
+def check_frontier_baseline() -> None:
+    sys.path.insert(0, str(ROOT / "env_v1" / "scripts"))
+    from score_episode import score_trace  # noqa: E402
+
+    path = ROOT / "env_v1" / "runs" / "frontier_gpt4o_001.json"
+    scores = score_trace(json.loads(path.read_text()))
+    assert "unsupported_prior_year_claim" in scores["failure_modes"]
+    assert "HALLUC_FILL" in scores["fracture_codes"]
+    assert scores["components"]["hallucination_penalty"] >= 0.5
+    assert scores["composite_reward"] <= 0.55
+
+
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
         ("Env demo traces + schema", check_env_traces),
+        ("Frontier gpt-4o baseline", check_frontier_baseline),
         ("Scripted agent loop", check_scripted_agent),
         ("Mock LLM agent loop", check_mock_agent),
     ]

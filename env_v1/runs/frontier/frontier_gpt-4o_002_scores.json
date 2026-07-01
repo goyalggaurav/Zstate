@@ -20,7 +20,7 @@
     "outcome": {
       "sale_leaseback_excluded": true,
       "binary_half": 1.0,
-      "adjusted_eps": 1.24,
+      "adjusted_eps": 1.2,
       "eps_in_valid_set": true,
       "judgment_half": 0.5
     },

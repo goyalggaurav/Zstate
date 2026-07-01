@@ -35,12 +35,12 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P1-05 | Outcome checker — sale-leaseback binary exclude | B | done | Eng | In `score_episode.py` |
 | P1-06 | Grounding checker — claims vs tool log | B | done | Eng | Doc ID hits in `score_episode.py` |
 | P1-07 | Defense rubric + Follow-up C engagement flag | B | pending_cfa_review | CFA + Eng | `defense_rubric.json` + REV-04 |
-| P1-08 | Hallucination detector — facts not in tool outputs | B | in_progress | Eng | Prior-year narrative without FY footnote retrieval (see frontier #001) |
+| P1-08 | Hallucination detector — facts not in tool outputs | B | done | Eng | Unsupported prior-year narrative without FY footnotes → `HALLUC_FILL` |
 | P1-09 | Timeout rule — cap Outcome / zero Defense if no submit | B | done | Eng | In `score_episode.py` |
 | P1-10 | 3 demo trajectories (good / partial / timeout) | B | done | Eng | `run_episode.py --mode all` |
 | P1-11 | `METHODOLOGY_RL_ENV.md` — anti-hacking, calibration | B | in_progress | Eng | Draft exists; finalize for lab |
 | P1-12 | One frontier model end-to-end run | B | done | Eng | GPT-4o run #001 — composite 0.59, `SECTION_MISS`; see `env_v1/runs/frontier/` |
-| P1-12b | Frontier campaign — 3 seeds + summary | B | in_progress | Eng | `scripts/run_frontier_batch.py`; runs 002–004 pending |
+| P1-12b | Frontier campaign — 3 seeds + summary | B | done | Eng | 4/4 gpt-4o runs; composite 0.5408 constant; see `frontier_campaign_v1.json` |
 | P1-13 | Expert adjudication protocol (10–20% sample) | Both | todo | CFA | κ ≥ 0.7 on Outcome (judgment) + Defense |
 | P1-14 | Solaris episode v1.1 — transcript distractor + pushover branch | B | todo | CFA + Eng | CEO rhetoric vs Note 12; `follow_up_pushover`; failure modes `pushover`, `rhetoric_over_filing`. Forward P/E out of scope — separate task |
 
@@ -141,6 +141,8 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-12 | Trajectory schema v1 + benchmark manifest | Jul 2026 |
 | DONE-13 | P1-12 prep sprint (agent loop, trace normalize, smoke tests) | Jul 2026 |
 | DONE-14 | First frontier run GPT-4o on Solaris v1.0 | Jul 2026 |
+| DONE-15 | P1-08 unsupported prior-year hallucination detector | Jul 2026 |
+| DONE-16 | GPT-4o frontier campaign (4 seeds, zero variance) | Jul 2026 |
 
 ---
 
