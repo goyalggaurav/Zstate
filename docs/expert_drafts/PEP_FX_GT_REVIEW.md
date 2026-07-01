@@ -133,7 +133,7 @@ Until step 5: leave status **`draft_pending_expert_review`**; do not mark P2-02 
 - [ ] MD&A organic CC percentages align with ground truth after independent calc
 - [ ] Trap design is fair (`spot_rate_method`, `reported_only`, `wrong_region`)
 - [ ] No investment recommendation required (Type M modeling / forensics)
-- [ ] Verify script passes on approved ground truth JSON
+- [ ] Verify script self-test passes on approved ground truth JSON *(run verify command; no code review)*
 
 ---
 
@@ -160,7 +160,11 @@ python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 
 ## Sign-off
 
-**Approve when:** Gate B complete (checklist + filing-verified JSON + verify self-test). Gate C (JSON-driven verify + METHOD_ALT) required before `published`.
+**CFA approve when (Gate B only):** Checklist complete, filing-verified GT JSON updated, and verify self-test reports `all_pass: true` (run command above — no Python code review required).
+
+**Gate C (eng — not your action):** Already met as of 2026-07-01. Engineering owns verify infrastructure; you do not re-verify the script before signing off data.
+
+**Before `published`:** Both Gate B (your sign-off) and Gate C (eng confirmation) must be complete. Eng marks publish after your Gate B is done.
 
 | Reviewer | Date | Status |
 |----------|------|--------|
