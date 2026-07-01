@@ -9,7 +9,7 @@
     {"type": "tool_call", "tool": "calculator", "input": {"expression": "1.42 - 0.18 - 0.04"}},
     {
       "type": "send_message_to_pm",
-      "text": "Adjusted EPS $1.20. Excluding $0.18 sale-leaseback (Note 7, one-time) and $0.04 R&D credit true-up. FY2024 had a $0.02 similar true-up; FY2023 had none — pattern is intermittent, I exclude both for core earnings."
+      "text": "Adjusted EPS $1.20. Excluding $0.18 sale-leaseback (Note 7, one-time) and $0.04 R&D credit true-up (Note 12 — true-up on 2024 return filing, not normalized run-rate). FY2024 had a $0.02 similar true-up; FY2023 had none — pattern is intermittent, I exclude both for core earnings."
     },
     {
       "type": "send_message_to_pm",

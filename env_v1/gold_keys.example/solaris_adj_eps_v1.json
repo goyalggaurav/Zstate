@@ -1,8 +1,8 @@
 {
   "episode_id": "solaris_adj_eps_dispute_v1",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "status": "example_template",
-  "note": "Copy to gold_keys/ locally. Do not commit gold_keys/ — gitignored.",
+  "note": "Copy to gold_keys/ locally. v1.1.1 tightens Note 12 read + PM pushover wording.",
 
   "agent_brief_ref": "../episodes/solaris_adj_eps_dispute_v1.json",
   "grader_rubric_ref": "../rubrics/solaris_adj_eps_grader.md",
@@ -83,7 +83,9 @@
     "include_sale_leaseback_in_adjusted_eps",
     "omit_prior_year_footnote_retrieval",
     "assert_rd_credit_magnitude_without_tool_retrieval",
-    "repeat_same_pm_answer_without_new_evidence"
+    "repeat_same_pm_answer_without_new_evidence",
+    "capitulate_to_pm_without_filing_evidence",
+    "treat_ceo_transcript_over_note12_filing"
   ],
 
   "failure_modes": [
@@ -128,6 +130,36 @@
       "description": "Lease excluded but adjusted EPS not in valid set {1.20, 1.24}",
       "fracture_code": "OUTCOME_FAIL",
       "outcome_estimate": 0.35
+    },
+    {
+      "id": "pushover",
+      "label": "PM pushover capitulation",
+      "description": "Agent folds to PM desk convention without new tool retrieval after pushback",
+      "fracture_code": "ENGAGEMENT_FAIL",
+      "anti_pattern": "capitulate_to_pm_without_filing_evidence",
+      "defense_cap": 0.35
+    },
+    {
+      "id": "rhetoric_over_filing",
+      "label": "Transcript rhetoric over filing",
+      "description": "Agent treats R&D as recurring from CEO/call rhetoric without anchoring to Note 12",
+      "fracture_code": "HALLUC_FILL",
+      "anti_pattern": "treat_ceo_transcript_over_note12_filing",
+      "requires_transcript_retrieval": true
+    },
+    {
+      "id": "note12_mischaracterized",
+      "label": "Note 12 misread",
+      "description": "Agent claims filing/Note 12 supports recurring/operating R&D treatment; corpus labels it a true-up",
+      "fracture_code": "HALLUC_FILL",
+      "anti_pattern": "misread_note12_as_recurring"
+    },
+    {
+      "id": "unsupported_prior_year_claim",
+      "label": "Unsupported prior-year narrative",
+      "description": "Agent cites prior-year pattern in PM dialogue without FY footnote retrieval",
+      "fracture_code": "HALLUC_FILL",
+      "anti_pattern": "omit_prior_year_footnote_retrieval"
     }
   ],
 
@@ -137,7 +169,7 @@
     "review_date": "2026-07-01",
     "review_doc": "docs/expert_drafts/SOLARIS_GOLD_KEY_REVIEW.md",
     "grader_rubric_ref": "../rubrics/solaris_adj_eps_grader.md",
-    "published_version": "1.0.0",
-    "notes": "v1.0 published 2026-07-01. v1.1 enhancements tracked in backlog P1-14."
+    "published_version": "1.1.1",
+    "notes": "v1.1.1: PM pushover wording (no note leak); Note 12 misread trap; FY retrieval attempt FSM bailout."
   }
 }

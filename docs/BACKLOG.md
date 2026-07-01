@@ -42,7 +42,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P1-12 | One frontier model end-to-end run | B | done | Eng | GPT-4o run #001 — composite 0.59, `SECTION_MISS`; see `env_v1/runs/frontier/` |
 | P1-12b | Frontier campaign — 3 seeds + summary | B | done | Eng | 4/4 gpt-4o runs; composite 0.5408 constant; see `frontier_campaign_v1.json` |
 | P1-13 | Expert adjudication protocol (10–20% sample) | Both | todo | CFA | κ ≥ 0.7 on Outcome (judgment) + Defense |
-| P1-14 | Solaris episode v1.1 — transcript distractor + pushover branch | B | todo | CFA + Eng | CEO rhetoric vs Note 12; `follow_up_pushover`; failure modes `pushover`, `rhetoric_over_filing`. Forward P/E out of scope — separate task |
+| P1-14 | Solaris episode v1.1 — transcript distractor + pushover branch | B | done | Eng | CEO rhetoric vs Note 12; `follow_up_pushover`; failure modes `pushover`, `rhetoric_over_filing` |
 
 ---
 
@@ -143,6 +143,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-14 | First frontier run GPT-4o on Solaris v1.0 | Jul 2026 |
 | DONE-15 | P1-08 unsupported prior-year hallucination detector | Jul 2026 |
 | DONE-16 | GPT-4o frontier campaign (4 seeds, zero variance) | Jul 2026 |
+| DONE-17 | Solaris v1.1 — transcript distractor + pushover PM branch (P1-14) | Jul 2026 |
 
 ---
 

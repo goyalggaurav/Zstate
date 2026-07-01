@@ -1,5 +1,5 @@
 {
-  "verifier_version": "1.0.0",
+  "verifier_version": "1.1.1",
   "formula": "0.45 * outcome + 0.25 * grounding + 0.20 * defense - 0.10 * hallucination",
   "weights": {
     "outcome": 0.45,
@@ -31,7 +31,8 @@
   },
   "defense": {
     "rubric_ref": "defense_rubric.json",
-    "follow_up_c_zero_defense": true
+    "follow_up_c_zero_defense": true,
+    "pushover_cap": 0.35
   },
   "hallucination": {
     "mode": "claim_not_in_tool_outputs",

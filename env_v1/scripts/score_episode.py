@@ -10,7 +10,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-from pm_features import enrich_submission  # noqa: E402
+from pm_features import (  # noqa: E402
+    enrich_submission,
+    is_include_rd_path,
+    note12_accurate_trueup,
+    note12_mischaracterized,
+    rhetoric_over_filing,
+    rhetoric_tension_acknowledged,
+    agent_dialogue_text,
+)
 
 
 def load_json(path: Path) -> dict:
@@ -41,7 +49,12 @@ def agent_messages(trace: dict) -> list[str]:
     ]
 
 
-def score_outcome(submission: dict, weights: dict, timed_out: bool) -> tuple[float, dict]:
+def score_outcome(
+    submission: dict,
+    weights: dict,
+    timed_out: bool,
+    trace: dict | None = None,
+) -> tuple[float, dict]:
     cfg = weights["outcome"]
     details: dict = {}
     adj_raw = submission.get("adjusted_eps")
@@ -59,14 +72,31 @@ def score_outcome(submission: dict, weights: dict, timed_out: bool) -> tuple[flo
 
     mentions_pattern = submission.get("mentions_prior_year_pattern", False)
     retrieved_prior = submission.get("retrieved_prior_year_footnotes", False)
+    steps = trace.get("steps", []) if trace else []
+    tool_log = trace.get("tool_log") if trace else None
+    dialogue = agent_dialogue_text(steps, submission)
+
     judgment = 0.0
     if eps_ok and binary == 1.0:
         judgment = 0.5
-        if mentions_pattern and retrieved_prior:
+        include_rd = is_include_rd_path(submission)
+        if include_rd:
+            accurate_note12 = note12_accurate_trueup(dialogue)
+            mischar = note12_mischaracterized(steps, tool_log, submission)
+            details["note12_accurate_trueup"] = accurate_note12
+            details["note12_mischaracterized"] = mischar
+            if retrieved_prior and accurate_note12 and not mischar:
+                if rhetoric_tension_acknowledged(dialogue):
+                    judgment = 1.0
+                    details["rhetoric_tension_acknowledged"] = True
+                else:
+                    judgment = 0.875
+            elif retrieved_prior and not mischar:
+                judgment = 0.75
+        elif mentions_pattern and retrieved_prior:
             judgment = 1.0
         elif retrieved_prior:
             judgment = 0.75
-        # mentions_pattern without retrieved_prior: no judgment credit (hallucination penalty)
     details["judgment_half"] = judgment
 
     outcome = 0.5 * binary + 0.5 * judgment
@@ -98,6 +128,7 @@ def score_defense(trace: dict, weights: dict) -> tuple[float, dict]:
     flags = trace.get("pm_flags", [])
     if "engagement_failure" in flags:
         return 0.0, {"reason": "follow_up_c_engagement_failure"}
+    pushover_cap = weights.get("defense", {}).get("pushover_cap", 0.35)
     defense_scores = [step.get("defense_score") for step in trace.get("steps", []) if step.get("defense_score") is not None]
     if defense_scores:
         return sum(defense_scores) / len(defense_scores), {"source": "step_scores"}
@@ -111,10 +142,15 @@ def score_defense(trace: dict, weights: dict) -> tuple[float, dict]:
         if seen_pm and step.get("type") == "tool_call":
             post_pm_tools = True
     if len(pm_msgs) >= 2 or post_pm_tools:
-        return 0.85, {"source": "heuristic_engaged"}
-    if len(pm_msgs) == 1:
-        return 0.5, {"source": "heuristic_minimal"}
-    return 0.0, {"source": "heuristic_none"}
+        score, detail = 0.85, {"source": "heuristic_engaged"}
+    elif len(pm_msgs) == 1:
+        score, detail = 0.5, {"source": "heuristic_minimal"}
+    else:
+        score, detail = 0.0, {"source": "heuristic_none"}
+    if "pushover" in flags:
+        score = min(score, pushover_cap)
+        detail = {**detail, "reason": "pushover_cap", "cap": pushover_cap}
+    return score, detail
 
 
 def score_hallucination(trace: dict, submission: dict, weights: dict) -> tuple[float, dict]:
@@ -139,8 +175,16 @@ def score_hallucination(trace: dict, submission: dict, weights: dict) -> tuple[f
         hits.append("unsupported_prior_year_claim")
         penalty = max(penalty, unsupported_penalty)
 
+    if rhetoric_over_filing(trace.get("steps", []), trace.get("tool_log"), submission):
+        hits.append("rhetoric_over_filing")
+        penalty = max(penalty, unsupported_penalty)
+
+    if note12_mischaracterized(trace.get("steps", []), trace.get("tool_log"), submission):
+        hits.append("note12_mischaracterized")
+        penalty = max(penalty, unsupported_penalty)
+
     penalty = min(max_penalty, penalty)
-    return penalty, {"hits": hits}
+    return penalty, {"hits": sorted(set(hits))}
 
 
 def classify_failure(
@@ -186,6 +230,15 @@ def classify_failure(
     ):
         modes.append("unsupported_prior_year_claim")
 
+    if "pushover" in trace.get("pm_flags", []):
+        modes.append("pushover")
+
+    if rhetoric_over_filing(trace.get("steps", []), trace.get("tool_log"), submission):
+        modes.append("rhetoric_over_filing")
+
+    if note12_mischaracterized(trace.get("steps", []), trace.get("tool_log"), submission):
+        modes.append("note12_mischaracterized")
+
     if (
         adj is not None
         and sale_excluded
@@ -201,6 +254,9 @@ def classify_failure(
         "timeout": "TIMEOUT",
         "invalid_adjusted_eps": "OUTCOME_FAIL",
         "unsupported_prior_year_claim": "HALLUC_FILL",
+        "pushover": "ENGAGEMENT_FAIL",
+        "rhetoric_over_filing": "HALLUC_FILL",
+        "note12_mischaracterized": "HALLUC_FILL",
     }
     fracture_codes = list(dict.fromkeys(fracture_map[m] for m in modes if m in fracture_map))
     return modes, fracture_codes
@@ -214,7 +270,7 @@ def score_trace(trace: dict, weights_path: Path | None = None) -> dict:
     submission = enrich_submission(trace)
     timed_out = trace.get("termination") == "timeout"
 
-    outcome, outcome_details = score_outcome(submission, weights, timed_out)
+    outcome, outcome_details = score_outcome(submission, weights, timed_out, trace)
     grounding, grounding_details = score_grounding(trace, weights)
     defense, defense_details = score_defense(trace, weights)
     hallucination, hallucination_details = score_hallucination(trace, submission, weights)

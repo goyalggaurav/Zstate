@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from pm_features import extract_pm_hints, infer_submission_fields  # noqa: E402
+from pm_fsm import pm_respond, should_append_acceptance  # noqa: E402
 from tool_backend import ToolBackend, load_corpus  # noqa: E402
 
 
@@ -31,24 +32,6 @@ def load_json(path: Path) -> dict:
 
 class StepAgent(Protocol):
     def next_action(self, context: dict[str, Any]) -> dict | None: ...
-
-
-def pm_respond(policy: dict, pm_turn_count: int, steps: list[dict], tool_log: list[dict]) -> tuple[str, list[str], str]:
-    from pm_features import extract_pm_hints
-
-    hints = extract_pm_hints(steps, tool_log)
-    branch_id = "fallback_ood"
-    if pm_turn_count == 0:
-        branch_id = "opening_pushback"
-    elif hints.get("engagement_failure"):
-        branch_id = "follow_up_c"
-    elif hints.get("mentions_prior_year_pattern") and hints.get("substantive_reasoning"):
-        branch_id = "follow_up_b"
-    elif hints.get("rd_credit_excluded") and not hints.get("mentions_prior_year_pattern"):
-        branch_id = "follow_up_a"
-
-    branch = next(b for b in policy["branches"] if b["branch_id"] == branch_id)
-    return branch["message"], list(branch.get("flags", [])), branch_id
 
 
 def build_trace(
@@ -136,7 +119,7 @@ def run_agent_episode(
             pm_turn_count += 1
             pm_flags.extend(flags)
             steps.append({"type": "pm_turn", "text": pm_msg, "branch_id": branch_id})
-            if branch_id == "follow_up_b":
+            if should_append_acceptance(policy, branch_id):
                 steps.append({
                     "type": "pm_turn",
                     "text": policy["acceptance"]["message"],

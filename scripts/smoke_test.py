@@ -37,6 +37,8 @@ def check_env_traces() -> None:
         "sample_trace_good.json": {"composite_min": 0.85, "fractures": []},
         "sample_trace_partial.json": {"composite_max": 0.50, "fractures_nonempty": True},
         "sample_trace_timeout.json": {"composite_max": 0.30, "fractures_nonempty": True},
+        "sample_trace_pushover.json": {"fractures_contains": "ENGAGEMENT_FAIL"},
+        "sample_trace_rhetoric.json": {"fractures_contains": "HALLUC_FILL", "failure_contains": "rhetoric_over_filing"},
     }
     for filename, exp in expectations.items():
         path = ROOT / "env_v1" / "runs" / filename
@@ -55,6 +57,10 @@ def check_env_traces() -> None:
             assert scores["fracture_codes"] == []
         if exp.get("fractures_nonempty"):
             assert len(scores["fracture_codes"]) > 0
+        if exp.get("fractures_contains"):
+            assert exp["fractures_contains"] in scores["fracture_codes"]
+        if exp.get("failure_contains"):
+            assert exp["failure_contains"] in scores["failure_modes"]
 
 
 def check_scripted_agent() -> None:

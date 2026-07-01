@@ -13,7 +13,7 @@ python3 scripts/smoke_test.py
 # Score a sample trace (deterministic components)
 python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_good.json
 
-# Generate demo trajectories (good / partial / timeout) — schema-enriched
+# Generate demo trajectories (good / partial / timeout / pushover / rhetoric)
 python3 env_v1/scripts/run_episode.py --mode all
 
 # Scripted agent loop (P1-12 prep — replay JSON plan)

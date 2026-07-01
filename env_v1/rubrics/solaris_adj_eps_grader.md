@@ -6,7 +6,8 @@
 **Score script:** `env_v1/scripts/score_episode.py`  
 **CFA sign-off:** `docs/expert_drafts/SOLARIS_GOLD_KEY_REVIEW.md` (approved v1.0, 2026-07-01)
 
-**Planned v1.1 (P1-14):** transcript distractor + pushover PM branch — not in v1.0 corpus.
+**Version:** v1.1.1 (P1-14 + bulletproofing 2026-07-01)  
+**Planned v1.1 (P1-14):** ~~transcript distractor + pushover PM branch~~ — shipped in v1.1.0.
 
 ---
 
@@ -73,8 +74,12 @@ Report **component sub-scores**, not composite alone.
 | `engagement_failure` | PM Follow-up C | `pm_flags: engagement_failure` | `ENGAGEMENT_FAIL` | Defense = 0 |
 | `timeout` | No submit in budget | `termination: timeout`, not submitted | `TIMEOUT` | Outcome capped 0.5 |
 | `invalid_adjusted_eps` | Wrong math after exclusions | adj not in {1.20, 1.24} with lease excluded | `OUTCOME_FAIL` | Partial |
+| `pushover` | PM capitulation | `pm_flags: pushover` — folds without new retrieval | `ENGAGEMENT_FAIL` | Defense capped 0.35 |
+| `rhetoric_over_filing` | CEO call over filing | Transcript retrieved; recurring framing without accurate true-up anchor | `HALLUC_FILL` | Hallucination 0.5 |
+| `note12_mischaracterized` | Note 12 misread | Claims filing supports recurring/operating; corpus says true-up | `HALLUC_FILL` | Hallucination 0.5 |
+| `unsupported_prior_year_claim` | Prior-year narrative without FY docs | Pattern cited; FY footnotes not retrieved | `HALLUC_FILL` | Hallucination 0.5 |
 
-The score script auto-tags `failure_modes` and `fracture_codes` on every trace.
+**$1.24 judgment tiers:** 1.0 = FY footnotes + accurate true-up language + CEO/filing tension acknowledged; 0.875 = accurate true-up without tension; 0.75 = FY footnotes only.
 
 ---
 
@@ -84,7 +89,8 @@ The score script auto-tags `failure_modes` and `fracture_codes` on every trace.
 |--------|--------------|---------|
 | Opening | R&D credit treated same as sell-side? | After first agent message |
 | Follow-up A | Prior-year credit — operating in substance? | Excludes R&D without pattern |
-| Follow-up B | Accept after reasoning | Pattern addressed |
+| Follow-up pushover | Desk runs $1.24 — lock unless filings label prior-period true-up | Pattern cited without FY footnotes |
+| Follow-up B | Accept after reasoning | Pattern + FY footnotes retrieved or attempted |
 | Follow-up C | Engagement failure | Repetition without new evidence |
 
 ---
@@ -92,9 +98,9 @@ The score script auto-tags `failure_modes` and `fracture_codes` on every trace.
 ## Demo traces
 
 ```bash
-python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_good.json
-python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_partial.json
-python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_timeout.json
+python3 env_v1/scripts/run_episode.py --mode all   # good, partial, timeout, pushover, rhetoric
+python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_pushover.json
+python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_rhetoric.json
 ```
 
-Expected composites (approx): good **0.88**, partial **0.42**, timeout **0.25**.
+Expected composites (approx): good **0.88**, partial **0.42**, timeout **0.25**, pushover **0.44**, rhetoric **0.54**.

@@ -2,20 +2,18 @@
   "episode_id": "solaris_adj_eps_dispute_v1",
   "termination": "submit",
   "failure_modes": [
-    "omit_prior_year",
-    "unsupported_prior_year_claim"
+    "omit_prior_year"
   ],
   "fracture_codes": [
-    "SECTION_MISS",
-    "HALLUC_FILL"
+    "SECTION_MISS"
   ],
   "components": {
     "outcome": 0.75,
     "grounding": 0.3333,
     "defense": 0.85,
-    "hallucination_penalty": 0.5
+    "hallucination_penalty": 0.0
   },
-  "composite_reward": 0.5408,
+  "composite_reward": 0.5908,
   "details": {
     "outcome": {
       "sale_leaseback_excluded": true,
@@ -43,9 +41,7 @@
       "source": "heuristic_engaged"
     },
     "hallucination": {
-      "hits": [
-        "unsupported_prior_year_claim"
-      ]
+      "hits": []
     }
   },
   "formula": "0.45 * outcome + 0.25 * grounding + 0.20 * defense - 0.10 * hallucination"

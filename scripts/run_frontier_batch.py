@@ -82,6 +82,7 @@ def main() -> int:
         "campaign_id": args.campaign_id,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "episode_id": args.episode,
+        "episode_version": "1.1.1",
         "model_id": args.model_id,
         "summary": summarize(runs),
         "runs": runs,

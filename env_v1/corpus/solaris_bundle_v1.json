@@ -1,8 +1,8 @@
 {
   "bundle_id": "solaris_bundle_v1",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "company": "Solaris Components Inc.",
-  "note": "Fictional corpus for env_v1 pilot. Expert annotator expands excerpts before lab demo.",
+  "note": "Fictional corpus for env_v1 pilot. v1.1 adds CEO transcript distractor (P1-14).",
 
   "documents": {
     "10-Q_2025Q2": {
@@ -23,7 +23,7 @@
     "transcript_2025Q2": {
       "doc_type": "transcript",
       "period": "2025Q2",
-      "excerpt": "CFO: Q2 EPS of $1.42 reflects strong packaging demand and a $24 million gain from the Tucson sale-leaseback, which we view as non-recurring.\n\nAnalyst (Q&A): Can you clarify whether the R&D tax credit true-up is recurring?\n\nCFO: The true-up relates to finalization of our 2024 return. Each year's credit depends on qualifying project mix — we don't budget for true-ups in our forward guide."
+      "excerpt": "CEO: Q2 demonstrates the strength of our model. Importantly, our R&D tax incentives are a recurring benefit — investors should treat these credits as part of normalized earnings, not one-offs.\n\nCFO: Q2 EPS of $1.42 reflects strong packaging demand and a $24 million gain from the Tucson sale-leaseback, which we view as non-recurring.\n\nAnalyst (Q&A): Can you clarify whether the R&D tax credit true-up is recurring?\n\nCFO: The true-up relates to finalization of our 2024 return filing. Each year's credit depends on qualifying project mix — we don't budget for true-ups in our forward guide. See Note 12 in the 10-Q for the precise accounting treatment."
     },
     "consensus_eps_2025Q2": {
       "doc_type": "consensus",

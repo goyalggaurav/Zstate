@@ -69,7 +69,7 @@ All four sub-scores exported per episode. See [dual_control_spec_v1.md](./dual_c
 - Fixed versioned corpus bundle per episode (`corpus/solaris_bundle_v1.json`)
 - No live web retrieval
 - Deterministic tool backend + calculator
-- PM policy v1: scripted FSM (LLM paraphrase deferred to v1.1)
+- PM policy v1.1: scripted FSM with pushover branch (`pm_v1_1.json`)
 
 ---
 
@@ -78,7 +78,7 @@ All four sub-scores exported per episode. See [dual_control_spec_v1.md](./dual_c
 - [x] `runs/sample_trace_good.json` + score breakdown
 - [x] `runs/sample_trace_partial.json` + score breakdown
 - [x] `runs/sample_trace_timeout.json` + score breakdown
-- [x] One-command: `python3 env_v1/scripts/run_episode.py --mode all`
+- [x] One-command: `python3 env_v1/scripts/run_episode.py --mode all` (5 demo traces incl. pushover + rhetoric)
 - [x] Agent loop: scripted / mock / openai — see [AGENT_ADAPTERS.md](./AGENT_ADAPTERS.md)
 - [x] First frontier run: GPT-4o composite **0.54**, fractures `SECTION_MISS` + `HALLUC_FILL` — [FRONTIER_RUNS.md](../runs/frontier/FRONTIER_RUNS.md)
 

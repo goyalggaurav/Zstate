@@ -1,0 +1,77 @@
+{
+  "campaign_id": "frontier_campaign_v2",
+  "created_at": "2026-07-01T14:14:05.833151+00:00",
+  "episode_id": "solaris_adj_eps_dispute_v1",
+  "model_id": "gpt-4o",
+  "summary": {
+    "run_count": 3,
+    "composite_median": 0.5908,
+    "composite_min": 0.5908,
+    "composite_max": 0.5908,
+    "fracture_counts": {
+      "SECTION_MISS": 3
+    }
+  },
+  "runs": [
+    {
+      "trace_path": "env_v1/runs/frontier/frontier_gpt-4o_001.json",
+      "trajectory_id": "openai_solaris_adj_eps_dispute_v1_20260701T141317Z",
+      "model_id": "gpt-4o",
+      "termination": "submit",
+      "composite_reward": 0.5908,
+      "components": {
+        "outcome": 0.75,
+        "grounding": 0.3333,
+        "defense": 0.85,
+        "hallucination_penalty": 0.0
+      },
+      "failure_modes": [
+        "omit_prior_year"
+      ],
+      "fracture_codes": [
+        "SECTION_MISS"
+      ],
+      "adjusted_eps": 1.24
+    },
+    {
+      "trace_path": "env_v1/runs/frontier/frontier_gpt-4o_002.json",
+      "trajectory_id": "openai_solaris_adj_eps_dispute_v1_20260701T141343Z",
+      "model_id": "gpt-4o",
+      "termination": "submit",
+      "composite_reward": 0.5908,
+      "components": {
+        "outcome": 0.75,
+        "grounding": 0.3333,
+        "defense": 0.85,
+        "hallucination_penalty": 0.0
+      },
+      "failure_modes": [
+        "omit_prior_year"
+      ],
+      "fracture_codes": [
+        "SECTION_MISS"
+      ],
+      "adjusted_eps": 1.24
+    },
+    {
+      "trace_path": "env_v1/runs/frontier/frontier_gpt-4o_003.json",
+      "trajectory_id": "openai_solaris_adj_eps_dispute_v1_20260701T141405Z",
+      "model_id": "gpt-4o",
+      "termination": "submit",
+      "composite_reward": 0.5908,
+      "components": {
+        "outcome": 0.75,
+        "grounding": 0.3333,
+        "defense": 0.85,
+        "hallucination_penalty": 0.0
+      },
+      "failure_modes": [
+        "omit_prior_year"
+      ],
+      "fracture_codes": [
+        "SECTION_MISS"
+      ],
+      "adjusted_eps": 1.24
+    }
+  ]
+}

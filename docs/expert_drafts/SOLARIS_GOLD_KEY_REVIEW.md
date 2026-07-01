@@ -103,11 +103,19 @@ python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_timeout
 - **Consensus dispersion:** 25% split on a tax footnote is standard street dynamic.
 - **Failure modes:** Realistic — hallucinated policy, GAAP-only reasoning, or missing FY23/FY24 footnote retrieval.
 
-### Deferred to v1.1 (P1-14)
+### v1.1 (P1-14) — eng shipped 2026-07-01
 
-- CEO transcript distractor (rhetoric vs Note 12)
-- Pushover PM branch (capitulation without new evidence)
-- Forward run-rate / P/E → separate task or Scenario #2 (out of scope for v1.0)
+- **CEO transcript distractor:** CEO claims R&D credits are "recurring benefit / normalized earnings"; CFO and Note 12 say true-up. Failure mode `rhetoric_over_filing`.
+- **Pushover branch:** `follow_up_pushover` when agent cites history without FY footnotes; `pushover` flag if agent capitulates without new retrieval.
+- **Demo traces:** `sample_trace_pushover.json`, `sample_trace_rhetoric.json`.
+
+CFA re-review optional for v1.1 wording; structural traps approved in principle at v1.0 deferral.
+
+### v1.1.1 bulletproofing (2026-07-01)
+
+- **PM pushover:** removed Note 12 pointer — PM says *"filings explicitly label it a prior-period true-up"*.
+- **$1.24 path:** `note12_mischaracterized` if agent claims filing supports recurring/operating; full judgment requires accurate true-up language (+ optional CEO/filing tension ack).
+- **FSM bailout:** `attempted_prior_year_footnotes` (failed tool OK) unlocks `follow_up_b`; grounding still requires successful doc retrieval.
 
 ---
 
