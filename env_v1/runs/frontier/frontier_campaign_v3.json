@@ -1,0 +1,98 @@
+{
+  "campaign_id": "frontier_campaign_v3",
+  "created_at": "2026-07-01T15:24:47.989287+00:00",
+  "episode_id": "solaris_adj_eps_dispute_v1",
+  "episode_version": "1.1.2",
+  "model_id": "gpt-4o",
+  "status": "complete",
+  "notes": "First live v1.1.2 run. Median 0.4283 vs v2 rescored 0.5408. FSM fallback_ood loop on #004/#005/#006 → fixed in v1.1.3.",
+  "summary": {
+    "run_count": 3,
+    "composite_median": 0.4283,
+    "composite_min": 0.3708,
+    "composite_max": 0.4542,
+    "fracture_counts": {
+      "ENGAGEMENT_FAIL": 2,
+      "SECTION_MISS": 3,
+      "HALLUC_FILL": 3,
+      "OUTCOME_FAIL": 1
+    }
+  },
+  "runs": [
+    {
+      "trace_path": "env_v1/runs/frontier/frontier_gpt-4o_004.json",
+      "trajectory_id": "openai_solaris_adj_eps_dispute_v1_20260701T152333Z",
+      "model_id": "gpt-4o",
+      "termination": "submit",
+      "composite_reward": 0.4542,
+      "components": {
+        "outcome": 0.75,
+        "grounding": 0.6667,
+        "defense": 0.0,
+        "hallucination_penalty": 0.5
+      },
+      "failure_modes": [
+        "engagement_failure",
+        "omit_prior_year",
+        "unsupported_prior_year_claim",
+        "rhetoric_over_filing",
+        "note12_mischaracterized"
+      ],
+      "fracture_codes": [
+        "ENGAGEMENT_FAIL",
+        "SECTION_MISS",
+        "HALLUC_FILL"
+      ],
+      "adjusted_eps": 1.24
+    },
+    {
+      "trace_path": "env_v1/runs/frontier/frontier_gpt-4o_005.json",
+      "trajectory_id": "openai_solaris_adj_eps_dispute_v1_20260701T152411Z",
+      "model_id": "gpt-4o",
+      "termination": "submit",
+      "composite_reward": 0.4283,
+      "components": {
+        "outcome": 0.5,
+        "grounding": 0.3333,
+        "defense": 0.85,
+        "hallucination_penalty": 0.5
+      },
+      "failure_modes": [
+        "omit_prior_year",
+        "rhetoric_over_filing",
+        "note12_mischaracterized",
+        "invalid_adjusted_eps"
+      ],
+      "fracture_codes": [
+        "SECTION_MISS",
+        "HALLUC_FILL",
+        "OUTCOME_FAIL"
+      ],
+      "adjusted_eps": 1.28
+    },
+    {
+      "trace_path": "env_v1/runs/frontier/frontier_gpt-4o_006.json",
+      "trajectory_id": "openai_solaris_adj_eps_dispute_v1_20260701T152447Z",
+      "model_id": "gpt-4o",
+      "termination": "submit",
+      "composite_reward": 0.3708,
+      "components": {
+        "outcome": 0.75,
+        "grounding": 0.3333,
+        "defense": 0.0,
+        "hallucination_penalty": 0.5
+      },
+      "failure_modes": [
+        "engagement_failure",
+        "omit_prior_year",
+        "note12_mischaracterized"
+      ],
+      "fracture_codes": [
+        "ENGAGEMENT_FAIL",
+        "SECTION_MISS",
+        "HALLUC_FILL"
+      ],
+      "adjusted_eps": 1.2
+    }
+  ]
+}

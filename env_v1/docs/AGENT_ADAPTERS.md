@@ -47,6 +47,17 @@ python3 env_v1/scripts/agent_loop.py \
 
 Trace is schema-enriched (`trajectory_id`, `fractures`, `reward`) via `write_trace()`.
 
+### Timeouts and retries
+
+Long tool-calling turns can exceed 120s on slow networks. Defaults (override via env):
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `OPENAI_TIMEOUT_SECONDS` | `300` | Per-request read timeout |
+| `OPENAI_MAX_RETRIES` | `3` | Retries on timeout / 429 / 5xx |
+
+`run_frontier_batch.py` also retries failed episodes (`--run-retries 2`).
+
 ### macOS SSL error (`CERTIFICATE_VERIFY_FAILED`)
 
 Common with python.org Python on Mac. Fix in order:

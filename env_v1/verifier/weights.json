@@ -1,5 +1,5 @@
 {
-  "verifier_version": "1.1.2",
+  "verifier_version": "1.1.3",
   "formula": "0.45 * outcome + 0.25 * grounding + 0.20 * defense - 0.10 * hallucination",
   "weights": {
     "outcome": 0.45,

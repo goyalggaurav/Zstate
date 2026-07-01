@@ -1,0 +1,206 @@
+{
+  "task_id": "PEP_fx_organic_growth",
+  "version": "0.1.0-draft",
+  "fiscal_period": "FY2025",
+  "period_end": "2025-12-27",
+  "unit": "USD_millions",
+
+  "extracted_values": [
+    {
+      "metric_id": "europe_net_revenue_fy2025",
+      "value": 12354,
+      "label": "Europe net revenue — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "PEP_10K_2025",
+        "note": "Note 1 — Our Business (Net Revenue by Segment / Geographic Area)",
+        "table_title": "Net revenue by segment — Europe",
+        "column": "Year ended December 27, 2025",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "snippet": "Europe $ 12,354"
+      }
+    },
+    {
+      "metric_id": "europe_net_revenue_fy2024",
+      "value": 11892,
+      "label": "Europe net revenue — FY2024",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "PEP_10K_2025",
+        "note": "Note 1 — Our Business",
+        "table_title": "Net revenue by segment — Europe",
+        "column": "Year ended December 28, 2024",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "snippet": "Europe $ 11,892"
+      }
+    },
+    {
+      "metric_id": "amesa_net_revenue_fy2025",
+      "value": 5670,
+      "label": "AMESA net revenue — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "PEP_10K_2025",
+        "note": "Note 1 — Our Business",
+        "table_title": "Net revenue by segment — AMESA",
+        "column": "Year ended December 27, 2025",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "snippet": "AMESA $ 5,670"
+      }
+    },
+    {
+      "metric_id": "amesa_net_revenue_fy2024",
+      "value": 5240,
+      "label": "AMESA net revenue — FY2024",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "PEP_10K_2025",
+        "note": "Note 1 — Our Business",
+        "table_title": "Net revenue by segment — AMESA",
+        "column": "Year ended December 28, 2024",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "snippet": "AMESA $ 5,240"
+      }
+    },
+    {
+      "metric_id": "wae_eur_usd_fy2025",
+      "value": 1.024,
+      "label": "Weighted-average EUR/USD — FY2025",
+      "tolerance": 0.001,
+      "citation": {
+        "doc_id": "PEP_10K_2025",
+        "note": "Note 1 — Our Business (Financial Instruments / Foreign Currency)",
+        "table_title": "Weighted-average exchange rates",
+        "column": "Year ended December 27, 2025",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "snippet": "Euro 1.024"
+      }
+    },
+    {
+      "metric_id": "wae_eur_usd_fy2024",
+      "value": 1.081,
+      "label": "Weighted-average EUR/USD — FY2024",
+      "tolerance": 0.001,
+      "citation": {
+        "doc_id": "PEP_10K_2025",
+        "note": "Note 1 — Our Business (Financial Instruments / Foreign Currency)",
+        "table_title": "Weighted-average exchange rates",
+        "column": "Year ended December 28, 2024",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+        "snippet": "Euro 1.081"
+      }
+    }
+  ],
+
+  "computed_values": [
+    {
+      "metric_id": "europe_reported_growth_pct",
+      "value": 3.9,
+      "formula": "(europe_fy2025 / europe_fy2024 - 1) * 100",
+      "tolerance": 0.1
+    },
+    {
+      "metric_id": "europe_fx_impact_pct",
+      "value": -6.1,
+      "label": "FX impact on Europe growth — FY2025 vs FY2024",
+      "source": "MD&A — Results of Operations — Europe",
+      "tolerance": 0.1
+    },
+    {
+      "metric_id": "europe_organic_cc_growth_pct",
+      "value": 10.0,
+      "formula": "reported_growth - fx_impact (or CC revenue rebuild using WAE)",
+      "tolerance": 0.2,
+      "verification_script_ref": "../scripts/verify_pep_fx_organic_growth.py"
+    },
+    {
+      "metric_id": "amesa_reported_growth_pct",
+      "value": 8.2,
+      "formula": "(amesa_fy2025 / amesa_fy2024 - 1) * 100",
+      "tolerance": 0.1
+    },
+    {
+      "metric_id": "amesa_fx_impact_pct",
+      "value": -1.5,
+      "source": "MD&A — Results of Operations — AMESA",
+      "tolerance": 0.1
+    },
+    {
+      "metric_id": "amesa_organic_cc_growth_pct",
+      "value": 9.7,
+      "formula": "reported_growth - fx_impact",
+      "tolerance": 0.2
+    },
+    {
+      "metric_id": "cc_growth_verified",
+      "value": true,
+      "formula": "python CC rebuild matches MD&A disclosed organic growth for both regions",
+      "tolerance": 0
+    }
+  ],
+
+  "qualitative_anchors": [
+    {
+      "dimension": "fx_methodology",
+      "expected_behavior": "Agent uses weighted-average exchange rates from the 10-K, not spot or year-end rates",
+      "score_anchor": 5
+    },
+    {
+      "dimension": "mdna_cross_check",
+      "expected_behavior": "Agent cross-checks computed CC growth against MD&A disclosed organic growth for Europe and AMESA",
+      "score_anchor": 5
+    }
+  ],
+
+  "required_narrative_points": [
+    "Europe reported net revenue growth vs organic constant-currency growth differ due to FX headwinds",
+    "AMESA organic CC growth exceeds reported growth after FX adjustment",
+    "Weighted-average EUR/USD rates sourced from filing — not spot rates"
+  ],
+
+  "failure_modes": [
+    {
+      "id": "spot_rate_method",
+      "label": "Spot rate method",
+      "description": "Agent uses year-end or spot FX instead of weighted-average rates from Note 1",
+      "wrong_signatures": {
+        "wae_eur_usd_fy2025": 1.058,
+        "wae_eur_usd_fy2024": 1.104
+      },
+      "fracture_code": "FX_METHOD_ERR",
+      "anti_pattern": "use_spot_or_year_end_fx_instead_of_weighted_average",
+      "layer1_estimate": 0.35
+    },
+    {
+      "id": "wrong_region",
+      "label": "Wrong geography",
+      "description": "Agent computes LATAM or North America instead of Europe and AMESA",
+      "fracture_code": "SCOPE_ERR",
+      "anti_pattern": "compute_latam_instead_of_amesa",
+      "layer1_estimate": 0.25
+    },
+    {
+      "id": "reported_only",
+      "label": "Reported growth only",
+      "description": "Agent stops at reported growth without CC adjustment",
+      "wrong_signatures": {
+        "europe_organic_cc_growth_pct": 3.9,
+        "amesa_organic_cc_growth_pct": 8.2
+      },
+      "fracture_code": "CC_OMIT",
+      "anti_pattern": "report_reported_growth_as_organic_cc",
+      "layer1_estimate": 0.45
+    },
+    {
+      "id": "wrong_period",
+      "label": "Wrong fiscal year",
+      "description": "Agent uses FY2024 10-K column or quarterly data instead of FY2025 annual",
+      "fracture_code": "HALLUC_FILL",
+      "anti_pattern": "use_fy2024_10k_as_primary",
+      "layer1_estimate": 0.15
+    }
+  ],
+
+  "review_status": "draft_pending_cfa",
+  "cfa_review_ref": "docs/expert_drafts/PEP_FX_GT_REVIEW.md"
+}

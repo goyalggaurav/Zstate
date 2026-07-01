@@ -41,8 +41,10 @@ def pm_respond(
         branch_id = "follow_up_a"
 
     last_branch = _last_pm_branch_id(steps)
-    if last_branch == branch_id and branch_id in ("follow_up_a", "opening_pushback"):
-        if hints.get("mentions_prior_year_pattern") and hints.get("substantive_reasoning"):
+    if last_branch == branch_id and branch_id in ("follow_up_a", "opening_pushback", "fallback_ood"):
+        if branch_id == "fallback_ood":
+            branch_id = "follow_up_c"
+        elif hints.get("mentions_prior_year_pattern") and hints.get("substantive_reasoning"):
             branch_id = "follow_up_pushover"
         else:
             branch_id = "follow_up_c"

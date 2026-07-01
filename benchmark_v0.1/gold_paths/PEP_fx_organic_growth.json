@@ -1,0 +1,120 @@
+{
+  "task_id": "PEP_fx_organic_growth",
+  "version": "0.1.0-draft",
+  "task_type": "M",
+  "fiscal_period": "FY2025",
+
+  "minimal_section_set": [
+    {
+      "section_id": "PEP_10K_2025_note_1_segments",
+      "name": "Note 1 — Our Business (Net Revenue by Geographic Area)",
+      "table_title": "Net revenue by segment",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+      "required": true,
+      "reason": "Europe and AMESA reported net revenue FY2025 vs FY2024"
+    },
+    {
+      "section_id": "PEP_10K_2025_note_1_fx",
+      "name": "Note 1 — Financial Instruments / Foreign Currency",
+      "table_title": "Weighted-average exchange rates",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+      "required": true,
+      "reason": "EUR/USD weighted-average rates — not spot"
+    },
+    {
+      "section_id": "PEP_10K_2025_mdna_europe",
+      "name": "MD&A — Results of Operations — Europe",
+      "required": true,
+      "reason": "Disclosed organic CC growth and FX impact for Europe"
+    },
+    {
+      "section_id": "PEP_10K_2025_mdna_amesa",
+      "name": "MD&A — Results of Operations — AMESA",
+      "required": true,
+      "reason": "Disclosed organic CC growth and FX impact for AMESA"
+    }
+  ],
+
+  "required_tool_classes": [
+    "Search_Filing",
+    "PDF_Parser",
+    "Python_Interpreter"
+  ],
+
+  "required_outputs": [
+    "growth_table",
+    "assumption_log",
+    "citations"
+  ],
+
+  "reference_workflow": [
+    {
+      "step": 1,
+      "action": "Locate geographic net revenue table",
+      "tool": "Search_Filing",
+      "target": "Note 1 — Europe and AMESA net revenue — years ended Dec 27 2025 and Dec 28 2024"
+    },
+    {
+      "step": 2,
+      "action": "Extract weighted-average EUR/USD rates",
+      "tool": "PDF_Parser",
+      "target": "Note 1 — Weighted-average exchange rates table"
+    },
+    {
+      "step": 3,
+      "action": "Extract MD&A disclosed organic CC growth",
+      "tool": "PDF_Parser",
+      "target": "MD&A Europe and AMESA organic growth percentages"
+    },
+    {
+      "step": 4,
+      "action": "Python verify CC growth",
+      "tool": "Python_Interpreter",
+      "target": "reported_growth - fx_impact == organic_cc; CC rebuild using WAE"
+    },
+    {
+      "step": 5,
+      "action": "Assumption log with citations",
+      "tool": null,
+      "target": "Every input rate and revenue tied to note/table/column"
+    }
+  ],
+
+  "anti_patterns": [
+    "use_spot_or_year_end_fx_instead_of_weighted_average",
+    "compute_latam_instead_of_amesa",
+    "report_reported_growth_as_organic_cc",
+    "use_fy2024_10k_as_primary",
+    "use_quarterly_10q_instead_of_fy2025_10k",
+    "produce_buy_hold_sell_recommendation"
+  ],
+
+  "failure_mode_map": [
+    {
+      "failure_mode_id": "spot_rate_method",
+      "anti_pattern": "use_spot_or_year_end_fx_instead_of_weighted_average",
+      "fracture_code": "FX_METHOD_ERR"
+    },
+    {
+      "failure_mode_id": "wrong_region",
+      "anti_pattern": "compute_latam_instead_of_amesa",
+      "fracture_code": "SCOPE_ERR"
+    },
+    {
+      "failure_mode_id": "reported_only",
+      "anti_pattern": "report_reported_growth_as_organic_cc",
+      "fracture_code": "CC_OMIT"
+    },
+    {
+      "failure_mode_id": "wrong_period",
+      "anti_pattern": "use_fy2024_10k_as_primary",
+      "fracture_code": "HALLUC_FILL"
+    }
+  ],
+
+  "assumption_log_scoring": {
+    "wae_rates_required": true,
+    "mdna_cross_check_required": true,
+    "pass_if_all_required_accessed": true
+  }
+}

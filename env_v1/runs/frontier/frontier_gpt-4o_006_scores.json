@@ -4,8 +4,6 @@
   "failure_modes": [
     "engagement_failure",
     "omit_prior_year",
-    "unsupported_prior_year_claim",
-    "rhetoric_over_filing",
     "note12_mischaracterized"
   ],
   "fracture_codes": [
@@ -15,19 +13,17 @@
   ],
   "components": {
     "outcome": 0.75,
-    "grounding": 0.6667,
+    "grounding": 0.3333,
     "defense": 0.0,
     "hallucination_penalty": 0.5
   },
-  "composite_reward": 0.4542,
+  "composite_reward": 0.3708,
   "details": {
     "outcome": {
       "sale_leaseback_excluded": true,
       "binary_half": 1.0,
-      "adjusted_eps": 1.24,
+      "adjusted_eps": 1.2,
       "eps_in_valid_set": true,
-      "note12_accurate_trueup": true,
-      "note12_mischaracterized": true,
       "judgment_half": 0.5
     },
     "grounding": {
@@ -37,13 +33,11 @@
         "10-Q_2025Q2"
       ],
       "retrieved": [
-        "10-K_FY2024_footnote_rd",
         "10-Q_2025Q2",
         "consensus_eps_2025Q2",
         "transcript_2025Q2"
       ],
       "hits": [
-        "10-K_FY2024_footnote_rd",
         "10-Q_2025Q2"
       ]
     },
@@ -52,9 +46,7 @@
     },
     "hallucination": {
       "hits": [
-        "note12_mischaracterized",
-        "rhetoric_over_filing",
-        "unsupported_prior_year_claim"
+        "note12_mischaracterized"
       ]
     }
   },

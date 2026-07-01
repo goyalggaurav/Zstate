@@ -1,6 +1,18 @@
 # benchmark_v0.1 — Pilot Package
 
-Minimum Viable Benchmark pilot: **15 tasks**, starting with **1 published reference task**.
+Minimum Viable Benchmark pilot: **15 tasks** across 5 companies, starting with **1 published** + **1 draft** task.
+
+## Corpus (P0-06)
+
+Pilot registry for **GOOGL, AMZN, NFLX, PEP, KO** — EDGAR metadata + SEC URLs. Full text ingest deferred to SH-06.
+
+```bash
+python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
+```
+
+Manifest: [corpus/corpus_manifest_v1.json](./corpus/corpus_manifest_v1.json)
+
+---
 
 ## Published task
 
@@ -12,35 +24,44 @@ Minimum Viable Benchmark pilot: **15 tasks**, starting with **1 published refere
 
 Reconcile **Q1 2026** reportable segment revenues to consolidated total revenue. The trap: agents sum Google Services + Google Cloud + Other Bets (**$110,076M**) and miss **hedging gains (losses) of $(180)M** — a **loss**, not a gain. Note 15 states hedging is **not allocated to reportable segments**.
 
-### Q1 2026 reconciliation (USD millions)
+---
 
-| Line | Q1 2026 |
+## Draft task (Type M — third archetype)
+
+| Task | Type | Period | Status |
+|------|------|--------|--------|
+| [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-18) | **Draft** (CFA review pending) |
+
+### What this task tests
+
+Constant-currency organic revenue growth for **Europe** and **AMESA** using **weighted-average FX** from the 10-K — not spot rates. Traps: reporting GAAP growth as organic CC, or using year-end EUR/USD instead of WAE.
+
+```bash
+python3 benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py
+```
+
+CFA review: [docs/expert_drafts/PEP_FX_GT_REVIEW.md](../docs/expert_drafts/PEP_FX_GT_REVIEW.md)
+
+---
+
+## Planned next (P2)
+
+| Task | Blocker |
 |------|---------|
-| Google Services | 89,637 |
-| Google Cloud | 20,028 |
-| Other Bets | 411 |
-| **Segment sum** | **110,076** |
-| **Hedging gains (losses)** | **(180)** |
-| **Consolidated total** | **109,896** |
+| NFLX_guidance_drift (Type F) | P2-08 transcript ingest |
+| AMZN_footnote_reconciliation | CFA associate draft |
+| KO_fx_organic_growth | After PEP template proven |
 
-### Files
+---
 
-```
-benchmark_v0.1/
-├── tasks/GOOGL_footnote_reconciliation.json
-├── ground_truth/GOOGL_footnote_reconciliation_gt.json
-├── gold_paths/GOOGL_footnote_reconciliation.json
-├── rubrics/GOOGL_footnote_reconciliation_grader.md
-├── scripts/verify_googl_footnote_reconciliation.py
-└── manifest.json
-```
-
-### Verify ground truth
+## Verify commands
 
 ```bash
 python3 benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py --period q1_2026
+python3 benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py
+python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 ```
 
-### CFA sign-off
+## CFA sign-off (published)
 
 See [docs/expert_drafts/GOOGL_GT_REVIEW.md](../docs/expert_drafts/GOOGL_GT_REVIEW.md).

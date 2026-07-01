@@ -1,0 +1,147 @@
+{
+  "manifest_version": "corpus_v1.0.0",
+  "status": "pilot",
+  "locked": false,
+  "description": "Pilot corpus registry for 5 MVD tickers. Metadata + SEC URLs; full text ingest deferred to SH-06.",
+  "updated_at": "2026-07-01",
+  "pilot_tickers": ["GOOGL", "AMZN", "NFLX", "PEP", "KO"],
+  "ticker_registry": {
+    "GOOGL": { "cik": "0001652044", "company_name": "Alphabet Inc.", "sector": "tech" },
+    "AMZN": { "cik": "0001018724", "company_name": "Amazon.com, Inc.", "sector": "tech" },
+    "NFLX": { "cik": "0001065280", "company_name": "Netflix, Inc.", "sector": "media" },
+    "PEP": { "cik": "0000077476", "company_name": "PepsiCo, Inc.", "sector": "consumer" },
+    "KO": { "cik": "0000021344", "company_name": "The Coca-Cola Company", "sector": "consumer" }
+  },
+  "documents": [
+    {
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "ticker": "GOOGL",
+      "doc_type": "10-Q",
+      "form_type": "10-Q",
+      "fiscal_period": "2026Q1",
+      "period_end": "2026-03-31",
+      "filing_date": "2026-04-30",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
+      "ingest_status": "metadata_only",
+      "checksum_sha256": null,
+      "task_refs": ["GOOGL_footnote_reconciliation"]
+    },
+    {
+      "doc_id": "GOOGL_10K_2025",
+      "ticker": "GOOGL",
+      "doc_type": "10-K",
+      "form_type": "10-K",
+      "fiscal_period": "FY2025",
+      "period_end": "2025-12-31",
+      "filing_date": "2026-02-05",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "ingest_status": "metadata_only",
+      "checksum_sha256": null,
+      "role": "context_only",
+      "task_refs": ["GOOGL_footnote_reconciliation"]
+    },
+    {
+      "doc_id": "PEP_10K_2025",
+      "ticker": "PEP",
+      "doc_type": "10-K",
+      "form_type": "10-K",
+      "fiscal_period": "FY2025",
+      "period_end": "2025-12-27",
+      "filing_date": "2026-02-18",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+      "ingest_status": "metadata_only",
+      "checksum_sha256": null,
+      "task_refs": ["PEP_fx_organic_growth"]
+    },
+    {
+      "doc_id": "PEP_10K_2024",
+      "ticker": "PEP",
+      "doc_type": "10-K",
+      "form_type": "10-K",
+      "fiscal_period": "FY2024",
+      "period_end": "2024-12-28",
+      "filing_date": "2025-02-13",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747625000010/pep-20241228.htm",
+      "ingest_status": "metadata_only",
+      "checksum_sha256": null,
+      "role": "context_only",
+      "task_refs": ["PEP_fx_organic_growth"]
+    },
+    {
+      "doc_id": "AMZN_10K_2025",
+      "ticker": "AMZN",
+      "doc_type": "10-K",
+      "form_type": "10-K",
+      "fiscal_period": "FY2025",
+      "period_end": "2025-12-31",
+      "filing_date": "2026-02-06",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000008/amzn-20251231.htm",
+      "ingest_status": "metadata_only",
+      "checksum_sha256": null,
+      "task_refs": []
+    },
+    {
+      "doc_id": "NFLX_10K_2025",
+      "ticker": "NFLX",
+      "doc_type": "10-K",
+      "form_type": "10-K",
+      "fiscal_period": "FY2025",
+      "period_end": "2025-12-31",
+      "filing_date": "2026-01-29",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528026000006/nflx-20251231.htm",
+      "ingest_status": "metadata_only",
+      "checksum_sha256": null,
+      "task_refs": []
+    },
+    {
+      "doc_id": "NFLX_transcript_2025Q2",
+      "ticker": "NFLX",
+      "doc_type": "earnings_transcript",
+      "fiscal_period": "2025Q2",
+      "source_url": null,
+      "ingest_status": "pending_transcript",
+      "checksum_sha256": null,
+      "task_refs": ["NFLX_guidance_drift"],
+      "note": "Requires P2-08 transcript API or manual IR backfill"
+    },
+    {
+      "doc_id": "NFLX_10Q_2025Q3",
+      "ticker": "NFLX",
+      "doc_type": "10-Q",
+      "form_type": "10-Q",
+      "fiscal_period": "2025Q3",
+      "period_end": "2025-09-30",
+      "filing_date": "2025-10-17",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000045/nflx-20250930.htm",
+      "ingest_status": "metadata_only",
+      "checksum_sha256": null,
+      "task_refs": ["NFLX_guidance_drift"]
+    },
+    {
+      "doc_id": "KO_10K_2025",
+      "ticker": "KO",
+      "doc_type": "10-K",
+      "form_type": "10-K",
+      "fiscal_period": "FY2025",
+      "period_end": "2025-12-31",
+      "filing_date": "2026-02-20",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134426000008/ko-20251231.htm",
+      "ingest_status": "metadata_only",
+      "checksum_sha256": null,
+      "task_refs": []
+    }
+  ],
+  "acquisition_summary": {
+    "edgar_metadata": { "count": 8, "status": "pilot_registry" },
+    "edgar_text_indexed": { "count": 0, "target": 30, "blocked_by": "SH-06" },
+    "transcripts": { "count": 0, "target": 6, "blocked_by": "P2-08" },
+    "fx_reference": { "count": 0, "target": 4, "blocked_by": "SH-06" }
+  },
+  "planned_tasks_by_ticker": {
+    "GOOGL": ["GOOGL_footnote_reconciliation", "GOOGL_guidance_drift", "GOOGL_fx_organic_growth"],
+    "AMZN": ["AMZN_footnote_reconciliation", "AMZN_guidance_drift", "AMZN_fx_organic_growth"],
+    "NFLX": ["NFLX_footnote_reconciliation", "NFLX_guidance_drift", "NFLX_fx_organic_growth"],
+    "PEP": ["PEP_footnote_reconciliation", "PEP_guidance_drift", "PEP_fx_organic_growth"],
+    "KO": ["KO_footnote_reconciliation", "KO_guidance_drift", "KO_fx_organic_growth"]
+  }
+}

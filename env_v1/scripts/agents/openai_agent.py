@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import json
 import os
+import socket
 import ssl
+import sys
+import time
 import urllib.error
 import urllib.request
 from typing import Any
@@ -67,29 +70,70 @@ class OpenAICompatAgent:
                 "OPENAI_API_KEY not set. Export it or use --agent mock for offline runs."
             )
         body = json.dumps(payload).encode("utf-8")
-        req = urllib.request.Request(
-            f"{self.base_url}/chat/completions",
-            data=body,
-            headers={
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json",
-            },
-            method="POST",
-        )
-        try:
-            with urllib.request.urlopen(req, timeout=120, context=_ssl_context()) as resp:
-                return json.loads(resp.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            detail = e.read().decode("utf-8", errors="replace")
-            raise RuntimeError(f"LLM API error {e.code}: {detail}") from e
-        except urllib.error.URLError as e:
-            if "CERTIFICATE_VERIFY_FAILED" in str(e.reason):
+        timeout = int(os.environ.get("OPENAI_TIMEOUT_SECONDS", "300"))
+        max_retries = int(os.environ.get("OPENAI_MAX_RETRIES", "3"))
+
+        last_error: Exception | None = None
+        for attempt in range(max_retries):
+            req = urllib.request.Request(
+                f"{self.base_url}/chat/completions",
+                data=body,
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=timeout, context=_ssl_context()) as resp:
+                    return json.loads(resp.read().decode("utf-8"))
+            except urllib.error.HTTPError as e:
+                detail = e.read().decode("utf-8", errors="replace")
+                if e.code in (429, 500, 502, 503, 504) and attempt < max_retries - 1:
+                    wait = 2 ** attempt
+                    print(
+                        f"LLM API {e.code} (attempt {attempt + 1}/{max_retries}), retry in {wait}s...",
+                        file=sys.stderr,
+                    )
+                    time.sleep(wait)
+                    last_error = e
+                    continue
+                raise RuntimeError(f"LLM API error {e.code}: {detail}") from e
+            except (TimeoutError, socket.timeout) as e:
+                last_error = e
+                if attempt < max_retries - 1:
+                    wait = 2 ** attempt
+                    print(
+                        f"LLM read timeout after {timeout}s "
+                        f"(attempt {attempt + 1}/{max_retries}), retry in {wait}s...",
+                        file=sys.stderr,
+                    )
+                    time.sleep(wait)
+                    continue
                 raise RuntimeError(
-                    "SSL certificate verify failed. Fix: pip3 install certifi "
-                    "(then retry), or run macOS 'Install Certificates.command' "
-                    "for your Python install. See env_v1/docs/AGENT_ADAPTERS.md."
+                    f"LLM request timed out after {max_retries} attempts ({timeout}s each). "
+                    "Try OPENAI_TIMEOUT_SECONDS=600 or retry when the network is stable."
                 ) from e
-            raise RuntimeError(f"LLM network error: {e.reason}") from e
+            except urllib.error.URLError as e:
+                if "CERTIFICATE_VERIFY_FAILED" in str(e.reason):
+                    raise RuntimeError(
+                        "SSL certificate verify failed. Fix: pip3 install certifi "
+                        "(then retry), or run macOS 'Install Certificates.command' "
+                        "for your Python install. See env_v1/docs/AGENT_ADAPTERS.md."
+                    ) from e
+                last_error = e
+                if attempt < max_retries - 1:
+                    wait = 2 ** attempt
+                    print(
+                        f"LLM network error: {e.reason} "
+                        f"(attempt {attempt + 1}/{max_retries}), retry in {wait}s...",
+                        file=sys.stderr,
+                    )
+                    time.sleep(wait)
+                    continue
+                raise RuntimeError(f"LLM network error: {e.reason}") from e
+
+        raise RuntimeError(f"LLM request failed after {max_retries} attempts") from last_error
 
     def _parse_tool_calls(self, message: dict) -> list[dict]:
         calls = message.get("tool_calls") or []

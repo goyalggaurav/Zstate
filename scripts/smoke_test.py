@@ -28,6 +28,46 @@ def check_googl_gt() -> None:
     assert report["fracture_codes"] == []
 
 
+def check_pep_fx_gt() -> None:
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py",
+    ])
+    assert report["all_pass"] is True, report
+    assert report["fracture_codes"] == []
+
+
+def check_corpus_manifest() -> None:
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/validate_corpus_manifest.py",
+    ])
+    assert report["all_pass"] is True, report
+    assert report["pilot_tickers"] == 5
+
+
+def check_pm_fsm_fallback_escalation() -> None:
+    sys.path.insert(0, str(ROOT / "env_v1" / "scripts"))
+    from pm_fsm import pm_respond  # noqa: E402
+
+    policy = json.loads((ROOT / "env_v1" / "pm_policies" / "pm_v1_1.json").read_text())
+    steps = [
+        {"type": "send_message_to_pm", "text": "Adjusted EPS is $1.24 excluding leaseback."},
+        {"type": "pm_turn", "text": "opening", "branch_id": "opening_pushback"},
+        {
+            "type": "send_message_to_pm",
+            "text": "Note 7 and Note 12 support the adjustment from the 10-Q reconciliation table.",
+        },
+        {"type": "pm_turn", "text": "fallback first", "branch_id": "fallback_ood"},
+        {
+            "type": "send_message_to_pm",
+            "text": "Note 7 and Note 12 support the adjustment from the 10-Q reconciliation table again.",
+        },
+    ]
+    _, _, branch_id = pm_respond(policy, pm_turn_count=2, steps=steps, tool_log=[])
+    assert branch_id == "follow_up_c", branch_id
+
+
 def check_env_traces() -> None:
     sys.path.insert(0, str(ROOT / "env_v1" / "scripts"))
     from score_episode import score_trace  # noqa: E402
@@ -126,6 +166,9 @@ def check_frontier_v2_rescore() -> None:
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
+        ("PEP FX ground truth L1", check_pep_fx_gt),
+        ("Corpus manifest", check_corpus_manifest),
+        ("PM FSM fallback escalation", check_pm_fsm_fallback_escalation),
         ("Env demo traces + schema", check_env_traces),
         ("Frontier v2 rescore traps", check_frontier_v2_rescore),
         ("Scripted agent loop", check_scripted_agent),

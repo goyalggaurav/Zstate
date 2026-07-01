@@ -18,7 +18,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P0-03 | Copy dual-control spec + flow diagram into repo | B | done | Eng | `env_v1/docs/` |
 | P0-04 | gitignore `gold_keys/` + example template | B | done | Eng | `gold_keys.example/` |
 | P0-05 | Solaris gold key (expert-authored) | B | done | CFA | v1.0 approved 2026-07-01; `SOLARIS_GOLD_KEY_REVIEW.md` |
-| P0-06 | Corpus manifest for 5 pilot tickers (EDGAR) | A | todo | Eng | Feeds Track A tasks |
+| P0-06 | Corpus manifest for 5 pilot tickers (EDGAR) | A | done | Eng | `benchmark_v0.1/corpus/corpus_manifest_v1.json` |
 | P0-07 | Roadmap + backlog (this file) | Both | done | Eng | Unified planning |
 | P0-08 | Name CFA lead + associate | Both | todo | Product | Binding constraint |
 
@@ -51,7 +51,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | ID | Item | Track | Status | Owner | Notes |
 |----|------|-------|--------|-------|-------|
 | P2-01 | NFLX guidance drift task (Type F) | A | todo | Associate | Maps to env Scenario #2 later |
-| P2-02 | PEP or KO FX organic growth task (Type M) | A | todo | Associate | Third MVD archetype |
+| P2-02 | PEP or KO FX organic growth task (Type M) | A | in_progress | Associate | Draft package `PEP_fx_organic_growth` — CFA sign-off pending |
 | P2-03 | AMZN footnote task (Type F) | A | deferred | Associate | After 3 core tasks |
 | P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | todo | Eng | Median aggregation |
 | P2-05 | Fracture report v0 | Both | todo | Eng | ≥8 codes; include `PM_OOD` |
@@ -59,7 +59,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-07 | Trajectory JSONL schema — align A + B | Both | done | Eng | `schemas/trajectory_v1.json` |
 | P2-08 | Transcript API trial (5 pilot names) | A | todo | Eng | Guidance tasks |
 
-**Cap:** Do not expand beyond 3–5 MVD tasks until P1-10 demo trajectories exist.
+**Cap:** Do not expand beyond 3–5 MVD tasks until P1-10 demo trajectories exist. *(Cap lifted — P1-10 done; 2 tasks in flight.)*
 
 ---
 
@@ -144,6 +144,8 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-15 | P1-08 unsupported prior-year hallucination detector | Jul 2026 |
 | DONE-16 | GPT-4o frontier campaign (4 seeds, zero variance) | Jul 2026 |
 | DONE-17 | Solaris v1.1 — transcript distractor + pushover PM branch (P1-14) | Jul 2026 |
+| DONE-18 | Solaris v1.1.2 scorer tightenings + frontier v2 rescore | Jul 2026 |
+| DONE-19 | Pilot corpus manifest (5 tickers) + PEP FX task draft (P0-06, P2-02) | Jul 2026 |
 
 ---
 

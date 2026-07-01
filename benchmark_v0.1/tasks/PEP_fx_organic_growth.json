@@ -1,0 +1,102 @@
+{
+  "task_id": "PEP_fx_organic_growth",
+  "version": "0.1.0-draft",
+  "status": "draft",
+  "benchmark_version": "benchmark_v0.1",
+
+  "ticker": "PEP",
+  "cik": "0000077476",
+  "sector": "consumer",
+  "archetype": "fx_organic_growth",
+  "task_type": "M",
+  "difficulty_tier": "L3",
+
+  "prompt": {
+    "text": "Using PepsiCo, Inc.'s Form 10-K for the fiscal year ended December 27, 2025 (filed February 18, 2026), compute constant-currency organic net revenue growth for FY2025 vs FY2024 for **Europe** and **AMESA** (Africa, Middle East and South Asia).\n\n1. Extract reported net revenue for Europe and AMESA for FY2025 and FY2024 from the geographic segment table (Note 1 — Our Business / segment footnote).\n2. Extract the **weighted-average exchange rates** disclosed in the filing for the EUR/USD and GBP/USD (or the basket rates the company cites for these regions) — do not use spot or year-end rates.\n3. Using Python, compute constant-currency organic growth for each region. Cross-check your result against the organic growth percentages disclosed in MD&A for Europe and AMESA.\n4. Produce a growth table (USD millions and %) and a short assumption log citing note/section for every input.\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Every numeric value must include a citation (document, note/section, table, column).\n- Python required to verify CC growth arithmetic.\n- No Buy/Hold/Sell or price target.\n- If a value cannot be verified, mark it unverified — do not interpolate.",
+    "constraints": [
+      "Document: PEP 10-K FY2025 only",
+      "Weighted-average FX from filing — not spot rates",
+      "Python required for CC growth verification",
+      "No investment recommendation"
+    ]
+  },
+
+  "required_documents": [
+    {
+      "doc_id": "PEP_10K_2025",
+      "form_type": "10-K",
+      "fiscal_period": "FY2025",
+      "period_end": "2025-12-27",
+      "filing_date": "2026-02-18",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747626000012/pep-20251227.htm",
+      "role": "primary"
+    }
+  ],
+
+  "supplementary_documents": [
+    {
+      "doc_id": "PEP_10K_2024",
+      "form_type": "10-K",
+      "fiscal_period": "FY2024",
+      "period_end": "2024-12-28",
+      "filing_date": "2025-02-13",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/77476/000007747625000010/pep-20241228.htm",
+      "role": "context_only",
+      "note": "Prior-year filing for cross-check only — scored period is FY2025 10-K"
+    }
+  ],
+
+  "allowed_tools": [
+    "Search_Filing",
+    "PDF_Parser",
+    "Python_Interpreter"
+  ],
+
+  "mandate_profile": null,
+  "compliance_baseline": "citation_only",
+
+  "expected_outputs": {
+    "schema_ref": "modeling_report_v1",
+    "required_sections": [
+      "growth_table",
+      "assumption_log",
+      "citations"
+    ],
+    "structured_fields": [
+      "europe_net_revenue_fy2025",
+      "europe_net_revenue_fy2024",
+      "europe_reported_growth_pct",
+      "europe_fx_impact_pct",
+      "europe_organic_cc_growth_pct",
+      "amesa_net_revenue_fy2025",
+      "amesa_net_revenue_fy2024",
+      "amesa_reported_growth_pct",
+      "amesa_fx_impact_pct",
+      "amesa_organic_cc_growth_pct",
+      "wae_eur_usd_fy2025",
+      "wae_eur_usd_fy2024",
+      "cc_growth_verified"
+    ]
+  },
+
+  "execution_limits": {
+    "max_tool_calls": 35,
+    "max_tokens": 90000,
+    "timeout_seconds": 720,
+    "required_stages": [1, 2, 3]
+  },
+
+  "scoring": {
+    "task_type_weights": { "layer1": 0.50, "layer2": 0.30, "layer3": 0.20 },
+    "finra_required": false,
+    "layer2_method": "assumption_log_automated"
+  },
+
+  "ground_truth_ref": "../ground_truth/PEP_fx_organic_growth_gt.json",
+  "gold_path_ref": "../gold_paths/PEP_fx_organic_growth.json",
+  "grader_rubric_ref": "../rubrics/PEP_fx_organic_growth_grader.md",
+
+  "authored_by": "pilot_template",
+  "review_status": "draft_pending_cfa",
+  "updated_at": "2026-07-01T00:00:00Z"
+}

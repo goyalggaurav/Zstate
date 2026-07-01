@@ -119,6 +119,12 @@ CFA re-review optional for v1.1 wording; structural traps approved in principle 
 - **PM FSM:** escalate repeated follow_up_a → pushover or follow_up_c.
 - **enrich_submission:** heuristics override stale agent submission flags for scoring.
 
+### v1.1.3 PM FSM + frontier v3 (2026-07-01)
+
+- **Frontier campaign v3:** GPT-4o live on v1.1.2 — median composite **0.4283** (vs v2 rescored 0.5408); ENGAGEMENT_FAIL 2/3; note12_mischaracterized 3/3. See `env_v1/runs/frontier/FRONTIER_RUNS.md`.
+- **PM FSM:** repeat `fallback_ood` → `follow_up_c` (v3 run #004 had fallback ×4 before escalation).
+- **OpenAI agent:** 300s timeout + retries for batch campaigns.
+
 ---
 
 ## Post-approval artifacts

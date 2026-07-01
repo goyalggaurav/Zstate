@@ -3,6 +3,8 @@
   "mvd_target_tasks": 15,
   "mvd_pilot_companies": 5,
   "published_tasks": 1,
+  "draft_tasks": 1,
+  "corpus_manifest": "corpus/corpus_manifest_v1.json",
   "pilot_tasks": [
     {
       "task_id": "GOOGL_footnote_reconciliation",
@@ -15,6 +17,19 @@
         "gold_path": "gold_paths/GOOGL_footnote_reconciliation.json",
         "grader_rubric": "rubrics/GOOGL_footnote_reconciliation_grader.md",
         "verify_script": "scripts/verify_googl_footnote_reconciliation.py"
+      }
+    },
+    {
+      "task_id": "PEP_fx_organic_growth",
+      "task_type": "M",
+      "status": "draft",
+      "cfa_review": "docs/expert_drafts/PEP_FX_GT_REVIEW.md",
+      "paths": {
+        "task": "tasks/PEP_fx_organic_growth.json",
+        "ground_truth": "ground_truth/PEP_fx_organic_growth_gt.json",
+        "gold_path": "gold_paths/PEP_fx_organic_growth.json",
+        "grader_rubric": "rubrics/PEP_fx_organic_growth_grader.md",
+        "verify_script": "scripts/verify_pep_fx_organic_growth.py"
       }
     }
   ],
