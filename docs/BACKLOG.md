@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.4  
-**Last updated:** July 2026 (post Track A runtime commit `6167be9`)
+**Last updated:** July 2026 (post P2-04g OpenAI mini grid — commit `142c503`)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -53,7 +53,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-01 | NFLX guidance drift task (Type F) | A | todo | Associate | Maps to env Scenario #2 later |
 | P2-02 | PEP or KO FX organic growth task (Type M) | A | done | Associate | `PEP_fx_organic_growth` expert-reviewed 2026-07-01; see `PEP_FX_GT_REVIEW.md` |
 | P2-03 | AMZN footnote task (Type F) | A | deferred | Associate | After 3 core tasks |
-| P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | in_progress | Eng | See **P2-04 sub-track** below |
+| P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | in_progress | Eng | OpenAI mini done (P2-04g); full 2×2×3 blocked on Anthropic |
 | P2-05 | Fracture report v0 | Both | done | Eng | `docs/FRACTURE_REPORT_v0.md` — frontier v1–v3 |
 | P2-06 | Leaderboard v0 publish | A | todo | Product | Not the lab headline |
 | P2-07 | Trajectory JSONL schema — align A + B | Both | done | Eng | `schemas/trajectory_v1.json` |
@@ -71,7 +71,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-04d | Agent submission + L3 citation validator | done | `validate_agent_submission.py`; `_submission.json` contract fixtures |
 | P2-04e | `score_benchmark_run.py` — L2/L3 v0 | done | Section recall from trace; composite median in campaign |
 | P2-04f | OpenAI adapter + `--execute` on campaign | done | `agents/openai_benchmark_agent.py`; `--execute --agent scripted|openai` |
-| P2-04g | **Live eval** — OpenAI mini 2×3 grid | ready | Re-pilot PEP L3, then `pilot_eval_openai_mini_v1` |
+| P2-04g | **Live eval** — OpenAI mini 2×3 grid | done | `gpt-4o-mini` × GOOGL + PEP × 3 runs; 6/6 composite 1.0; `runs/pilot_eval_openai_mini_v1/` |
 
 ---
 
@@ -116,7 +116,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-04 | Component specs (corpus, registry, eval, scoring) | done | Target architecture; implement lightweight first |
 | SH-05 | Word/PDF export generator | done | Stakeholder docs |
 | SH-06 | Corpus service implementation | deferred | **Explore later** — see BACKLOG LATER-01 (EDGAR full ingest) |
-| SH-07 | Eval orchestrator (model adapters) | in_progress | OpenAI + `--execute` done; Anthropic adapter pending |
+| SH-07 | Eval orchestrator (model adapters) | in_progress | OpenAI live grid done (P2-04g); Anthropic adapter pending |
 | SH-08 | Calibration dataset (5 tasks, dual-rater) | todo | Both benchmark L2 and env Defense |
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
@@ -132,7 +132,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 |----|------|-------|-------|
 | LATER-01 | **Track A — EDGAR corpus full ingest** | A | SH-06: download 10-K/10-Q text, section index, checksum lock. Pilot manifest (`corpus_manifest_v1.json`) is metadata-only; explore after 2+ published eval tasks or lab demo shipped. |
 | LATER-02 | Track A — transcript API + NFLX guidance task | A | P2-08 + P2-01; blocked on vendor + IR fallback runbook |
-| LATER-03 | Track A — eval orchestrator (SH-07) | A | in_progress | OpenAI execute done (P2-04f); Anthropic + live 2×2×3 pending |
+| LATER-03 | Track A — eval orchestrator (SH-07) | A | in_progress | OpenAI mini grid done (P2-04g); Anthropic + `pilot_eval_campaign_v1` pending |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
 
 ---
@@ -179,6 +179,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-26 | P2-04f OpenAI adapter + campaign `--execute` | Jul 2026 |
 | DONE-27 | P2-04d L3 submission validator + citation fixtures | Jul 2026 |
 | DONE-28 | P2-04e composite run scoring (L1+L2+L3) | Jul 2026 |
+| DONE-29 | P2-04g OpenAI mini live eval (6/6, composite 1.0) + PEP L3 citation fix | Jul 2026 |
 
 ---
 
