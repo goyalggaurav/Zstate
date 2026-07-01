@@ -52,6 +52,15 @@ def verify_task(task_id: str, values: dict, *, period: str | None = None) -> dic
         report["archetype"] = archetype
         return report
 
+    if archetype == "F_guidance_drift":
+        from verify_guidance_drift import load_ground_truth, verify as verify_guidance
+
+        gt_doc = load_ground_truth(ground_truth_path(task_id))
+        report = verify_guidance(values, gt_doc)
+        report["task_id"] = task_id
+        report["archetype"] = archetype
+        return report
+
     raise ValueError(f"No L1 verifier for archetype {archetype!r}")
 
 
@@ -70,6 +79,14 @@ def default_gold_values(task_id: str, *, period: str | None = None) -> dict:
 
         gt = load_ground_truth(ground_truth_path(task_id))
         return gt["values"]
+    if archetype == "F_guidance_drift":
+        from verify_guidance_drift import load_ground_truth
+
+        gt = load_ground_truth(ground_truth_path(task_id))
+        vals = {k: v for k, v in gt["values"].items() if not isinstance(v, bool)}
+        if "guidance_pace_under" in gt["values"]:
+            vals["guidance_pace_under"] = gt["values"]["guidance_pace_under"]
+        return vals
     raise ValueError(f"No default values for {task_id!r}")
 
 

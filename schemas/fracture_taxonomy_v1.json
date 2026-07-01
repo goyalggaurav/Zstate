@@ -111,6 +111,34 @@
       "tracks": ["benchmark"],
       "severity": "high",
       "example": "Valid CC derivation path but not ground-truth method"
+    },
+    {
+      "code": "GUIDE_CONFUSE",
+      "label": "Guidance conflated with actuals or wrong KPI line",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "Content amortization reported as guided cash spend"
+    },
+    {
+      "code": "GUIDANCE_PERIOD_ERR",
+      "label": "Guidance actual compared using wrong fiscal period column",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "NFLX Q2 cash column (3920) substituted for Q3 actual (4350)"
+    },
+    {
+      "code": "CASH_VS_AMORT_ERR",
+      "label": "Content amortization reported as guided cash spend",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "NFLX Q3 amortization (3980) used as content cash payments"
+    },
+    {
+      "code": "SBC_ALLOCATION_ERR",
+      "label": "Stock-based compensation added to segment net sales reconciliation",
+      "tracks": ["benchmark"],
+      "severity": "critical",
+      "example": "AMZN segment sum + SBC expense treated as consolidated net sales"
     }
   ]
 }

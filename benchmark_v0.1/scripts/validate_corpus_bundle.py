@@ -16,6 +16,7 @@ TASK_BUNDLES: dict[str, str] = {
     "GOOGL_footnote_reconciliation": "corpus/googl_q1_2026_bundle.json",
     "PEP_fx_organic_growth": "corpus/pep_fy2025_bundle.json",
     "AMZN_footnote_reconciliation": "corpus/amzn_fy2025_bundle.json",
+    "NFLX_guidance_drift": "corpus/nflx_q2q3_2025_bundle.json",
 }
 
 # Contract §4 required phrases beyond GT citation snippets.
@@ -50,9 +51,17 @@ CONTRACT_PHRASES: dict[str, list[str]] = {
         "637,959",
         "stock-based compensation",
         "not allocated to segment results",
-        "22,411",
+        "19,467",
         "increased 13%",
         "increased 10% excluding changes in foreign exchange rates",
+    ],
+    "NFLX_guidance_drift": [
+        "cash content spend of roughly $18B",
+        "12,039,405",
+        "4,002,744",
+        "Nine months ended September 30, 2025",
+        "Content amortization on the income statement is not the same as content cash payments",
+        "7,385,470",
     ],
 }
 
@@ -105,6 +114,7 @@ def gt_snippets(ground_truth: dict) -> list[str]:
 PEP_POLICY_REQUIRED = {
     "PEP_fx_organic_growth": ["no_wae_fx_table"],
     "AMZN_footnote_reconciliation": ["sbc_not_in_segment_oi"],
+    "NFLX_guidance_drift": ["amortization_not_cash_spend"],
 }
 
 

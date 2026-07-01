@@ -83,6 +83,11 @@
     }
   ],
 
+  "reference_constants": {
+    "sbc_expense_usd_m": 19467,
+    "sbc_source": "Note 8 — Stockholders' Equity, total stock-based compensation expense FY2025 column (10-K filed 2026-02-06)"
+  },
+
   "failure_modes": [
     {
       "id": "wrong_period",
@@ -97,6 +102,13 @@
       "wrong_signatures": {
         "international_reported_growth_pct": 10.0,
         "international_cc_growth_pct": 13.0
+      }
+    },
+    {
+      "id": "treat_sbc_as_segment_line_item",
+      "description": "Adds SBC expense to segment net sales sum or consolidated total",
+      "wrong_signatures": {
+        "consolidated_net_sales": 736391
       }
     }
   ]

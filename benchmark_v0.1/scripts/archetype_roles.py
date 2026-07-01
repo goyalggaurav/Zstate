@@ -25,6 +25,7 @@ def allowed_path_roles(archetype_id: str) -> set[str]:
     roles = set(spec.get("default_path_order", []))
     roles.update(spec.get("optional_roles", []))
     roles.add("segment_financials_prior_year")
+    roles.add("quantitative_prior_quarter")
     return roles
 
 
@@ -72,6 +73,14 @@ def gt_metric_values(task_id: str) -> dict:
         return amzn_gold_values()
     if archetype == "M_organic":
         return pep_gold_values(load_json(ground_truth_path(task_id)))
+    if archetype == "F_guidance_drift":
+        from verify_guidance_drift import load_ground_truth
+
+        gt = load_ground_truth(ground_truth_path(task_id))
+        vals = {k: v for k, v in gt["values"].items() if not isinstance(v, bool)}
+        if "guidance_pace_under" in gt["values"]:
+            vals["guidance_pace_under"] = gt["values"]["guidance_pace_under"]
+        return vals
     raise ValueError(f"No metric loader for archetype {archetype!r}")
 
 

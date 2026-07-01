@@ -1,0 +1,106 @@
+{
+  "task_id": "NFLX_guidance_drift",
+  "version": "1.1.0-pilot",
+  "fiscal_period": "2025Q3",
+  "period_end": "2025-09-30",
+  "unit": "USD_millions",
+
+  "guidance_spec": {
+    "grain": "annual",
+    "ytd_months": 9,
+    "guidance_doc_id": "NFLX_shareholder_letter_2024Q4",
+    "actuals_doc_id": "NFLX_10Q_2025Q3"
+  },
+
+  "extracted_values": [
+    {
+      "metric_id": "guidance_content_cash_annual_usd_m",
+      "value": 18000,
+      "label": "FY2025 cash content spend guidance (annual)",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "NFLX_shareholder_letter_2024Q4",
+        "note": "Q4 2024 shareholder letter — Cash Flow and Capital Structure",
+        "snippet": "cash content spend of roughly $18B"
+      }
+    },
+    {
+      "metric_id": "ytd_period_months",
+      "value": 9,
+      "label": "YTD window for actuals (months through Q3 2025)",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "NFLX_10Q_2025Q3",
+        "note": "Cash flow statement — nine months ended September 30, 2025",
+        "snippet": "Nine months ended September 30, 2025"
+      }
+    },
+    {
+      "metric_id": "ytd_content_cash_payments_usd_m",
+      "value": 12039,
+      "label": "YTD content cash payments (additions to content assets, 9 months)",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "NFLX_10Q_2025Q3",
+        "note": "Cash flow statement — nine months ended September 30, 2025",
+        "snippet": "Additions to content assets (cash) $ (12,039,405)"
+      }
+    },
+    {
+      "metric_id": "q3_content_amortization_usd_m",
+      "value": 4003,
+      "label": "Q3 2025 content amortization (supplemental table)",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "NFLX_10Q_2025Q3",
+        "note": "Content amortization table — three months ended September 30, 2025",
+        "snippet": "Total amortization of content assets $ 4,002,744"
+      }
+    },
+    {
+      "metric_id": "cash_vs_guidance_pace_variance_pct",
+      "value": -10.8,
+      "label": "YTD cash vs implied annual-guidance pace — variance %",
+      "formula": "(12039 - 18000 * 9 / 12) / (18000 * 9 / 12) * 100",
+      "tolerance": 0.15,
+      "citation": {
+        "doc_id": "NFLX_10Q_2025Q3",
+        "note": "Derived — YTD additions vs annual guide pace",
+        "snippet": "Additions to content assets (cash) $ (12,039,405)"
+      }
+    }
+  ],
+
+  "computed_values": [
+    {
+      "metric_id": "implied_ytd_pace_usd_m",
+      "value": 13500,
+      "label": "Implied YTD pace from annual guidance (9/12 × $18B)",
+      "formula": "guidance_content_cash_annual_usd_m * ytd_period_months / 12"
+    },
+    {
+      "metric_id": "guidance_pace_under",
+      "value": true,
+      "label": "YTD cash payments below implied annual-guidance pace",
+      "formula": "ytd_content_cash_payments_usd_m < implied_ytd_pace_usd_m",
+      "formula_note": "L1 boolean compare in verify_guidance_drift.py (not Python_Interpreter safe_calc)"
+    }
+  ],
+
+  "failure_modes": [
+    {
+      "id": "wrong_ytd_window",
+      "description": "Uses six-month YTD column instead of nine-month YTD",
+      "wrong_signatures": {
+        "ytd_content_cash_payments_usd_m": 7385
+      }
+    },
+    {
+      "id": "amortization_as_cash",
+      "description": "Reports YTD content amortization as if it were YTD content cash payments",
+      "wrong_signatures": {
+        "ytd_content_cash_payments_usd_m": 11658
+      }
+    }
+  ]
+}

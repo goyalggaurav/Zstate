@@ -1,6 +1,6 @@
 # benchmark_v0.1 — Pilot Package
 
-Minimum Viable Benchmark pilot: **15 tasks** across 5 companies; **2 published** tasks (Type F + Type M).
+Minimum Viable Benchmark pilot: **15 tasks** across 5 companies; **4 published** tasks (3× Type F + 1× Type M).
 
 ## Corpus (P0-06)
 
@@ -28,7 +28,8 @@ Contract: [docs/CORPUS_BUNDLE_CONTRACT.md](./docs/CORPUS_BUNDLE_CONTRACT.md)
 |------|------|--------|--------|
 | [GOOGL_footnote_reconciliation](./tasks/GOOGL_footnote_reconciliation.json) | F — Forensics | **Q1 2026** (10-Q filed 2026-04-30) | **Published** (expert-reviewed 2026-07-01) |
 | [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-03) | **Published** (expert-reviewed 2026-07-01) |
-| [AMZN_footnote_reconciliation](./tasks/AMZN_footnote_reconciliation.json) | F — Forensics | **FY2025** (10-K filed 2026-02-06) | **Published** (pilot draft) |
+| [AMZN_footnote_reconciliation](./tasks/AMZN_footnote_reconciliation.json) | F — Forensics | **FY2025** (10-K filed 2026-02-06) | **Published** (expert-reviewed 2026-07-02) |
+| [NFLX_guidance_drift](./tasks/NFLX_guidance_drift.json) | F — Guidance drift | **2024Q4 guide → 2025Q3 YTD** (SEC excerpts) | **Published** ([expert review](../docs/expert_drafts/NFLX_GT_REVIEW.md)) |
 
 ### GOOGL — footnote reconciliation
 
@@ -72,9 +73,9 @@ Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_e
 
 **Discrimination campaign (P2-09):** [campaigns/pilot_eval_discrimination_v1.json](./campaigns/pilot_eval_discrimination_v1.json) sets `"eval_mode": true` (generic citation rules, no task-specific examples) and uses L2 gold-path scoring (section recall + access order + tool coverage) plus L3 partial credit on citations.
 
-**Three-task campaign (P2-10):** [campaigns/pilot_eval_3task_v1.json](./campaigns/pilot_eval_3task_v1.json) adds `AMZN_footnote_reconciliation` with a **5-section ordered gold path** (policy → compensation disclosure → segment financials → consolidated primary → narrative FX). PEP L3 now requires **distinct snippets per metric** (`l3_citation_rules.distinct_snippets_required`).
+**Three-task campaign (P2-10):** [campaigns/pilot_eval_3task_v1.json](./campaigns/pilot_eval_3task_v1.json) — five-section AMZN path, PEP distinct L3 snippets, **headline excludes GOOGL** (P2-18). Full write-up: [docs/PILOT_EVAL_JUL2026.md](./docs/PILOT_EVAL_JUL2026.md).
 
-**Live results (Jul 2026):** 18/18 runs (`gpt-4o` + `claude-sonnet-4-5` × 3 tasks × 3). Headline composite median **1.0** — GOOGL/AMZN still at ceiling. **PEP separates models:** gpt-4o composite **0.864** (L3 0.32, duplicate MD&A row citations + halluc snippets); claude median **1.0** (one run 0.898 on duplicate snippet). Fractures: `CITE_HALLUC`×3, `CITE_BROAD`×4. Full report: [runs/pilot_eval_3task_v1/pilot_eval_3task_v1.json](./runs/pilot_eval_3task_v1/pilot_eval_3task_v1.json).
+**Live results (Jul 2026, role slugs):** 18/18 runs. **Headline** (PEP + AMZN): gpt-4o **0.911** vs claude **0.949**. PEP still sharpest wedge (gpt-4o **0.864**); AMZN now separates (gpt-4o **0.958**, L3 duplicate snippets). GOOGL ceiling **1.0** both models. Fractures: `CITE_BROAD`×9, `CITE_HALLUC`×3.
 
 **Discrimination v2 (P2-11):** [campaigns/pilot_eval_discrimination_v2.json](./campaigns/pilot_eval_discrimination_v2.json) drops GOOGL from the headline and reports **task-weighted per-model composite** (`weighted_composite_by_model`). Rescore existing 3-task runs without new API calls:
 
@@ -85,9 +86,7 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
 
 **AMZN path hardening (P2-12):** Five-section gold path adds required `compensation_disclosure` (Note 8 — Stockholders' Equity, SBC expense table) between policy and segment financials, plus optional decoy slug `segment_financials_prior_year` (FY2024 column only). Prior live runs that skipped Note 8 score lower on L2 section recall when rescored — discrimination v2 weighted composite **gpt-4o 0.885 vs claude 0.953** under role slugs + legacy alias rescore.
 
-**Universal task architecture (P2-13–15):** Tasks are defined by **archetype** (`F_exact`, `F_adjustment`, `M_organic`), not company-specific note numbers. Each bundle maps stable **path_role** slugs (`segment_financials`, `narrative_organic`, `compensation_disclosure`, …) to issuer-specific `filing_label` text. Per-company customization lives only in bundle JSON; prompts, L1 router (`verify_benchmark_l1.py`), and scoring are archetype-driven. Bundles v1.2 include `legacy_section_slugs[]` so prior live traces (e.g. `note_15`, `mdna_organic`) still score correctly on rescore.
-
-Schema: [schemas/archetype_roles_v1.json](./schemas/archetype_roles_v1.json) · Helpers: [scripts/archetype_roles.py](./scripts/archetype_roles.py)
+**Universal task architecture (P2-13–15):** Archetypes `F_exact`, `F_adjustment`, `M_organic`, **`F_guidance_drift`** (NFLX draft). Path-role slugs + `legacy_section_slugs[]` for rescore. Schema: [schemas/archetype_roles_v1.json](./schemas/archetype_roles_v1.json).
 
 ```bash
 export BENCHMARK_RUN_DELAY_SECONDS=3
@@ -209,3 +208,5 @@ python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 
 - [GOOGL_GT_REVIEW.md](../docs/expert_drafts/GOOGL_GT_REVIEW.md)
 - [PEP_FX_GT_REVIEW.md](../docs/expert_drafts/PEP_FX_GT_REVIEW.md)
+- [AMZN_GT_REVIEW.md](../docs/expert_drafts/AMZN_GT_REVIEW.md)
+- [NFLX_GT_REVIEW.md](../docs/expert_drafts/NFLX_GT_REVIEW.md)

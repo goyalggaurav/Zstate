@@ -1,0 +1,90 @@
+{
+  "task_id": "NFLX_guidance_drift",
+  "version": "1.1.0-pilot",
+  "status": "published",
+  "benchmark_version": "benchmark_v0.1",
+
+  "ticker": "NFLX",
+  "cik": "0001065280",
+  "sector": "media",
+  "archetype": "F_guidance_drift",
+  "task_type": "F",
+  "difficulty_tier": "L3",
+
+  "prompt": {
+    "text": "Using Netflix, Inc. materials for FY2025 guidance and Q3 2025 actuals, quantify guidance drift on **content cash spend**.\n\nRetrieve filing sections by path_role slug (see tool enum):\n1. narrative_guidance — Q4 2024 shareholder letter: FY2025 **annual** cash content spend guidance (~$18B).\n2. quantitative_actuals — Q3 2025 10-Q **nine months ended September 30, 2025** column: YTD content cash payments (additions to content assets) and Q3 content amortization (supplemental table).\n3. Python — compute implied YTD pace from annual guidance (9/12 × annual guide), variance of YTD cash vs that pace (%), and whether YTD is below pace.\n4. Produce a guidance vs actuals table (USD millions) and short drift narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified corpus documents and cited sections.\n- Do not use decoy slug quantitative_wrong_ytd_window for scored YTD metrics.\n- Cash payments and amortization are different lines — do not conflate them.\n- Each citation must use a distinct verbatim snippet.\n- Acknowledge required policy notes in your submission.",
+    "constraints": [
+      "Documents: NFLX Q4 2024 shareholder letter excerpt + Q3 2025 10-Q only",
+      "Role order: narrative_guidance → quantitative_actuals",
+      "No Buy/Hold/Sell or price target"
+    ]
+  },
+
+  "required_documents": [
+    {
+      "doc_id": "NFLX_shareholder_letter_2024Q4",
+      "form_type": "shareholder_letter",
+      "fiscal_period": "2024Q4",
+      "period_end": "2024-12-31",
+      "filing_date": "2025-01-21",
+      "source_url": "https://cdn.arstechnica.net/wp-content/uploads/2025/01/FINAL-Q4-24-Shareholder-Letter.pdf",
+      "role": "guidance_source"
+    },
+    {
+      "doc_id": "NFLX_10Q_2025Q3",
+      "form_type": "10-Q",
+      "fiscal_period": "2025Q3",
+      "period_end": "2025-09-30",
+      "filing_date": "2025-10-17",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "role": "primary"
+    }
+  ],
+
+  "allowed_tools": [
+    "Search_Filing",
+    "PDF_Parser",
+    "Python_Interpreter"
+  ],
+
+  "mandate_profile": null,
+  "compliance_baseline": "citation_only",
+
+  "expected_outputs": {
+    "schema_ref": "forensics_report_v1",
+    "required_sections": [
+      "guidance_vs_actuals_table",
+      "drift_narrative",
+      "citations"
+    ],
+    "structured_fields": [
+      "guidance_content_cash_annual_usd_m",
+      "ytd_period_months",
+      "ytd_content_cash_payments_usd_m",
+      "q3_content_amortization_usd_m",
+      "cash_vs_guidance_pace_variance_pct",
+      "guidance_pace_under"
+    ]
+  },
+
+  "execution_limits": {
+    "max_tool_calls": 30,
+    "max_tokens": 80000,
+    "timeout_seconds": 600,
+    "required_stages": [1, 2, 3]
+  },
+
+  "scoring": {
+    "task_type_weights": { "layer1": 0.50, "layer2": 0.30, "layer3": 0.20 },
+    "finra_required": false,
+    "layer2_method": "gold_path_automated"
+  },
+
+  "ground_truth_ref": "../ground_truth/NFLX_guidance_drift_gt.json",
+  "gold_path_ref": "../gold_paths/NFLX_guidance_drift.json",
+  "grader_rubric_ref": "../rubrics/NFLX_guidance_drift_grader.md",
+
+  "authored_by": "pilot_template",
+  "review_status": "cfa_approved",
+  "updated_at": "2026-07-02T18:00:00Z"
+}

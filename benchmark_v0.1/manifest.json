@@ -2,7 +2,7 @@
   "benchmark_version": "benchmark_v0.1",
   "mvd_target_tasks": 15,
   "mvd_pilot_companies": 5,
-  "published_tasks": 3,
+  "published_tasks": 4,
   "draft_tasks": 0,
   "corpus_manifest": "corpus/corpus_manifest_v1.json",
   "pilot_tasks": [
@@ -37,12 +37,25 @@
       "task_id": "AMZN_footnote_reconciliation",
       "task_type": "F",
       "status": "published",
-      "cfa_review": null,
+      "cfa_review": "docs/expert_drafts/AMZN_GT_REVIEW.md",
       "paths": {
         "task": "tasks/AMZN_footnote_reconciliation.json",
         "ground_truth": "ground_truth/AMZN_footnote_reconciliation_gt.json",
         "gold_path": "gold_paths/AMZN_footnote_reconciliation.json",
         "grader_rubric": "rubrics/AMZN_footnote_reconciliation_grader.md",
+        "verify_script": "scripts/verify_benchmark_l1.py"
+      }
+    },
+    {
+      "task_id": "NFLX_guidance_drift",
+      "task_type": "F",
+      "status": "published",
+      "cfa_review": "docs/expert_drafts/NFLX_GT_REVIEW.md",
+      "paths": {
+        "task": "tasks/NFLX_guidance_drift.json",
+        "ground_truth": "ground_truth/NFLX_guidance_drift_gt.json",
+        "gold_path": "gold_paths/NFLX_guidance_drift.json",
+        "grader_rubric": "rubrics/NFLX_guidance_drift_grader.md",
         "verify_script": "scripts/verify_benchmark_l1.py"
       }
     }

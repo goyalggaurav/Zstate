@@ -1,7 +1,7 @@
 {
-  "campaign_id": "pilot_eval_3task_v1",
-  "backlog_ref": "P2-10",
-  "description": "Three-task eval — GOOGL + PEP + AMZN; eval_mode on; headline excludes GOOGL (ceiling task).",
+  "campaign_id": "pilot_eval_4task_v1",
+  "backlog_ref": "P2-19",
+  "description": "Four-task eval — GOOGL + PEP + AMZN + NFLX; eval_mode on; headline excludes GOOGL (ceiling task).",
   "status": "execute_ready",
   "eval_mode": true,
   "models": [
@@ -11,15 +11,18 @@
   "tasks": [
     "GOOGL_footnote_reconciliation",
     "PEP_fx_organic_growth",
-    "AMZN_footnote_reconciliation"
+    "AMZN_footnote_reconciliation",
+    "NFLX_guidance_drift"
   ],
   "headline_tasks": [
     "PEP_fx_organic_growth",
-    "AMZN_footnote_reconciliation"
+    "AMZN_footnote_reconciliation",
+    "NFLX_guidance_drift"
   ],
   "task_weights": {
     "PEP_fx_organic_growth": 1.0,
-    "AMZN_footnote_reconciliation": 1.0
+    "AMZN_footnote_reconciliation": 1.0,
+    "NFLX_guidance_drift": 1.0
   },
   "runs_per_task": 3,
   "aggregation": {
@@ -29,5 +32,5 @@
     "fracture_codes": "union"
   },
   "manifest_ref": "../manifest.json",
-  "runs_dir": "runs/pilot_eval_3task_v1"
+  "runs_dir": "runs/pilot_eval_4task_v1"
 }

@@ -9,7 +9,9 @@
     "revenue_disaggregation": "Revenue disaggregation or secondary cross-check note",
     "consolidated_primary": "Consolidated income statement or primary total",
     "narrative_fx": "MD&A segment narrative with FX or reported vs constant-currency growth",
-    "narrative_organic": "MD&A organic / constant-currency revenue bridge table"
+    "narrative_organic": "MD&A organic / constant-currency revenue bridge table",
+    "narrative_guidance": "Management guidance commentary (earnings call or MD&A outlook)",
+    "quantitative_actuals": "Subsequent filing quantitative actuals vs prior guidance"
   },
 
   "decoy_traps": {
@@ -17,6 +19,16 @@
       "description": "Same note layout but prior fiscal period column only",
       "failure_mode": "wrong_period",
       "fracture_code": "HALLUC_FILL"
+    },
+    "prior_quarter_actuals": {
+      "description": "Same KPI table but prior quarter column only",
+      "failure_mode": "wrong_period",
+      "fracture_code": "HALLUC_FILL"
+    },
+    "wrong_ytd_window": {
+      "description": "Same KPI table but wrong YTD month window (e.g. six months vs nine)",
+      "failure_mode": "wrong_ytd_window",
+      "fracture_code": "GUIDANCE_PERIOD_ERR"
     }
   },
 
@@ -46,6 +58,13 @@
       "description": "Segment revenue + organic/CC growth decomposition",
       "reconciliation_mode": "organic_bridge",
       "default_path_order": ["segment_financials", "narrative_organic"],
+      "optional_roles": []
+    },
+    "F_guidance_drift": {
+      "task_type": "F",
+      "description": "Compare management guidance (grain in task GT) to subsequent filing actuals",
+      "reconciliation_mode": "guidance_vs_actuals",
+      "default_path_order": ["narrative_guidance", "quantitative_actuals"],
       "optional_roles": []
     }
   }

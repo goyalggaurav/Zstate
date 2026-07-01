@@ -1,0 +1,90 @@
+{
+  "task_id": "NFLX_guidance_drift",
+  "version": "1.1.0-pilot",
+  "archetype": "F_guidance_drift",
+  "task_type": "F",
+  "fiscal_period": "2025Q3",
+
+  "minimal_section_set": [
+    {
+      "section_id": "NFLX_shareholder_letter_2024Q4_guidance",
+      "name": "Q4 2024 shareholder letter — FY2025 cash content spend",
+      "required": true,
+      "reason": "Annual management guidance on FY2025 cash content spend (~$18B)"
+    },
+    {
+      "section_id": "NFLX_10Q_2025Q3_content_actuals",
+      "name": "Q3 2025 10-Q — nine-month content cash and Q3 amortization",
+      "required": true,
+      "reason": "YTD actual cash payments vs annual guidance pace"
+    }
+  ],
+
+  "required_tool_classes": [
+    "Search_Filing",
+    "PDF_Parser",
+    "Python_Interpreter"
+  ],
+
+  "required_outputs": [
+    "guidance_vs_actuals_table",
+    "drift_narrative",
+    "citations"
+  ],
+
+  "reference_workflow": [
+    {
+      "step": 1,
+      "action": "Extract FY2025 annual cash content spend guidance",
+      "tool": "Search_Filing",
+      "target": "narrative_guidance — roughly $18B annual cash content spend"
+    },
+    {
+      "step": 2,
+      "action": "Extract nine-month YTD content cash payments and Q3 amortization",
+      "tool": "Search_Filing",
+      "target": "quantitative_actuals — nine months ended September 30, 2025 column"
+    },
+    {
+      "step": 3,
+      "action": "Python verify YTD cash vs implied annual-guidance pace",
+      "tool": "Python_Interpreter",
+      "target": "(12039 - 18000 * 9 / 12) / (18000 * 9 / 12) * 100"
+    }
+  ],
+
+  "anti_patterns": [
+    "use_six_month_ytd_for_nine_month_actuals",
+    "use_amortization_as_guidance_actual",
+    "ignore_guidance_pace_under",
+    "produce_buy_hold_sell_recommendation"
+  ],
+
+  "failure_mode_map": [
+    {
+      "failure_mode_id": "wrong_ytd_window",
+      "anti_pattern": "use_six_month_ytd_for_nine_month_actuals",
+      "fracture_code": "GUIDANCE_PERIOD_ERR"
+    },
+    {
+      "failure_mode_id": "amortization_as_cash",
+      "anti_pattern": "use_amortization_as_guidance_actual",
+      "fracture_code": "CASH_VS_AMORT_ERR"
+    }
+  ],
+
+  "l2_gold_path": {
+    "weights": {
+      "section_recall": 0.5,
+      "section_order": 0.25,
+      "tool_coverage": 0.25
+    },
+    "expected_section_order": ["narrative_guidance", "quantitative_actuals"],
+    "required_tools": ["Search_Filing", "Python_Interpreter"],
+    "strict_first_section": "narrative_guidance"
+  },
+
+  "l3_citation_rules": {
+    "distinct_snippets_required": true
+  }
+}

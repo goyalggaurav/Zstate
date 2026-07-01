@@ -124,6 +124,11 @@
       "failure_mode_id": "sbc_note_skip",
       "anti_pattern": "skip_stock_compensation_note",
       "fracture_code": "SECTION_MISS"
+    },
+    {
+      "failure_mode_id": "treat_sbc_as_segment_line_item",
+      "anti_pattern": "treat_sbc_as_segment_line_item",
+      "fracture_code": "SBC_ALLOCATION_ERR"
     }
   ],
 

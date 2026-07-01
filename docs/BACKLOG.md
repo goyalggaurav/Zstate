@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.4  
-**Last updated:** July 2026 (post P2-15 universal path_role architecture — bundles v1.2, 24 smoke checks)
+**Last updated:** July 2026 (post P2-19 NFLX expert sign-off — 4 published tasks, 25 smoke checks)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -50,14 +50,14 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 
 | ID | Item | Track | Status | Owner | Notes |
 |----|------|-------|--------|-------|-------|
-| P2-01 | NFLX guidance drift task (Type F) | A | todo | Associate | Maps to env Scenario #2 later |
+| P2-01 | NFLX guidance drift task (Type F) | A | done | Associate | Pattern 1 rebuild; expert sign-off `NFLX_GT_REVIEW.md` 2026-07-02 |
 | P2-02 | PEP or KO FX organic growth task (Type M) | A | done | Associate | `PEP_fx_organic_growth` expert-reviewed 2026-07-01; see `PEP_FX_GT_REVIEW.md` |
 | P2-03 | AMZN footnote task (Type F) | A | done | Eng | `AMZN_footnote_reconciliation` — 4-section L2 path; pilot draft |
 | P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | done | Eng | `gpt-4o` + `claude-sonnet-4-5` × GOOGL + PEP × 3; 12/12 composite 1.0; see `runs/pilot_eval_campaign_v1/` |
 | P2-05 | Fracture report v0 | Both | done | Eng | `docs/FRACTURE_REPORT_v0.md` — frontier v1–v3 |
 | P2-06 | Leaderboard v0 publish | A | todo | Product | Not the lab headline |
 | P2-07 | Trajectory JSONL schema — align A + B | Both | done | Eng | `schemas/trajectory_v1.json` |
-| P2-08 | Transcript API trial (5 pilot names) | A | todo | Eng | Guidance tasks |
+| P2-08 | Transcript API trial (5 pilot names) | A | todo | Eng | Guidance tasks; see LATER-06 for NFLX EDGAR bundle ingest |
 
 **Cap:** Do not expand beyond 3–5 MVD tasks until P1-10 demo trajectories exist. *(Cap lifted — P1-10 done; 2 tasks published.)*
 
@@ -80,6 +80,10 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-13 | **Universal archetypes** — `archetype_roles_v1.json` + `archetype_roles.py` | done | `F_exact`, `F_adjustment`, `M_organic`; decoy trap registry |
 | P2-14 | **Path-role slugs** — migrate bundles/gold paths/tasks to role slugs (v1.2) | done | `segment_financials`, `narrative_organic`, `compensation_disclosure`, etc.; unified `verify_benchmark_l1.py` |
 | P2-15 | **Legacy slug aliasing** — rescore old live traces without re-run | done | `legacy_section_slugs[]` on registry; L2/L3 + backend canonicalize |
+| P2-16 | **AMZN expert sign-off** — `AMZN_GT_REVIEW.md` | done | Third published task expert-backed |
+| P2-17 | **Jul 2026 eval write-up** — pilot report + fracture report Track A | done | `benchmark_v0.1/docs/PILOT_EVAL_JUL2026.md` |
+| P2-18 | **GOOGL L3 hardening + headline policy** — distinct snippets; GOOGL out of headline | done | `l3_citation_rules` on GOOGL; `headline_tasks` on 3-task campaign |
+| P2-19 | **NFLX expert sign-off** — Pattern 1 GT + `NFLX_GT_REVIEW.md` | done | Fourth published task; annual vs YTD pace archetype |
 
 ---
 
@@ -129,7 +133,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 24 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 25 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 
 ---
@@ -138,8 +142,9 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 
 | ID | Item | Track | Notes |
 |----|------|-------|-------|
-| LATER-01 | **Track A — EDGAR corpus full ingest** | A | Unlock met (2 tasks + lab demo). Defer until P3-03 scale or >5 hand-curated tasks. |
-| LATER-02 | Track A — transcript API + NFLX guidance task | A | P2-08 + P2-01; blocked on vendor + IR fallback runbook |
+| LATER-01 | **Track A — EDGAR corpus full ingest** | A | Unlock met (4 published tasks + lab demo). Defer until P3-03 scale or corpus service (SH-06). |
+| LATER-02 | Track A — transcript API (non-NFLX guidance tasks) | A | P2-08; vendor + IR fallback runbook. NFLX uses shareholder letter (no transcript). |
+| LATER-06 | **NFLX_guidance_drift — EDGAR verbatim bundle ingest** | A | Replace excerpt stubs in `nflx_q2q3_2025_bundle.json` with checksum-verified Q4 2024 letter + Q3 2025 10-Q text; set `ingest_status` + `checksum_sha256` in `corpus_manifest_v1.json`. GT signed off — ingest does not block published status. Depends on P2-08 / SH-06. |
 | LATER-03 | Track A — eval orchestrator (SH-07) | A | done | Adapters + `pilot_eval_campaign_v1` live run complete |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
 | LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | PEP L3 separates models; AMZN L2 recall tightened (P2-12) — re-run live for fresh signal |

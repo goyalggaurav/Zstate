@@ -127,7 +127,7 @@ def googl_gold_submission() -> dict:
             {
                 "metric_id": "consolidated_total_revenue",
                 "doc_id": "GOOGL_10Q_2026Q1",
-                "section_slug": "segment_financials",
+                "section_slug": "revenue_disaggregation",
                 "snippet": "Total revenues $ 109,896",
             },
         ],

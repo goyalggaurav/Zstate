@@ -45,6 +45,76 @@ def check_amzn_gt() -> None:
     assert report["all_pass"] is True, report
     assert report["fracture_codes"] == []
 
+    import tempfile
+    trap_values = {
+        "north_america_net_sales": 426_305,
+        "international_net_sales": 161_894,
+        "aws_net_sales": 128_725,
+        "consolidated_net_sales": 736_391,
+        "international_reported_growth_pct": 13.0,
+        "international_cc_growth_pct": 10.0,
+    }
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
+        json.dump(trap_values, tmp)
+        trap_path = tmp.name
+    trap_report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_amzn_footnote_reconciliation.py",
+        "--agent-output", trap_path,
+    ])
+    Path(trap_path).unlink(missing_ok=True)
+    assert trap_report["all_pass"] is False, trap_report
+    assert "treat_sbc_as_segment_line_item" in trap_report["failure_modes"], trap_report
+    assert trap_report["fracture_codes"] == ["SBC_ALLOCATION_ERR"], trap_report
+
+
+def check_nflx_gt() -> None:
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_benchmark_l1.py",
+        "--task", "NFLX_guidance_drift",
+    ])
+    assert report["all_pass"] is True, report
+    assert report["fracture_codes"] == []
+
+    import tempfile
+    gt_path = ROOT / "benchmark_v0.1" / "ground_truth" / "NFLX_guidance_drift_gt.json"
+    gt = json.loads(gt_path.read_text())
+    base = {item["metric_id"]: item["value"] for item in gt["extracted_values"]}
+    for item in gt["computed_values"]:
+        if isinstance(item.get("value"), bool):
+            base[item["metric_id"]] = item["value"]
+
+    wrong_ytd = {**base, "ytd_content_cash_payments_usd_m": 7385}
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
+        json.dump(wrong_ytd, tmp)
+        trap_path = tmp.name
+    trap_report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_guidance_drift.py",
+        "--ground-truth", str(gt_path),
+        "--agent-output", trap_path,
+    ])
+    Path(trap_path).unlink(missing_ok=True)
+    assert trap_report["all_pass"] is False, trap_report
+    assert "wrong_ytd_window" in trap_report["failure_modes"], trap_report
+    assert trap_report["fracture_codes"] == ["GUIDANCE_PERIOD_ERR"], trap_report
+
+    amort_trap = {**base, "ytd_content_cash_payments_usd_m": 11658}
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
+        json.dump(amort_trap, tmp)
+        trap_path = tmp.name
+    trap_report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_guidance_drift.py",
+        "--ground-truth", str(gt_path),
+        "--agent-output", trap_path,
+    ])
+    Path(trap_path).unlink(missing_ok=True)
+    assert trap_report["all_pass"] is False, trap_report
+    assert "amortization_as_cash" in trap_report["failure_modes"], trap_report
+    assert trap_report["fracture_codes"] == ["CASH_VS_AMORT_ERR"], trap_report
+
 
 def check_fracture_taxonomy_registry() -> None:
     """Benchmark verify scripts must only emit codes registered in fracture_taxonomy_v1.json."""
@@ -57,11 +127,13 @@ def check_fracture_taxonomy_registry() -> None:
     from verify_googl_footnote_reconciliation import FAILURE_FRACTURE as googl_fractures  # noqa: E402
     from validate_agent_submission import FAILURE_FRACTURE as l3_fractures  # noqa: E402
     from verify_amzn_footnote_reconciliation import FAILURE_FRACTURE as amzn_fractures  # noqa: E402
+    from verify_guidance_drift import FAILURE_FRACTURE as guidance_fractures  # noqa: E402
 
     emitted = (
         set(googl_fractures.values())
         | set(pep_fractures.values())
         | set(amzn_fractures.values())
+        | set(guidance_fractures.values())
         | set(l3_fractures.values())
     )
     missing = emitted - registry
@@ -996,6 +1068,7 @@ def check_archetype_roles() -> None:
         "GOOGL_footnote_reconciliation",
         "PEP_fx_organic_growth",
         "AMZN_footnote_reconciliation",
+        "NFLX_guidance_drift",
     ):
         archetype = task_archetype(task_id)
         bundle = load_bundle(task_id)
@@ -1009,6 +1082,7 @@ def main() -> int:
         ("GOOGL ground truth L1", check_googl_gt),
         ("PEP FX ground truth L1", check_pep_fx_gt),
         ("AMZN footnote ground truth L1", check_amzn_gt),
+        ("NFLX guidance drift L1", check_nflx_gt),
         ("Fracture taxonomy registry", check_fracture_taxonomy_registry),
         ("Corpus manifest", check_corpus_manifest),
         ("Corpus bundles", check_corpus_bundles),

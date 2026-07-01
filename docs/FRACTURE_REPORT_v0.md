@@ -87,7 +87,38 @@ Frontier model performs near **rhetoric/pushover demo traps**, not near gold pat
 
 - [ ] Tag `PM_OOD` when agent loops on `fallback_ood` (pre-v1.1.3)
 - [ ] Add fracture counts to campaign JSON auto-summary
-- [ ] Cross-track GOOGL benchmark fractures (RECON_OMIT, SIGN_ERR) when P2-04 runs
+- [x] Cross-track GOOGL benchmark fractures when P2-04 runs — see Track A below
 - [ ] v4 campaign under v1.1.3 FSM — validate fallback escalation fix
+
+---
+
+## Track A — `pilot_eval_3task_v1` (Jul 2026, role slugs)
+
+**Source:** `benchmark_v0.1/runs/pilot_eval_3task_v1/pilot_eval_3task_v1.json` (18 live runs, eval_mode)  
+**Full write-up:** [PILOT_EVAL_JUL2026.md](../benchmark_v0.1/docs/PILOT_EVAL_JUL2026.md)
+
+| Campaign | Runs | Headline composite (PEP+AMZN) | Top fractures |
+|----------|------|-------------------------------|---------------|
+| 3-task live | 18 | gpt-4o **0.911** vs claude **0.949** | CITE_BROAD×9, CITE_HALLUC×3 |
+
+### Fracture frequency (18 runs)
+
+| Code | Count | Rate |
+|------|-------|------|
+| **CITE_BROAD** | 9 | 50% |
+| **CITE_HALLUC** | 3 | 17% |
+
+No L1 RECON_OMIT or SIGN_ERR on live frontier runs — discrimination is **L3 citation discipline**, not arithmetic.
+
+### Task-level pattern
+
+| Task | gpt-4o composite | claude composite | Primary fracture |
+|------|------------------|------------------|------------------|
+| GOOGL | 1.0 | 1.0 | (none — ceiling) |
+| PEP | 0.864 | 0.898 | CITE_BROAD / duplicate MD&A snippets |
+| AMZN | 0.958 | 1.0 | CITE_BROAD on gpt-4o (L2 now separates skip-Note-8 paths on rescore) |
+
+**Implication:** Benchmark headline must exclude ceiling tasks; PEP + AMZN carry ranking signal until GOOGL L3 hardening or harder task variants land.
+
 
 See [FRONTIER_RUNS.md](../env_v1/runs/frontier/FRONTIER_RUNS.md).

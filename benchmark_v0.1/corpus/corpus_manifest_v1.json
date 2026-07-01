@@ -95,6 +95,19 @@
       "task_refs": []
     },
     {
+      "doc_id": "NFLX_shareholder_letter_2024Q4",
+      "ticker": "NFLX",
+      "doc_type": "shareholder_letter",
+      "fiscal_period": "2024Q4",
+      "period_end": "2024-12-31",
+      "filing_date": "2025-01-21",
+      "source_url": "https://cdn.arstechnica.net/wp-content/uploads/2025/01/FINAL-Q4-24-Shareholder-Letter.pdf",
+      "ingest_status": "metadata_only",
+      "checksum_sha256": null,
+      "task_refs": ["NFLX_guidance_drift"],
+      "note": "Guidance source for annual cash content spend (~$18B FY2025)"
+    },
+    {
       "doc_id": "NFLX_transcript_2025Q2",
       "ticker": "NFLX",
       "doc_type": "earnings_transcript",
@@ -102,8 +115,8 @@
       "source_url": null,
       "ingest_status": "pending_transcript",
       "checksum_sha256": null,
-      "task_refs": ["NFLX_guidance_drift"],
-      "note": "Requires P2-08 transcript API or manual IR backfill"
+      "task_refs": [],
+      "note": "Deferred — P2-08 transcript API; not used by NFLX_guidance_drift v1.1"
     },
     {
       "doc_id": "NFLX_10Q_2025Q3",
