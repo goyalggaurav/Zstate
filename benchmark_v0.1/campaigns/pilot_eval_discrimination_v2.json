@@ -1,0 +1,33 @@
+{
+  "campaign_id": "pilot_eval_discrimination_v2",
+  "backlog_ref": "P2-11",
+  "description": "Discrimination eval v2 — PEP + AMZN only (GOOGL excluded from headline); task-weighted per-model composite.",
+  "status": "execute_ready",
+  "eval_mode": true,
+  "orchestrator_note": "Rescore live runs from pilot_eval_3task_v1 without --execute, or run fresh with --campaign pilot_eval_3task_v1.json --execute.",
+  "models": [
+    "gpt-4o",
+    "claude-sonnet-4-5"
+  ],
+  "tasks": [
+    "PEP_fx_organic_growth",
+    "AMZN_footnote_reconciliation"
+  ],
+  "headline_tasks": [
+    "PEP_fx_organic_growth",
+    "AMZN_footnote_reconciliation"
+  ],
+  "task_weights": {
+    "PEP_fx_organic_growth": 1.0,
+    "AMZN_footnote_reconciliation": 1.0
+  },
+  "runs_per_task": 3,
+  "aggregation": {
+    "composite_score": "median",
+    "headline_composite_score": "median",
+    "weighted_composite_by_model": "task_weighted_mean_of_task_medians",
+    "fracture_codes": "union"
+  },
+  "manifest_ref": "../manifest.json",
+  "runs_dir": "runs/pilot_eval_3task_v1"
+}

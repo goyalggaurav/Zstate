@@ -171,7 +171,12 @@ def first_section_access_order(trace: dict, expected: list[str]) -> list[str]:
     return order
 
 
-def score_section_order(trace: dict | None, expected_order: list[str]) -> tuple[float, list[str]]:
+def score_section_order(
+    trace: dict | None,
+    expected_order: list[str],
+    *,
+    strict_first_section: str | None = None,
+) -> tuple[float, list[str]]:
     if trace is None or len(expected_order) < 2:
         return 1.0, []
     observed = first_section_access_order(trace, expected_order)
@@ -185,6 +190,8 @@ def score_section_order(trace: dict | None, expected_order: list[str]) -> tuple[
         if a in positions and b in positions and positions[a] < positions[b]:
             correct += 1
     score = correct / total if total else 1.0
+    if strict_first_section and observed and observed[0] != strict_first_section:
+        score *= 0.5
     failure_modes = [] if score >= 1.0 else ["section_order"]
     return score, failure_modes
 
@@ -212,6 +219,7 @@ def l2_gold_path_config(gold_path: dict) -> dict:
         },
         "expected_section_order": list(cfg.get("expected_section_order") or []),
         "required_tools": list(cfg.get("required_tools") or gold_path.get("required_tool_classes") or []),
+        "strict_first_section": cfg.get("strict_first_section"),
     }
 
 
@@ -261,7 +269,11 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
         recall_failures = ["section_miss"] if missing else []
 
     gp = l2_gold_path_config(gold_path)
-    order_score, order_failures = score_section_order(trace, gp["expected_section_order"])
+    order_score, order_failures = score_section_order(
+        trace,
+        gp["expected_section_order"],
+        strict_first_section=gp.get("strict_first_section"),
+    )
     tool_score, tool_failures = score_tool_coverage(trace, gp["required_tools"])
 
     weights = gp["weights"]

@@ -74,6 +74,15 @@ Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_e
 
 **Three-task campaign (P2-10):** [campaigns/pilot_eval_3task_v1.json](./campaigns/pilot_eval_3task_v1.json) adds `AMZN_footnote_reconciliation` with a **4-section ordered gold path** (policy → Note 10 → income statement → MD&A International). PEP L3 now requires **distinct snippets per metric** (`l3_citation_rules.distinct_snippets_required`).
 
+**Live results (Jul 2026):** 18/18 runs (`gpt-4o` + `claude-sonnet-4-5` × 3 tasks × 3). Headline composite median **1.0** — GOOGL/AMZN still at ceiling. **PEP separates models:** gpt-4o composite **0.864** (L3 0.32, duplicate MD&A row citations + halluc snippets); claude median **1.0** (one run 0.898 on duplicate snippet). Fractures: `CITE_HALLUC`×3, `CITE_BROAD`×4. Full report: [runs/pilot_eval_3task_v1/pilot_eval_3task_v1.json](./runs/pilot_eval_3task_v1/pilot_eval_3task_v1.json).
+
+**Discrimination v2 (P2-11):** [campaigns/pilot_eval_discrimination_v2.json](./campaigns/pilot_eval_discrimination_v2.json) drops GOOGL from the headline and reports **task-weighted per-model composite** (`weighted_composite_by_model`). Rescore existing 3-task runs without new API calls:
+
+```bash
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_discrimination_v2.json
+```
+
 ```bash
 export BENCHMARK_RUN_DELAY_SECONDS=3
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \

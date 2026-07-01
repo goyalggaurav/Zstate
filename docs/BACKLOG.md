@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.4  
-**Last updated:** July 2026 (post P2-09 discrimination eval — `pilot_eval_discrimination_v1` 12/12 live)
+**Last updated:** July 2026 (post P2-11 discrimination v2 — `pilot_eval_3task_v1` live 18/18)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -74,7 +74,8 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-04g | **Live eval** — OpenAI mini 2×3 grid | done | `gpt-4o-mini` × GOOGL + PEP × 3 runs; 6/6 composite 1.0; `runs/pilot_eval_openai_mini_v1/` |
 | P2-04h | Anthropic adapter + `--agent auto` routing | done | `claude-sonnet-4-5`; live 12/12 in `pilot_eval_campaign_v1` |
 | P2-09 | **Discrimination eval** — eval_mode + L2 gold-path + L3 partial | done | Live 12/12; PEP composite 0.966; `CITE_HALLUC`×5; GOOGL still 1.0 — scorer validated, ranking deferred |
-| P2-10 | **Harder L3 + 3rd task** — PEP distinct snippets; AMZN 4-section path | done | `l3_citation_rules.distinct_snippets_required`; `pilot_eval_3task_v1` |
+| P2-10 | **Harder L3 + 3rd task** — PEP distinct snippets; AMZN 4-section path | done | Live 18/18; PEP task median 0.881; `pilot_eval_3task_v1` |
+| P2-11 | **Discrimination v2** — drop GOOGL headline; weighted per-model composite | done | `pilot_eval_discrimination_v2`; rescores 3-task runs; AMZN `strict_first_section` |
 
 ---
 
@@ -124,7 +125,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 22 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 23 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 
 ---
@@ -137,7 +138,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | LATER-02 | Track A — transcript API + NFLX guidance task | A | P2-08 + P2-01; blocked on vendor + IR fallback runbook |
 | LATER-03 | Track A — eval orchestrator (SH-07) | A | done | Adapters + `pilot_eval_campaign_v1` live run complete |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
-| LATER-05 | Track A — model ranking / harder L3 thresholds | A | After 3+ tasks or calibration set; PEP verbatim brittleness known |
+| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | PEP L3 separates gpt-4o vs claude; AMZN path still 1.0 — add 5th section or decoy |
 
 ---
 
@@ -187,6 +188,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-30 | P2-04 live campaign — gpt-4o + claude-sonnet-4-5, 12/12 composite 1.0 | Jul 2026 |
 | DONE-31 | P2-09 discrimination eval — eval_mode, L2 gold-path, L3 partial; live 12/12 | Jul 2026 |
 | DONE-32 | P2-10 PEP distinct L3 + AMZN third task (4-section L2 path) | Jul 2026 |
+| DONE-33 | P2-11 discrimination v2 + live 3-task eval (PEP separates models) | Jul 2026 |
 
 ---
 

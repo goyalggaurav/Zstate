@@ -824,6 +824,26 @@ def check_discrimination_scoring() -> None:
     assert campaign.get("eval_mode") is True
 
 
+def check_discrimination_v2_rescore() -> None:
+    """P2-11 — PEP+AMZN headline composite and weighted per-model scores."""
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "benchmark_v0.1/scripts/run_benchmark_campaign.py",
+            "--campaign", "benchmark_v0.1/campaigns/pilot_eval_discrimination_v2.json",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 0, proc.stderr or proc.stdout
+    summary = json.loads(proc.stdout.split("\n\nWrote")[0])
+    assert summary["scored"] == 12, summary
+    assert summary.get("weighted_composite_by_model"), summary
+    assert summary["weighted_composite_by_model"]["gpt-4o"] < summary["weighted_composite_by_model"]["claude-sonnet-4-5"]
+    assert summary["by_task_composite_median"]["PEP_fx_organic_growth"] < 1.0
+
+
 def check_amzn_l2_path() -> None:
     """AMZN third task — four-section gold path with order-weighted L2."""
     import tempfile
@@ -926,6 +946,7 @@ def main() -> int:
         ("Anthropic adapter", check_anthropic_adapter),
         ("Eval mode prompts", check_eval_mode_prompts),
         ("Discrimination scoring", check_discrimination_scoring),
+        ("Discrimination v2 rescore", check_discrimination_v2_rescore),
         ("AMZN L2 path variance", check_amzn_l2_path),
         ("Campaign execute scripted", check_campaign_execute_scripted),
     ]

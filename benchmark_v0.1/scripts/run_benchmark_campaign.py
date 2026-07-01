@@ -26,6 +26,106 @@ from datetime import datetime, timezone
 from pathlib import Path
 from statistics import median
 
+
+def _task_weights(campaign: dict, task_list: list[str]) -> dict[str, float]:
+    raw = campaign.get("task_weights") or {}
+    weights = {tid: float(raw[tid]) for tid in task_list if tid in raw}
+    if weights:
+        return weights
+    if len(task_list) <= 1:
+        return {task_list[0]: 1.0} if task_list else {}
+    return {tid: 1.0 for tid in task_list}
+
+
+def _weighted_mean(values: dict[str, float], weights: dict[str, float]) -> float | None:
+    pairs = [(values[tid], weights[tid]) for tid in weights if tid in values and values[tid] is not None]
+    if not pairs:
+        return None
+    total_w = sum(w for _, w in pairs)
+    if total_w <= 0:
+        return None
+    return sum(v * w for v, w in pairs) / total_w
+
+
+def _campaign_summary(scored: list[dict], campaign: dict, task_list: list[str]) -> dict:
+    l1_rates = [
+        1.0 if r.get("l1_all_pass") else (0.5 if r.get("l1_pass") else 0.0)
+        for r in scored
+    ]
+    composite_scores = [r["composite_score"] for r in scored if r.get("composite_score") is not None]
+    l2_scores = [r["l2_score"] for r in scored if r.get("l2_score") is not None]
+    l3_scores = [r["l3_score"] for r in scored if r.get("l3_score") is not None]
+    fractures: dict[str, int] = {}
+    for r in scored:
+        for code in r.get("fracture_codes") or []:
+            fractures[code] = fractures.get(code, 0) + 1
+
+    by_task: dict[str, list[float]] = {}
+    by_task_composite: dict[str, list[float]] = {}
+    by_model_composite: dict[str, list[float]] = {}
+    by_model_task_composite: dict[str, dict[str, list[float]]] = {}
+    for r in scored:
+        rate = 1.0 if r.get("l1_all_pass") else (0.5 if r.get("l1_pass") else 0.0)
+        by_task.setdefault(r["task_id"], []).append(rate)
+        if r.get("composite_score") is not None:
+            by_task_composite.setdefault(r["task_id"], []).append(r["composite_score"])
+            by_model_composite.setdefault(r["model_id"], []).append(r["composite_score"])
+            by_model_task_composite.setdefault(r["model_id"], {}).setdefault(
+                r["task_id"], []
+            ).append(r["composite_score"])
+
+    weights = _task_weights(campaign, task_list)
+    by_model_task_median = {
+        model: {
+            tid: median(rates) if rates else None
+            for tid, rates in tasks.items()
+        }
+        for model, tasks in by_model_task_composite.items()
+    }
+    weighted_by_model = {
+        model: _weighted_mean(task_medians, weights)
+        for model, task_medians in by_model_task_median.items()
+        if weights
+    }
+
+    headline_tasks = campaign.get("headline_tasks") or task_list
+    headline_scores = [
+        r["composite_score"]
+        for r in scored
+        if r.get("composite_score") is not None and r["task_id"] in headline_tasks
+    ]
+
+    summary = {
+        "run_slots": len(scored),
+        "scored": len(scored),
+        "missing": 0,
+        "l1_all_pass_count": sum(1 for r in scored if r.get("l1_all_pass")),
+        "l1_pass_rate_median": median(l1_rates) if l1_rates else None,
+        "l2_score_median": median(l2_scores) if l2_scores else None,
+        "l3_score_median": median(l3_scores) if l3_scores else None,
+        "composite_score_median": median(composite_scores) if composite_scores else None,
+        "by_task_l1_pass_rate_median": {
+            tid: median(rates) if rates else None for tid, rates in by_task.items()
+        },
+        "by_task_composite_median": {
+            tid: median(rates) if rates else None for tid, rates in by_task_composite.items()
+        },
+        "fracture_counts": fractures,
+    }
+    if headline_tasks != task_list and headline_scores:
+        summary["headline_composite_score_median"] = median(headline_scores)
+        summary["headline_tasks"] = list(headline_tasks)
+    if by_model_composite:
+        summary["by_model_composite_median"] = {
+            model: median(rates) if rates else None for model, rates in by_model_composite.items()
+        }
+    if by_model_task_median:
+        summary["by_model_task_composite_median"] = by_model_task_median
+    if weighted_by_model:
+        summary["weighted_composite_by_model"] = weighted_by_model
+        summary["task_weights"] = weights
+    return summary
+
 BENCH = Path(__file__).resolve().parent.parent
 SCRIPTS = BENCH / "scripts"
 
@@ -266,25 +366,10 @@ def score_campaign(
                 run_records.append(rec)
 
     scored = [r for r in run_records if r.get("status") == "scored"]
-    l1_rates = [
-        1.0 if r.get("l1_all_pass") else (0.5 if r.get("l1_pass") else 0.0)
-        for r in scored
-    ]
-    composite_scores = [r["composite_score"] for r in scored if r.get("composite_score") is not None]
-    l2_scores = [r["l2_score"] for r in scored if r.get("l2_score") is not None]
-    l3_scores = [r["l3_score"] for r in scored if r.get("l3_score") is not None]
-    fractures: dict[str, int] = {}
-    for r in scored:
-        for code in r.get("fracture_codes") or []:
-            fractures[code] = fractures.get(code, 0) + 1
-
-    by_task: dict[str, list[float]] = {}
-    by_task_composite: dict[str, list[float]] = {}
-    for r in scored:
-        rate = 1.0 if r.get("l1_all_pass") else (0.5 if r.get("l1_pass") else 0.0)
-        by_task.setdefault(r["task_id"], []).append(rate)
-        if r.get("composite_score") is not None:
-            by_task_composite.setdefault(r["task_id"], []).append(r["composite_score"])
+    summary = _campaign_summary(scored, campaign, task_list)
+    summary["run_slots"] = len(run_records)
+    summary["scored"] = len(scored)
+    summary["missing"] = sum(1 for r in run_records if r.get("status") == "missing")
 
     return {
         "campaign_id": campaign["campaign_id"],
@@ -294,23 +379,7 @@ def score_campaign(
         "tasks": task_list,
         "runs_per_task": campaign["runs_per_task"],
         "execution": campaign.get("_execution"),
-        "summary": {
-            "run_slots": len(run_records),
-            "scored": len(scored),
-            "missing": sum(1 for r in run_records if r.get("status") == "missing"),
-            "l1_all_pass_count": sum(1 for r in scored if r.get("l1_all_pass")),
-            "l1_pass_rate_median": median(l1_rates) if l1_rates else None,
-            "l2_score_median": median(l2_scores) if l2_scores else None,
-            "l3_score_median": median(l3_scores) if l3_scores else None,
-            "composite_score_median": median(composite_scores) if composite_scores else None,
-            "by_task_l1_pass_rate_median": {
-                tid: median(rates) if rates else None for tid, rates in by_task.items()
-            },
-            "by_task_composite_median": {
-                tid: median(rates) if rates else None for tid, rates in by_task_composite.items()
-            },
-            "fracture_counts": fractures,
-        },
+        "summary": summary,
         "runs": run_records,
     }
 

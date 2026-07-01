@@ -118,6 +118,7 @@
       "income_statement",
       "mdna_international_fx"
     ],
+    "strict_first_section": "segment_reporting_policy",
     "required_tools": ["Search_Filing", "Python_Interpreter"]
   },
 
