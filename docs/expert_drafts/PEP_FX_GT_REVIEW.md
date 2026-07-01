@@ -203,6 +203,7 @@ Two independent gates — **do not block data sign-off on METHOD_ALT eng work**:
 - [ ] **Assumption log:** Grader requires agent list: (a) Note 1 revenue citations, (b) MD&A reported/FX/organic % citations, (c) additive derivation shown.
 - [ ] **WAE handling:** If agent searches for FX rates, must state filing does not disclose them — no external/invented rates.
 - [ ] **L2 reconcile:** Agent organic CC within ±0.2 pp strict (or ±0.75 pp with `METHOD_ALT` if multiplicative shown + MD&A cited).
+- [ ] **L3 citation design:** Material-claim inventory (10–11 claims) and citation schema match **Scoring intent → Layer 3**; ≥90% table-level cite bar documented.
 - [ ] **Type M scope:** No Buy/Hold/Sell or price target.
 
 ---
@@ -248,15 +249,100 @@ Report **layer sub-scores**, not a single pass/fail. A `reported_only` trap hit 
 
 `layer2_method: assumption_log_automated` in task JSON — expert spot-check on calibration set only at MVD scale.
 
-### Layer 3 — Traceability & trust
+### Layer 3 — Traceability & trust *(20% weight)*
 
-| Signal | Pass | Fail |
-|--------|------|------|
-| **Citation completeness** | Every material number → `{doc_id, note/section, table, column}` | Broad “10-K” cite or missing column |
-| **Uncertainty** | Marks unverified; no interpolation | Hallucinated fill-in |
-| **Task-type compliance** | No Buy/Hold/Sell or price target | Recommendation on Type M forensics task → veto |
+**Scope for this task:** `compliance_baseline: citation_only` — FINRA linter **not** required (`finra_required: false`). L3 is **source grounding + uncertainty honesty**, not investment compliance.
 
-**Pilot rule:** If &lt;90% of material claims are table-level auditable → L3 fail (framework default).
+**Pilot aggregation:** On 3-run calibration, L3 uses **worst run wins** for citation completeness (framework default).
+
+#### Material claims inventory
+
+Every row below is a **material claim** — each needs a table-level citation in the growth table or assumption log:
+
+| # | Claim | Required cite anchor |
+|---|-------|----------------------|
+| 1–4 | EMEA / LatAm Foods net revenue (FY2025 + FY2024) | Note 1 — *Net revenue by segment*; correct fiscal-year **column** |
+| 5–10 | Per segment: reported growth %, FX translation %, organic CC % | MD&A — *Net Revenue and Organic Revenue Performance*; **segment row** |
+| 11 *(conditional)* | “Filing does not disclose WAE rate table” | Negative search OK — must name sections checked; no external FX source |
+
+**Derived values** (e.g. FX = reported − organic, Python check) do **not** need a separate filing line if all inputs are cited and derivation is shown.
+
+**L3 denominator:** Count material claims present in the agent output (typically **10**; **11** if WAE search is discussed). Do not penalize for omitting uncited optional commentary.
+
+#### Citation schema (pass bar)
+
+Gold shape matches GT `extracted_values[].citation`:
+
+```json
+{
+  "doc_id": "PEP_10K_2025",
+  "note": "Note 1 — Segment Reporting",
+  "table_title": "Net revenue by segment",
+  "column": "Year ended December 27, 2025",
+  "snippet": "EMEA $ 18,025"
+}
+```
+
+| Field | Pass | Fail |
+|-------|------|------|
+| `doc_id` | `PEP_10K_2025` (scored filing) | `PEP_10K_2024` as primary; external URL; “PepsiCo 10-K” only |
+| `note` / section | Note 1 or MD&A subsection name | “Item 8” with no table; wrong note for metric type |
+| `table_title` | Named table (e.g. *Net revenue by segment*) | “segment data” / “financial statements” |
+| `column` | Fiscal period column (Dec 27 2025 vs Dec 28 2024) | Missing column; wrong year in cite |
+| `snippet` | Short verbatim or numeric anchor | Paraphrase with no locatable string |
+
+**Completeness rule:** ≥**90%** of material claims fully cited → L3 pass. Below 90% → `L3_CITATION_INCOMPLETE` (pilot veto on L3 sub-score, not necessarily whole task unless campaign config says so).
+
+#### Trust signals beyond citations
+
+| Signal | Pass | Fail / penalty |
+|--------|------|----------------|
+| **Source scope** | Scored doc only: PEP FY2025 10-K (`PEP_10K_2025`) | Primary cite from `PEP_10K_2024`, 10-Q, or web FX feed |
+| **Section–metric match** | Revenues from Note 1; % from MD&A organic table | Organic % cited to Note 1; revenue cited to MD&A narrative only |
+| **Uncertainty** | “Unverified” / “not disclosed” when absent; no interpolation | Invented WAE (`invent_wae_rates_not_in_filing`); filled gaps |
+| **Sign / label honesty** | FX impact labeled as MD&A *translation*; organic ≠ reported | Calls reported growth “organic CC” without FX adjustment |
+| **Task-type compliance** | No Buy/Hold/Sell or price target | `produce_buy_hold_sell_recommendation` → **L3 veto** |
+
+#### L3 anti-patterns (gold path)
+
+| Anti-pattern | L3 effect |
+|--------------|-----------|
+| `invent_wae_rates_not_in_filing` | Trust fail — fabricated or external FX |
+| `produce_buy_hold_sell_recommendation` | Veto |
+| `use_fy2024_10k_as_primary` | Wrong doc_id in cites → completeness fail |
+| `use_quarterly_10q_instead_of_fy2025_10k` | Wrong period in cites |
+
+#### L2 vs L3 boundary
+
+| Concern | Layer |
+|---------|-------|
+| Assumption log lists (a)(b)(c) derivation steps | L2 |
+| Each listed input has auditable `{doc, note, table, column}` | L3 |
+| MD&A accessed (section recall) | L2 |
+| MD&A cite includes segment row + correct % column | L3 |
+| Python shown | L2 (Type M methodology) |
+| Python I/O traceable to cited inputs | L3 |
+
+#### Illustrative citation quality
+
+| Quality | Example |
+|---------|---------|
+| **Pass** | “EMEA FY2025 revenue $18,025M — PEP 10-K Note 1, Net revenue by segment, column Year ended Dec 27 2025, snippet: ‘EMEA $ 18,025’.” |
+| **Pass** | “EMEA organic CC 6.0% — MD&A Net Revenue and Organic Revenue Performance, EMEA row, organic % column FY2025 vs FY2024.” |
+| **Fail** | “EMEA revenue from PepsiCo 10-K segment footnote.” *(no note, table, or column)* |
+| **Fail** | “Organic growth 6% per MD&A.” *(no table name or segment row)* |
+| **Fail** | “EUR/USD 1.024 (Bloomberg).” *(external FX — not in filing)* |
+
+#### Automation boundary (L3)
+
+| Automated (scoring engine / citation auditor) | Expert calibration |
+|-------------------------------------------------|-------------------|
+| Claim count vs fully-cited count | Snippet plausibility spot-check |
+| `doc_id` / period mismatch heuristics | MD&A row correctly identified |
+| FINRA skip on this task | WAE absence statement adequacy |
+| Anti-pattern tags from trajectory | Borderline “Item 7” cites |
+
+L1 verify script does **not** score citations — L3 requires separate citation audit on agent narrative output.
 
 ### Partial credit examples
 
@@ -266,6 +352,7 @@ Report **layer sub-scores**, not a single pass/fail. A `reported_only` trap hit 
 | All % correct; multiplicative formula; MD&A cited | L1 **`METHOD_ALT`** partial via ±0.75 pp band; not `all_pass` |
 | Correct table extract; no Python work shown | L1 **methodology fail**; L2/L3 may still score |
 | Both segments correct; one wrong fiscal column | L1 partial; possible `wrong_period` fracture |
+| All numbers correct; 7/10 material claims table-cited | L1 pass; L3 **fail** (`L3_CITATION_INCOMPLETE` at 70%) |
 
 ### Automation boundary
 
@@ -273,8 +360,9 @@ Report **layer sub-scores**, not a single pass/fail. A `reported_only` trap hit 
 |-----------------------|-------------------------|
 | Numeric compare vs GT JSON | Assumption log quality |
 | `reported_only` / `wrong_region` classification | Python artifact present |
-| `METHOD_ALT` flag on organic CC | Citation snippet audit |
-| Additive formula self-check | WAE absence acknowledgment |
+| `METHOD_ALT` flag on organic CC | Citation snippet audit (L3) |
+| Additive formula self-check | WAE absence acknowledgment (L2/L3) |
+| — | Citation auditor: claim count vs 90% threshold (L3) |
 
 **Calibration command:**
 

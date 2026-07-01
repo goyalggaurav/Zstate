@@ -23,7 +23,7 @@ Using PepsiCo FY2025 Form 10-K (filed 2026-02-03), compute constant-currency org
 |-------|--------|------------------|
 | **L1** | 50% | Revenue extraction + MD&A CC decomposition math |
 | **L2** | 30% | Assumption log + MD&A cross-check + section recall |
-| **L3** | 20% | Citation quality (table-level, auditable) |
+| **L3** | 20% | Citation quality — material-claim inventory, table-level cites, trust anti-patterns |
 
 Full scoring intent (pass rules, partial credit, automation boundary): **`docs/expert_drafts/PEP_FX_GT_REVIEW.md` → Scoring intent (Type M)**.
 
