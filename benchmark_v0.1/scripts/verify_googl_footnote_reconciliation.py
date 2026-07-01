@@ -34,12 +34,62 @@ GT_FY2025 = {
     "consolidated_total_revenue": 402_836,
 }
 
+SEGMENT_SUM_Q1_2026 = 110_076
+
+FAILURE_FRACTURE = {
+    "blind_sum": "RECON_OMIT",
+    "sign_error": "SIGN_ERR",
+    "wrong_period": "HALLUC_FILL",
+    "wrong_filing": "HALLUC_FILL",
+    "hedging_as_segment": "RECON_OMIT",
+}
+
 
 def _get_field(values: dict, *keys: str):
     for key in keys:
         if key in values and values[key] is not None:
             return values[key]
     return None
+
+
+def _segments_match_gt(gs, gc, ob, gt: dict) -> bool:
+    return (
+        gs == gt["google_services_revenue"]
+        and gc == gt["google_cloud_revenue"]
+        and ob == gt["other_bets_revenue"]
+    )
+
+
+def classify_failure(values: dict, gt: dict) -> list[str]:
+    """Return ordered failure_mode ids detected from agent output."""
+    gs = _get_field(values, "google_services_revenue", "google_services_revenue_fy2024")
+    gc = _get_field(values, "google_cloud_revenue", "google_cloud_revenue_fy2024")
+    ob = _get_field(values, "other_bets_revenue", "other_bets_revenue_fy2024")
+    hedge = _get_field(
+        values, "hedging_gains_losses", "hedging_gains_losses_fy2024", "reconciling_item_amount"
+    )
+    total = _get_field(values, "consolidated_total_revenue", "consolidated_total_revenue_fy2024")
+
+    modes: list[str] = []
+
+    # FY2025 annual column mistaken for scored period
+    if total == GT_FY2025["consolidated_total_revenue"] or hedge == GT_FY2025["hedging_gains_losses"]:
+        modes.append("wrong_filing")
+        return modes
+
+    if hedge == 180:
+        modes.append("sign_error")
+
+    segments_ok = _segments_match_gt(gs, gc, ob, gt)
+    if segments_ok and (total == SEGMENT_SUM_Q1_2026 or hedge is None):
+        if "sign_error" not in modes:
+            modes.append("blind_sum")
+
+    if not segments_ok and any(v is not None for v in (gs, gc, ob, total, hedge)):
+        if not modes:
+            modes.append("wrong_period")
+
+    return modes
 
 
 def verify(values: dict, gt: dict) -> dict:
@@ -90,10 +140,15 @@ def verify(values: dict, gt: dict) -> dict:
     all_pass = all(c["pass"] for c in checks)
     critical_fail = any(not c["pass"] and c["critical"] for c in checks)
 
+    failure_modes = [] if all_pass else classify_failure(values, gt)
+    fracture_codes = list(dict.fromkeys(FAILURE_FRACTURE[m] for m in failure_modes if m in FAILURE_FRACTURE))
+
     return {
         "task_id": "GOOGL_footnote_reconciliation",
         "all_pass": all_pass,
         "critical_fail": critical_fail,
+        "failure_modes": failure_modes,
+        "fracture_codes": fracture_codes,
         "checks": checks,
         "computed": {
             "segment_sum": segment_sum,

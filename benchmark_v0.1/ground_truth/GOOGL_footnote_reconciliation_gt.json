@@ -1,6 +1,6 @@
 {
   "task_id": "GOOGL_footnote_reconciliation",
-  "version": "1.1.0-pilot",
+  "version": "1.2.0-pilot",
   "fiscal_period": "2026Q1",
   "period_end": "2026-03-31",
   "unit": "USD_millions",
@@ -14,6 +14,9 @@
       "citation": {
         "doc_id": "GOOGL_10Q_2026Q1",
         "note": "Note 15 — Information about Segments and Geographic Areas",
+        "table_title": "Revenues, traffic acquisition costs (TAC) and monetization metrics by segment",
+        "table_position": "first table in Note 15",
+        "column": "Three months ended March 31, 2026",
         "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
         "snippet": "Three Months Ended March 31, 2026 ... Google Services $ 89,637"
       }
@@ -25,7 +28,10 @@
       "tolerance": 0,
       "citation": {
         "doc_id": "GOOGL_10Q_2026Q1",
-        "note": "Note 15",
+        "note": "Note 15 — Information about Segments and Geographic Areas",
+        "table_title": "Revenues, traffic acquisition costs (TAC) and monetization metrics by segment",
+        "table_position": "first table in Note 15",
+        "column": "Three months ended March 31, 2026",
         "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
         "snippet": "Google Cloud ... 20,028"
       }
@@ -37,7 +43,10 @@
       "tolerance": 0,
       "citation": {
         "doc_id": "GOOGL_10Q_2026Q1",
-        "note": "Note 15",
+        "note": "Note 15 — Information about Segments and Geographic Areas",
+        "table_title": "Revenues, traffic acquisition costs (TAC) and monetization metrics by segment",
+        "table_position": "first table in Note 15",
+        "column": "Three months ended March 31, 2026",
         "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
         "snippet": "Other Bets ... 411"
       }
@@ -50,7 +59,14 @@
       "display": "(180)",
       "citation": {
         "doc_id": "GOOGL_10Q_2026Q1",
-        "note": "Note 15 (also Note 2 — Revenues disaggregation)",
+        "note": "Note 15 — Information about Segments and Geographic Areas (cross-check Note 2 — Revenues)",
+        "table_title": "Revenues, traffic acquisition costs (TAC) and monetization metrics by segment",
+        "table_position": "first table in Note 15 — hedging gains (losses) row",
+        "column": "Three months ended March 31, 2026",
+        "secondary_table": {
+          "note": "Note 2 — Revenues",
+          "table_title": "Disaggregation of revenue by type"
+        },
         "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
         "snippet": "Hedging gains (losses) ... (180)"
       }
@@ -62,7 +78,10 @@
       "tolerance": 0,
       "citation": {
         "doc_id": "GOOGL_10Q_2026Q1",
-        "note": "Note 15 / Consolidated statements",
+        "note": "Note 15 — Information about Segments and Geographic Areas",
+        "table_title": "Revenues, traffic acquisition costs (TAC) and monetization metrics by segment",
+        "table_position": "first table in Note 15 — total revenues row",
+        "column": "Three months ended March 31, 2026",
         "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
         "snippet": "Total revenues $ 109,896"
       }
@@ -112,12 +131,58 @@
     "Filing states hedging gains (losses) related to revenue are not allocated to segments"
   ],
 
-  "known_failure_modes": [
-    "segment_sum_only — ignores hedging line",
-    "sign_error — uses +180 instead of (180) loss",
-    "wrong_period — uses FY2025 annual or Q1 2025 instead of Q1 2026",
-    "wrong_filing — uses 10-K FY2024 stale data",
-    "hedging_as_segment — treats hedging as fourth operating segment"
+  "failure_modes": [
+    {
+      "id": "blind_sum",
+      "label": "Blind sum",
+      "description": "Agent sums the three segments (110,076) and treats that as consolidated total, omitting hedging",
+      "wrong_signatures": {
+        "consolidated_total_revenue": 110076,
+        "hedging_gains_losses": null
+      },
+      "fracture_code": "RECON_OMIT",
+      "anti_pattern": "omit_hedging_line_in_reconciliation",
+      "layer1_estimate": 0.50
+    },
+    {
+      "id": "sign_error",
+      "label": "Sign error",
+      "description": "Agent finds hedging but adds +180 instead of subtracting the (180) loss",
+      "wrong_signatures": {
+        "hedging_gains_losses": 180,
+        "implied_consolidated_total": 110256
+      },
+      "fracture_code": "SIGN_ERR",
+      "anti_pattern": "positive_180_instead_of_hedging_loss",
+      "layer1_estimate": 0.70
+    },
+    {
+      "id": "wrong_period",
+      "label": "Wrong period",
+      "description": "Agent pulls from FY2025 annual, Q1 2025 comparative column, or stale filing",
+      "wrong_signatures": {
+        "example_fy2025_consolidated_total": 402836,
+        "example_fy2025_hedging": -127
+      },
+      "fracture_code": "HALLUC_FILL",
+      "anti_pattern": "use_q1_2025_column_instead_of_q1_2026",
+      "layer1_estimate": 0.15
+    },
+    {
+      "id": "wrong_filing",
+      "label": "Wrong filing",
+      "description": "Agent uses 10-K or wrong quarter instead of specified Q1 2026 10-Q",
+      "fracture_code": "HALLUC_FILL",
+      "anti_pattern": "use_fy2024_or_fy2025_annual_instead_of_q1_2026_10q",
+      "layer1_estimate": 0.10
+    },
+    {
+      "id": "hedging_as_segment",
+      "label": "Hedging as segment",
+      "description": "Agent treats hedging as a fourth operating segment rather than a reconciling item",
+      "fracture_code": "RECON_OMIT",
+      "layer1_estimate": 0.40
+    }
   ],
 
   "annual_reference_fy2025": {
@@ -145,8 +210,11 @@
   ],
 
   "expert_sign_off": {
-    "status": "pending",
-    "reviewer": null,
-    "notes": "Q1 2026 numbers verified against Alphabet 10-Q filed 2026-04-30. FY2025 annual reference from 10-K filed 2026-02-05. Requires CFA peer review before publish."
+    "status": "approved",
+    "reviewer": "Gaurav Goyal",
+    "review_date": "2026-07-01",
+    "review_doc": "docs/expert_drafts/GOOGL_GT_REVIEW.md",
+    "grader_rubric_ref": "../rubrics/GOOGL_footnote_reconciliation_grader.md",
+    "notes": "Q1 2026 numbers verified against Alphabet 10-Q filed 2026-04-30. Failure modes and table-level citations added post-review."
   }
 }

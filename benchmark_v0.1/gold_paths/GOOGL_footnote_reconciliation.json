@@ -1,6 +1,6 @@
 {
   "task_id": "GOOGL_footnote_reconciliation",
-  "version": "1.1.0-pilot",
+  "version": "1.2.0-pilot",
   "task_type": "F",
   "fiscal_period": "2026Q1",
 
@@ -8,6 +8,7 @@
     {
       "section_id": "GOOGL_10Q_2026Q1_note_15",
       "name": "Note 15 — Information about Segments and Geographic Areas",
+      "table_title": "Revenues, traffic acquisition costs (TAC) and monetization metrics by segment",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
       "required": true,
       "reason": "Q1 2026 segment revenue table + hedging allocation policy"
@@ -15,6 +16,7 @@
     {
       "section_id": "GOOGL_10Q_2026Q1_note_2",
       "name": "Note 2 — Revenues (disaggregated by type)",
+      "table_title": "Disaggregation of revenue by type",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
       "required": true,
       "reason": "Cross-check segment totals and hedging line for three months ended March 31, 2026"
@@ -46,7 +48,7 @@
       "step": 1,
       "action": "Locate Q1 2026 segment disclosure",
       "tool": "Search_Filing",
-      "target": "Note 15 segment revenue table — three months ended March 31, 2026"
+      "target": "Note 15 — first table: Revenues, TAC and monetization metrics by segment — three months ended March 31, 2026"
     },
     {
       "step": 2,
@@ -58,7 +60,7 @@
       "step": 3,
       "action": "Cross-check Note 2 disaggregation",
       "tool": "PDF_Parser",
-      "target": "Note 2 revenues by type — March 31, 2026 column"
+      "target": "Note 2 — Disaggregation of revenue by type — March 31, 2026 column"
     },
     {
       "step": 4,
@@ -81,6 +83,29 @@
     "omit_hedging_line_in_reconciliation",
     "load_entire_10q_without_targeting_notes",
     "produce_buy_hold_sell_recommendation"
+  ],
+
+  "failure_mode_map": [
+    {
+      "failure_mode_id": "blind_sum",
+      "anti_pattern": "omit_hedging_line_in_reconciliation",
+      "fracture_code": "RECON_OMIT"
+    },
+    {
+      "failure_mode_id": "sign_error",
+      "anti_pattern": "positive_180_instead_of_hedging_loss",
+      "fracture_code": "SIGN_ERR"
+    },
+    {
+      "failure_mode_id": "wrong_period",
+      "anti_pattern": "use_q1_2025_column_instead_of_q1_2026",
+      "fracture_code": "HALLUC_FILL"
+    },
+    {
+      "failure_mode_id": "wrong_filing",
+      "anti_pattern": "use_fy2024_or_fy2025_annual_instead_of_q1_2026_10q",
+      "fracture_code": "HALLUC_FILL"
+    }
   ],
 
   "section_recall_scoring": {

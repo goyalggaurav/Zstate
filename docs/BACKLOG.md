@@ -13,7 +13,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 
 | ID | Item | Track | Status | Owner | Notes |
 |----|------|-------|--------|-------|-------|
-| P0-01 | GOOGL footnote pilot — expert sign-off | A | pending_cfa_review | CFA | See `docs/expert_drafts/GOOGL_GT_REVIEW.md` |
+| P0-01 | GOOGL footnote pilot — expert sign-off | A | done | CFA | Approved 2026-07-01; see `GOOGL_GT_REVIEW.md` + `rubrics/GOOGL_footnote_reconciliation_grader.md` |
 | P0-02 | env_v1 scaffold (tool backend, episode, PM FSM, scorer) | B | done | Eng | See `env_v1/` |
 | P0-03 | Copy dual-control spec + flow diagram into repo | B | done | Eng | `env_v1/docs/` |
 | P0-04 | gitignore `gold_keys/` + example template | B | done | Eng | `gold_keys.example/` |

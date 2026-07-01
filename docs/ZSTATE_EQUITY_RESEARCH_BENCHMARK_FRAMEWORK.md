@@ -435,8 +435,9 @@ benchmark_v0.1/
 | `LOOP_TOOL` | Repeated tool calls on large tables | F, M |
 | `BLOAT_CTX` | Full doc load vs targeted sections | F, M |
 | `NO_CODE` | Skipped Python on Type M task | M |
-| `SIGN_ERR` | Cash flow sign inversion | M |
-| `HALLUC_FILL` | Interpolated missing data | F, M |
+| `SIGN_ERR` | Sign inversion (e.g. hedging loss as gain) | F, M |
+| `RECON_OMIT` | Reconciliation item omitted (segment sum = total) | F |
+| `HALLUC_FILL` | Interpolated or wrong-period data | F, M |
 | `CITE_BROAD` | Non-auditable citation | F, M |
 | `SECTION_MISS` | Required footnote/section not accessed | F |
 | `FX_SPOT misuse` | Spot rate used instead of weighted avg | M |

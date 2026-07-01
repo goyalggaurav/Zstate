@@ -1,6 +1,6 @@
 {
   "task_id": "GOOGL_footnote_reconciliation",
-  "version": "1.1.0-pilot",
+  "version": "1.2.0-pilot",
   "status": "pilot",
   "benchmark_version": "benchmark_v0.1",
 
@@ -89,8 +89,9 @@
 
   "ground_truth_ref": "../ground_truth/GOOGL_footnote_reconciliation_gt.json",
   "gold_path_ref": "../gold_paths/GOOGL_footnote_reconciliation.json",
+  "grader_rubric_ref": "../rubrics/GOOGL_footnote_reconciliation_grader.md",
 
   "authored_by": "pilot_template",
-  "review_status": "pending_expert_sign_off",
+  "review_status": "cfa_approved",
   "updated_at": "2026-06-25T00:00:00Z"
 }
