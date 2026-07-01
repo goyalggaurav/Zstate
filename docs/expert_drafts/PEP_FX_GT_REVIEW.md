@@ -165,41 +165,45 @@ Two independent gates — **do not block data sign-off on METHOD_ALT eng work**:
 
 ---
 
-## Scope & logic
+## 1. Scope & logic
 
-- **Re-scope:** EMEA + LatAm Foods (per FY2025 Note 1 segment table — not legacy Europe/AMESA).
-- **Methodology:** Additive reconciliation (`Reported growth − FX impact = Organic CC`); FX impact signed per MD&A.
-- **WAE:** Not required — filing does not disclose weighted-average FX rate tables (not in Note 1 or elsewhere); MD&A is the auditable anchor.
+- **Segments:** EMEA + LatAm Foods (FY2025 Note 1 segment reporting table — not legacy Europe/AMESA).
+- **Methodology:** Additive MD&A decomposition: `organic_cc = reported_growth − fx_impact` (percentage points; FX signed per MD&A).
+- **Primary sources:** Note 1 (segment net revenue, USD millions) + MD&A *Net Revenue and Organic Revenue Performance* (reported %, FX translation %, organic %).
+- **WAE:** Not in scope — filing discloses no weighted-average FX rate table; task anchored on MD&A only (`fx_instruments: []` in GT).
+- **Type M gate:** Python verification required; MD&A extract alone is insufficient.
 
 ---
 
-## Expert audit ledger (Gate B — data finality)
+## 2. Expert audit ledger (Gate B — data finality)
 
-*Perform against [PEP FY2025 10-K](https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm) (SEC accession `0000077476-26-000007`).*
+*Verify against [PEP FY2025 10-K](https://www.sec.gov/Archives/edgar/data/77476/000007747626000007/pep-20251227.htm) — SEC accession `0000077476-26-000007` (filed 2026-02-03).*
 
-**How to use:** Section **I** is Gate B (filing-verified data). Section **II** is Gate A/B (task design + traps). Section **III** is agent-runtime scoring intent — validate design, not individual runs.
+**How to use:** Section **I** = Gate B (filing data). Section **II** = Gate A/B (design + traps). Section **III** = agent-runtime scoring intent (validate design, not individual runs).
 
 ### I. Source & baseline audit *(Gate B)*
 
-- [ ] **Revenue reconciliation:** FY2025/FY2024 segment revenues in GT JSON match Note 1 exactly (correct fiscal-year columns).
-- [ ] **MD&A organic anchor:** Reported %, FX translation %, and organic % match MD&A **Net Revenue and Organic Revenue Performance**; additive identity holds for both segments.
-- [ ] **Geographic scope:** Scored segments are EMEA and LatAm Foods per Note 1 — not PFNA, PBNA, or Asia Pacific.
-- [ ] **WAE absence confirmed:** Filing has no WAE rate table; GT contains no phantom EUR/USD placeholders.
+- [ ] **Revenue (Note 1):** EMEA and LatAm Foods FY2025/FY2024 net revenue match Note 1 segment table exactly.
+- [ ] **MD&A % (organic table):** Reported growth, FX translation impact, and organic CC match MD&A *Net Revenue and Organic Revenue Performance* for both segments.
+- [ ] **Additive identity:** `reported − fx = organic` holds for EMEA and LatAm Foods.
+- [ ] **Reported % convention:** MD&A whole-percentage anchor (e.g. EMEA **8.0%**) vs revenue-implied (e.g. **8.2%**) — revenue-implied acceptable within ±0.2 pp for L1 reported %; **FX decomposition must use MD&A table reported %**, not revenue-implied.
+- [ ] **Geographic scope:** Scored segments are EMEA + LatAm Foods only — not PFNA, PBNA, or Asia Pacific.
+- [ ] **WAE absence:** Confirm filing has no WAE rate table; GT contains no placeholder rates.
 
 ### II. Trap & methodology audit *(Gate A design; Gate B after data locked)*
 
-- [ ] **Agent scoring intent *(task design)*:** Prompt requires Python verification of additive identity **and** MD&A cross-check — MD&A extract alone fails L1.
-- [ ] **Trap design *(task design)*:** `reported_only`, `wrong_region`, and `wrong_period` signatures documented in GT `failure_modes`.
-- [ ] **Trap wiring *(eng spot-check)*:** Verify script classifies `reported_only` when agent returns GAAP growth as organic CC; self-test confirms GT JSON consistency only.
-- [ ] **Formula integrity:** `organic_cc = reported_growth − fx_impact` matches MD&A decomposition (see **Data finality report**).
-- [ ] **Tolerance policy:** `verification_policy` bands active in GT JSON — ±0.2 pp strict, ±0.75 pp alternative / `METHOD_ALT`.
+- [ ] **Trap signatures:** `reported_only`, `wrong_region`, `wrong_period` documented in GT `failure_modes`.
+- [ ] **Formula integrity:** Additive formula matches GT `verification_policy`; FX impact matches MD&A translation column and reconciles as `reported − organic`.
+- [ ] **Tolerance policy:** ±0.2 pp strict (L1 pass); ±0.75 pp multiplicative alternative → `METHOD_ALT` (partial credit).
+- [ ] **Trap wiring *(eng spot-check)*:** Self-test validates GT JSON only; trap classification (`reported_only`, etc.) applies at agent eval time.
+- [ ] **Script self-test:** `verify_pep_fx_organic_growth.py` reports `all_pass: true` on approved GT JSON.
 
-### III. Auditability & traceability *(agent runtime)*
+### III. Auditability & traceability *(agent runtime — design check)*
 
-- [ ] **Assumption log *(L2)*:** Grader requires agents to cite (a) Note 1 revenue base, (b) MD&A reported/FX/organic %, (c) additive derivation.
-- [ ] **MD&A reconciliation *(L2)*:** Agent organic CC reconciles to MD&A within ±0.2 pp strict or ±0.75 pp alternative band.
-- [ ] **Type M scope *(task design)*:** No investment recommendation — modeling / forensics only.
-- [ ] **Script validation *(Gate B)*:** `verify_pep_fx_organic_growth.py` reports `all_pass: true` on approved GT JSON.
+- [ ] **Assumption log:** Grader requires agent list: (a) Note 1 revenue citations, (b) MD&A reported/FX/organic % citations, (c) additive derivation shown.
+- [ ] **WAE handling:** If agent searches for FX rates, must state filing does not disclose them — no external/invented rates.
+- [ ] **L2 reconcile:** Agent organic CC within ±0.2 pp strict (or ±0.75 pp with `METHOD_ALT` if multiplicative shown + MD&A cited).
+- [ ] **Type M scope:** No Buy/Hold/Sell or price target.
 
 ---
 
