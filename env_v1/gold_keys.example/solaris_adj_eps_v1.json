@@ -1,6 +1,6 @@
 {
   "episode_id": "solaris_adj_eps_dispute_v1",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "status": "example_template",
   "note": "Copy to gold_keys/ locally. Do not commit gold_keys/ — gitignored.",
 
@@ -132,9 +132,12 @@
   ],
 
   "expert_sign_off": {
-    "status": "pending",
-    "reviewer": null,
+    "status": "approved",
+    "reviewer": "Gaurav Goyal",
+    "review_date": "2026-07-01",
     "review_doc": "docs/expert_drafts/SOLARIS_GOLD_KEY_REVIEW.md",
-    "notes": "Eng scaffold v1.1 — failure modes and citations added; awaiting CFA review (P0-05)."
+    "grader_rubric_ref": "../rubrics/solaris_adj_eps_grader.md",
+    "published_version": "1.0.0",
+    "notes": "v1.0 published 2026-07-01. v1.1 enhancements tracked in backlog P1-14."
   }
 }

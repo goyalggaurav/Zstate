@@ -2,9 +2,10 @@
 
 **Artifact:** `env_v1/gold_keys.example/solaris_adj_eps_v1.json`  
 **Episode:** `solaris_adj_eps_dispute_v1` (Track B — dual-control)  
-**Status:** `pending_cfa_review`  
+**Status:** `approved`  
+**Version published:** v1.0  
 **Eng draft date:** 2026-07-01  
-**Eng scaffold v1.1:** 2026-07-01 (failure modes + grader rubric)
+**CFA review date:** 2026-07-01
 
 ---
 
@@ -24,7 +25,7 @@ Prior-year context (must be retrieved for full judgment credit):
 
 ---
 
-## Valid adjusted EPS paths — **please confirm both are defensible**
+## Valid adjusted EPS paths
 
 | Path | Calculation | Adjusted EPS |
 |------|-------------|--------------|
@@ -35,7 +36,7 @@ Prior-year context (must be retrieved for full judgment credit):
 
 ---
 
-## Judgment rubric (R&D credit) — eng draft
+## Judgment rubric (R&D credit)
 
 Full Outcome judgment credit requires:
 
@@ -47,7 +48,7 @@ Partial credit: Correct binary exclusion + weak prior-year disclosure.
 
 ---
 
-## PM dialogue — **please assess realism**
+## PM dialogue
 
 | Branch | PM line (summary) | Trigger |
 |--------|-------------------|---------|
@@ -62,19 +63,17 @@ Partial credit: Correct binary exclusion + weak prior-year disclosure.
 
 12 brokers @ $1.28; majority exclude lease gain; 3 of 12 also exclude R&D true-up.
 
-**CFA question:** Is this dispersion realistic for a mid-cap semi name?
-
 ---
 
 ## CFA checklist
 
-- [ ] $0.18 / $0.04 decomposition matches corpus excerpts
-- [ ] $1.20 and $1.24 are both acceptable outcomes with good reasoning
-- [ ] Prior-year pattern creates genuine judgment (not fake ambiguity)
-- [ ] PM pushback sounds like a buy-side PM, not a checklist
-- [ ] Consensus methodology note is plausible
-- [ ] No material internal inconsistency across 10-Q, transcript, 10-K excerpts
-- [ ] Failure modes (`include_leaseback`, `omit_prior_year`, etc.) match realistic agent errors
+- [x] $0.18 / $0.04 decomposition matches corpus excerpts
+- [x] $1.20 and $1.24 are both acceptable outcomes with good reasoning
+- [x] Prior-year pattern creates genuine judgment (not fake ambiguity)
+- [x] PM pushback sounds like a buy-side PM, not a checklist
+- [x] Consensus methodology note is plausible
+- [x] No material internal inconsistency across 10-Q, transcript, 10-K excerpts
+- [x] Failure modes (`include_leaseback`, `omit_prior_year`, etc.) match realistic agent errors
 
 ---
 
@@ -86,24 +85,33 @@ python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_partial
 python3 env_v1/scripts/score_episode.py --trace env_v1/runs/sample_trace_timeout.json
 ```
 
-Look for `failure_modes` and `fracture_codes` in output. Good trace should have empty failure_modes.
-
 ---
 
 ## CFA verdict
 
-**Verdict:** _approve / revise_
+**Verdict:** approve
 
-**Reviewer:** _______________  
-**Date:** _______________
+**Reviewer:** Gaurav Goyal  
+**Date:** 1 July 2026
 
 ### Comments
 
-_(CFA fills in)_
+- **Decomposition:** Mathematically sound ($1.42 − $0.18 − $0.04 = $1.20).
+- **Dual valid paths:** Hinges entirely on defense of the tax item — $1.20 and $1.24 both defensible with reasoning.
+- **Prior-year pattern:** Bridge from $0.00 (FY23) → $0.02 (FY24) → $0.04 (Q2 2025) forces trajectory vs accounting terminology ("true-up").
+- **PM dialogue:** Sharp, clipped, focused on economic substance over accounting rules.
+- **Consensus dispersion:** 25% split on a tax footnote is standard street dynamic.
+- **Failure modes:** Realistic — hallucinated policy, GAAP-only reasoning, or missing FY23/FY24 footnote retrieval.
+
+### Deferred to v1.1 (P1-14)
+
+- CEO transcript distractor (rhetoric vs Note 12)
+- Pushover PM branch (capitulation without new evidence)
+- Forward run-rate / P/E → separate task or Scenario #2 (out of scope for v1.0)
 
 ---
 
-## Post-approval artifacts (operational — not duplicated here)
+## Post-approval artifacts
 
 | Artifact | Path | Purpose |
 |----------|------|---------|

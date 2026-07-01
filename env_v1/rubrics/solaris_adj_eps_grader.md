@@ -4,7 +4,9 @@
 **Canonical brief:** `env_v1/episodes/solaris_adj_eps_dispute_v1.json` → `brief.text`  
 **Gold key:** `env_v1/gold_keys.example/solaris_adj_eps_v1.json` (copy to `gold_keys/` locally)  
 **Score script:** `env_v1/scripts/score_episode.py`  
-**CFA sign-off:** `docs/expert_drafts/SOLARIS_GOLD_KEY_REVIEW.md` (pending)
+**CFA sign-off:** `docs/expert_drafts/SOLARIS_GOLD_KEY_REVIEW.md` (approved v1.0, 2026-07-01)
+
+**Planned v1.1 (P1-14):** transcript distractor + pushover PM branch — not in v1.0 corpus.
 
 ---
 

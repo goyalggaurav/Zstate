@@ -1,6 +1,6 @@
 {
   "episode_id": "solaris_adj_eps_dispute_v1",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "company": "Solaris Components Inc.",
   "ticker": "SLRS",
   "scenario": "earnings_quality_dispute",
@@ -14,6 +14,7 @@
   "pm_policy_ref": "../pm_policies/pm_v1.json",
   "gold_key_ref": "../gold_keys/solaris_adj_eps_v1.json",
   "grader_rubric_ref": "../rubrics/solaris_adj_eps_grader.md",
+  "review_status": "cfa_approved",
 
   "allowed_tools": [
     "get_filing",

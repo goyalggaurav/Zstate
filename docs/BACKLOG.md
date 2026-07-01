@@ -17,7 +17,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P0-02 | env_v1 scaffold (tool backend, episode, PM FSM, scorer) | B | done | Eng | See `env_v1/` |
 | P0-03 | Copy dual-control spec + flow diagram into repo | B | done | Eng | `env_v1/docs/` |
 | P0-04 | gitignore `gold_keys/` + example template | B | done | Eng | `gold_keys.example/` |
-| P0-05 | Solaris gold key (expert-authored) | B | pending_cfa_review | CFA | Eng scaffold v1.1 done — `SOLARIS_GOLD_KEY_REVIEW.md` + `rubrics/solaris_adj_eps_grader.md` |
+| P0-05 | Solaris gold key (expert-authored) | B | done | CFA | v1.0 approved 2026-07-01; `SOLARIS_GOLD_KEY_REVIEW.md` |
 | P0-06 | Corpus manifest for 5 pilot tickers (EDGAR) | A | todo | Eng | Feeds Track A tasks |
 | P0-07 | Roadmap + backlog (this file) | Both | done | Eng | Unified planning |
 | P0-08 | Name CFA lead + associate | Both | todo | Product | Binding constraint |
@@ -41,6 +41,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P1-11 | `METHODOLOGY_RL_ENV.md` — anti-hacking, calibration | B | in_progress | Eng | Draft exists; finalize for lab |
 | P1-12 | One frontier model end-to-end run | B | todo | Eng | First fracture data from env |
 | P1-13 | Expert adjudication protocol (10–20% sample) | Both | todo | CFA | κ ≥ 0.7 on Outcome (judgment) + Defense |
+| P1-14 | Solaris episode v1.1 — transcript distractor + pushover branch | B | todo | CFA + Eng | CEO rhetoric vs Note 12; `follow_up_pushover`; failure modes `pushover`, `rhetoric_over_filing`. Forward P/E out of scope — separate task |
 
 ---
 
