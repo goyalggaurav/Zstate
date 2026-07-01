@@ -8,6 +8,8 @@ Expects agent structured-output JSON files:
 Usage:
   python run_benchmark_campaign.py --bootstrap-fixtures   # gold outputs for smoke test
   python run_benchmark_campaign.py --campaign ../campaigns/pilot_eval_campaign_v1.json
+  python run_benchmark_campaign.py --execute --agent scripted   # CI smoke (no API key)
+  python run_benchmark_campaign.py --execute --agent openai     # live eval (OPENAI_API_KEY)
 """
 
 from __future__ import annotations
@@ -83,6 +85,88 @@ def run_verify(task_entry: dict, agent_path: Path) -> dict:
     return report
 
 
+def execute_campaign(
+    campaign: dict,
+    manifest: dict,
+    *,
+    agent_mode: str,
+    models: list[str] | None = None,
+    tasks: list[str] | None = None,
+    skip_existing: bool = False,
+) -> list[dict]:
+    """Run agent loop for each campaign slot; return execution records."""
+    from benchmark_agent_loop import (
+        TASK_SCRIPTED_PLANS,
+        resolve_output_paths,
+        run_mock_task,
+        run_openai_task,
+        run_scripted_task,
+        write_outputs,
+    )
+
+    pub = published_tasks(manifest)
+    runs_dir = (BENCH / campaign["runs_dir"]).resolve()
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    exec_records: list[dict] = []
+
+    model_list = models or campaign["models"]
+    task_list = tasks or campaign["tasks"]
+
+    for model_id in model_list:
+        for task_id in task_list:
+            if task_id not in pub:
+                exec_records.append({
+                    "model_id": model_id,
+                    "task_id": task_id,
+                    "status": "skipped",
+                    "reason": "task not published",
+                })
+                continue
+            for run in range(1, campaign["runs_per_task"] + 1):
+                agent_path, trace_path = resolve_output_paths(
+                    task_id,
+                    run,
+                    out_dir=None,
+                    campaign=campaign,
+                    model_id=model_id,
+                )
+                rec = {
+                    "model_id": model_id,
+                    "task_id": task_id,
+                    "run_index": run,
+                    "agent_output": str(agent_path),
+                    "agent_mode": agent_mode,
+                }
+                if skip_existing and agent_path.exists() and trace_path.exists():
+                    rec["status"] = "skipped_existing"
+                    exec_records.append(rec)
+                    continue
+                try:
+                    if agent_mode == "scripted":
+                        plan = TASK_SCRIPTED_PLANS.get(task_id)
+                        if not plan or not plan.exists():
+                            raise FileNotFoundError(f"No scripted plan for {task_id}")
+                        trace, structured_output = run_scripted_task(
+                            task_id, plan, model_id=model_id
+                        )
+                    elif agent_mode == "openai":
+                        trace, structured_output = run_openai_task(task_id, model_id=model_id)
+                    elif agent_mode == "mock":
+                        if task_id != "GOOGL_footnote_reconciliation":
+                            raise NotImplementedError("mock execute supports GOOGL only")
+                        trace, structured_output = run_mock_task(task_id)
+                    else:
+                        raise ValueError(f"Unknown agent mode {agent_mode!r}")
+                    write_outputs(structured_output, trace, agent_path, trace_path)
+                    rec["status"] = "executed"
+                    rec["termination"] = trace.get("termination")
+                except Exception as e:
+                    rec["status"] = "error"
+                    rec["error"] = str(e)
+                exec_records.append(rec)
+    return exec_records
+
+
 def score_campaign(campaign: dict, manifest: dict) -> dict:
     pub = published_tasks(manifest)
     runs_dir = (BENCH / campaign["runs_dir"]).resolve()
@@ -141,6 +225,7 @@ def score_campaign(campaign: dict, manifest: dict) -> dict:
         "models": campaign["models"],
         "tasks": campaign["tasks"],
         "runs_per_task": campaign["runs_per_task"],
+        "execution": campaign.get("_execution"),
         "summary": {
             "run_slots": len(run_records),
             "scored": len(scored),
@@ -168,6 +253,30 @@ def main() -> int:
         action="store_true",
         help="Write gold agent outputs for all model×task×run slots",
     )
+    parser.add_argument(
+        "--execute",
+        action="store_true",
+        help="Run agent loop for each campaign slot before scoring",
+    )
+    parser.add_argument(
+        "--agent",
+        choices=("scripted", "mock", "openai"),
+        default="openai",
+        help="Agent mode when --execute (default: openai)",
+    )
+    parser.add_argument(
+        "--models",
+        help="Comma-separated model ids to run (default: all in campaign config)",
+    )
+    parser.add_argument(
+        "--tasks",
+        help="Comma-separated task ids to run (default: all in campaign config)",
+    )
+    parser.add_argument(
+        "--skip-existing",
+        action="store_true",
+        help="Skip execute when agent output file already exists",
+    )
     args = parser.parse_args()
 
     campaign_path = args.campaign if args.campaign.is_absolute() else BENCH / args.campaign
@@ -178,13 +287,40 @@ def main() -> int:
         paths = bootstrap_fixtures(campaign)
         print(f"Wrote {len(paths)} fixture agent outputs under {campaign['runs_dir']}")
 
+    if args.execute:
+        if args.agent == "openai" and not __import__("os").environ.get("OPENAI_API_KEY"):
+            print("ERROR: OPENAI_API_KEY not set for --execute --agent openai", file=sys.stderr)
+            return 1
+        model_filter = [m.strip() for m in args.models.split(",")] if args.models else None
+        task_filter = [t.strip() for t in args.tasks.split(",")] if args.tasks else None
+        exec_records = execute_campaign(
+            campaign,
+            manifest,
+            agent_mode=args.agent,
+            models=model_filter,
+            tasks=task_filter,
+            skip_existing=args.skip_existing,
+        )
+        campaign = {**campaign, "_execution": exec_records}
+        errors = [r for r in exec_records if r.get("status") == "error"]
+        executed = sum(1 for r in exec_records if r.get("status") == "executed")
+        print(f"Execute: {executed} runs, {len(errors)} errors")
+        for err in errors[:5]:
+            print(f"  ERROR {err['task_id']} run {err['run_index']}: {err.get('error')}", file=sys.stderr)
+        if errors:
+            return 1
+
     result = score_campaign(campaign, manifest)
     out_dir = (BENCH / campaign["runs_dir"]).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{campaign['campaign_id']}.json"
     out_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result["summary"], indent=2))
-    print(f"\nWrote {out_path.relative_to(BENCH.parent)}")
+    try:
+        rel = out_path.relative_to(BENCH.parent)
+    except ValueError:
+        rel = out_path
+    print(f"\nWrote {rel}")
     return 0 if result["summary"]["missing"] == 0 else 1
 
 

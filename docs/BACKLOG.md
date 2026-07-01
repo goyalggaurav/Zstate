@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
-**Version:** 0.3  
-**Last updated:** July 2026  
+**Version:** 0.4  
+**Last updated:** July 2026 (post Track A runtime commit `6167be9`)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -53,13 +53,25 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-01 | NFLX guidance drift task (Type F) | A | todo | Associate | Maps to env Scenario #2 later |
 | P2-02 | PEP or KO FX organic growth task (Type M) | A | done | Associate | `PEP_fx_organic_growth` expert-reviewed 2026-07-01; see `PEP_FX_GT_REVIEW.md` |
 | P2-03 | AMZN footnote task (Type F) | A | deferred | Associate | After 3 core tasks |
-| P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | in_progress | Eng | Runtime + corpus done; live OpenAI campaign pending |
+| P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | in_progress | Eng | See **P2-04 sub-track** below |
 | P2-05 | Fracture report v0 | Both | done | Eng | `docs/FRACTURE_REPORT_v0.md` — frontier v1–v3 |
 | P2-06 | Leaderboard v0 publish | A | todo | Product | Not the lab headline |
 | P2-07 | Trajectory JSONL schema — align A + B | Both | done | Eng | `schemas/trajectory_v1.json` |
 | P2-08 | Transcript API trial (5 pilot names) | A | todo | Eng | Guidance tasks |
 
-**Cap:** Do not expand beyond 3–5 MVD tasks until P1-10 demo trajectories exist. *(Cap lifted — P1-10 done; 2 tasks in flight.)*
+**Cap:** Do not expand beyond 3–5 MVD tasks until P1-10 demo trajectories exist. *(Cap lifted — P1-10 done; 2 tasks published.)*
+
+### P2-04 sub-track (eval campaign)
+
+| ID | Item | Status | Notes |
+|----|------|--------|-------|
+| P2-04a | Campaign scorer + contract stub | done | `run_benchmark_campaign.py`, `mock_agent_stub.py`, `contract_fixtures/` |
+| P2-04b | Track A agent loop (scripted + mock) | done | `benchmark_agent_loop.py`; A2 gate passes L1 |
+| P2-04c | Corpus bundles v1.1 + sectional retrieval | done | `section_registry`, `policy_notes`, canonical slug enforcement |
+| P2-04d | Agent submission + L3 citation validator | todo | `agent_submission_v1.json` → `validate_agent_submission.py` |
+| P2-04e | `score_benchmark_run.py` — L2/L3 v0 | todo | Section recall from trace; composite median in campaign |
+| P2-04f | OpenAI adapter + `--execute` on campaign | done | `agents/openai_benchmark_agent.py`; `--execute --agent scripted|openai` |
+| P2-04g | **Live eval** — 2 models × 2 tasks × 3 runs | blocked | Blocked on P2-04g API keys + Anthropic adapter |
 
 ---
 
@@ -104,12 +116,13 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-04 | Component specs (corpus, registry, eval, scoring) | done | Target architecture; implement lightweight first |
 | SH-05 | Word/PDF export generator | done | Stakeholder docs |
 | SH-06 | Corpus service implementation | deferred | **Explore later** — see BACKLOG LATER-01 (EDGAR full ingest) |
-| SH-07 | Eval orchestrator (model adapters) | in_progress | Shared by A and B; see LATER-03 |
+| SH-07 | Eval orchestrator (model adapters) | in_progress | OpenAI + `--execute` done; Anthropic adapter pending |
 | SH-08 | Calibration dataset (5 tasks, dual-rater) | todo | Both benchmark L2 and env Defense |
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 14 checks |
+| SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 
 ---
 
@@ -119,7 +132,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 |----|------|-------|-------|
 | LATER-01 | **Track A — EDGAR corpus full ingest** | A | SH-06: download 10-K/10-Q text, section index, checksum lock. Pilot manifest (`corpus_manifest_v1.json`) is metadata-only; explore after 2+ published eval tasks or lab demo shipped. |
 | LATER-02 | Track A — transcript API + NFLX guidance task | A | P2-08 + P2-01; blocked on vendor + IR fallback runbook |
-| LATER-03 | Track A — eval orchestrator (SH-07) | A | in_progress | Directory contract stub + campaign scorer done; model adapters pending |
+| LATER-03 | Track A — eval orchestrator (SH-07) | A | in_progress | OpenAI execute done (P2-04f); Anthropic + live 2×2×3 pending |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
 
 ---
@@ -160,6 +173,10 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-20 | Frontier v3 live campaign + v1.1.3 FSM + OpenAI retry hardening | Jul 2026 |
 | DONE-21 | Lab package: METHODOLOGY v1.0, FRACTURE_REPORT v0, REV-04 draft | Jul 2026 |
 | DONE-22 | Expert credentials policy + Gaurav Goyal named (P0-08) | Jul 2026 |
+| DONE-23 | P2-04a campaign scorer + agent output contract stub | Jul 2026 |
+| DONE-24 | Week 0 hygiene — fracture taxonomy, validate_manifest, doc sync | Jul 2026 |
+| DONE-25 | P2-04b/c Track A runtime + corpus v1.1 + sectional retrieval | Jul 2026 |
+| DONE-26 | P2-04f OpenAI adapter + campaign `--execute` | Jul 2026 |
 
 ---
 

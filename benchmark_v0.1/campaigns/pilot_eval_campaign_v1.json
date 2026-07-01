@@ -2,8 +2,8 @@
   "campaign_id": "pilot_eval_campaign_v1",
   "backlog_ref": "P2-04",
   "description": "Pilot eval campaign — 2 models × 2 published tasks × 3 runs; L1 via verify scripts; median aggregation.",
-  "status": "verify_only",
-  "orchestrator_note": "Live agent runs blocked on LATER-03 (SH-07 eval orchestrator). This campaign scores structured agent outputs on disk.",
+  "status": "execute_ready",
+  "orchestrator_note": "Use run_benchmark_campaign.py --execute --agent scripted|openai. Live 2×2×3 eval blocked on API keys and Anthropic adapter.",
   "models": [
     "gpt-4o",
     "claude-sonnet-4-20250514"

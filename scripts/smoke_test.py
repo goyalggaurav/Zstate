@@ -393,6 +393,64 @@ def check_benchmark_agent_loop() -> None:
         assert "RECON_OMIT" in mock_report.get("fracture_codes", []), mock_report
 
 
+def check_campaign_execute_scripted() -> None:
+    """P2-04f — campaign --execute with scripted agent writes contract paths (no API key)."""
+    import tempfile
+
+    campaign = json.loads(
+        (ROOT / "benchmark_v0.1" / "campaigns" / "pilot_eval_campaign_v1.json").read_text()
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        mini = {
+            **campaign,
+            "campaign_id": "smoke_execute_scripted",
+            "runs_dir": tmp,
+            "models": ["gpt-4o"],
+            "tasks": ["GOOGL_footnote_reconciliation"],
+            "runs_per_task": 1,
+        }
+        mini_path = Path(tmp) / "mini_campaign.json"
+        mini_path.write_text(json.dumps(mini), encoding="utf-8")
+        proc = subprocess.run(
+            [
+                sys.executable,
+                "benchmark_v0.1/scripts/run_benchmark_campaign.py",
+                "--campaign",
+                str(mini_path),
+                "--execute",
+                "--agent",
+                "scripted",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        assert proc.returncode == 0, proc.stderr or proc.stdout
+
+        agent_path = Path(tmp) / "gpt-4o" / "GOOGL_footnote_reconciliation_run01.json"
+        trace_path = Path(tmp) / "gpt-4o" / "GOOGL_footnote_reconciliation_run01_trace.json"
+        assert agent_path.exists(), agent_path
+        assert trace_path.exists(), trace_path
+
+        trace = json.loads(trace_path.read_text())
+        assert trace["termination"] == "submit"
+        assert trace["agent_mode"] == "scripted"
+
+        report = run([
+            sys.executable,
+            "benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py",
+            "--period", "q1_2026",
+            "--agent-output", str(agent_path),
+        ])
+        assert report["all_pass"] is True, report
+
+        result = json.loads((Path(tmp) / f"{mini['campaign_id']}.json").read_text())
+        assert result["summary"]["missing"] == 0
+        assert result["summary"]["l1_all_pass_count"] == 1
+        assert result.get("execution") is not None
+        assert any(r.get("status") == "executed" for r in result["execution"])
+
+
 def main() -> int:
     checks = [
         ("GOOGL ground truth L1", check_googl_gt),
@@ -408,6 +466,7 @@ def main() -> int:
         ("Scripted agent loop", check_scripted_agent),
         ("Mock LLM agent loop", check_mock_agent),
         ("Benchmark agent loop", check_benchmark_agent_loop),
+        ("Campaign execute scripted", check_campaign_execute_scripted),
     ]
     failed = 0
     for name, fn in checks:

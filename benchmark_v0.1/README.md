@@ -47,13 +47,19 @@ Config: [campaigns/pilot_eval_campaign_v1.json](./campaigns/pilot_eval_campaign_
 # Gold-fixture smoke (verify + median aggregation)
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --bootstrap-fixtures
 
+# Execute scripted agents (CI / offline — no API key)
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --execute --agent scripted
+
+# Execute live OpenAI agents (requires OPENAI_API_KEY)
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --execute --agent openai
+
 # Score existing agent outputs on disk
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py
 ```
 
 Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json)
 
-Live agent runs require **LATER-03** (SH-07 eval orchestrator). This pipeline scores structured `--agent-output` JSON via task verify scripts.
+`--execute` runs the Track A agent loop for each model×task×run slot and writes structured output + trace under `runs_dir`. Use `--models`, `--tasks`, or `--skip-existing` to narrow or resume runs.
 
 ### Agent output contract (SH-07 stub)
 
@@ -91,7 +97,9 @@ python3 benchmark_v0.1/scripts/benchmark_agent_loop.py \
   --out-dir /tmp/bench_mock --run-index 1
 ```
 
-Modes: `scripted`, `mock`. OpenAI deferred. No PM — tools + structured submit only.
+Modes: `scripted`, `mock`, `openai`. No PM — tools + structured submit only.
+
+OpenAI mode uses `OPENAI_API_KEY` (optional `OPENAI_MODEL`, default `gpt-4o-mini`). Campaign `--execute --agent openai` writes the same contract paths as scripted replay.
 
 ---
 
@@ -99,7 +107,7 @@ Modes: `scripted`, `mock`. OpenAI deferred. No PM — tools + structured submit 
 
 | Task | Blocker |
 |------|---------|
-| P2-04 live eval | LATER-03 orchestrator (fixtures + scoring ready) |
+| P2-04g live eval | API keys + Anthropic adapter (OpenAI `--execute` ready) |
 | NFLX_guidance_drift (Type F) | P2-08 transcript ingest |
 | AMZN_footnote_reconciliation | CFA associate draft |
 | KO_fx_organic_growth | Clone PEP published template |

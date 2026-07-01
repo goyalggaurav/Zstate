@@ -125,10 +125,23 @@ def run_benchmark_task(
                 "output": out,
                 "doc_id": doc_id,
             })
+            if hasattr(agent, "record_tool_result"):
+                agent.record_tool_result(action.get("_tool_call_id"), tool, out)
+            context["steps"] = steps
+            continue
+
+        if action["type"] == "agent_message":
+            steps.append({"type": "agent_message", "text": action.get("text", "")})
             context["steps"] = steps
             continue
 
         if action["type"] == "submit_structured_output":
+            if hasattr(agent, "record_tool_result") and action.get("_tool_call_id"):
+                agent.record_tool_result(
+                    action["_tool_call_id"],
+                    "submit_structured_output",
+                    "Structured output submitted.",
+                )
             structured_output = action.get("structured_output", action.get("values", {}))
             submission = {"submitted": True, "structured_output": structured_output}
             steps.append({"type": "submit_structured_output", "structured_output": structured_output})
@@ -241,8 +254,25 @@ def run_mock_task(task_id: str) -> tuple[dict, dict]:
     )
 
 
-def run_openai_task(_task_id: str) -> tuple[dict, dict]:
-    raise NotImplementedError("openai agent mode is deferred in benchmark_v0.1")
+def run_openai_task(task_id: str, *, model_id: str | None = None) -> tuple[dict, dict]:
+    from agents.openai_benchmark_agent import OpenAIBenchmarkAgent
+
+    task = load_task(task_id)
+    bundle = load_bundle(task_id)
+    agent = OpenAIBenchmarkAgent(task, bundle, model=model_id)
+    return run_benchmark_task(
+        task_id,
+        agent,
+        agent_mode="openai",
+        model_id=agent.model,
+        plan_id=None,
+    )
+
+
+TASK_SCRIPTED_PLANS: dict[str, Path] = {
+    "GOOGL_footnote_reconciliation": BENCH / "examples/agents/googl_good_plan.json",
+    "PEP_fx_organic_growth": BENCH / "examples/agents/pep_good_plan.json",
+}
 
 
 def write_outputs(structured_output: dict, trace: dict, agent_path: Path, trace_path: Path) -> None:
@@ -283,7 +313,7 @@ def main() -> int:
     elif args.agent == "mock":
         trace, structured_output = run_mock_task(args.task)
     else:
-        trace, structured_output = run_openai_task(args.task)
+        trace, structured_output = run_openai_task(args.task, model_id=args.model_id)
 
     agent_path, trace_path = resolve_output_paths(
         args.task,
