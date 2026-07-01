@@ -2,8 +2,8 @@
   "benchmark_version": "benchmark_v0.1",
   "mvd_target_tasks": 15,
   "mvd_pilot_companies": 5,
-  "published_tasks": 1,
-  "draft_tasks": 1,
+  "published_tasks": 2,
+  "draft_tasks": 0,
   "corpus_manifest": "corpus/corpus_manifest_v1.json",
   "pilot_tasks": [
     {
@@ -22,7 +22,7 @@
     {
       "task_id": "PEP_fx_organic_growth",
       "task_type": "M",
-      "status": "draft",
+      "status": "published",
       "cfa_review": "docs/expert_drafts/PEP_FX_GT_REVIEW.md",
       "paths": {
         "task": "tasks/PEP_fx_organic_growth.json",

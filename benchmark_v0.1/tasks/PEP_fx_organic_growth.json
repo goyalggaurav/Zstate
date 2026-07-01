@@ -1,7 +1,7 @@
 {
   "task_id": "PEP_fx_organic_growth",
-  "version": "0.2.0-draft",
-  "status": "draft",
+  "version": "0.3.0-pilot",
+  "status": "pilot",
   "benchmark_version": "benchmark_v0.1",
 
   "ticker": "PEP",

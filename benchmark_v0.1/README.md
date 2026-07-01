@@ -1,6 +1,6 @@
 # benchmark_v0.1 — Pilot Package
 
-Minimum Viable Benchmark pilot: **15 tasks** across 5 companies, starting with **1 published** + **1 draft** task.
+Minimum Viable Benchmark pilot: **15 tasks** across 5 companies; **2 published** tasks (Type F + Type M).
 
 ## Corpus (P0-06)
 
@@ -14,33 +14,20 @@ Manifest: [corpus/corpus_manifest_v1.json](./corpus/corpus_manifest_v1.json)
 
 ---
 
-## Published task
+## Published tasks
 
 | Task | Type | Period | Status |
 |------|------|--------|--------|
 | [GOOGL_footnote_reconciliation](./tasks/GOOGL_footnote_reconciliation.json) | F — Forensics | **Q1 2026** (10-Q filed 2026-04-30) | **Published** (expert-reviewed 2026-07-01) |
+| [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-03) | **Published** (expert-reviewed 2026-07-01) |
 
-### What this task tests
+### GOOGL — footnote reconciliation
 
 Reconcile **Q1 2026** reportable segment revenues to consolidated total revenue. The trap: agents sum Google Services + Google Cloud + Other Bets (**$110,076M**) and miss **hedging gains (losses) of $(180)M** — a **loss**, not a gain. Note 15 states hedging is **not allocated to reportable segments**.
 
----
-
-## Draft task (Type M — third archetype)
-
-| Task | Type | Period | Status |
-|------|------|--------|--------|
-| [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-03) | **Expert-reviewed** (2026-07-01) — publish pending |
-
-### What this task tests
+### PEP — FX organic growth
 
 Constant-currency organic revenue growth for **EMEA** and **LatAm Foods** via MD&A additive decomposition (`reported − FX = organic`) — not WAE rebuild (FY2025 10-K has no FX rate table). Traps: reporting GAAP growth as organic CC, wrong segment, wrong period.
-
-```bash
-python3 benchmark_v0.1/scripts/verify_pep_fx_organic_growth.py
-```
-
-Expert review: [docs/expert_drafts/PEP_FX_GT_REVIEW.md](../docs/expert_drafts/PEP_FX_GT_REVIEW.md)
 
 ---
 
@@ -48,9 +35,10 @@ Expert review: [docs/expert_drafts/PEP_FX_GT_REVIEW.md](../docs/expert_drafts/PE
 
 | Task | Blocker |
 |------|---------|
+| P2-04 eval campaign | **Unblocked** — 2 published core tasks |
 | NFLX_guidance_drift (Type F) | P2-08 transcript ingest |
 | AMZN_footnote_reconciliation | CFA associate draft |
-| KO_fx_organic_growth | After PEP template proven |
+| KO_fx_organic_growth | Clone PEP published template |
 
 ---
 
@@ -64,4 +52,5 @@ python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 
 ## Expert sign-off (published)
 
-See [docs/expert_drafts/GOOGL_GT_REVIEW.md](../docs/expert_drafts/GOOGL_GT_REVIEW.md).
+- [GOOGL_GT_REVIEW.md](../docs/expert_drafts/GOOGL_GT_REVIEW.md)
+- [PEP_FX_GT_REVIEW.md](../docs/expert_drafts/PEP_FX_GT_REVIEW.md)

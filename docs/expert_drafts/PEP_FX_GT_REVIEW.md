@@ -159,7 +159,7 @@ Two independent gates — **do not block data sign-off on METHOD_ALT eng work**:
 
 **Gate B complete (2026-07-01).** Expert audit ledger §2 signed off; `review_status: expert_reviewed` in GT JSON.
 
-**Eng follow-up for `published`:** Set `manifest.json` PEP task `status: published` and increment `published_tasks`.
+**Eng follow-up for `published`:** Done 2026-07-01 — `manifest.json` PEP `status: published`; `published_tasks: 2`.
 
 ---
 
@@ -385,7 +385,7 @@ python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 
 **Gate B (CFA):** Complete 2026-07-01 — audit ledger §2 checked against PEP FY2025 10-K; verify self-test `all_pass: true`.
 
-**Gate C (eng):** Met as of 2026-07-01 — JSON-driven verify + `METHOD_ALT`. **`published`** in `manifest.json` remains eng action.
+**Gate C (eng):** Complete 2026-07-01 — PEP published in `benchmark_v0.1/manifest.json`; preflight verify + corpus validation passed.
 
 | Reviewer | Date | Status |
 |----------|------|--------|
