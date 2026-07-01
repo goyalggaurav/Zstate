@@ -53,7 +53,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-01 | NFLX guidance drift task (Type F) | A | todo | Associate | Maps to env Scenario #2 later |
 | P2-02 | PEP or KO FX organic growth task (Type M) | A | done | Associate | `PEP_fx_organic_growth` expert-reviewed 2026-07-01; see `PEP_FX_GT_REVIEW.md` |
 | P2-03 | AMZN footnote task (Type F) | A | deferred | Associate | After 3 core tasks |
-| P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | todo | Eng | Median aggregation |
+| P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | in_progress | Eng | `run_benchmark_campaign.py` + gold fixtures scored; live runs blocked on LATER-03 |
 | P2-05 | Fracture report v0 | Both | done | Eng | `docs/FRACTURE_REPORT_v0.md` — frontier v1–v3 |
 | P2-06 | Leaderboard v0 publish | A | todo | Product | Not the lab headline |
 | P2-07 | Trajectory JSONL schema — align A + B | Both | done | Eng | `schemas/trajectory_v1.json` |

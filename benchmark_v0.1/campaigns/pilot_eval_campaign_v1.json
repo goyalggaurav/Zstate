@@ -1,0 +1,24 @@
+{
+  "campaign_id": "pilot_eval_campaign_v1",
+  "backlog_ref": "P2-04",
+  "description": "Pilot eval campaign — 2 models × 2 published tasks × 3 runs; L1 via verify scripts; median aggregation.",
+  "status": "verify_only",
+  "orchestrator_note": "Live agent runs blocked on LATER-03 (SH-07 eval orchestrator). This campaign scores structured agent outputs on disk.",
+  "models": [
+    "gpt-4o",
+    "claude-sonnet-4-20250514"
+  ],
+  "tasks": [
+    "GOOGL_footnote_reconciliation",
+    "PEP_fx_organic_growth"
+  ],
+  "runs_per_task": 3,
+  "aggregation": {
+    "l1_all_pass": "median_boolean",
+    "l1_pass_rate": "median",
+    "fracture_codes": "union",
+    "layer3_citation": "worst_run_wins"
+  },
+  "manifest_ref": "../manifest.json",
+  "runs_dir": "runs/pilot_eval_campaign_v1"
+}

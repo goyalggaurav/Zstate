@@ -31,11 +31,29 @@ Constant-currency organic revenue growth for **EMEA** and **LatAm Foods** via MD
 
 ---
 
+## Eval campaign (P2-04)
+
+Config: [campaigns/pilot_eval_campaign_v1.json](./campaigns/pilot_eval_campaign_v1.json) — 2 models × 2 published tasks × 3 runs.
+
+```bash
+# Gold-fixture smoke (verify + median aggregation)
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --bootstrap-fixtures
+
+# Score existing agent outputs on disk
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py
+```
+
+Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json)
+
+Live agent runs require **LATER-03** (SH-07 eval orchestrator). This pipeline scores structured `--agent-output` JSON via task verify scripts.
+
+---
+
 ## Planned next (P2)
 
 | Task | Blocker |
 |------|---------|
-| P2-04 eval campaign | **Unblocked** — 2 published core tasks |
+| P2-04 live eval | LATER-03 orchestrator (fixtures + scoring ready) |
 | NFLX_guidance_drift (Type F) | P2-08 transcript ingest |
 | AMZN_footnote_reconciliation | CFA associate draft |
 | KO_fx_organic_growth | Clone PEP published template |
