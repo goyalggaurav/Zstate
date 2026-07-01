@@ -50,8 +50,18 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --bootstrap-fixtures
 # Execute scripted agents (CI / offline — no API key)
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --execute --agent scripted
 
-# Execute live OpenAI agents (requires OPENAI_API_KEY)
-python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --execute --agent openai
+# Execute live agents (requires API keys; routes OpenAI vs Anthropic by model id)
+export OPENAI_API_KEY="..."
+export ANTHROPIC_API_KEY="..."
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_campaign_v1.json \
+  --execute --agent auto
+
+# OpenAI-only or Anthropic-only subsets
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --execute --agent openai --models gpt-4o
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --execute --agent anthropic --models claude-sonnet-4-20250514
 
 # Score existing agent outputs on disk
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py

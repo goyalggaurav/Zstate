@@ -10,6 +10,8 @@ Usage:
   python run_benchmark_campaign.py --campaign ../campaigns/pilot_eval_campaign_v1.json
   python run_benchmark_campaign.py --execute --agent scripted   # CI smoke (no API key)
   python run_benchmark_campaign.py --execute --agent openai     # live eval (OPENAI_API_KEY)
+  python run_benchmark_campaign.py --execute --agent anthropic  # live eval (ANTHROPIC_API_KEY)
+  python run_benchmark_campaign.py --execute --agent auto       # route by model id (P2-04h)
 """
 
 from __future__ import annotations
@@ -34,6 +36,7 @@ from agent_output_contract import (  # noqa: E402
     resolve_bench_path,
 )
 from score_benchmark_run import score_run  # noqa: E402
+from agents.benchmark_tool_specs import is_anthropic_model  # noqa: E402
 
 
 def published_tasks(manifest: dict) -> dict[str, dict]:
@@ -100,6 +103,8 @@ def execute_campaign(
     from benchmark_agent_loop import (
         TASK_SCRIPTED_PLANS,
         resolve_output_paths,
+        run_anthropic_task,
+        run_live_task,
         run_mock_task,
         run_openai_task,
         run_scripted_task,
@@ -155,6 +160,15 @@ def execute_campaign(
                         trace, structured_output, agent_submission = run_openai_task(
                             task_id, model_id=model_id
                         )
+                    elif agent_mode == "anthropic":
+                        trace, structured_output, agent_submission = run_anthropic_task(
+                            task_id, model_id=model_id
+                        )
+                    elif agent_mode == "auto":
+                        trace, structured_output, agent_submission, routed = run_live_task(
+                            task_id, model_id=model_id
+                        )
+                        rec["agent_mode"] = routed
                     elif agent_mode == "mock":
                         if task_id != "GOOGL_footnote_reconciliation":
                             raise NotImplementedError("mock execute supports GOOGL only")
@@ -305,9 +319,9 @@ def main() -> int:
     )
     parser.add_argument(
         "--agent",
-        choices=("scripted", "mock", "openai"),
-        default="openai",
-        help="Agent mode when --execute (default: openai)",
+        choices=("scripted", "mock", "openai", "anthropic", "auto"),
+        default="auto",
+        help="Agent mode when --execute (default: auto — route OpenAI vs Anthropic by model id)",
     )
     parser.add_argument(
         "--models",
@@ -339,8 +353,18 @@ def main() -> int:
         print(f"Wrote {len(paths)} fixture agent outputs under {campaign['runs_dir']}")
 
     if args.execute:
-        if args.agent == "openai" and not __import__("os").environ.get("OPENAI_API_KEY"):
-            print("ERROR: OPENAI_API_KEY not set for --execute --agent openai", file=sys.stderr)
+        models_to_run = model_filter or campaign["models"]
+        needs_openai = args.agent in ("openai", "auto") and any(
+            not is_anthropic_model(m) for m in models_to_run
+        )
+        needs_anthropic = args.agent in ("anthropic", "auto") and any(
+            is_anthropic_model(m) for m in models_to_run
+        )
+        if needs_openai and not __import__("os").environ.get("OPENAI_API_KEY"):
+            print("ERROR: OPENAI_API_KEY not set for OpenAI model slots", file=sys.stderr)
+            return 1
+        if needs_anthropic and not __import__("os").environ.get("ANTHROPIC_API_KEY"):
+            print("ERROR: ANTHROPIC_API_KEY not set for Anthropic model slots", file=sys.stderr)
             return 1
         exec_records = execute_campaign(
             campaign,

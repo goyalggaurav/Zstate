@@ -295,6 +295,31 @@ def run_openai_task(task_id: str, *, model_id: str | None = None) -> tuple[dict,
     )
 
 
+def run_anthropic_task(task_id: str, *, model_id: str | None = None) -> tuple[dict, dict, dict | None]:
+    from agents.anthropic_benchmark_agent import AnthropicBenchmarkAgent
+
+    task = load_task(task_id)
+    bundle = load_bundle(task_id)
+    agent = AnthropicBenchmarkAgent(task, bundle, model=model_id)
+    return run_benchmark_task(
+        task_id,
+        agent,
+        agent_mode="anthropic",
+        model_id=agent.model,
+        plan_id=None,
+    )
+
+
+def run_live_task(task_id: str, *, model_id: str | None = None) -> tuple[dict, dict, dict | None, str]:
+    from agents.benchmark_tool_specs import is_anthropic_model
+
+    if model_id and is_anthropic_model(model_id):
+        trace, structured_output, agent_submission = run_anthropic_task(task_id, model_id=model_id)
+        return trace, structured_output, agent_submission, "anthropic"
+    trace, structured_output, agent_submission = run_openai_task(task_id, model_id=model_id)
+    return trace, structured_output, agent_submission, "openai"
+
+
 TASK_SCRIPTED_PLANS: dict[str, Path] = {
     "GOOGL_footnote_reconciliation": BENCH / "examples/agents/googl_good_plan.json",
     "PEP_fx_organic_growth": BENCH / "examples/agents/pep_good_plan.json",
@@ -325,7 +350,7 @@ def main() -> int:
     parser.add_argument("--task", required=True, help="Task id, e.g. GOOGL_footnote_reconciliation")
     parser.add_argument(
         "--agent",
-        choices=("scripted", "mock", "openai"),
+        choices=("scripted", "mock", "openai", "anthropic", "auto"),
         required=True,
     )
     parser.add_argument("--plan", type=Path, help="JSON plan for scripted agent")
@@ -351,6 +376,10 @@ def main() -> int:
         )
     elif args.agent == "mock":
         trace, structured_output, agent_submission = run_mock_task(args.task)
+    elif args.agent == "anthropic":
+        trace, structured_output, agent_submission = run_anthropic_task(args.task, model_id=args.model_id)
+    elif args.agent == "auto":
+        trace, structured_output, agent_submission, _mode = run_live_task(args.task, model_id=args.model_id)
     else:
         trace, structured_output, agent_submission = run_openai_task(args.task, model_id=args.model_id)
 

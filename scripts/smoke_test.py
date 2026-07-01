@@ -609,6 +609,40 @@ def check_openai_submit_schema() -> None:
         assert "l3_pass" in l3
 
 
+def check_anthropic_adapter() -> None:
+    """P2-04h — Anthropic tool schema + model routing (offline)."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from agents.benchmark_tool_specs import (  # noqa: E402
+        build_system_prompt,
+        build_tool_definitions,
+        is_anthropic_model,
+        to_anthropic_tools,
+    )
+    from agents.anthropic_benchmark_agent import AnthropicBenchmarkAgent  # noqa: E402
+    from benchmark_tool_backend import load_bundle  # noqa: E402
+
+    assert is_anthropic_model("claude-sonnet-4-20250514") is True
+    assert is_anthropic_model("gpt-4o") is False
+
+    task = json.loads(
+        (ROOT / "benchmark_v0.1" / "tasks" / "GOOGL_footnote_reconciliation.json").read_text()
+    )
+    bundle = load_bundle(task["task_id"])
+    openai_tools = build_tool_definitions(task, bundle)
+    anthropic_tools = to_anthropic_tools(openai_tools)
+    assert len(anthropic_tools) == len(openai_tools)
+    for tool in anthropic_tools:
+        assert "name" in tool and "input_schema" in tool
+        assert "function" not in tool
+
+    prompt = build_system_prompt(task, bundle)
+    assert "GOOGL" in prompt or "footnote" in prompt.lower()
+
+    agent = AnthropicBenchmarkAgent(task, bundle, model="claude-sonnet-4-20250514", api_key="test-key")
+    assert agent.tools[0]["name"] == "Search_Filing"
+    assert agent.messages[0]["role"] == "user"
+
+
 def check_agent_submission_validator() -> None:
     """P2-04d — L3 submission validator + gold/trap contract fixtures."""
     report = run([
@@ -684,6 +718,7 @@ def main() -> int:
         ("Agent submission L3 validator", check_agent_submission_validator),
         ("Composite run scoring", check_composite_scoring),
         ("OpenAI submit schema", check_openai_submit_schema),
+        ("Anthropic adapter", check_anthropic_adapter),
         ("Campaign execute scripted", check_campaign_execute_scripted),
     ]
     failed = 0

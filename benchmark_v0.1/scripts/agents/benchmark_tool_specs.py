@@ -62,6 +62,58 @@ def snippet_field_description(task_id: str) -> str:
     return base
 
 
+def build_system_prompt(task: dict, bundle: dict) -> str:
+    """Shared system prompt for OpenAI and Anthropic benchmark agents."""
+    registry = bundle.get("section_registry", [])
+    slug_lines = "\n".join(
+        f"  - {e['section_slug']}: {e.get('name', e['section_id'])}"
+        for e in registry
+    )
+    policy_lines = ""
+    for note in bundle.get("policy_notes", []):
+        if note.get("agent_ack_required"):
+            policy_lines += f"\n- REQUIRED policy ack `{note['policy_id']}`: {note['statement']}"
+        else:
+            policy_lines += f"\n- Policy note `{note['policy_id']}`: {note['statement']}"
+
+    ids = sorted(metric_keys(task["task_id"]))
+    metric_list = ", ".join(ids)
+
+    return (
+        "You are an equity research analyst agent in a controlled benchmark evaluation.\n"
+        "Use ONLY the provided tools against the fixed corpus — no external data.\n"
+        "For Search_Filing, pass exact section_slug tokens (lowercase, underscores).\n"
+        "Retrieve evidence before stating numbers. Use Python_Interpreter to verify arithmetic.\n"
+        "When ready, call submit_structured_output with:\n"
+        f"  - metrics: all {len(ids)} required fields ({metric_list})\n"
+        f"  - citations: exactly one entry per metrics key ({metric_list}) — no omissions\n"
+        "  - each citation snippet must be a verbatim substring from a section you retrieved\n"
+        "  - policy_acknowledgements: include every REQUIRED policy_id listed below\n\n"
+        f"{citation_guidance_for_task(task['task_id'])}\n\n"
+        f"TASK:\n{task['prompt']['text']}\n\n"
+        f"ALLOWED SECTION SLUGS:\n{slug_lines or '  (see tool enum)'}"
+        f"{policy_lines}"
+    )
+
+
+def to_anthropic_tools(openai_tools: list[dict]) -> list[dict]:
+    """Convert OpenAI function tools to Anthropic Messages API tool format."""
+    anthropic: list[dict] = []
+    for tool in openai_tools:
+        fn = tool.get("function", {})
+        anthropic.append({
+            "name": fn["name"],
+            "description": fn.get("description", ""),
+            "input_schema": fn.get("parameters", {"type": "object", "properties": {}}),
+        })
+    return anthropic
+
+
+def is_anthropic_model(model_id: str) -> bool:
+    model = model_id.lower()
+    return model.startswith("claude") or model.startswith("anthropic/")
+
+
 def parse_submission_args(args: dict, task: dict) -> tuple[dict, dict | None]:
     """Parse submit tool args into (metrics, agent_submission_v1 | None)."""
     task_id = task["task_id"]

@@ -3,7 +3,7 @@
   "backlog_ref": "P2-04",
   "description": "Pilot eval campaign — 2 models × 2 published tasks × 3 runs; L1 via verify scripts; median aggregation.",
   "status": "execute_ready",
-  "orchestrator_note": "Use run_benchmark_campaign.py --execute --agent scripted|openai. Live 2×2×3 eval blocked on API keys and Anthropic adapter.",
+  "orchestrator_note": "Use run_benchmark_campaign.py --execute --agent auto|openai|anthropic. Full 2×2×3 requires OPENAI_API_KEY + ANTHROPIC_API_KEY.",
   "models": [
     "gpt-4o",
     "claude-sonnet-4-20250514"
