@@ -1,15 +1,16 @@
 {
   "schema_version": "leaderboard_v0",
-  "campaign_id": "pilot_eval_4task_v1",
-  "generated_at": "2026-07-02T13:41:10.870413+00:00",
-  "source_report": "2026-07-02T00:36:35.579447+00:00",
-  "git_commit": "a638bc0",
+  "campaign_id": "pilot_eval_5task_v1",
+  "generated_at": "2026-07-02T13:46:27.747507+00:00",
+  "source_report": "2026-07-02T13:31:22.426125+00:00",
+  "git_commit": "2a20fff",
   "methodology": {
     "primary_rank": "headline_weighted_composite",
     "headline_tasks": [
       "PEP_fx_organic_growth",
       "AMZN_footnote_reconciliation",
-      "NFLX_guidance_drift"
+      "NFLX_guidance_drift",
+      "KO_footnote_reconciliation"
     ],
     "excluded_from_headline": [
       "GOOGL_footnote_reconciliation"
@@ -57,23 +58,26 @@
   "rankings": [
     {
       "model_id": "claude-sonnet-4-5",
-      "headline_composite": 0.966,
+      "headline_composite": 0.9939,
       "fracture_intensity": 0.0,
       "task_composites": {
-        "PEP_fx_organic_growth": 0.898,
+        "PEP_fx_organic_growth": 1.0,
         "AMZN_footnote_reconciliation": 1.0,
-        "NFLX_guidance_drift": 1.0
+        "NFLX_guidance_drift": 0.9757,
+        "KO_footnote_reconciliation": 1.0
       },
-      "headline_run_count": 9,
+      "headline_run_count": 12,
       "fracture_profile": {
         "L1": {},
         "L2": {},
         "L3": {
-          "CITE_BROAD": 3
+          "CITE_BROAD": 1,
+          "CITE_HALLUC": 2
         }
       },
       "fracture_codes_union": [
-        "CITE_BROAD"
+        "CITE_BROAD",
+        "CITE_HALLUC"
       ],
       "rank": 1,
       "is_leader": true,
@@ -81,48 +85,86 @@
       "fracture_delta_vs_leader": {}
     },
     {
-      "model_id": "gpt-4o",
-      "headline_composite": 0.8167,
-      "fracture_intensity": 1.0,
+      "model_id": "gemini-2.5-flash",
+      "headline_composite": 0.9818,
+      "fracture_intensity": 0.0,
       "task_composites": {
-        "PEP_fx_organic_growth": 0.864,
-        "AMZN_footnote_reconciliation": 0.9575,
-        "NFLX_guidance_drift": 0.6286
+        "PEP_fx_organic_growth": 1.0,
+        "AMZN_footnote_reconciliation": 1.0,
+        "NFLX_guidance_drift": 0.9271,
+        "KO_footnote_reconciliation": 1.0
       },
-      "headline_run_count": 9,
+      "headline_run_count": 12,
       "fracture_profile": {
-        "L1": {
-          "GUIDANCE_PERIOD_ERR": 2
-        },
+        "L1": {},
         "L2": {},
         "L3": {
-          "CITE_HALLUC": 3,
-          "CITE_BROAD": 8
+          "CITE_HALLUC": 1,
+          "CITE_BROAD": 4
         }
       },
       "fracture_codes_union": [
         "CITE_BROAD",
-        "CITE_HALLUC",
-        "GUIDANCE_PERIOD_ERR"
+        "CITE_HALLUC"
       ],
       "rank": 2,
       "is_leader": false,
       "gap_task": {
         "task_id": "NFLX_guidance_drift",
-        "leader_composite": 1.0,
-        "model_composite": 0.6286,
-        "delta": 0.3714
+        "leader_composite": 0.9757,
+        "model_composite": 0.9271,
+        "delta": 0.0486
       },
       "fracture_delta_vs_leader": {
         "PEP_fx_organic_growth": [
           "CITE_HALLUC"
         ],
+        "KO_footnote_reconciliation": [
+          "CITE_BROAD"
+        ]
+      }
+    },
+    {
+      "model_id": "gpt-4o",
+      "headline_composite": 0.8961,
+      "fracture_intensity": 0.3,
+      "task_composites": {
+        "PEP_fx_organic_growth": 0.864,
+        "AMZN_footnote_reconciliation": 0.9575,
+        "NFLX_guidance_drift": 0.8786,
+        "KO_footnote_reconciliation": 0.8841
+      },
+      "headline_run_count": 12,
+      "fracture_profile": {
+        "L1": {},
+        "L2": {},
+        "L3": {
+          "CITE_HALLUC": 3,
+          "CITE_BROAD": 11
+        }
+      },
+      "fracture_codes_union": [
+        "CITE_BROAD",
+        "CITE_HALLUC"
+      ],
+      "rank": 3,
+      "is_leader": false,
+      "gap_task": {
+        "task_id": "PEP_fx_organic_growth",
+        "leader_composite": 1.0,
+        "model_composite": 0.864,
+        "delta": 0.136
+      },
+      "fracture_delta_vs_leader": {
+        "PEP_fx_organic_growth": [
+          "CITE_BROAD",
+          "CITE_HALLUC"
+        ],
         "AMZN_footnote_reconciliation": [
           "CITE_BROAD"
         ],
-        "NFLX_guidance_drift": [
-          "CITE_BROAD",
-          "GUIDANCE_PERIOD_ERR"
+        "KO_footnote_reconciliation": [
+          "CITE_BROAD"
         ]
       }
     }

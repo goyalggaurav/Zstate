@@ -5,8 +5,11 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+from statistics import median
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -17,6 +20,15 @@ from fpdf.enums import XPos, YPos
 ROOT = Path(__file__).resolve().parents[1]
 BENCH = ROOT / "benchmark_v0.1"
 EXPORT = ROOT / "docs" / "export"
+PILOT_CAMPAIGN_ID = "pilot_eval_5task_v1"
+
+TASK_SHORT_NAMES = {
+    "PEP_fx_organic_growth": "PEP FX / organic growth",
+    "AMZN_footnote_reconciliation": "AMZN segment bridge",
+    "NFLX_guidance_drift": "NFLX guidance drift",
+    "KO_footnote_reconciliation": "KO segment bridge",
+    "GOOGL_footnote_reconciliation": "GOOGL segment sum (ceiling)",
+}
 
 
 def git_head() -> str:
@@ -57,18 +69,210 @@ def task_summaries() -> list[dict]:
 
 
 def full_campaign_summary() -> dict | None:
-    report_path = BENCH / "runs" / "pilot_eval_5task_v1" / "pilot_eval_5task_v1.json"
+    report_path = BENCH / "runs" / PILOT_CAMPAIGN_ID / f"{PILOT_CAMPAIGN_ID}.json"
     report = load_json(report_path)
     if not isinstance(report, dict):
         return None
     summary = report.get("summary") or {}
     return {
-        "campaign_id": report.get("campaign_id", "pilot_eval_5task_v1"),
+        "campaign_id": report.get("campaign_id", PILOT_CAMPAIGN_ID),
         "weighted": summary.get("weighted_composite_by_model") or {},
         "by_model_task": summary.get("by_model_task_composite_median") or {},
         "fractures": summary.get("fracture_counts") or {},
         "runs_scored": summary.get("scored", 0),
+        "headline_tasks": summary.get("headline_tasks") or [],
     }
+
+
+def load_leaderboard_data() -> dict | None:
+    """Build leaderboard from scored campaign report (falls back to checked-in JSON)."""
+    campaign_path = BENCH / "campaigns" / f"{PILOT_CAMPAIGN_ID}.json"
+    report_path = BENCH / "runs" / PILOT_CAMPAIGN_ID / f"{PILOT_CAMPAIGN_ID}.json"
+    campaign = load_json(campaign_path)
+    report = load_json(report_path)
+    if isinstance(campaign, dict) and isinstance(report, dict) and report.get("runs"):
+        scripts_dir = str(BENCH / "scripts")
+        if scripts_dir not in sys.path:
+            sys.path.insert(0, scripts_dir)
+        from generate_leaderboard import build_leaderboard  # noqa: WPS433
+
+        return build_leaderboard(campaign, report)
+    lb = load_json(BENCH / "docs" / "LEADERBOARD_v0.json")
+    return lb if isinstance(lb, dict) else None
+
+
+def task_label(task_id: str) -> str:
+    return TASK_SHORT_NAMES.get(task_id, task_id.replace("_", " "))
+
+
+def load_campaign_report() -> dict | None:
+    report = load_json(BENCH / "runs" / PILOT_CAMPAIGN_ID / f"{PILOT_CAMPAIGN_ID}.json")
+    return report if isinstance(report, dict) else None
+
+
+def model_rank_order(leaderboard: dict | None) -> list[str]:
+    if leaderboard and leaderboard.get("rankings"):
+        return [row["model_id"] for row in leaderboard["rankings"]]
+    return []
+
+
+def summarize_issue(
+    runs: list[dict],
+    fracture_labels: dict[str, str],
+) -> str:
+    composites = [r.get("composite_score") for r in runs if r.get("composite_score") is not None]
+    if composites and min(composites) >= 0.999:
+        codes: Counter[str] = Counter()
+        for rec in runs:
+            for code in rec.get("fracture_codes") or []:
+                codes[code] += 1
+            comp = rec.get("composite") or {}
+            for layer in ("l1", "l2", "l3"):
+                for code in comp.get(layer, {}).get("fracture_codes") or []:
+                    codes[code] += 1
+        if not codes:
+            return "None"
+
+    codes = Counter()
+    failure_modes: Counter[str] = Counter()
+    for rec in runs:
+        for code in rec.get("fracture_codes") or []:
+            codes[code] += 1
+        for fm in rec.get("failure_modes") or []:
+            failure_modes[fm] += 1
+        comp = rec.get("composite") or {}
+        for layer in ("l1", "l2", "l3"):
+            for code in comp.get(layer, {}).get("fracture_codes") or []:
+                codes[code] += 1
+            for fm in comp.get(layer, {}).get("failure_modes") or []:
+                failure_modes[fm] += 1
+
+    if not codes and not failure_modes:
+        if composites and median(composites) >= 0.95:
+            return "Minor citation variance"
+        return "Score below leader; no dominant fracture code"
+
+    parts: list[str] = []
+    for code, count in codes.most_common(2):
+        label = fracture_labels.get(code, code.replace("_", " ").lower())
+        parts.append(f"{label} ({code})")
+    if failure_modes and not codes:
+        parts.append(failure_modes.most_common(1)[0][0].replace("_", " "))
+    issue = "; ".join(parts)
+    if len(codes) > 2:
+        issue += f"; +{len(codes) - 2} more"
+    return issue
+
+
+def findings_table_rows(
+    report: dict,
+    leaderboard: dict | None,
+) -> list[dict]:
+    fracture_labels = (leaderboard or {}).get("fracture_labels") or {}
+    task_order = report.get("tasks") or []
+    model_order = model_rank_order(leaderboard) or report.get("models") or []
+    headline_tasks = set(
+        (leaderboard or {}).get("methodology", {}).get("headline_tasks")
+        or (report.get("summary") or {}).get("headline_tasks")
+        or []
+    )
+
+    headline_by_model: dict[str, float] = {}
+    if leaderboard and leaderboard.get("rankings"):
+        for row in leaderboard["rankings"]:
+            if row.get("headline_composite") is not None:
+                headline_by_model[row["model_id"]] = float(row["headline_composite"])
+    else:
+        for model, score in ((report.get("summary") or {}).get("weighted_composite_by_model") or {}).items():
+            headline_by_model[model] = float(score)
+
+    grouped: dict[tuple[str, str], list[dict]] = {}
+    for rec in report.get("runs", []):
+        if rec.get("status") != "scored":
+            continue
+        key = (rec["task_id"], rec["model_id"])
+        grouped.setdefault(key, []).append(rec)
+
+    rows: list[dict] = []
+    for tid in task_order:
+        for mid in model_order:
+            recs = grouped.get((tid, mid))
+            if not recs:
+                continue
+            l1_scores = [r["composite"]["l1"]["score"] for r in recs if r.get("composite")]
+            composites = [r["composite_score"] for r in recs if r.get("composite_score") is not None]
+            rows.append({
+                "task_id": tid,
+                "model_id": mid,
+                "l1_median": median(l1_scores) if l1_scores else None,
+                "composite_median": median(composites) if composites else None,
+                "headline_composite": headline_by_model.get(mid),
+                "issue": summarize_issue(recs, fracture_labels),
+                "in_headline": tid in headline_tasks,
+            })
+    return rows
+
+
+def truncate_cell(text: str, limit: int = 140) -> str:
+    text = text.strip()
+    if len(text) <= limit:
+        return text
+    return text[: limit - 3] + "..."
+
+
+def add_findings_section(
+    doc: Document,
+    eval_full: dict | None,
+    leaderboard: dict | None,
+    report: dict | None,
+) -> None:
+    if not eval_full or not eval_full.get("runs_scored") or not report:
+        add_para(doc, "Full 5-task eval not yet scored.")
+        return
+
+    add_para(
+        doc,
+        f"Campaign {eval_full['campaign_id']}: {eval_full['runs_scored']} runs scored "
+        "(5 tasks x 3 models x 3 runs). Score = median L1 hard-accuracy; "
+        "Composite = median full L1+L2+L3 (3 runs per cell).",
+    )
+
+    rows = findings_table_rows(report, leaderboard)
+    if not rows:
+        add_para(doc, "No scored runs in campaign report.")
+        return
+
+    table = doc.add_table(rows=len(rows) + 1, cols=5)
+    table.style = "Table Grid"
+    headers = ("Task", "Model", "Score", "Composite", "Issue")
+    for i, label in enumerate(headers):
+        table.rows[0].cells[i].text = label
+
+    for i, row in enumerate(rows, start=1):
+        task_txt = task_label(row["task_id"])
+        if not row["in_headline"]:
+            task_txt += " *"
+        table.rows[i].cells[0].text = task_txt
+        table.rows[i].cells[1].text = row["model_id"]
+        table.rows[i].cells[2].text = (
+            f"{row['l1_median']:.3f}" if row["l1_median"] is not None else "-"
+        )
+        table.rows[i].cells[3].text = (
+            f"{row['composite_median']:.3f}" if row["composite_median"] is not None else "-"
+        )
+        table.rows[i].cells[4].text = truncate_cell(row["issue"])
+
+    add_para(doc, "* Not in headline rank (see note below).", bold=False)
+
+    add_para(
+        doc,
+        "Why GOOGL is scored but excluded from headline rank: GOOGL_footnote_reconciliation "
+        "is included in the full 5-task campaign as a ceiling check — all three models median "
+        "1.0 on L1, path recall, and composite across three runs, so it no longer separates "
+        "frontier performers. Headline rank therefore uses PEP, AMZN, NFLX, and KO, where "
+        "citation quality (CITE_BROAD, CITE_HALLUC) and task-specific traps still produce "
+        "meaningful spread (Claude 0.994 vs GPT-4o 0.896 in this pilot).",
+    )
 
 
 def add_heading(doc: Document, text: str, level: int = 1) -> None:
@@ -92,6 +296,8 @@ def build_pilot_brief() -> Document:
     commit = git_head()
     tasks = task_summaries()
     eval_full = full_campaign_summary()
+    leaderboard = load_leaderboard_data()
+    report = load_campaign_report()
 
     doc = Document()
     section = doc.sections[0]
@@ -206,59 +412,12 @@ def build_pilot_brief() -> Document:
     ])
 
     add_heading(doc, "5. Findings (July 2026 pilot)", 1)
-
-    add_heading(doc, "Full 5-task eval (pilot_eval_5task_v1)", 2)
-    if eval_full and eval_full.get("runs_scored"):
-        add_para(
-            doc,
-            f"Campaign {eval_full['campaign_id']}: {eval_full['runs_scored']} runs scored "
-            "(5 tasks x 3 models x 3 runs). Headline = PEP + AMZN + NFLX + KO (excl. GOOGL).",
-        )
-        ranked = sorted(
-            eval_full["weighted"].items(),
-            key=lambda x: x[1],
-            reverse=True,
-        )
-        rtable = doc.add_table(rows=len(ranked) + 1, cols=2)
-        rtable.style = "Table Grid"
-        rtable.rows[0].cells[0].text = "Model"
-        rtable.rows[0].cells[1].text = "Headline weighted composite"
-        for i, (model, score) in enumerate(ranked, start=1):
-            rtable.rows[i].cells[0].text = model
-            rtable.rows[i].cells[1].text = f"{score:.3f}"
-        if eval_full.get("by_model_task"):
-            add_para(doc, "Per-task medians by model:", bold=True)
-            tasks = sorted(next(iter(eval_full["by_model_task"].values())).keys())
-            mtable = doc.add_table(
-                rows=len(tasks) + 1,
-                cols=len(eval_full["by_model_task"]) + 1,
-            )
-            mtable.style = "Table Grid"
-            mtable.rows[0].cells[0].text = "Task"
-            for j, model in enumerate(sorted(eval_full["by_model_task"]), start=1):
-                mtable.rows[0].cells[j].text = model.replace("-", " ")
-            for i, tid in enumerate(tasks, start=1):
-                mtable.rows[i].cells[0].text = tid.replace("_", " ")
-                for j, model in enumerate(sorted(eval_full["by_model_task"]), start=1):
-                    val = eval_full["by_model_task"][model].get(tid)
-                    mtable.rows[i].cells[j].text = f"{val:.3f}" if val is not None else "-"
-        if eval_full.get("fractures"):
-            add_para(doc, f"Fractures (all runs): {eval_full['fractures']}")
-    else:
-        add_para(doc, "Full 5-task eval not yet scored.")
-
-    add_para(doc, "Interpretation:", bold=True)
-    add_bullets(doc, [
-        "KO_footnote_reconciliation is the universal gap — all three models median 0.0 on headline.",
-        "Claude leads headline (0.744); Gemini close second (0.732); GPT-4o third (0.675).",
-        "GOOGL ceiling task: all models median 1.0 on 3 runs.",
-        "L3 citation fractures (CITE_BROAD, CITE_HALLUC) dominate; KO adds HALLUC_FILL on L1.",
-    ])
+    add_findings_section(doc, eval_full, leaderboard, report)
 
     add_heading(doc, "6. WIP / next steps", 1)
     add_bullets(doc, [
         "Scale to 15-task MVD (5 companies x 3 task types) with expert sign-off pipeline.",
-        "Investigate KO metric schema confusion (wrong submit keys observed on Gemini).",
+        "Tighten L3 citation rules or eval-mode prompts — CITE_BROAD is the main separator on headline tasks.",
         "Track B: more frontier trajectories + PM branch coverage.",
         "Expert Workbench (spec) for CFA draft -> review -> publish workflow.",
         "LATER-06: full corpus ingest with excerpt SHA pins (P3-10 mitigation on KO bundle).",
