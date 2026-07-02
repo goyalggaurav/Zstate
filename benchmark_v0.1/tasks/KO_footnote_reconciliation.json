@@ -1,7 +1,7 @@
 {
   "task_id": "KO_footnote_reconciliation",
-  "version": "0.3.0-draft",
-  "status": "draft",
+  "version": "0.3.0-pilot",
+  "status": "published",
   "benchmark_version": "benchmark_v0.1",
 
   "ticker": "KO",
@@ -74,6 +74,6 @@
   "grader_rubric_ref": "../rubrics/KO_footnote_reconciliation_grader.md",
 
   "authored_by": "pilot_template_p3_18",
-  "review_status": "draft_pending_expert",
-  "updated_at": "2026-07-02T19:00:00Z"
+  "review_status": "expert_reviewed",
+  "updated_at": "2026-07-02T20:00:00Z"
 }

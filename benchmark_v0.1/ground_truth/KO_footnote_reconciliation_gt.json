@@ -1,6 +1,6 @@
 {
   "task_id": "KO_footnote_reconciliation",
-  "version": "0.3.0-draft",
+  "version": "0.3.0-pilot",
   "fiscal_period": "FY2025",
   "period_end": "2025-12-31",
   "unit": "USD_millions",
@@ -211,10 +211,10 @@
   ],
 
   "expert_sign_off": {
-    "status": "draft",
-    "reviewer": null,
-    "review_date": null,
+    "status": "expert_reviewed",
+    "reviewer": "Gaurav Goyal (CFA Level III candidate)",
+    "review_date": "2026-07-02",
     "review_doc": "docs/expert_drafts/KO_GT_REVIEW.md",
-    "notes": "F_exact bridge v2: Total segment net revenues + Corporate + Eliminations = Consolidated (0001628280-26-010047)."
+    "notes": "Signed off — Note 20 Total row + Corporate + Eliminations bridge; EDGAR 0001628280-26-010047."
   }
 }

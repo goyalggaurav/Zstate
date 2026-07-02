@@ -1,11 +1,12 @@
 # Expert Review — KO Footnote Reconciliation Ground Truth
 
-**Reviewer:** _pending_  
+**Reviewer:** Gaurav Goyal (CFA Level III candidate)  
 **Artifact:** `benchmark_v0.1/ground_truth/KO_footnote_reconciliation_gt.json`  
 **Task:** `KO_footnote_reconciliation` (Type F, archetype `F_exact`)  
 **Backlog ref:** P3-18 / LATER-06 (EDGAR verbatim ingest deferred)  
 **Scored period:** FY2025 (fiscal year ended 2025-12-31)  
-**Status:** `draft` — **not published** until sign-off below  
+**Status:** `expert_reviewed` — **signed off**  
+**Expert review date:** 2026-07-02  
 **EDGAR:** `0001628280-26-010047` · [10-K](https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm)  
 **Schema:** [CORPUS_BUNDLE_CONTRACT §1e](../../benchmark_v0.1/docs/CORPUS_BUNDLE_CONTRACT.md) (`segment_metrics` + `additive_metrics` + `elimination_metrics`)
 
@@ -54,17 +55,17 @@ Reconcile Note 20 **Total net operating revenues** by segment + **Corporate** + 
 
 ### I. Mathematical & Financial Baseline
 
-- [ ] **Note 20 table anchoring:** Verified **Total net operating revenues** row figures for all five operating segments, **Corporate** allocation ($144M), and the **Eliminations** bridge line ($(1,009)M) against Note 20 (page ~116, accession above).
-- [ ] **Reconciliation identity:** 48,806M + 144M − 1,009M = **47,941M** (matches consolidated with ±0 tolerance).
-- [ ] **Consolidated cross-check:** **47,941M** verified on Consolidated Statement of Income face (`consolidated_primary`) — must agree with Note 20 Consolidated column.
-- [ ] **Latin America FX pair:** **(2)%** total net revenue change vs **(12)%** foreign-currency impact on the **same MD&A table row** (`narrative_fx`); confirm `fx_pair_same_sentence` passes in bundle validator.
+- [x] **Note 20 table anchoring:** Verified **Total net operating revenues** row figures for all five operating segments, **Corporate** allocation ($144M), and the **Eliminations** bridge line ($(1,009)M) against Note 20 (page ~116, accession above).
+- [x] **Reconciliation identity:** 48,806M + 144M − 1,009M = **47,941M** (matches consolidated with ±0 tolerance).
+- [x] **Consolidated cross-check:** **47,941M** verified on Consolidated Statement of Income face (`consolidated_primary`) — agrees with Note 20 Consolidated column.
+- [x] **Latin America FX pair:** **(2)%** total net revenue change vs **(12)%** foreign-currency impact on the **same MD&A table row** (`narrative_fx`); `fx_pair_same_sentence` passes in bundle validator.
 
 ### II. Architecture & Decoy Integrity
 
-- [ ] **Global Ventures sunset:** Item 1 / MD&A confirms segment sunset **January 1, 2025**; Costa (ex-RTD), innocent, and doğadan into **EMEA**; no sixth reportable segment in Note 20 FY2025 column.
-- [ ] **Decoy validity:** Prior-year consolidated **47,061M** isolated to `segment_financials_prior_year` (required=false); scored metrics must not pull FY2024 column.
-- [ ] **Third-party vs Total trap:** Filing distinguishes LatAm third-party **6,331M** from Total segment **6,334M** — omission or row confusion must fracture (`third_party_row_instead_of_total` or `segment_sum_mismatch`).
-- [ ] **Eliminations trap:** Agent that sums 48,806 + 144 without eliminations reaches 48,950M ≠ 47,941M — `omit_eliminations` / `RECON_OMIT`.
+- [x] **Global Ventures sunset:** Item 1 / MD&A confirms segment sunset **January 1, 2025**; Costa (ex-RTD), innocent, and doğadan into **EMEA**; no sixth reportable segment in Note 20 FY2025 column.
+- [x] **Decoy validity:** Prior-year consolidated **47,061M** isolated to `segment_financials_prior_year` (required=false); scored metrics must not pull FY2024 column.
+- [x] **Third-party vs Total trap:** Filing distinguishes LatAm third-party **6,331M** from Total segment **6,334M** — row confusion fractures via `third_party_row_instead_of_total` / `RECON_OMIT`.
+- [x] **Eliminations trap:** Agent that sums 48,806 + 144 without eliminations reaches 48,950M ≠ 47,941M — `omit_eliminations` / `RECON_OMIT`.
 - [x] **Universal slug check:** No `Note N` in task JSON, gold path, or GT citations; issuer note index only in bundle `filing_label` + excerpt.
 - [x] **Sliding-drift guard:** `legacy_section_slugs: ["note_20"]` only; `validate_corpus_bundle.py` passes `legacy_note_aligned`.
 - [x] **F_exact schema (§1e):** GT declares `elimination_metrics: ["intersegment_eliminations"]`; verifier sums bridge lines uniformly.
@@ -100,10 +101,9 @@ python3 benchmark_v0.1/scripts/validate_corpus_bundle.py --task KO_footnote_reco
 
 ## Expert verdict
 
-| Field | Value |
-|-------|-------|
-| Reviewer | _pending_ |
-| Review date | _pending_ |
-| Decision | ☐ Approve publish &nbsp; ☐ Revise wedge &nbsp; ☐ Reject task |
+**Verdict:** approve  
 
-**Blockers:** Complete all **unchecked** items in §I and §II against live 10-K before changing manifest status to `published`.
+**Reviewer:** Gaurav Goyal (CFA Level III candidate)  
+**Date:** 2 July 2026  
+
+**Sign-off:** KO fifth pilot task cleared for **published** benchmark use alongside GOOGL, PEP, AMZN, and NFLX. Elimination-bridge wedge (Note 20 Total row + Corporate + Eliminations) validated against EDGAR accession `0001628280-26-010047`.

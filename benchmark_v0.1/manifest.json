@@ -2,8 +2,8 @@
   "benchmark_version": "benchmark_v0.1",
   "mvd_target_tasks": 15,
   "mvd_pilot_companies": 5,
-  "published_tasks": 4,
-  "draft_tasks": 1,
+  "published_tasks": 5,
+  "draft_tasks": 0,
   "corpus_manifest": "corpus/corpus_manifest_v1.json",
   "pilot_tasks": [
     {
@@ -69,7 +69,7 @@
     {
       "task_id": "KO_footnote_reconciliation",
       "task_type": "F",
-      "status": "draft",
+      "status": "published",
       "cfa_review": "docs/expert_drafts/KO_GT_REVIEW.md",
       "paths": {
         "task": "tasks/KO_footnote_reconciliation.json",

@@ -1170,8 +1170,8 @@ def check_task_registry() -> None:
     )
 
     manifest = load_manifest()
-    assert manifest["published_tasks"] == 4
-    assert manifest["draft_tasks"] == 1
+    assert manifest["published_tasks"] == 5
+    assert manifest["draft_tasks"] == 0
     task_ids = all_task_ids()
     assert len(task_ids) == 5
     for task_id in task_ids:
@@ -1184,8 +1184,8 @@ def check_task_registry() -> None:
     ):
         assert scripted_plan_path(task_id) is not None, task_id
     assert scripted_plan_path("NFLX_guidance_drift") is None
-    assert len(published_task_ids()) == 4
-    assert "KO_footnote_reconciliation" not in published_task_ids()
+    assert len(published_task_ids()) == 5
+    assert "KO_footnote_reconciliation" in published_task_ids()
 
 
 def check_archetype_roles() -> None:

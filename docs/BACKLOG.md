@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.5  
-**Last updated:** July 2026 (P3-18 KO footnote draft + P3-17 GT fixtures — 4 published + 1 draft, 29 smoke checks)
+**Last updated:** July 2026 (P3-18 KO footnote published — 5 published tasks)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -105,7 +105,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-16 | **Task special-case cleanup** | A | in_progress | Eng | GOOGL `--period` sprawl removed from campaign/scorer via `l1_verify_argv()`; mock agent still GOOGL-only |
 | P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
 | P3-17b | **Contract literals retrofit (legacy 4 tasks)** | A | todo | Eng | Migrate GOOGL/AMZN/PEP hand-typed literals to GT-derived; smoke asserts GT parity |
-| P3-18 | **KO_footnote_reconciliation — hardened template** | A | in_progress | Associate | Rebuilt from EDGAR 0001628280-26-010047 (5 segments + Corporate bridge); expert sign-off pending |
+| P3-18 | **KO_footnote_reconciliation — hardened template** | A | done | Associate | Published 2026-07-02; EDGAR elimination bridge; [KO_GT_REVIEW.md](./expert_drafts/KO_GT_REVIEW.md) |
 
 **Gate:** P3-03 (15 tasks) blocked until P3-16 mock-agent generalization (optional). P3-11 + P3-12 done. Full EDGAR ingest remains **LATER-06**.
 

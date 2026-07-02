@@ -160,7 +160,7 @@
       "filing_date": "2026-02-20",
       "sec_accession": "0001628280-26-010047",
       "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm",
-      "ingest_status": "metadata_only",
+      "ingest_status": "excerpt_vetted",
       "checksum_sha256": null,
       "task_refs": ["KO_footnote_reconciliation"]
     }

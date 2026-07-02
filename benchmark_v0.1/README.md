@@ -1,6 +1,6 @@
 # benchmark_v0.1 — Pilot Package
 
-Minimum Viable Benchmark pilot: **15 tasks** across 5 companies; **4 published** tasks (3× Type F + 1× Type M).
+Minimum Viable Benchmark pilot: **15 tasks** across 5 companies; **5 published** tasks (4× Type F + 1× Type M).
 
 ## Corpus (P0-06)
 
@@ -30,6 +30,7 @@ Contract: [docs/CORPUS_BUNDLE_CONTRACT.md](./docs/CORPUS_BUNDLE_CONTRACT.md)
 | [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-03) | **Published** (expert-reviewed 2026-07-01) |
 | [AMZN_footnote_reconciliation](./tasks/AMZN_footnote_reconciliation.json) | F — Forensics | **FY2025** (10-K filed 2026-02-06) | **Published** (expert-reviewed 2026-07-02) |
 | [NFLX_guidance_drift](./tasks/NFLX_guidance_drift.json) | F — Guidance drift | **2024Q4 guide → 2025Q3 YTD** (SEC excerpts) | **Published** ([expert review](../docs/expert_drafts/NFLX_GT_REVIEW.md)) |
+| [KO_footnote_reconciliation](./tasks/KO_footnote_reconciliation.json) | F — Forensics | **FY2025** (10-K filed 2026-02-20) | **Published** ([expert review](../docs/expert_drafts/KO_GT_REVIEW.md)) |
 
 ### GOOGL — footnote reconciliation
 
@@ -224,3 +225,4 @@ python3 benchmark_v0.1/scripts/validate_corpus_manifest.py
 - [PEP_FX_GT_REVIEW.md](../docs/expert_drafts/PEP_FX_GT_REVIEW.md)
 - [AMZN_GT_REVIEW.md](../docs/expert_drafts/AMZN_GT_REVIEW.md)
 - [NFLX_GT_REVIEW.md](../docs/expert_drafts/NFLX_GT_REVIEW.md)
+- [KO_GT_REVIEW.md](../docs/expert_drafts/KO_GT_REVIEW.md)

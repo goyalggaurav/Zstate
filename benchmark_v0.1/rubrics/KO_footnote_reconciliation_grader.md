@@ -1,8 +1,9 @@
-# KO Footnote Reconciliation — Grader Rubric (Draft)
+# KO Footnote Reconciliation — Grader Rubric
 
 **Task:** `KO_footnote_reconciliation`  
 **Expert review:** [KO_GT_REVIEW.md](../../docs/expert_drafts/KO_GT_REVIEW.md)  
-**Schema:** CORPUS_BUNDLE_CONTRACT §1e (`elimination_metrics`)
+**Schema:** CORPUS_BUNDLE_CONTRACT §1e (`elimination_metrics`)  
+**Status:** Published (expert-reviewed 2026-07-02)
 
 ## L1 (automated)
 
