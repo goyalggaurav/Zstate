@@ -1,6 +1,6 @@
 {
   "task_id": "KO_footnote_reconciliation",
-  "version": "0.1.1-draft",
+  "version": "0.2.0-draft",
   "archetype": "F_exact",
   "task_type": "F",
   "fiscal_period": "FY2025",
@@ -8,15 +8,15 @@
   "minimal_section_set": [
     {
       "section_id": "KO_10K_2025_segment_policy",
-      "name": "segment_policy — six operating segments",
+      "name": "segment_policy — five operating segments post Global Ventures sunset",
       "required": true,
-      "reason": "Confirm Global Ventures and Bottling Investments are reportable before extracting segment_financials"
+      "reason": "Confirm Global Ventures sunset and five reportable segments before extracting Note 20 table"
     },
     {
       "section_id": "KO_10K_2025_segment_financials",
-      "name": "segment_financials — operating segment net revenues",
+      "name": "segment_financials — third-party net operating revenues",
       "required": true,
-      "reason": "FY2025 net revenues for all six operating segments (issuer maps to Note 20 in bundle filing_label)"
+      "reason": "FY2025 third-party net operating revenues for five segments plus Corporate (Note 20 in bundle filing_label)"
     },
     {
       "section_id": "KO_10K_2025_income_statement",
@@ -26,9 +26,9 @@
     },
     {
       "section_id": "KO_10K_2025_mdna_latam",
-      "name": "narrative_fx — Latin America growth",
+      "name": "narrative_fx — Latin America net revenue change decomposition",
       "required": true,
-      "reason": "Reported vs currency-neutral Latin America growth"
+      "reason": "Total net revenue change vs foreign currency impact from MD&A percent-change table"
     }
   ],
 
@@ -39,15 +39,15 @@
   "reference_workflow": [
     {
       "step": 1,
-      "action": "Read segment definitions",
+      "action": "Read segment structure and Global Ventures sunset",
       "tool": "Search_Filing",
-      "target": "segment_policy — six segments including Global Ventures and Bottling Investments"
+      "target": "segment_policy — five segments; Global Ventures sunset effective 2025-01-01"
     },
     {
       "step": 2,
-      "action": "Extract FY2025 segment net revenues",
+      "action": "Extract FY2025 third-party net operating revenues",
       "tool": "Search_Filing",
-      "target": "segment_financials — all six segments, Year Ended December 31, 2025"
+      "target": "segment_financials — Third party row, Year Ended December 31, 2025"
     },
     {
       "step": 3,
@@ -57,24 +57,26 @@
     },
     {
       "step": 4,
-      "action": "Extract Latin America FX growth",
+      "action": "Extract Latin America net revenue change decomposition",
       "tool": "Search_Filing",
-      "target": "narrative_fx — 12% reported vs 15% currency neutral"
+      "target": "narrative_fx — Latin America Total (2)% vs FX (12)%"
     },
     {
       "step": 5,
-      "action": "Verify six-segment sum equals consolidated",
+      "action": "Verify five segments plus Corporate equals consolidated",
       "tool": "Python_Interpreter",
-      "target": "9842 + 6115 + 18256 + 5934 + 3218 + 6891 == 50256"
+      "target": "10833 + 6331 + 19579 + 5328 + 5726 + 144 == 47941"
     }
   ],
 
   "anti_patterns": [
     "use_fy2024_column_instead_of_fy2025",
     "use_decoy_segment_financials_prior_year_slug",
-    "omit_global_ventures_segment",
+    "legacy_global_ventures_segment",
+    "use_total_not_third_party_column",
     "omit_bottling_investments_segment",
-    "swap_latin_america_reported_and_cc_growth",
+    "omit_corporate_net_revenues",
+    "swap_latin_america_total_and_fx_impact",
     "produce_buy_hold_sell_recommendation"
   ],
 
@@ -85,18 +87,23 @@
       "fracture_code": "HALLUC_FILL"
     },
     {
-      "failure_mode_id": "omit_global_ventures",
-      "anti_pattern": "omit_global_ventures_segment",
-      "fracture_code": "RECON_OMIT"
-    },
-    {
       "failure_mode_id": "omit_bottling_investments",
       "anti_pattern": "omit_bottling_investments_segment",
       "fracture_code": "RECON_OMIT"
     },
     {
+      "failure_mode_id": "omit_corporate",
+      "anti_pattern": "omit_corporate_net_revenues",
+      "fracture_code": "RECON_OMIT"
+    },
+    {
+      "failure_mode_id": "total_column_not_third_party",
+      "anti_pattern": "use_total_not_third_party_column",
+      "fracture_code": "RECON_OMIT"
+    },
+    {
       "failure_mode_id": "latin_fx_swap",
-      "anti_pattern": "swap_latin_america_reported_and_cc_growth",
+      "anti_pattern": "swap_latin_america_total_and_fx_impact",
       "fracture_code": "CC_OMIT"
     },
     {

@@ -61,19 +61,18 @@ CONTRACT_PHRASES: dict[str, list[str]] = {
         "7,385,470",
     ],
     "KO_footnote_reconciliation": [
-        "9,842",
-        "6,115",
-        "18,256",
-        "5,934",
-        "3,218",
-        "6,891",
-        "50,256",
-        "46,905",
-        "Note 20",
+        "10,833",
+        "6,331",
+        "19,579",
+        "5,328",
+        "5,726",
+        "47,941",
+        "47,061",
+        "NOTE 20",
+        "Third party",
         "Global Ventures",
-        "Bottling Investments",
-        "increased 12%",
-        "increased 15% on a comparable currency neutral basis",
+        "sunset",
+        "Latin America | (1) | 11 | (12) | — | (2)",
     ],
 }
 
@@ -337,6 +336,82 @@ def validate_synthetic_l3_bait(bundle: dict) -> list[tuple[str, str, bool]]:
     return results
 
 
+FX_PAIR_MAX_CHAR_GAP = 100  # reported vs CC snippets must sit in same breath for latin_fx_swap
+
+
+def _excerpt_for_section_slug(bundle: dict, section_slug: str) -> str:
+    for entry in bundle.get("section_registry", []):
+        if entry.get("section_slug") == section_slug:
+            doc_key = entry.get("document_key", "")
+            return bundle.get("documents", {}).get(doc_key, {}).get("excerpt", "")
+    return ""
+
+
+def _citation_for_metric(ground_truth: dict, metric_id: str) -> dict:
+    for item in ground_truth.get("extracted_values", []):
+        if item.get("metric_id") == metric_id:
+            return item.get("citation") or {}
+    return {}
+
+
+def validate_fx_pair_trap_adjacency(
+    ground_truth: dict, bundle: dict
+) -> list[tuple[str, str, bool]]:
+    """FX swap trap requires reported and CC snippets adjacent in the narrative excerpt."""
+    results: list[tuple[str, str, bool]] = []
+    fx = (ground_truth.get("verification_schema") or {}).get("fx_metrics") or {}
+    reported_id = fx.get("reported")
+    cc_id = fx.get("cc")
+    if not reported_id or not cc_id:
+        return results
+
+    rep_cite = _citation_for_metric(ground_truth, reported_id)
+    cc_cite = _citation_for_metric(ground_truth, cc_id)
+    rep_snip = normalize(rep_cite.get("snippet") or "")
+    cc_snip = normalize(cc_cite.get("snippet") or "")
+    rep_slug = rep_cite.get("section_slug") or ""
+
+    if not rep_snip or not cc_snip:
+        results.append(("fx_pair_snippets_present", "both", False))
+        return results
+
+    cc_slug = cc_cite.get("section_slug") or ""
+    results.append(("fx_pair_same_section_slug", rep_slug, rep_slug == cc_slug and bool(rep_slug)))
+
+    excerpt = _excerpt_for_section_slug(bundle, rep_slug)
+    norm_excerpt = normalize(excerpt)
+    rep_idx = norm_excerpt.find(rep_snip)
+    cc_idx = norm_excerpt.find(cc_snip)
+    both_found = rep_idx >= 0 and cc_idx >= 0
+    results.append(("fx_pair_snippets_in_excerpt", rep_slug or "?", both_found))
+    if not both_found:
+        return results
+
+    if rep_idx <= cc_idx:
+        gap = cc_idx - (rep_idx + len(rep_snip))
+    else:
+        gap = rep_idx - (cc_idx + len(cc_snip))
+    gap = max(0, gap)
+    results.append(
+        (
+            "fx_pair_adjacency_gap",
+            f"<={FX_PAIR_MAX_CHAR_GAP} chars between spans",
+            gap <= FX_PAIR_MAX_CHAR_GAP,
+        )
+    )
+
+    rep_sentence = ""
+    for sent in re.split(r"(?<=[.!?])\s+|\n+", excerpt):
+        norm_sent = normalize(sent)
+        if rep_snip in norm_sent:
+            rep_sentence = norm_sent
+            break
+    same_sentence = bool(rep_sentence) and cc_snip in rep_sentence
+    results.append(("fx_pair_same_sentence", "both snippets in one sentence", same_sentence))
+
+    return results
+
+
 def validate_policy_notes(bundle: dict, task_id: str) -> list[tuple[str, str, bool]]:
     results: list[tuple[str, str, bool]] = []
     notes = bundle.get("policy_notes", [])
@@ -428,6 +503,9 @@ def validate_task(task_id: str) -> dict:
         add_check(label, required, passed)
 
     for label, required, passed in validate_gt_citations_role_based(ground_truth, bundle, task_id=task_id):
+        add_check(label, required, passed)
+
+    for label, required, passed in validate_fx_pair_trap_adjacency(ground_truth, bundle):
         add_check(label, required, passed)
 
     archetype = task_json.get("archetype") or gold_path.get("archetype") or bundle.get("archetype")

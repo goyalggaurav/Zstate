@@ -483,15 +483,15 @@ def payload_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict | 
         values["emea_net_revenue_fy2025"] = 25_000
         return values
 
-    if mode == "trap_ko_omit_global_ventures":
+    if mode == "trap_ko_omit_bottling":
         if task_id != "KO_footnote_reconciliation":
-            raise ValueError("trap_ko_omit_global_ventures applies to KO_footnote_reconciliation only")
+            raise ValueError("trap_ko_omit_bottling applies to KO_footnote_reconciliation only")
         doc = load_ground_truth_doc(task_id)
         values = l1_values_from_gt(task_id)
         trap = next(
             fm["wrong_signatures"]
             for fm in doc["failure_modes"]
-            if fm["id"] == "omit_global_ventures"
+            if fm["id"] == "omit_bottling_investments"
         )
         values.update(trap)
         return values
@@ -532,10 +532,10 @@ CONTRACT_MODES: dict[str, dict] = {
         "expect_fractures": ["SCOPE_ERR"],
         "expect_failure_modes": ["wrong_region"],
     },
-    "trap_ko_omit_global_ventures": {
+    "trap_ko_omit_bottling": {
         "tasks": ["KO_footnote_reconciliation"],
         "expect_fractures": ["RECON_OMIT"],
-        "expect_failure_modes": ["omit_global_ventures"],
+        "expect_failure_modes": ["omit_bottling_investments"],
     },
 }
 

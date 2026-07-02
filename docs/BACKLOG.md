@@ -105,7 +105,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-16 | **Task special-case cleanup** | A | in_progress | Eng | GOOGL `--period` sprawl removed from campaign/scorer via `l1_verify_argv()`; mock agent still GOOGL-only |
 | P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
 | P3-17b | **Contract literals retrofit (legacy 4 tasks)** | A | todo | Eng | Migrate GOOGL/AMZN/PEP hand-typed literals to GT-derived; smoke asserts GT parity |
-| P3-18 | **KO_footnote_reconciliation — hardened template** | A | in_progress | Associate | Draft package: GT + bundle + gold_path + `verify_footnote_exact.py`; expert sign-off pending |
+| P3-18 | **KO_footnote_reconciliation — hardened template** | A | in_progress | Associate | Rebuilt from EDGAR 0001628280-26-010047 (5 segments + Corporate bridge); expert sign-off pending |
 
 **Gate:** P3-03 (15 tasks) blocked until P3-16 mock-agent generalization (optional). P3-11 + P3-12 done. Full EDGAR ingest remains **LATER-06**.
 

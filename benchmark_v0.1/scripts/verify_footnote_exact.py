@@ -63,8 +63,9 @@ def _close(a: float | None, b: float, tol: float = 0.05) -> bool:
     return abs(float(a) - float(b)) <= tol
 
 
-def _segment_sum(values: dict, segment_metrics: list[str]) -> int | float | None:
-    parts = [_get_field(values, m) for m in segment_metrics]
+def _segment_sum(values: dict, segment_metrics: list[str], additive_metrics: list[str] | None = None) -> int | float | None:
+    metrics = list(segment_metrics) + list(additive_metrics or [])
+    parts = [_get_field(values, m) for m in metrics]
     if any(p is None for p in parts):
         return None
     return sum(parts)
@@ -88,7 +89,8 @@ def _sbc_trap_triggered(values: dict, gt: dict) -> bool:
         return True
 
     segment_metrics = gt["schema"].get("segment_metrics", [])
-    parts = [_get_field(values, m) for m in segment_metrics]
+    additive_metrics = gt["schema"].get("additive_metrics") or []
+    parts = [_get_field(values, m) for m in segment_metrics + additive_metrics]
     if all(p is not None for p in parts) and consolidated is not None:
         if sum(parts) + sbc == consolidated:
             return True
@@ -129,7 +131,8 @@ def classify_failure(values: dict, gt: dict) -> list[str]:
                     return ["intl_fx_swap" if "intl_fx_swap" in gt["traps"] else "latin_fx_swap"]
 
     segment_metrics = schema.get("segment_metrics", [])
-    segment_sum = _segment_sum(values, segment_metrics)
+    additive_metrics = schema.get("additive_metrics") or []
+    segment_sum = _segment_sum(values, segment_metrics, additive_metrics)
     if segment_sum is not None and consolidated is not None and segment_sum != consolidated:
         return ["segment_sum_mismatch"]
 
@@ -143,7 +146,9 @@ def verify(values: dict, gt: dict) -> dict:
     consolidated_key = schema.get("consolidated_metric", "consolidated_net_sales")
     fx = schema.get("fx_metrics") or {}
 
-    segment_sum = _segment_sum(values, segment_metrics)
+    segment_metrics = schema.get("segment_metrics", [])
+    additive_metrics = schema.get("additive_metrics") or []
+    segment_sum = _segment_sum(values, segment_metrics, additive_metrics)
     consolidated = _get_field(values, consolidated_key)
     balanced = segment_sum is not None and consolidated is not None and segment_sum == consolidated
 
@@ -162,7 +167,7 @@ def verify(values: dict, gt: dict) -> dict:
             "critical": critical,
         })
 
-    for metric_id in segment_metrics:
+    for metric_id in segment_metrics + additive_metrics:
         add(metric_id, expected.get(metric_id), _get_field(values, metric_id))
 
     add(consolidated_key, expected.get(consolidated_key), consolidated, critical=True)

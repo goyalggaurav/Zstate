@@ -1131,17 +1131,17 @@ def check_ko_gt_draft() -> None:
     from agent_output_contract import l1_values_from_gt, submission_from_gt  # noqa: E402
 
     metrics = l1_values_from_gt("KO_footnote_reconciliation")
-    assert metrics["consolidated_net_revenues"] == 50_256
+    assert metrics["consolidated_net_revenues"] == 47_941
     sub = submission_from_gt("KO_footnote_reconciliation")
     assert sub["schema_version"] == "agent_submission_v1"
     assert len(sub["citations"]) >= 6
-    assert "global_ventures_is_reportable_segment" in sub["policy_acknowledgements"]
+    assert "global_ventures_sunset_2025" in sub["policy_acknowledgements"]
     seg_cite = next(c for c in sub["citations"] if c["metric_id"] == "emea_net_revenues")
     assert seg_cite["section_slug"] == "segment_financials"
     assert "Note 20" in seg_cite.get("filing_label", "")
 
     trap_values = l1_values_from_gt("KO_footnote_reconciliation")
-    trap_values["global_ventures_net_revenues"] = None
+    trap_values["bottling_investments_net_revenues"] = None
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
         json.dump(trap_values, tmp)
         trap_path = tmp.name
@@ -1155,7 +1155,7 @@ def check_ko_gt_draft() -> None:
     ])
     Path(trap_path).unlink(missing_ok=True)
     assert trap_report["all_pass"] is False, trap_report
-    assert "omit_global_ventures" in trap_report["failure_modes"], trap_report
+    assert "omit_bottling_investments" in trap_report["failure_modes"], trap_report
 
 
 def check_task_registry() -> None:

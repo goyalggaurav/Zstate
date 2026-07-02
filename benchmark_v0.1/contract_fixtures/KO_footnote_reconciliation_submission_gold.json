@@ -1,92 +1,92 @@
 {
   "schema_version": "agent_submission_v1",
   "metrics": {
-    "emea_net_revenues": 9842,
-    "latin_america_net_revenues": 6115,
-    "north_america_net_revenues": 18256,
-    "asia_pacific_net_revenues": 5934,
-    "global_ventures_net_revenues": 3218,
-    "bottling_investments_net_revenues": 6891,
-    "consolidated_net_revenues": 50256,
-    "latin_america_reported_growth_pct": 12.0,
-    "latin_america_cc_growth_pct": 15.0,
-    "segment_net_revenues_sum": 50256
+    "emea_net_revenues": 10833,
+    "latin_america_net_revenues": 6331,
+    "north_america_net_revenues": 19579,
+    "asia_pacific_net_revenues": 5328,
+    "bottling_investments_net_revenues": 5726,
+    "corporate_net_revenues": 144,
+    "consolidated_net_revenues": 47941,
+    "latin_america_net_revenue_change_pct": -2.0,
+    "latin_america_fx_impact_pct": -12.0,
+    "segment_net_revenues_sum": 47941
   },
   "citations": [
     {
       "metric_id": "emea_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "Europe, Middle East & Africa\nNet revenues $ 9,842",
-      "filing_label": "Note 20 \u2014 Operating Segments (FY2025 column)",
-      "note": "Note 20 \u2014 Operating Segments (FY2025 column)"
+      "snippet": "Third party | $ | 10,833",
+      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
     },
     {
       "metric_id": "latin_america_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "Latin America\nNet revenues $ 6,115",
-      "filing_label": "Note 20 \u2014 Operating Segments (FY2025 column)",
-      "note": "Note 20 \u2014 Operating Segments (FY2025 column)"
+      "snippet": "6,331 | $ | 19,579",
+      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
     },
     {
       "metric_id": "north_america_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "North America\nNet revenues $ 18,256",
-      "filing_label": "Note 20 \u2014 Operating Segments (FY2025 column)",
-      "note": "Note 20 \u2014 Operating Segments (FY2025 column)"
+      "snippet": "19,579 | $ | 5,328",
+      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
     },
     {
       "metric_id": "asia_pacific_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "Asia Pacific\nNet revenues $ 5,934",
-      "filing_label": "Note 20 \u2014 Operating Segments (FY2025 column)",
-      "note": "Note 20 \u2014 Operating Segments (FY2025 column)"
-    },
-    {
-      "metric_id": "global_ventures_net_revenues",
-      "doc_id": "KO_10K_2025",
-      "section_slug": "segment_financials",
-      "snippet": "Global Ventures\nNet revenues $ 3,218",
-      "filing_label": "Note 20 \u2014 Operating Segments (FY2025 column)",
-      "note": "Note 20 \u2014 Operating Segments (FY2025 column)"
+      "snippet": "5,328 | $ | 5,726",
+      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
     },
     {
       "metric_id": "bottling_investments_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "Bottling Investments\nNet revenues $ 6,891",
-      "filing_label": "Note 20 \u2014 Operating Segments (FY2025 column)",
-      "note": "Note 20 \u2014 Operating Segments (FY2025 column)"
+      "snippet": "5,726 | $ | 47,797",
+      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
+    },
+    {
+      "metric_id": "corporate_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "47,797 | $ | 144",
+      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
     },
     {
       "metric_id": "consolidated_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "consolidated_primary",
-      "snippet": "Net operating revenues $ 50,256",
+      "snippet": "Net Operating Revenues | $ | 47,941",
       "filing_label": "Consolidated Statement of Income",
       "note": "Consolidated Statement of Income"
     },
     {
-      "metric_id": "latin_america_reported_growth_pct",
+      "metric_id": "latin_america_net_revenue_change_pct",
       "doc_id": "KO_10K_2025",
       "section_slug": "narrative_fx",
-      "snippet": "Latin America segment net revenues increased 12%",
-      "filing_label": "MD&A \u2014 Latin America reported vs currency-neutral growth",
-      "note": "MD&A \u2014 Latin America reported vs currency-neutral growth"
+      "snippet": "Latin America | (1) | 11 | (12) | \u2014 | (2)",
+      "filing_label": "MD&A \u2014 net operating revenues percent change decomposition table",
+      "note": "MD&A \u2014 net operating revenues percent change decomposition table"
     },
     {
-      "metric_id": "latin_america_cc_growth_pct",
+      "metric_id": "latin_america_fx_impact_pct",
       "doc_id": "KO_10K_2025",
       "section_slug": "narrative_fx",
-      "snippet": "increased 15% on a comparable currency neutral basis",
-      "filing_label": "MD&A \u2014 Latin America reported vs currency-neutral growth",
-      "note": "MD&A \u2014 Latin America reported vs currency-neutral growth"
+      "snippet": "(12) | \u2014 | (2)",
+      "filing_label": "MD&A \u2014 net operating revenues percent change decomposition table",
+      "note": "MD&A \u2014 net operating revenues percent change decomposition table"
     }
   ],
   "policy_acknowledgements": [
-    "global_ventures_is_reportable_segment"
+    "global_ventures_sunset_2025"
   ]
 }

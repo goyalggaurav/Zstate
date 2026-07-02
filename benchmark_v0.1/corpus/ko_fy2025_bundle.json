@@ -1,6 +1,6 @@
 {
   "bundle_id": "ko_fy2025_bundle",
-  "version": "1.0.1-draft",
+  "version": "1.1.0-draft",
   "task_id": "KO_footnote_reconciliation",
   "archetype": "F_exact",
   "documents": {
@@ -8,36 +8,36 @@
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "segment_policy",
-      "name": "Item 1 — Business (segment overview)",
-      "excerpt": "Item 1. Business\n\nThe Company operates through six geographic operating segments: Europe, Middle East & Africa; Latin America; North America; Asia Pacific; Global Ventures; and Bottling Investments.\n\nGlobal Ventures includes Costa Limited, innocent Limited, and other emerging beverage brands. Bottling Investments includes the Company's majority-owned bottling operations.\n\nThe Company sells beverage concentrates and syrups, and in some cases finished beverages, to authorized bottling partners."
+      "name": "Item 1 / MD&A — operating segment structure",
+      "excerpt": "Item 1. Business\n\nEffective January 1, 2025, we sunset our Global Ventures operating segment to streamline and simplify our operating structure. The Global Ventures operating segment was established in 2019 primarily to oversee the Company's ownership of Costa Limited (\"Costa\"), innocent and doğadan. The results of the Costa (excluding the ready-to-drink business), innocent and doğadan businesses are now reported within the Company's Europe, Middle East and Africa (\"EMEA\") operating segment.\n\nOur organizational structure consists of the following operating segments: EMEA; Latin America; North America; Asia Pacific; and Bottling Investments. Our operating structure also includes Corporate, which consists of a center and a platform services organization."
     },
     "segment_financials_doc": {
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "segment_financials",
-      "name": "Operating Segments (Note 20)",
-      "excerpt": "Note 20 — Operating Segments\n\nYear Ended December 31, 2025\n(in millions)\n\nEurope, Middle East & Africa\nNet revenues $ 9,842\n\nLatin America\nNet revenues $ 6,115\n\nNorth America\nNet revenues $ 18,256\n\nAsia Pacific\nNet revenues $ 5,934\n\nGlobal Ventures\nNet revenues $ 3,218\n\nBottling Investments\nNet revenues $ 6,891\n\nConsolidated\nNet operating revenues $ 50,256"
+      "name": "Note 20 — Operating Segments",
+      "excerpt": "NOTE 20: OPERATING SEGMENTS\n\nInformation about our Company's operations by operating segment and Corporate is as follows (in millions):\n\nYear Ended December 31, 2025\n\n| EMEA | Latin America | North America | Asia Pacific | Bottling Investments | Operating Segments Total | Corporate | Eliminations | Consolidated |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Net operating revenues: |\n| Third party | $ | 10,833 | $ | 6,331 | $ | 19,579 | $ | 5,328 | $ | 5,726 | $ | 47,797 | $ | 144 | $ | — | $ | 47,941 |\n| Intersegment | 680 | 3 | 7 | 310 | 9 | 1,009 | — | (1,009) | — |\n| Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 | 144 | (1,009) | 47,941 |"
     },
     "segment_financials_prior_year_doc": {
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "segment_financials_prior_year",
-      "name": "Operating Segments (Note 20, FY2024 column)",
-      "excerpt": "Note 20 — Operating Segments\n\nYear Ended December 31, 2024\n(in millions)\n\nEurope, Middle East & Africa\nNet revenues $ 9,410\n\nLatin America\nNet revenues $ 5,462\n\nNorth America\nNet revenues $ 17,842\n\nAsia Pacific\nNet revenues $ 5,612\n\nGlobal Ventures\nNet revenues $ 3,045\n\nBottling Investments\nNet revenues $ 6,536\n\nConsolidated\nNet operating revenues $ 46,905"
+      "name": "Note 20 — Operating Segments (FY2024 column)",
+      "excerpt": "NOTE 20: OPERATING SEGMENTS\n\nYear Ended December 31, 2024\n\n| EMEA | Latin America | North America | Asia Pacific | Bottling Investments | Operating Segments Total | Corporate | Eliminations | Consolidated |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Net operating revenues: |\n| Third party | $ | 10,278 | $ | 6,471 | $ | 18,860 | $ | 5,127 | $ | 6,215 | $ | 46,951 | $ | 110 | $ | — | $ | 47,061 |\n| Total net operating revenues | 10,958 | 6,471 | 18,869 | 5,594 | 6,223 | 48,115 | 110 | (1,164) | 47,061 |"
     },
     "consolidated_primary_doc": {
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "consolidated_primary",
-      "name": "Consolidated Statement of Income",
-      "excerpt": "THE COCA-COLA COMPANY AND SUBSIDIARIES\nConsolidated Statements of Income\n(in millions except per share data)\n\nYear Ended December 31, 2025\n\nNet operating revenues $ 50,256\nGross profit 31,842\nOperating income 12,418\nNet income $ 10,892"
+      "name": "Consolidated Statements of Income",
+      "excerpt": "THE COCA-COLA COMPANY AND SUBSIDIARIES\nCONSOLIDATED STATEMENTS OF INCOME\n(In millions except per share data)\n\n| Year Ended December 31, | 2025 | 2024 | 2023 |\n| --- | --- | --- | --- |\n| Net Operating Revenues | $ | 47,941 | $ | 47,061 | $ | 45,754 |\n| Cost of goods sold | 18,397 | 18,324 | 18,520 |\n| Gross Profit | 29,544 | 28,737 | 27,234 |\n| Operating Income | 13,762 | 9,992 | 11,311 |"
     },
     "narrative_fx_doc": {
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "narrative_fx",
-      "name": "MD&A — Latin America net revenue growth",
-      "excerpt": "Management's Discussion and Analysis of Financial Condition and Results of Operations\n\nLatin America\n\nLatin America segment net revenues increased 12% year-over-year, or increased 15% on a comparable currency neutral basis, driven by concentrate sales volume growth and favorable pricing.\n\nEurope, Middle East & Africa segment net revenues increased 5% year-over-year."
+      "name": "MD&A — net operating revenues percent change table",
+      "excerpt": "Management's Discussion and Analysis of Financial Condition and Results of Operations\n\nThe following table illustrates, on a percentage basis, the estimated impact of the factors resulting in the increase (decrease) in net operating revenues on a consolidated basis and for each of our operating segments:\n\n| Percent Change 2025 versus 2024 |\n| --- |\n| Volume1 | Price/Mix | Foreign Currency Exchange Rate Fluctuations | Acquisitions & Divestitures2 | Total |\n| Consolidated | 1 | % | 4 | % | (2) | % | (1) | % | 2 | % |\n| EMEA | 4 | 2 | — | (1) | 5 |\n| Latin America | (1) | 11 | (12) | — | (2) |\n| North America | (1) | 5 | — | — | 4 |\n| Asia Pacific | 1 | 4 | (3) | (1) | 1 |\n| Bottling Investments | — | 2 | (2) | (7) | (8) |"
     }
   },
   "section_registry": [
@@ -47,7 +47,7 @@
       "section_id": "KO_10K_2025_segment_policy",
       "doc_id": "KO_10K_2025",
       "document_key": "segment_policy_doc",
-      "filing_label": "Item 1 — six operating segments including Global Ventures",
+      "filing_label": "Item 1 / MD&A — five operating segments (Global Ventures sunset 2025-01-01)",
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
@@ -57,7 +57,7 @@
       "section_id": "KO_10K_2025_segment_financials",
       "doc_id": "KO_10K_2025",
       "document_key": "segment_financials_doc",
-      "filing_label": "Note 20 — Operating Segments (FY2025 column)",
+      "filing_label": "Note 20 — Operating Segments (third-party net operating revenues, FY2025)",
       "legacy_section_slugs": ["note_20"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
@@ -89,18 +89,18 @@
       "section_id": "KO_10K_2025_mdna_latam",
       "doc_id": "KO_10K_2025",
       "document_key": "narrative_fx_doc",
-      "filing_label": "MD&A — Latin America reported vs currency-neutral growth",
+      "filing_label": "MD&A — net operating revenues percent change decomposition table",
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     }
   ],
   "policy_notes": [
     {
-      "policy_id": "global_ventures_is_reportable_segment",
+      "policy_id": "global_ventures_sunset_2025",
       "doc_id": "KO_10K_2025",
-      "statement": "Global Ventures is a reportable operating segment (Costa, innocent, and other emerging brands) and must be included in the segment net revenue reconciliation.",
+      "statement": "Effective January 1, 2025, the Company sunset its Global Ventures operating segment; Costa (excluding ready-to-drink), innocent and doğadan results are reported within EMEA — do not treat Global Ventures as a sixth reportable segment for FY2025.",
       "agent_ack_required": true,
-      "anti_pattern": "omit_global_ventures"
+      "anti_pattern": "legacy_global_ventures_segment"
     }
   ],
   "retrieval_keys": {
