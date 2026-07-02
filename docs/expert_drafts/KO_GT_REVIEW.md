@@ -74,7 +74,7 @@ Reconcile Note 20 **Total net operating revenues** by segment + **Corporate** + 
 ### III. Compliance & Governance
 
 - [x] **Investment independence:** Type F — no Buy/Hold/Sell in prompt.
-- [ ] **Data pipeline maturity:** Full EDGAR verbatim ingest deferred (**LATER-06**). **Mitigation:** Bundle excerpts expert-vetted against accession `0001628280-26-010047`; SHA-256 linkage in `ko_fy2025_bundle.json` / `corpus_manifest_v1.json` when ingest lands.
+- [x] **Data pipeline maturity (P3-10 mitigation):** Full EDGAR verbatim ingest deferred (**LATER-06** / SH-06). **Mitigation in place:** each excerpt in `ko_fy2025_bundle.json` carries `excerpt_sha256` + `source_anchor.sec_accession` (`0001628280-26-010047`); filing metadata + `ingest_status: excerpt_vetted` in `corpus_manifest_v1.json`. Validator recomputes digests via `validate_excerpt_provenance`.
 
 ---
 

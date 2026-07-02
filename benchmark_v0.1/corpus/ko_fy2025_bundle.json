@@ -1,6 +1,6 @@
 {
   "bundle_id": "ko_fy2025_bundle",
-  "version": "1.2.0-draft",
+  "version": "1.2.0",
   "task_id": "KO_footnote_reconciliation",
   "archetype": "F_exact",
   "documents": {
@@ -8,36 +8,66 @@
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "segment_policy",
-      "name": "Item 1 / MD&A — operating segment structure",
-      "excerpt": "Item 1. Business\n\nEffective January 1, 2025, we sunset our Global Ventures operating segment to streamline and simplify our operating structure. The Global Ventures operating segment was established in 2019 primarily to oversee the Company's ownership of Costa Limited (\"Costa\"), innocent and doğadan. The results of the Costa (excluding the ready-to-drink business), innocent and doğadan businesses are now reported within the Company's Europe, Middle East and Africa (\"EMEA\") operating segment.\n\nOur organizational structure consists of the following operating segments: EMEA; Latin America; North America; Asia Pacific; and Bottling Investments. Our operating structure also includes Corporate, which consists of a center and a platform services organization."
+      "name": "Item 1 / MD&A \u2014 operating segment structure",
+      "excerpt": "Item 1. Business\n\nEffective January 1, 2025, we sunset our Global Ventures operating segment to streamline and simplify our operating structure. The Global Ventures operating segment was established in 2019 primarily to oversee the Company's ownership of Costa Limited (\"Costa\"), innocent and do\u011fadan. The results of the Costa (excluding the ready-to-drink business), innocent and do\u011fadan businesses are now reported within the Company's Europe, Middle East and Africa (\"EMEA\") operating segment.\n\nOur organizational structure consists of the following operating segments: EMEA; Latin America; North America; Asia Pacific; and Bottling Investments. Our operating structure also includes Corporate, which consists of a center and a platform services organization.",
+      "source_anchor": {
+        "sec_accession": "0001628280-26-010047",
+        "filing_date": "2026-02-20",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm"
+      },
+      "excerpt_sha256": "c97bc364ea7dd5b39769940b073eef40e7a7602f86a7272ad9315732fa96abd2"
     },
     "segment_financials_doc": {
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "segment_financials",
-      "name": "Note 20 — Operating Segments",
-      "excerpt": "NOTE 20: OPERATING SEGMENTS\n\nInformation about our Company's operations by operating segment and Corporate is as follows (in millions):\n\nYear Ended December 31, 2025\n\n| EMEA | Latin America | North America | Asia Pacific | Bottling Investments | Operating Segments Total | Corporate | Eliminations | Consolidated |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Net operating revenues: |\n| Third party | $ | 10,833 | $ | 6,331 | $ | 19,579 | $ | 5,328 | $ | 5,726 | $ | 47,797 | $ | 144 | $ | — | $ | 47,941 |\n| Intersegment | 680 | 3 | 7 | 310 | 9 | 1,009 | — | (1,009) | — |\n| Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 | 144 | (1,009) | 47,941 |"
+      "name": "Note 20 \u2014 Operating Segments",
+      "excerpt": "NOTE 20: OPERATING SEGMENTS\n\nInformation about our Company's operations by operating segment and Corporate is as follows (in millions):\n\nYear Ended December 31, 2025\n\n| EMEA | Latin America | North America | Asia Pacific | Bottling Investments | Operating Segments Total | Corporate | Eliminations | Consolidated |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Net operating revenues: |\n| Third party | $ | 10,833 | $ | 6,331 | $ | 19,579 | $ | 5,328 | $ | 5,726 | $ | 47,797 | $ | 144 | $ | \u2014 | $ | 47,941 |\n| Intersegment | 680 | 3 | 7 | 310 | 9 | 1,009 | \u2014 | (1,009) | \u2014 |\n| Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 | 144 | (1,009) | 47,941 |",
+      "source_anchor": {
+        "sec_accession": "0001628280-26-010047",
+        "filing_date": "2026-02-20",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm"
+      },
+      "excerpt_sha256": "96901e053bc4ba7c2c6167ca4d021925d9f9f751438947adee8acdf946c5e844"
     },
     "segment_financials_prior_year_doc": {
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "segment_financials_prior_year",
-      "name": "Note 20 — Operating Segments (FY2024 column)",
-      "excerpt": "NOTE 20: OPERATING SEGMENTS\n\nYear Ended December 31, 2024\n\n| EMEA | Latin America | North America | Asia Pacific | Bottling Investments | Operating Segments Total | Corporate | Eliminations | Consolidated |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Net operating revenues: |\n| Third party | $ | 10,278 | $ | 6,471 | $ | 18,860 | $ | 5,127 | $ | 6,215 | $ | 46,951 | $ | 110 | $ | — | $ | 47,061 |\n| Total net operating revenues | 10,958 | 6,471 | 18,869 | 5,594 | 6,223 | 48,115 | 110 | (1,164) | 47,061 |"
+      "name": "Note 20 \u2014 Operating Segments (FY2024 column)",
+      "excerpt": "NOTE 20: OPERATING SEGMENTS\n\nYear Ended December 31, 2024\n\n| EMEA | Latin America | North America | Asia Pacific | Bottling Investments | Operating Segments Total | Corporate | Eliminations | Consolidated |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Net operating revenues: |\n| Third party | $ | 10,278 | $ | 6,471 | $ | 18,860 | $ | 5,127 | $ | 6,215 | $ | 46,951 | $ | 110 | $ | \u2014 | $ | 47,061 |\n| Total net operating revenues | 10,958 | 6,471 | 18,869 | 5,594 | 6,223 | 48,115 | 110 | (1,164) | 47,061 |",
+      "source_anchor": {
+        "sec_accession": "0001628280-26-010047",
+        "filing_date": "2026-02-20",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm"
+      },
+      "excerpt_sha256": "e465aaf62f8ff0e30dde802a2f09e33c6fe1f6c6abbbba9fb2a05844ff4de70c"
     },
     "consolidated_primary_doc": {
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "consolidated_primary",
       "name": "Consolidated Statements of Income",
-      "excerpt": "THE COCA-COLA COMPANY AND SUBSIDIARIES\nCONSOLIDATED STATEMENTS OF INCOME\n(In millions except per share data)\n\n| Year Ended December 31, | 2025 | 2024 | 2023 |\n| --- | --- | --- | --- |\n| Net Operating Revenues | $ | 47,941 | $ | 47,061 | $ | 45,754 |\n| Cost of goods sold | 18,397 | 18,324 | 18,520 |\n| Gross Profit | 29,544 | 28,737 | 27,234 |\n| Operating Income | 13,762 | 9,992 | 11,311 |"
+      "excerpt": "THE COCA-COLA COMPANY AND SUBSIDIARIES\nCONSOLIDATED STATEMENTS OF INCOME\n(In millions except per share data)\n\n| Year Ended December 31, | 2025 | 2024 | 2023 |\n| --- | --- | --- | --- |\n| Net Operating Revenues | $ | 47,941 | $ | 47,061 | $ | 45,754 |\n| Cost of goods sold | 18,397 | 18,324 | 18,520 |\n| Gross Profit | 29,544 | 28,737 | 27,234 |\n| Operating Income | 13,762 | 9,992 | 11,311 |",
+      "source_anchor": {
+        "sec_accession": "0001628280-26-010047",
+        "filing_date": "2026-02-20",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm"
+      },
+      "excerpt_sha256": "78ca32066b2baeb72d7c0c058abd493c883968737f6c7a33bec5e99514eeef4b"
     },
     "narrative_fx_doc": {
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "narrative_fx",
-      "name": "MD&A — net operating revenues percent change table",
-      "excerpt": "Management's Discussion and Analysis of Financial Condition and Results of Operations\n\nThe following table illustrates, on a percentage basis, the estimated impact of the factors resulting in the increase (decrease) in net operating revenues on a consolidated basis and for each of our operating segments:\n\n| Percent Change 2025 versus 2024 |\n| --- |\n| Volume1 | Price/Mix | Foreign Currency Exchange Rate Fluctuations | Acquisitions & Divestitures2 | Total |\n| Consolidated | 1 | % | 4 | % | (2) | % | (1) | % | 2 | % |\n| EMEA | 4 | 2 | — | (1) | 5 |\n| Latin America | (1) | 11 | (12) | — | (2) |\n| North America | (1) | 5 | — | — | 4 |\n| Asia Pacific | 1 | 4 | (3) | (1) | 1 |\n| Bottling Investments | — | 2 | (2) | (7) | (8) |"
+      "name": "MD&A \u2014 net operating revenues percent change table",
+      "excerpt": "Management's Discussion and Analysis of Financial Condition and Results of Operations\n\nThe following table illustrates, on a percentage basis, the estimated impact of the factors resulting in the increase (decrease) in net operating revenues on a consolidated basis and for each of our operating segments:\n\n| Percent Change 2025 versus 2024 |\n| --- |\n| Volume1 | Price/Mix | Foreign Currency Exchange Rate Fluctuations | Acquisitions & Divestitures2 | Total |\n| Consolidated | 1 | % | 4 | % | (2) | % | (1) | % | 2 | % |\n| EMEA | 4 | 2 | \u2014 | (1) | 5 |\n| Latin America | (1) | 11 | (12) | \u2014 | (2) |\n| North America | (1) | 5 | \u2014 | \u2014 | 4 |\n| Asia Pacific | 1 | 4 | (3) | (1) | 1 |\n| Bottling Investments | \u2014 | 2 | (2) | (7) | (8) |",
+      "source_anchor": {
+        "sec_accession": "0001628280-26-010047",
+        "filing_date": "2026-02-20",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000162828026010047/ko-20251231.htm"
+      },
+      "excerpt_sha256": "6310bad77a7100d203ac9e0795cc1de7621eedebbffbd4fc070c4b5c37210a61"
     }
   },
   "section_registry": [
@@ -47,9 +77,12 @@
       "section_id": "KO_10K_2025_segment_policy",
       "doc_id": "KO_10K_2025",
       "document_key": "segment_policy_doc",
-      "filing_label": "Item 1 / MD&A — five operating segments (Global Ventures sunset 2025-01-01)",
+      "filing_label": "Item 1 / MD&A \u2014 five operating segments (Global Ventures sunset 2025-01-01)",
       "required": true,
-      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+      "allowed_tools": [
+        "Search_Filing",
+        "PDF_Parser"
+      ]
     },
     {
       "section_slug": "segment_financials",
@@ -57,10 +90,15 @@
       "section_id": "KO_10K_2025_segment_financials",
       "doc_id": "KO_10K_2025",
       "document_key": "segment_financials_doc",
-      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "legacy_section_slugs": ["note_20"],
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "legacy_section_slugs": [
+        "note_20"
+      ],
       "required": true,
-      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+      "allowed_tools": [
+        "Search_Filing",
+        "PDF_Parser"
+      ]
     },
     {
       "section_slug": "segment_financials_prior_year",
@@ -68,10 +106,13 @@
       "section_id": "KO_10K_2025_segment_financials_py",
       "doc_id": "KO_10K_2025",
       "document_key": "segment_financials_prior_year_doc",
-      "filing_label": "Note 20 — Operating Segments (FY2024 column only)",
+      "filing_label": "Note 20 \u2014 Operating Segments (FY2024 column only)",
       "required": false,
       "decoy_trap": "prior_year_column",
-      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+      "allowed_tools": [
+        "Search_Filing",
+        "PDF_Parser"
+      ]
     },
     {
       "section_slug": "consolidated_primary",
@@ -81,7 +122,10 @@
       "document_key": "consolidated_primary_doc",
       "filing_label": "Consolidated Statement of Income",
       "required": true,
-      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+      "allowed_tools": [
+        "Search_Filing",
+        "PDF_Parser"
+      ]
     },
     {
       "section_slug": "narrative_fx",
@@ -89,16 +133,19 @@
       "section_id": "KO_10K_2025_mdna_latam",
       "doc_id": "KO_10K_2025",
       "document_key": "narrative_fx_doc",
-      "filing_label": "MD&A — net operating revenues percent change decomposition table",
+      "filing_label": "MD&A \u2014 net operating revenues percent change decomposition table",
       "required": true,
-      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+      "allowed_tools": [
+        "Search_Filing",
+        "PDF_Parser"
+      ]
     }
   ],
   "policy_notes": [
     {
       "policy_id": "global_ventures_sunset_2025",
       "doc_id": "KO_10K_2025",
-      "statement": "Effective January 1, 2025, the Company sunset its Global Ventures operating segment; Costa (excluding ready-to-drink), innocent and doğadan results are reported within EMEA — do not treat Global Ventures as a sixth reportable segment for FY2025.",
+      "statement": "Effective January 1, 2025, the Company sunset its Global Ventures operating segment; Costa (excluding ready-to-drink), innocent and do\u011fadan results are reported within EMEA \u2014 do not treat Global Ventures as a sixth reportable segment for FY2025.",
       "agent_ack_required": true,
       "anti_pattern": "legacy_global_ventures_segment"
     }

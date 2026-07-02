@@ -127,6 +127,8 @@ Layer-1 footnote reconciliation uses optional bridge lines so one verifier handl
 
 Task prompts and gold paths stay slug-only; wedge shape is encoded in GT `verification_schema`, not issuer names.
 
+**Excerpt provenance (P3-10 — interim until LATER-06):** Each `documents.*` entry should include `excerpt_sha256` (normalized excerpt digest) and `source_anchor` (`sec_accession`, `filing_date`, `source_url`). Multi-slice bundles (one `doc_id`, many `document_key`s — e.g. KO 10-K) pin SHA **per excerpt**; `corpus_manifest_v1.json` carries filing-level accession + `ingest_status`. `validate_corpus_bundle.py` recomputes digests on every run.
+
 **Drift failures (backend returns, does not guess):**
 
 | Agent input | Result |
