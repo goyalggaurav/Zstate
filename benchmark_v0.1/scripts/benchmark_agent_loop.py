@@ -136,6 +136,22 @@ def run_benchmark_task(
             context["steps"] = steps
             continue
 
+        if action["type"] == "tool_error":
+            err_msg = f"ERROR: {action.get('error', 'invalid tool call')}"
+            if hasattr(agent, "record_tool_result"):
+                agent.record_tool_result(
+                    action.get("_tool_call_id"),
+                    action.get("tool", "unknown"),
+                    err_msg,
+                )
+            steps.append({
+                "type": "tool_error",
+                "tool": action.get("tool"),
+                "error": action.get("error"),
+            })
+            context["steps"] = steps
+            continue
+
         if action["type"] == "submit_structured_output":
             if hasattr(agent, "record_tool_result") and action.get("_tool_call_id"):
                 agent.record_tool_result(
@@ -301,6 +317,41 @@ def run_openai_task(
     )
 
 
+def run_gemini_task(
+    task_id: str,
+    *,
+    model_id: str | None = None,
+    eval_mode: bool | None = None,
+) -> tuple[dict, dict, dict | None]:
+    import os
+
+    from agents.openai_benchmark_agent import OpenAIBenchmarkAgent
+
+    task = load_task(task_id)
+    bundle = load_bundle(task_id)
+    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY", "")
+    base_url = os.environ.get(
+        "GEMINI_BASE_URL",
+        "https://generativelanguage.googleapis.com/v1beta/openai",
+    ).rstrip("/")
+    model = model_id or os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    agent = OpenAIBenchmarkAgent(
+        task,
+        bundle,
+        model=model,
+        api_key=api_key,
+        base_url=base_url,
+        eval_mode=eval_mode,
+    )
+    return run_benchmark_task(
+        task_id,
+        agent,
+        agent_mode="gemini",
+        model_id=agent.model,
+        plan_id=None,
+    )
+
+
 def run_anthropic_task(
     task_id: str,
     *,
@@ -327,13 +378,18 @@ def run_live_task(
     model_id: str | None = None,
     eval_mode: bool | None = None,
 ) -> tuple[dict, dict, dict | None, str]:
-    from agents.benchmark_tool_specs import is_anthropic_model
+    from agents.benchmark_tool_specs import is_anthropic_model, is_gemini_model
 
     if model_id and is_anthropic_model(model_id):
         trace, structured_output, agent_submission = run_anthropic_task(
             task_id, model_id=model_id, eval_mode=eval_mode
         )
         return trace, structured_output, agent_submission, "anthropic"
+    if model_id and is_gemini_model(model_id):
+        trace, structured_output, agent_submission = run_gemini_task(
+            task_id, model_id=model_id, eval_mode=eval_mode
+        )
+        return trace, structured_output, agent_submission, "gemini"
     trace, structured_output, agent_submission = run_openai_task(
         task_id, model_id=model_id, eval_mode=eval_mode
     )
@@ -364,7 +420,7 @@ def main() -> int:
     parser.add_argument("--task", required=True, help="Task id, e.g. GOOGL_footnote_reconciliation")
     parser.add_argument(
         "--agent",
-        choices=("scripted", "mock", "openai", "anthropic", "auto"),
+        choices=("scripted", "mock", "openai", "anthropic", "gemini", "auto"),
         required=True,
     )
     parser.add_argument("--plan", type=Path, help="JSON plan for scripted agent")
@@ -392,6 +448,8 @@ def main() -> int:
         trace, structured_output, agent_submission = run_mock_task(args.task)
     elif args.agent == "anthropic":
         trace, structured_output, agent_submission = run_anthropic_task(args.task, model_id=args.model_id)
+    elif args.agent == "gemini":
+        trace, structured_output, agent_submission = run_gemini_task(args.task, model_id=args.model_id)
     elif args.agent == "auto":
         trace, structured_output, agent_submission, _mode = run_live_task(args.task, model_id=args.model_id)
     else:

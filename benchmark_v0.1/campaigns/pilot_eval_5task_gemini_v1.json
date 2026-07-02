@@ -1,0 +1,38 @@
+{
+  "campaign_id": "pilot_eval_5task_gemini_v1",
+  "backlog_ref": "P3-19",
+  "description": "Five-task Gemini pilot — all published tasks incl. KO; eval_mode on; headline excludes GOOGL ceiling.",
+  "status": "execute_ready",
+  "eval_mode": true,
+  "models": [
+    "gemini-2.5-flash"
+  ],
+  "tasks": [
+    "GOOGL_footnote_reconciliation",
+    "PEP_fx_organic_growth",
+    "AMZN_footnote_reconciliation",
+    "NFLX_guidance_drift",
+    "KO_footnote_reconciliation"
+  ],
+  "headline_tasks": [
+    "PEP_fx_organic_growth",
+    "AMZN_footnote_reconciliation",
+    "NFLX_guidance_drift",
+    "KO_footnote_reconciliation"
+  ],
+  "task_weights": {
+    "PEP_fx_organic_growth": 1.0,
+    "AMZN_footnote_reconciliation": 1.0,
+    "NFLX_guidance_drift": 1.0,
+    "KO_footnote_reconciliation": 1.0
+  },
+  "runs_per_task": 1,
+  "aggregation": {
+    "composite_score": "median",
+    "headline_composite_score": "median",
+    "weighted_composite_by_model": "task_weighted_mean_of_task_medians",
+    "fracture_codes": "union"
+  },
+  "manifest_ref": "../manifest.json",
+  "runs_dir": "runs/pilot_eval_5task_gemini_v1"
+}

@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.5  
-**Last updated:** July 2026 (P3-18 KO footnote published — 5 published tasks)
+**Last updated:** July 2026 (P3-20 schema fix + 5-task pilot eval; P3-21 horizontal table note)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -106,6 +106,8 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
 | P3-17b | **Contract literals retrofit (legacy 4 tasks)** | A | todo | Eng | Migrate GOOGL/AMZN/PEP hand-typed literals to GT-derived; smoke asserts GT parity |
 | P3-18 | **KO_footnote_reconciliation — hardened template** | A | done | Associate | Published 2026-07-02; EDGAR elimination bridge; [KO_GT_REVIEW.md](./expert_drafts/KO_GT_REVIEW.md) |
+| P3-20 | **Per-task submit metric schema fidelity** | A | done | Eng | F_exact GT-driven metric keys in `archetype_roles.py`; `validate_task_metrics` + tool_error retry; KO re-run post-fix (`pilot_eval_5task_v1`) |
+| P3-21 | **Horizontal segment tables (KO Note 20)** | A | noted | Associate | **Horizontal layout adds real difficulty** — segments-as-columns vs vertical Note 10-style tables; filing-faithful, keep for discrimination. Not a scoring failure mode after P3-20; optional normalized row view deferred to LATER-06. |
 
 **Gate:** P3-03 (15 tasks) blocked until P3-16 mock-agent generalization (optional). P3-11 + P3-12 done. Full EDGAR ingest remains **LATER-06**.
 
@@ -150,7 +152,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-04 | Component specs (corpus, registry, eval, scoring) | done | Target architecture; implement lightweight first |
 | SH-05 | Word/PDF export generator | done | Stakeholder docs |
 | SH-06 | Corpus service implementation | deferred | **Explore later** — implementation rolls into **LATER-06** (full EDGAR ingest pipeline) |
-| SH-07 | Eval orchestrator (model adapters) | done | OpenAI + Anthropic adapters; live 2×2×3 campaign complete |
+| SH-07 | Eval orchestrator (model adapters) | done | OpenAI + Anthropic + Gemini adapters; `pilot_eval_5task_v1` live |
 | SH-08 | Calibration dataset (5 tasks, dual-rater) | todo | Both benchmark L2 and env Defense |
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
@@ -225,6 +227,8 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | DONE-32 | P2-10 PEP distinct L3 + AMZN third task (4-section L2 path) | Jul 2026 |
 | DONE-33 | P2-11 discrimination v2 + live 3-task eval (PEP separates models) | Jul 2026 |
 | DONE-34 | P2-12 AMZN 5-section path + FY2024 decoy slug | Jul 2026 |
+| DONE-35 | P3-20 per-task submit schema fidelity + KO eval re-run | Jul 2026 |
+| DONE-36 | Gemini adapter + 5-task pilot campaign + pilot status brief export | Jul 2026 |
 
 ---
 

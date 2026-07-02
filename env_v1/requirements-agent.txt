@@ -11,5 +11,8 @@
 #   OPENAI_API_KEY     Required for --agent openai
 #   OPENAI_MODEL       Default model (default: gpt-4o-mini)
 #   OPENAI_BASE_URL    Compatible API base (default: https://api.openai.com/v1)
+#   GEMINI_API_KEY     Required for --agent gemini (or GOOGLE_API_KEY)
+#   GEMINI_MODEL       Default Gemini model (default: gemini-2.5-flash)
+#   GEMINI_BASE_URL    Gemini OpenAI-compatible base (default: generativelanguage.googleapis.com/v1beta/openai)
 
 certifi>=2024.2.2

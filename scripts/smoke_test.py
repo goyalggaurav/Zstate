@@ -642,6 +642,46 @@ def check_composite_scoring() -> None:
         assert l1_only["composite_score"] < full["composite_score"]
 
 
+def check_submit_metric_schema_validation() -> None:
+    """Reject submit payloads with wrong task metric keys (P3-20 schema fidelity)."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from agents.benchmark_tool_specs import parse_submission_args, validate_task_metrics  # noqa: E402
+
+    ko_task = json.loads(
+        (ROOT / "benchmark_v0.1" / "tasks" / "KO_footnote_reconciliation.json").read_text()
+    )
+    amzn_metrics = {
+        "north_america_net_sales": 19586,
+        "international_net_sales": 18720,
+        "aws_net_sales": 5735,
+        "consolidated_net_sales": 47941,
+        "international_reported_growth_pct": -2,
+        "international_cc_growth_pct": 10,
+    }
+    try:
+        parse_submission_args({"metrics": amzn_metrics, "citations": []}, ko_task)
+        raise AssertionError("expected schema mismatch for AMZN keys on KO task")
+    except ValueError as e:
+        assert "schema mismatch" in str(e)
+        assert "aws_net_sales" in str(e)
+
+    ko_gold = json.loads(
+        (
+            ROOT / "benchmark_v0.1" / "contract_fixtures" / "KO_footnote_reconciliation_submission_gold.json"
+        ).read_text()
+    )
+    metrics, submission = parse_submission_args(
+        {
+            "metrics": ko_gold["metrics"],
+            "citations": ko_gold["citations"],
+            "policy_acknowledgements": ko_gold.get("policy_acknowledgements", []),
+        },
+        ko_task,
+    )
+    assert submission is not None
+    validate_task_metrics(metrics, ko_task["task_id"])
+
+
 def check_openai_submit_schema() -> None:
     """OpenAI submit tool exposes agent_submission_v1 wrapper (metrics + citations)."""
     import os
@@ -749,6 +789,8 @@ def check_anthropic_adapter() -> None:
         build_system_prompt,
         build_tool_definitions,
         is_anthropic_model,
+        is_gemini_model,
+        is_openai_model,
         to_anthropic_tools,
     )
     from agents.anthropic_benchmark_agent import AnthropicBenchmarkAgent  # noqa: E402
@@ -759,6 +801,9 @@ def check_anthropic_adapter() -> None:
     assert retry_sleep_seconds(429, "Please try again in 1.148s", 0) >= 1.6
     assert is_anthropic_model("claude-sonnet-4-5") is True
     assert is_anthropic_model("gpt-4o") is False
+    assert is_gemini_model("gemini-2.0-flash") is True
+    assert is_openai_model("gemini-2.0-flash") is False
+    assert is_openai_model("gpt-4o") is True
 
     task = json.loads(
         (ROOT / "benchmark_v0.1" / "tasks" / "GOOGL_footnote_reconciliation.json").read_text()
@@ -1231,6 +1276,7 @@ def main() -> int:
         ("Benchmark agent loop", check_benchmark_agent_loop),
         ("Agent submission L3 validator", check_agent_submission_validator),
         ("Composite run scoring", check_composite_scoring),
+        ("Submit metric schema validation", check_submit_metric_schema_validation),
         ("OpenAI submit schema", check_openai_submit_schema),
         ("Anthropic adapter", check_anthropic_adapter),
         ("Eval mode prompts", check_eval_mode_prompts),

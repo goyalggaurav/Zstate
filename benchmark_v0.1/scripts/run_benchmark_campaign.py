@@ -11,6 +11,7 @@ Usage:
   python run_benchmark_campaign.py --execute --agent scripted   # CI smoke (no API key)
   python run_benchmark_campaign.py --execute --agent openai     # live eval (OPENAI_API_KEY)
   python run_benchmark_campaign.py --execute --agent anthropic  # live eval (ANTHROPIC_API_KEY)
+  python run_benchmark_campaign.py --execute --agent gemini     # live eval (GEMINI_API_KEY)
   python run_benchmark_campaign.py --execute --agent auto       # route by model id (P2-04h)
 """
 
@@ -138,7 +139,7 @@ from agent_output_contract import (  # noqa: E402
     resolve_bench_path,
 )
 from score_benchmark_run import score_run  # noqa: E402
-from agents.benchmark_tool_specs import is_anthropic_model  # noqa: E402
+from agents.benchmark_tool_specs import is_anthropic_model, is_gemini_model, is_openai_model  # noqa: E402
 from benchmark_eval_mode import eval_mode_enabled  # noqa: E402
 
 
@@ -185,6 +186,7 @@ def execute_campaign(
     from benchmark_agent_loop import (
         resolve_output_paths,
         run_anthropic_task,
+        run_gemini_task,
         run_live_task,
         run_mock_task,
         run_openai_task,
@@ -246,6 +248,10 @@ def execute_campaign(
                         )
                     elif agent_mode == "anthropic":
                         trace, structured_output, agent_submission = run_anthropic_task(
+                            task_id, model_id=model_id, eval_mode=eval_mode
+                        )
+                    elif agent_mode == "gemini":
+                        trace, structured_output, agent_submission = run_gemini_task(
                             task_id, model_id=model_id, eval_mode=eval_mode
                         )
                     elif agent_mode == "auto":
@@ -374,9 +380,9 @@ def main() -> int:
     )
     parser.add_argument(
         "--agent",
-        choices=("scripted", "mock", "openai", "anthropic", "auto"),
+        choices=("scripted", "mock", "openai", "anthropic", "gemini", "auto"),
         default="auto",
-        help="Agent mode when --execute (default: auto — route OpenAI vs Anthropic by model id)",
+        help="Agent mode when --execute (default: auto — route by model id)",
     )
     parser.add_argument(
         "--models",
@@ -409,17 +415,28 @@ def main() -> int:
 
     if args.execute:
         models_to_run = model_filter or campaign["models"]
-        needs_openai = args.agent in ("openai", "auto") and any(
-            not is_anthropic_model(m) for m in models_to_run
+        needs_openai = args.agent in ("openai",) or (
+            args.agent == "auto" and any(is_openai_model(m) for m in models_to_run)
         )
-        needs_anthropic = args.agent in ("anthropic", "auto") and any(
-            is_anthropic_model(m) for m in models_to_run
+        needs_anthropic = args.agent in ("anthropic",) or (
+            args.agent == "auto" and any(is_anthropic_model(m) for m in models_to_run)
         )
-        if needs_openai and not __import__("os").environ.get("OPENAI_API_KEY"):
+        needs_gemini = args.agent in ("gemini",) or (
+            args.agent == "auto" and any(is_gemini_model(m) for m in models_to_run)
+        )
+        if needs_openai and not os.environ.get("OPENAI_API_KEY"):
             print("ERROR: OPENAI_API_KEY not set for OpenAI model slots", file=sys.stderr)
             return 1
-        if needs_anthropic and not __import__("os").environ.get("ANTHROPIC_API_KEY"):
+        if needs_anthropic and not os.environ.get("ANTHROPIC_API_KEY"):
             print("ERROR: ANTHROPIC_API_KEY not set for Anthropic model slots", file=sys.stderr)
+            return 1
+        if needs_gemini and not (
+            os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+        ):
+            print(
+                "ERROR: GEMINI_API_KEY (or GOOGLE_API_KEY) not set for Gemini model slots",
+                file=sys.stderr,
+            )
             return 1
         exec_records = execute_campaign(
             campaign,
@@ -432,11 +449,10 @@ def main() -> int:
         campaign = {**campaign, "_execution": exec_records}
         errors = [r for r in exec_records if r.get("status") == "error"]
         executed = sum(1 for r in exec_records if r.get("status") == "executed")
-        print(f"Execute: {executed} runs, {len(errors)} errors")
-        for err in errors[:5]:
+        skipped = sum(1 for r in exec_records if r.get("status") == "skipped_existing")
+        print(f"Execute: {executed} runs, {skipped} skipped, {len(errors)} errors")
+        for err in errors[:10]:
             print(f"  ERROR {err['task_id']} run {err['run_index']}: {err.get('error')}", file=sys.stderr)
-        if errors:
-            return 1
 
     result = score_campaign(
         campaign,

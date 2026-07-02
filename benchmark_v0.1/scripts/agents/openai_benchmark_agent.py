@@ -163,7 +163,15 @@ class OpenAIBenchmarkAgent:
         name = call["name"]
         args = call["arguments"]
         if name == SUBMIT_TOOL:
-            metrics, submission = parse_submission_args(args, self.task)
+            try:
+                metrics, submission = parse_submission_args(args, self.task)
+            except ValueError as e:
+                return {
+                    "type": "tool_error",
+                    "tool": SUBMIT_TOOL,
+                    "_tool_call_id": call.get("id"),
+                    "error": str(e),
+                }
             action: dict = {
                 "type": "submit_structured_output",
                 "structured_output": metrics,

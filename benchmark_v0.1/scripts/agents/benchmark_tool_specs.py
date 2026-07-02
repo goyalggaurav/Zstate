@@ -35,6 +35,39 @@ def metric_keys(task_id: str) -> set[str]:
     return set(_metric_properties(task_id).keys())
 
 
+def validate_task_metrics(metrics: dict, task_id: str) -> None:
+    """Reject submit payloads whose keys do not match this task's GT schema."""
+    allowed = metric_keys(task_id)
+    got = set(metrics.keys())
+    missing = sorted(allowed - got)
+    extra = sorted(got - allowed)
+    if not missing and not extra:
+        return
+    parts: list[str] = []
+    if missing:
+        parts.append(f"missing required keys: {missing}")
+    if extra:
+        parts.append(f"unknown keys (wrong task schema?): {extra}")
+    raise ValueError(
+        f"submit_structured_output metrics schema mismatch for {task_id}: "
+        + "; ".join(parts)
+        + f". Required exactly: {sorted(allowed)}"
+    )
+
+
+def validate_citation_metric_ids(citations: list, task_id: str) -> None:
+    allowed = metric_keys(task_id)
+    for cite in citations:
+        if not isinstance(cite, dict):
+            raise ValueError("each citation must be an object")
+        mid = cite.get("metric_id")
+        if mid not in allowed:
+            raise ValueError(
+                f"submit_structured_output citation metric_id {mid!r} not in task schema; "
+                f"allowed: {sorted(allowed)}"
+            )
+
+
 def citation_guidance_for_task(
     task_id: str,
     *,
@@ -76,6 +109,8 @@ def build_system_prompt(task: dict, bundle: dict, *, eval_mode: bool | None = No
         "Use ONLY the provided tools against the fixed corpus — no external data.\n"
         "For Search_Filing, pass exact section_slug tokens (lowercase, underscores).\n"
         "Retrieve evidence before stating numbers. Use Python_Interpreter to verify arithmetic.\n"
+        "CRITICAL: metrics keys must exactly match this task's submit schema — never reuse metric "
+        "names from other companies or prior tasks.\n"
         "When ready, call submit_structured_output with:\n"
         f"  - metrics: all {len(ids)} required fields ({metric_list})\n"
         f"  - citations: exactly one entry per metrics key ({metric_list}) — no omissions\n"
@@ -106,6 +141,15 @@ def is_anthropic_model(model_id: str) -> bool:
     return model.startswith("claude") or model.startswith("anthropic/")
 
 
+def is_gemini_model(model_id: str) -> bool:
+    model = model_id.lower()
+    return model.startswith("gemini") or model.startswith("google/")
+
+
+def is_openai_model(model_id: str) -> bool:
+    return not is_anthropic_model(model_id) and not is_gemini_model(model_id)
+
+
 def parse_submission_args(args: dict, task: dict) -> tuple[dict, dict | None]:
     """Parse submit tool args into (metrics, agent_submission_v1 | None)."""
     task_id = task["task_id"]
@@ -115,16 +159,23 @@ def parse_submission_args(args: dict, task: dict) -> tuple[dict, dict | None]:
         metrics = args["metrics"]
         if not isinstance(metrics, dict):
             raise ValueError("submit metrics must be an object")
+        validate_task_metrics(metrics, task_id)
+        citations = args.get("citations") or []
+        if citations:
+            if not isinstance(citations, list):
+                raise ValueError("submit citations must be an array")
+            validate_citation_metric_ids(citations, task_id)
         submission = {
             "schema_version": "agent_submission_v1",
             "metrics": metrics,
-            "citations": args.get("citations") or [],
+            "citations": citations,
             "policy_acknowledgements": args.get("policy_acknowledgements") or [],
         }
         return metrics, submission
 
     if keys.intersection(args.keys()):
         metrics = {k: args[k] for k in keys if k in args}
+        validate_task_metrics(metrics, task_id)
         return metrics, None
 
     raise ValueError(f"submit_structured_output missing metrics for {task_id!r}")

@@ -64,13 +64,16 @@ def task_archetype(task_id: str) -> str:
 
 
 def gt_metric_values(task_id: str) -> dict:
-    from agent_output_contract import amzn_gold_values, googl_gold_values, pep_gold_values
+    from agent_output_contract import googl_gold_values, pep_gold_values
 
     archetype = task_archetype(task_id)
     if archetype == "F_adjustment":
         return googl_gold_values()
     if archetype == "F_exact":
-        return amzn_gold_values()
+        from verify_footnote_exact import load_ground_truth
+
+        gt = load_ground_truth(ground_truth_path(task_id))
+        return dict(gt["values"])
     if archetype == "M_organic":
         return pep_gold_values(load_json(ground_truth_path(task_id)))
     if archetype == "F_guidance_drift":

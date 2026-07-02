@@ -53,12 +53,18 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --bootstrap-fixtures
 # Execute scripted agents (CI / offline — no API key)
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py --execute --agent scripted
 
-# Execute live agents (requires API keys; routes OpenAI vs Anthropic by model id)
+# Execute live agents (requires API keys; routes OpenAI / Anthropic / Gemini by model id)
 export OPENAI_API_KEY="..."
 export ANTHROPIC_API_KEY="..."
+export GEMINI_API_KEY="..."   # or GOOGLE_API_KEY
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
   --campaign benchmark_v0.1/campaigns/pilot_eval_campaign_v1.json \
   --execute --agent auto
+
+# Gemini 5-task pilot (all published tasks incl. KO)
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_5task_gemini_v1.json \
+  --execute --agent gemini
 
 # OpenAI-only or Anthropic-only subsets
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
@@ -73,6 +79,8 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py
 Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json) — includes `composite_score_median` per campaign.
 
 ### Leaderboard v0 (P2-06)
+
+**Full 5-task pilot** (3 models × 3 runs): [campaigns/pilot_eval_5task_v1.json](./campaigns/pilot_eval_5task_v1.json)
 
 Four-task campaign: [campaigns/pilot_eval_4task_v1.json](./campaigns/pilot_eval_4task_v1.json). After scoring, generate the actionable leaderboard (composite rank + Fracture Intensity + gap task + fracture delta):
 
@@ -167,15 +175,15 @@ python3 benchmark_v0.1/scripts/benchmark_agent_loop.py \
   --out-dir /tmp/bench_mock --run-index 1
 ```
 
-Modes: `scripted`, `mock`, `openai`. No PM — tools + structured submit only.
+Modes: `scripted`, `mock`, `openai`, `anthropic`, `gemini`, `auto`. No PM — tools + structured submit only.
 
-OpenAI mode uses `OPENAI_API_KEY` (optional `OPENAI_MODEL`, default `gpt-4o-mini`). Submit tool requires `metrics` + `citations` + policy acks (PEP).
+OpenAI mode uses `OPENAI_API_KEY` (optional `OPENAI_MODEL`, default `gpt-4o-mini`). Gemini uses the OpenAI-compatible endpoint (`GEMINI_API_KEY` or `GOOGLE_API_KEY`; default model `gemini-2.5-flash`). Submit tool requires `metrics` + `citations` + policy acks (PEP).
 
 ### API keys (local only)
 
 Do **not** paste keys into shell history or commit them. Recommended:
 
-1. Create repo-root `.env` (already gitignored): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, optional `BENCHMARK_RUN_DELAY_SECONDS=3`.
+1. Create repo-root `.env` (already gitignored): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, optional `BENCHMARK_RUN_DELAY_SECONDS=3`.
 2. Load once per session: `set -a && source .env && set +a`
 3. Verify Anthropic format: `python3 -c "import os; k=os.environ.get('ANTHROPIC_API_KEY',''); print('ok' if k.startswith('sk-ant-') and 'ANTHROPIC_API_KEY=' not in k else 'bad')"`
 4. **Rotate** any key that appeared in terminal logs, chat, or screenshots — revoke the old key in the provider console after creating a replacement.
