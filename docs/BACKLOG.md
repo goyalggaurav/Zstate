@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.5  
-**Last updated:** July 2026 (P3-22–26 architecture hardening; P3-20 schema fix + 5-task pilot eval)
+**Last updated:** July 2026 (SH-14 + P3-14 + P3-27; P3-22–26 architecture hardening)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -100,7 +100,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-11 | **`task_registry.py` SSOT** — manifest-driven task wiring | A | done | Eng | `task_registry.py`; `corpus_bundle` + `scripted_plan` in manifest; 3× bundle maps removed |
 | P3-12 | **GT-native L1** — GOOGL + AMZN verifiers | A | done | Eng | GT-loaded verify; `verify_benchmark_l1.py` router + `l1_verify_argv()`; hardcoded constants removed |
 | P3-13 | **Doc sync from manifest** | Both | done | Eng | `ARCHITECTURE.md` v1.2, root `README.md` — 4 tasks, leaderboard/campaign commands |
-| P3-14 | **Track B fracture registry** | B | todo | Eng | Extend `fracture_library_v1.json` + `fracture_registry.py` for Track B; retire inline `fracture_map` in `env_v1/scripts/score_episode.py` |
+| P3-14 | **Track B fracture registry** | B | done | Eng | `fracture_library_v1.json` env map; `score_episode.py` uses `fracture_registry` |
 | P3-15 | **Synthetic L3 eval mode** | A | todo | Eng | Campaign flag `synthetic_l3: true` + separate FI column in leaderboard (P3-09 bait exists; eval wiring not built) |
 | P3-16 | **Task special-case cleanup** | A | in_progress | Eng | GOOGL `--period` sprawl removed from campaign/scorer via `l1_verify_argv()`; mock agent still GOOGL-only |
 | P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
@@ -113,6 +113,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-24 | **Pin scored campaign report** | A | done | Eng | `manifest.pinned_campaign_report`; gitignore exception for `pilot_eval_5task_v1.json` only |
 | P3-25 | **CI — smoke + validators (no live API)** | A | done | Eng | `.github/workflows/ci.yml` |
 | P3-26 | **Doc sync (5-task pilot SSOT)** | A | done | Eng | Root README, benchmark README, smoke leaderboard assert |
+| P3-27 | **Track A trajectory_v1 validation** | A | done | Eng | `shared/trace_utils.py`; validate on benchmark trace write |
 
 **Gate:** P3-03 (15 tasks) blocked until P3-16 mock-agent generalization (optional). P3-11 + P3-12 done. Full EDGAR ingest remains **LATER-06**.
 
@@ -162,9 +163,9 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 29 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 30 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
-| SH-14 | Shared runtime extract (Track A/B dedupe) | todo | `safe_calc`, LLM retry, trace normalize — thin package before SH-06 corpus service |
+| SH-14 | Shared runtime extract (Track A/B dedupe) | done | `shared/` — `safe_calc`, `llm_retry`, `trace_utils`; backends import shared |
 
 ---
 

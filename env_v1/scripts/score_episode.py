@@ -6,10 +6,15 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO = ROOT.parent
+if str(REPO / "benchmark_v0.1" / "scripts") not in sys.path:
+    sys.path.insert(0, str(REPO / "benchmark_v0.1" / "scripts"))
 
+from fracture_registry import fracture_codes as resolve_fracture_codes  # noqa: E402
 from pm_features import (  # noqa: E402
     enrich_submission,
     is_include_rd_path,
@@ -247,18 +252,7 @@ def classify_failure(
     ):
         modes.append("invalid_adjusted_eps")
 
-    fracture_map = {
-        "include_leaseback": "OUTCOME_FAIL",
-        "omit_prior_year": "SECTION_MISS",
-        "engagement_failure": "ENGAGEMENT_FAIL",
-        "timeout": "TIMEOUT",
-        "invalid_adjusted_eps": "OUTCOME_FAIL",
-        "unsupported_prior_year_claim": "HALLUC_FILL",
-        "pushover": "ENGAGEMENT_FAIL",
-        "rhetoric_over_filing": "HALLUC_FILL",
-        "note12_mischaracterized": "HALLUC_FILL",
-    }
-    fracture_codes = list(dict.fromkeys(fracture_map[m] for m in modes if m in fracture_map))
+    fracture_codes = resolve_fracture_codes(modes, layer="ENV")
     return modes, fracture_codes
 
 

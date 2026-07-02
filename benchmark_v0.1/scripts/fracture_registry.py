@@ -73,9 +73,16 @@ def l1_map_for_task(task_id: str | None) -> dict[str, str]:
     return mapping
 
 
+def env_map() -> dict[str, str]:
+    library = load_library()
+    return dict(library.get("env", {}))
+
+
 def layer_map(layer: str) -> dict[str, str]:
     library = load_library()
     key = layer.upper()
+    if key == "ENV":
+        return env_map()
     if key not in ("L1", "L2", "L3"):
         raise ValueError(f"Unknown layer {layer!r}")
     if key == "L1":
@@ -92,6 +99,8 @@ def fracture_code(
     layer_key = layer.upper()
     if layer_key == "L1":
         return l1_map_for_task(task_id).get(failure_mode)
+    if layer_key == "ENV":
+        return env_map().get(failure_mode)
     return layer_map(layer_key).get(failure_mode)
 
 
@@ -116,6 +125,7 @@ def all_registered_fracture_codes() -> set[str]:
     for layer_map_val in library.get("layers", {}).values():
         codes.update(layer_map_val.values())
     codes.update(library.get("l1_global", {}).values())
+    codes.update(env_map().values())
     codes.update(decoy_trap_modes().values())
     manifest = load_json(BENCH / "manifest.json")
     for entry in manifest.get("pilot_tasks", []):

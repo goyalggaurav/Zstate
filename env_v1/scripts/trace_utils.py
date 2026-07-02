@@ -3,9 +3,17 @@
 
 from __future__ import annotations
 
+import sys
 from copy import deepcopy
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
+
+REPO = Path(__file__).resolve().parents[2]
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
+from shared.trace_utils import validate_trajectory_v1_minimal  # noqa: E402
 
 
 def enrich_env_trace(trace: dict, scores: dict | None = None) -> dict:
@@ -39,7 +47,4 @@ def enrich_env_trace(trace: dict, scores: dict | None = None) -> dict:
     return enriched
 
 
-def validate_trajectory_v1_minimal(trace: dict) -> list[str]:
-    """Return list of missing required fields for trajectory_v1."""
-    required = ["trajectory_id", "episode_or_task_id", "track", "termination", "steps"]
-    return [f for f in required if not trace.get(f)]
+__all__ = ["enrich_env_trace", "validate_trajectory_v1_minimal"]

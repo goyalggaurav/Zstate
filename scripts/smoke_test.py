@@ -1151,12 +1151,27 @@ def check_fracture_registry() -> None:
     )
 
     assert fracture_code("cite_halluc", layer="L3") == "CITE_HALLUC"
+    assert fracture_code("pushover", layer="ENV") == "ENGAGEMENT_FAIL"
+    assert fracture_code("omit_prior_year", layer="ENV") == "SECTION_MISS"
     assert fracture_code("wrong_ytd_window", task_id="NFLX_guidance_drift", layer="L1") == "GUIDANCE_PERIOD_ERR"
     assert fracture_codes(["blind_sum", "sign_error"], task_id="GOOGL_footnote_reconciliation", layer="L1") == [
         "RECON_OMIT",
         "SIGN_ERR",
     ]
     assert all_registered_fracture_codes() <= taxonomy_codes()
+
+
+def check_shared_runtime() -> None:
+    """SH-14 — cross-track safe_calc + LLM retry helpers."""
+    sys.path.insert(0, str(ROOT))
+    from shared.llm_retry import retry_sleep_seconds  # noqa: E402
+    from shared.safe_calc import safe_calc  # noqa: E402
+    from shared.trace_utils import validate_trajectory_v1_minimal  # noqa: E402
+
+    assert safe_calc("89637 + 20028 + 411") == 110_076.0
+    assert safe_calc("-180") == -180.0
+    assert retry_sleep_seconds(429, "try again in 3.2s", 1) >= 3.5
+    assert validate_trajectory_v1_minimal({"trajectory_id": "t1", "episode_or_task_id": "x", "track": "benchmark", "termination": "submit", "steps": []}) == []
 
 
 def check_ko_gt_draft() -> None:
@@ -1261,6 +1276,7 @@ def main() -> int:
         ("AMZN footnote ground truth L1", check_amzn_gt),
         ("NFLX guidance drift L1", check_nflx_gt),
         ("KO footnote draft L1", check_ko_gt_draft),
+        ("Shared runtime (SH-14)", check_shared_runtime),
         ("Fracture taxonomy registry", check_fracture_taxonomy_registry),
         ("Corpus manifest", check_corpus_manifest),
         ("Corpus bundles", check_corpus_bundles),

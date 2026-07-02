@@ -22,7 +22,12 @@ from typing import Any, Protocol
 
 SCRIPTS = Path(__file__).resolve().parent
 BENCH = SCRIPTS.parent
+REPO = BENCH.parent
 sys.path.insert(0, str(SCRIPTS))
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
+from shared.trace_utils import validate_trajectory_v1_minimal  # noqa: E402
 
 from agent_output_contract import agent_output_path, amzn_gold_submission, googl_gold_submission, load_json, pep_gold_submission, resolve_bench_path  # noqa: E402
 from benchmark_tool_backend import BenchmarkToolBackend, load_bundle  # noqa: E402
@@ -404,6 +409,9 @@ def write_outputs(
     *,
     agent_submission: dict | None = None,
 ) -> None:
+    missing = validate_trajectory_v1_minimal(trace)
+    if missing:
+        raise ValueError(f"Trace missing trajectory_v1 fields: {missing}")
     agent_path.parent.mkdir(parents=True, exist_ok=True)
     agent_path.write_text(json.dumps(structured_output, indent=2) + "\n", encoding="utf-8")
     trace_path.write_text(json.dumps(trace, indent=2) + "\n", encoding="utf-8")

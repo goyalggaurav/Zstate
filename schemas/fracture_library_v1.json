@@ -1,6 +1,6 @@
 {
   "schema_version": "fracture_library_v1",
-  "description": "Central failure_mode → fracture_code maps for Track A. L1 task maps live in gold_path.failure_mode_map + GT failure_modes; this file holds cross-task L2/L3 and L1 fallbacks.",
+  "description": "Central failure_mode → fracture_code maps for Track A (L2/L3 + L1 fallbacks) and Track B env scoring.",
   "taxonomy_ref": "fracture_taxonomy_v1.json",
 
   "layers": {
@@ -22,6 +22,18 @@
       "schema_invalid": "CITE_BROAD",
       "submission_missing": "CITE_BROAD"
     }
+  },
+
+  "env": {
+    "include_leaseback": "OUTCOME_FAIL",
+    "omit_prior_year": "SECTION_MISS",
+    "engagement_failure": "ENGAGEMENT_FAIL",
+    "timeout": "TIMEOUT",
+    "invalid_adjusted_eps": "OUTCOME_FAIL",
+    "unsupported_prior_year_claim": "HALLUC_FILL",
+    "pushover": "ENGAGEMENT_FAIL",
+    "rhetoric_over_filing": "HALLUC_FILL",
+    "note12_mischaracterized": "HALLUC_FILL"
   },
 
   "l1_global": {
