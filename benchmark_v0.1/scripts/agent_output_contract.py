@@ -91,24 +91,37 @@ def l1_values_from_gt(task_id: str, gt_path: Path | None = None) -> dict:
     return values
 
 
+def filing_label_for_slug(bundle: dict, section_slug: str) -> str | None:
+    for entry in bundle.get("section_registry", []):
+        if entry.get("section_slug") == section_slug:
+            return entry.get("filing_label")
+    return None
+
+
 def submission_from_gt(task_id: str, gt_path: Path | None = None) -> dict:
     """Build agent_submission_v1 from GT citations (P3-17 — hardened template)."""
     doc = load_ground_truth_doc(task_id, gt_path)
     metrics = l1_values_from_gt(task_id, gt_path)
+    from task_registry import load_bundle
+
+    bundle = load_bundle(task_id)
     citations: list[dict] = []
     for item in doc.get("extracted_values", []):
         cite = item.get("citation") or {}
         snippet = cite.get("snippet")
         if not snippet:
             continue
+        section_slug = cite.get("section_slug", "segment_financials")
         entry: dict = {
             "metric_id": item["metric_id"],
             "doc_id": cite.get("doc_id", ""),
-            "section_slug": cite.get("section_slug", "segment_financials"),
+            "section_slug": section_slug,
             "snippet": snippet,
         }
-        if cite.get("note"):
-            entry["note"] = cite["note"]
+        label = filing_label_for_slug(bundle, section_slug)
+        if label:
+            entry["filing_label"] = label
+            entry["note"] = label
         citations.append(entry)
 
     policy_ids = doc.get("required_policy_acknowledgements") or []

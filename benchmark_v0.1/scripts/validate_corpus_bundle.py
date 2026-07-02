@@ -69,6 +69,7 @@ CONTRACT_PHRASES: dict[str, list[str]] = {
         "6,891",
         "50,256",
         "46,905",
+        "Note 20",
         "Global Ventures",
         "Bottling Investments",
         "increased 12%",
@@ -178,6 +179,74 @@ def validate_section_registry(
     return results
 
 
+_NOTE_NUM_IN_SLUG = re.compile(r"note_(\d+)", re.I)
+_NOTE_NUM_IN_LABEL = re.compile(r"Note\s+(\d+)", re.I)
+
+
+def _note_numbers_in_slug(token: str) -> set[int]:
+    return {int(m.group(1)) for m in _NOTE_NUM_IN_SLUG.finditer(token.replace("-", "_"))}
+
+
+def _canonical_note_numbers(entry: dict, bundle: dict) -> set[int]:
+    """Issuer note index from filing_label + excerpt header (single SSOT per registry row)."""
+    nums: set[int] = set()
+    for text in (entry.get("filing_label") or "",):
+        nums.update(int(m.group(1)) for m in _NOTE_NUM_IN_LABEL.finditer(text))
+    doc_key = entry.get("document_key", "")
+    excerpt = bundle.get("documents", {}).get(doc_key, {}).get("excerpt", "")
+    if excerpt:
+        header = excerpt.strip().split("\n", 1)[0]
+        nums.update(int(m.group(1)) for m in _NOTE_NUM_IN_LABEL.finditer(header))
+    return nums
+
+
+def validate_legacy_slugs_no_sliding_drift(bundle: dict) -> list[tuple[str, str, bool]]:
+    """Legacy note_* slugs must not contradict filing_label — prevents wrong-note acceptance."""
+    results: list[tuple[str, str, bool]] = []
+    for entry in bundle.get("section_registry", []):
+        slug = entry.get("section_slug", "?")
+        legacy = entry.get("legacy_section_slugs") or []
+        if not legacy:
+            continue
+
+        canonical_notes = _canonical_note_numbers(entry, bundle)
+        legacy_note_nums: set[int] = set()
+        for leg in legacy:
+            if leg == slug:
+                results.append((f"legacy_not_canonical_slug.{slug}", leg, False))
+            legacy_note_nums.update(_note_numbers_in_slug(leg))
+
+        if len(legacy_note_nums) > 1:
+            results.append(
+                (
+                    f"legacy_sliding_drift.{slug}",
+                    ",".join(str(n) for n in sorted(legacy_note_nums)),
+                    False,
+                )
+            )
+
+        if canonical_notes and legacy_note_nums:
+            stray = legacy_note_nums - canonical_notes
+            aligned = not stray and len(legacy_note_nums) <= 1
+            results.append(
+                (
+                    f"legacy_note_aligned.{slug}",
+                    ",".join(str(n) for n in sorted(canonical_notes)),
+                    aligned,
+                )
+            )
+            if stray:
+                results.append(
+                    (
+                        f"legacy_note_stray.{slug}",
+                        ",".join(str(n) for n in sorted(stray)),
+                        False,
+                    )
+                )
+
+    return results
+
+
 def excerpt_sha256(excerpt: str) -> str:
     return hashlib.sha256(normalize(excerpt).encode("utf-8")).hexdigest()
 
@@ -283,6 +352,33 @@ def validate_policy_notes(bundle: dict, task_id: str) -> list[tuple[str, str, bo
     return results
 
 
+GT_CITATION_STRICT_TASKS = frozenset({"KO_footnote_reconciliation"})
+
+
+def validate_gt_citations_role_based(
+    ground_truth: dict, bundle: dict, *, task_id: str
+) -> list[tuple[str, str, bool]]:
+    """GT citations must use section_slug; filer note numbers live in bundle filing_label only."""
+    results: list[tuple[str, str, bool]] = []
+    strict = task_id in GT_CITATION_STRICT_TASKS
+    registry_slugs = {e["section_slug"] for e in bundle.get("section_registry", [])}
+    for item in ground_truth.get("extracted_values", []):
+        mid = item.get("metric_id", "?")
+        cite = item.get("citation") or {}
+        slug = cite.get("section_slug")
+        if strict or slug:
+            results.append((f"gt_citation.section_slug.{mid}", slug or "missing", bool(slug)))
+            if slug:
+                results.append(
+                    (f"gt_citation.slug_in_registry.{mid}", slug, slug in registry_slugs)
+                )
+        if strict:
+            results.append(
+                (f"gt_citation.no_note_field.{mid}", "note absent", "note" not in cite)
+            )
+    return results
+
+
 def validate_task(task_id: str) -> dict:
     bundle_path = corpus_bundle_path(task_id)
     manifest = load_json(BENCH / "manifest.json")
@@ -319,6 +415,9 @@ def validate_task(task_id: str) -> dict:
     for label, required, passed in validate_section_registry(bundle, gold_path, task_json):
         add_check(label, required, passed)
 
+    for label, required, passed in validate_legacy_slugs_no_sliding_drift(bundle):
+        add_check(label, required, passed)
+
     for label, required, passed in validate_policy_notes(bundle, task_id):
         add_check(label, required, passed)
 
@@ -326,6 +425,9 @@ def validate_task(task_id: str) -> dict:
         add_check(label, required, passed)
 
     for label, required, passed in validate_synthetic_l3_bait(bundle):
+        add_check(label, required, passed)
+
+    for label, required, passed in validate_gt_citations_role_based(ground_truth, bundle, task_id=task_id):
         add_check(label, required, passed)
 
     archetype = task_json.get("archetype") or gold_path.get("archetype") or bundle.get("archetype")

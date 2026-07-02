@@ -31,7 +31,6 @@
       "citation": {
         "doc_id": "KO_10K_2025",
         "section_slug": "segment_financials",
-        "note": "Note 19 — Operating Segments",
         "snippet": "Europe, Middle East & Africa\nNet revenues $ 9,842"
       }
     },
@@ -43,7 +42,6 @@
       "citation": {
         "doc_id": "KO_10K_2025",
         "section_slug": "segment_financials",
-        "note": "Note 19 — Operating Segments",
         "snippet": "Latin America\nNet revenues $ 6,115"
       }
     },
@@ -55,7 +53,6 @@
       "citation": {
         "doc_id": "KO_10K_2025",
         "section_slug": "segment_financials",
-        "note": "Note 19 — Operating Segments",
         "snippet": "North America\nNet revenues $ 18,256"
       }
     },
@@ -67,7 +64,6 @@
       "citation": {
         "doc_id": "KO_10K_2025",
         "section_slug": "segment_financials",
-        "note": "Note 19 — Operating Segments",
         "snippet": "Asia Pacific\nNet revenues $ 5,934"
       }
     },
@@ -79,7 +75,6 @@
       "citation": {
         "doc_id": "KO_10K_2025",
         "section_slug": "segment_financials",
-        "note": "Note 19 — Operating Segments",
         "snippet": "Global Ventures\nNet revenues $ 3,218"
       }
     },
@@ -91,7 +86,6 @@
       "citation": {
         "doc_id": "KO_10K_2025",
         "section_slug": "segment_financials",
-        "note": "Note 19 — Operating Segments",
         "snippet": "Bottling Investments\nNet revenues $ 6,891"
       }
     },
@@ -103,7 +97,6 @@
       "citation": {
         "doc_id": "KO_10K_2025",
         "section_slug": "consolidated_primary",
-        "note": "Consolidated Statement of Income",
         "snippet": "Net operating revenues $ 50,256"
       }
     },
@@ -115,7 +108,6 @@
       "citation": {
         "doc_id": "KO_10K_2025",
         "section_slug": "narrative_fx",
-        "note": "MD&A — Latin America",
         "snippet": "Latin America segment net revenues increased 12%"
       }
     },
@@ -127,7 +119,6 @@
       "citation": {
         "doc_id": "KO_10K_2025",
         "section_slug": "narrative_fx",
-        "note": "MD&A — Latin America",
         "snippet": "increased 15% on a comparable currency neutral basis"
       }
     }
@@ -192,6 +183,6 @@
     "reviewer": null,
     "review_date": null,
     "review_doc": "docs/expert_drafts/KO_GT_REVIEW.md",
-    "notes": "Pilot draft — expert must verify Note 19 excerpts against KO 10-K FY2025 before publish."
+    "notes": "Pilot draft — expert must verify segment_financials (Note 20) excerpts against KO 10-K FY2025 before publish."
   }
 }

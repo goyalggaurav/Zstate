@@ -1,6 +1,6 @@
 {
   "task_id": "KO_footnote_reconciliation",
-  "version": "0.1.0-draft",
+  "version": "0.1.1-draft",
   "archetype": "F_exact",
   "task_type": "F",
   "fiscal_period": "FY2025",
@@ -8,25 +8,25 @@
   "minimal_section_set": [
     {
       "section_id": "KO_10K_2025_segment_policy",
-      "name": "Item 1 — six operating segments",
+      "name": "segment_policy — six operating segments",
       "required": true,
-      "reason": "Confirm Global Ventures and Bottling Investments are reportable before extracting Note 19"
+      "reason": "Confirm Global Ventures and Bottling Investments are reportable before extracting segment_financials"
     },
     {
-      "section_id": "KO_10K_2025_note_19",
-      "name": "Note 19 — Operating Segments",
+      "section_id": "KO_10K_2025_segment_financials",
+      "name": "segment_financials — operating segment net revenues",
       "required": true,
-      "reason": "FY2025 net revenues for all six operating segments"
+      "reason": "FY2025 net revenues for all six operating segments (issuer maps to Note 20 in bundle filing_label)"
     },
     {
       "section_id": "KO_10K_2025_income_statement",
-      "name": "Consolidated Statement of Income",
+      "name": "consolidated_primary — Consolidated Statement of Income",
       "required": true,
       "reason": "Cross-check consolidated net operating revenues"
     },
     {
       "section_id": "KO_10K_2025_mdna_latam",
-      "name": "MD&A — Latin America growth",
+      "name": "narrative_fx — Latin America growth",
       "required": true,
       "reason": "Reported vs currency-neutral Latin America growth"
     }
@@ -41,25 +41,25 @@
       "step": 1,
       "action": "Read segment definitions",
       "tool": "Search_Filing",
-      "target": "Item 1 — six segments including Global Ventures and Bottling Investments"
+      "target": "segment_policy — six segments including Global Ventures and Bottling Investments"
     },
     {
       "step": 2,
       "action": "Extract FY2025 segment net revenues",
       "tool": "Search_Filing",
-      "target": "Note 19 — all six segments, Year Ended December 31, 2025"
+      "target": "segment_financials — all six segments, Year Ended December 31, 2025"
     },
     {
       "step": 3,
       "action": "Cross-check consolidated net operating revenues",
       "tool": "Search_Filing",
-      "target": "Consolidated Statement of Income — 2025 column"
+      "target": "consolidated_primary — 2025 column"
     },
     {
       "step": 4,
       "action": "Extract Latin America FX growth",
       "tool": "Search_Filing",
-      "target": "MD&A — 12% reported vs 15% currency neutral"
+      "target": "narrative_fx — 12% reported vs 15% currency neutral"
     },
     {
       "step": 5,
@@ -71,7 +71,7 @@
 
   "anti_patterns": [
     "use_fy2024_column_instead_of_fy2025",
-    "use_decoy_note_19_prior_year_slug",
+    "use_decoy_segment_financials_prior_year_slug",
     "omit_global_ventures_segment",
     "omit_bottling_investments_segment",
     "swap_latin_america_reported_and_cc_growth",

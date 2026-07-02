@@ -77,7 +77,7 @@ Agents MUST NOT pass free-text queries. `Search_Filing` resolves **only** via th
 | `section_slug` | Stable API token — canonical value agent should pass as `section` |
 | `path_role` | Must equal `section_slug` (v1.2); archetype-validated role from `schemas/archetype_roles_v1.json` |
 | `filing_label` | Human-readable note/section title for prompts (issuer-specific) |
-| `legacy_section_slugs` | Optional prior slug tokens accepted by backend/L2/L3 rescore (migration only) |
+| `legacy_section_slugs` | Optional prior slug tokens accepted by backend/L2/L3 rescore (migration only). **Anti sliding-drift:** at most one `note_N` token per registry row; must match `filing_label` / excerpt header note index (validated in `validate_corpus_bundle.py`). |
 | `section_id` | Must match `gold_paths/*/minimal_section_set[].section_id` |
 | `document_key` | Key in `documents{}` |
 | `required` | If true, L2 section-recall expects a tool hit on this slug |
@@ -91,7 +91,19 @@ Agents MUST NOT pass free-text queries. `Search_Filing` resolves **only** via th
 | Path order | `gold_paths/*/l2_gold_path.expected_section_order` | List of **path_role** slugs; scoring is archetype-generic |
 | L1 verify | `manifest.json` → `verify_script` | Unified `scripts/verify_benchmark_l1.py` routes by archetype |
 
-Per-company customization is **bundle-only** (excerpt text, `filing_label`, decoy slugs). Task prompts reference path roles, not note numbers.
+Per-company customization is **bundle-only** (excerpt text, `filing_label`, decoy slugs). Task prompts, gold paths, and ground truth reference **path_role slugs only** — never filer-specific note numbers.
+
+### 1d. Citation SSOT (GT + L3 — P3-18)
+
+| Layer | Filer-specific note number? | Required fields |
+|-------|----------------------------|-----------------|
+| Task prompt / gold path workflow | **No** — use `segment_financials`, etc. | path_role slugs |
+| Ground truth `citation` | **No** — do not store `Note N` | `doc_id`, `section_slug`, `snippet` |
+| Bundle `section_registry.filing_label` | **Yes** — single issuer map | e.g. `Note 20 — Operating Segments` (KO) |
+| Bundle `documents.*.excerpt` | **Yes** — must match filing verbatim | includes note header text |
+| Agent submission (L3) | Optional display | `section_slug` + `snippet` required; `filing_label` from bundle at fixture gen |
+
+`submission_from_gt()` resolves display labels from the bundle registry — GT must not duplicate note numbers.
 
 **Drift failures (backend returns, does not guess):**
 

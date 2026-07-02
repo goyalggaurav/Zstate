@@ -1,6 +1,6 @@
 {
   "bundle_id": "ko_fy2025_bundle",
-  "version": "1.0.0-draft",
+  "version": "1.0.1-draft",
   "task_id": "KO_footnote_reconciliation",
   "archetype": "F_exact",
   "documents": {
@@ -15,15 +15,15 @@
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "segment_financials",
-      "name": "Note 19 — Operating Segments",
-      "excerpt": "Note 19 — Operating Segments\n\nYear Ended December 31, 2025\n(in millions)\n\nEurope, Middle East & Africa\nNet revenues $ 9,842\n\nLatin America\nNet revenues $ 6,115\n\nNorth America\nNet revenues $ 18,256\n\nAsia Pacific\nNet revenues $ 5,934\n\nGlobal Ventures\nNet revenues $ 3,218\n\nBottling Investments\nNet revenues $ 6,891\n\nConsolidated\nNet operating revenues $ 50,256"
+      "name": "Operating Segments (Note 20)",
+      "excerpt": "Note 20 — Operating Segments\n\nYear Ended December 31, 2025\n(in millions)\n\nEurope, Middle East & Africa\nNet revenues $ 9,842\n\nLatin America\nNet revenues $ 6,115\n\nNorth America\nNet revenues $ 18,256\n\nAsia Pacific\nNet revenues $ 5,934\n\nGlobal Ventures\nNet revenues $ 3,218\n\nBottling Investments\nNet revenues $ 6,891\n\nConsolidated\nNet operating revenues $ 50,256"
     },
     "segment_financials_prior_year_doc": {
       "doc_id": "KO_10K_2025",
       "doc_type": "10-K",
       "section": "segment_financials_prior_year",
-      "name": "Note 19 — Operating Segments (FY2024 column only)",
-      "excerpt": "Note 19 — Operating Segments\n\nYear Ended December 31, 2024\n(in millions)\n\nEurope, Middle East & Africa\nNet revenues $ 9,410\n\nLatin America\nNet revenues $ 5,462\n\nNorth America\nNet revenues $ 17,842\n\nAsia Pacific\nNet revenues $ 5,612\n\nGlobal Ventures\nNet revenues $ 3,045\n\nBottling Investments\nNet revenues $ 6,536\n\nConsolidated\nNet operating revenues $ 46,905"
+      "name": "Operating Segments (Note 20, FY2024 column)",
+      "excerpt": "Note 20 — Operating Segments\n\nYear Ended December 31, 2024\n(in millions)\n\nEurope, Middle East & Africa\nNet revenues $ 9,410\n\nLatin America\nNet revenues $ 5,462\n\nNorth America\nNet revenues $ 17,842\n\nAsia Pacific\nNet revenues $ 5,612\n\nGlobal Ventures\nNet revenues $ 3,045\n\nBottling Investments\nNet revenues $ 6,536\n\nConsolidated\nNet operating revenues $ 46,905"
     },
     "consolidated_primary_doc": {
       "doc_id": "KO_10K_2025",
@@ -54,20 +54,21 @@
     {
       "section_slug": "segment_financials",
       "path_role": "segment_financials",
-      "section_id": "KO_10K_2025_note_19",
+      "section_id": "KO_10K_2025_segment_financials",
       "doc_id": "KO_10K_2025",
       "document_key": "segment_financials_doc",
-      "filing_label": "Note 19 — Operating Segments (FY2025 column)",
+      "filing_label": "Note 20 — Operating Segments (FY2025 column)",
+      "legacy_section_slugs": ["note_20"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
     },
     {
       "section_slug": "segment_financials_prior_year",
       "path_role": "segment_financials_prior_year",
-      "section_id": "KO_10K_2025_note_19_py",
+      "section_id": "KO_10K_2025_segment_financials_py",
       "doc_id": "KO_10K_2025",
       "document_key": "segment_financials_prior_year_doc",
-      "filing_label": "Note 19 — Operating Segments (FY2024 column only)",
+      "filing_label": "Note 20 — Operating Segments (FY2024 column only)",
       "required": false,
       "decoy_trap": "prior_year_column",
       "allowed_tools": ["Search_Filing", "PDF_Parser"]

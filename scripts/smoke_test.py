@@ -1136,6 +1136,9 @@ def check_ko_gt_draft() -> None:
     assert sub["schema_version"] == "agent_submission_v1"
     assert len(sub["citations"]) >= 6
     assert "global_ventures_is_reportable_segment" in sub["policy_acknowledgements"]
+    seg_cite = next(c for c in sub["citations"] if c["metric_id"] == "emea_net_revenues")
+    assert seg_cite["section_slug"] == "segment_financials"
+    assert "Note 20" in seg_cite.get("filing_label", "")
 
     trap_values = l1_values_from_gt("KO_footnote_reconciliation")
     trap_values["global_ventures_net_revenues"] = None
