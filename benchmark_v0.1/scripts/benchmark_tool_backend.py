@@ -12,19 +12,14 @@ from pathlib import Path
 
 BENCH = Path(__file__).resolve().parent.parent
 
+from task_registry import load_bundle  # noqa: F401 — re-export for existing imports
+
 OPS = {
     ast.Add: operator.add,
     ast.Sub: operator.sub,
     ast.Mult: operator.mul,
     ast.Div: operator.truediv,
     ast.USub: operator.neg,
-}
-
-TASK_BUNDLE: dict[str, str] = {
-    "GOOGL_footnote_reconciliation": "googl_q1_2026_bundle.json",
-    "PEP_fx_organic_growth": "pep_fy2025_bundle.json",
-    "AMZN_footnote_reconciliation": "amzn_fy2025_bundle.json",
-    "NFLX_guidance_drift": "nflx_q2q3_2025_bundle.json",
 }
 
 NOT_FOUND_PREFIX = "NOT FOUND:"
@@ -54,16 +49,6 @@ def safe_calc(expression: str) -> float:
         raise ValueError(f"Unsupported expression: {expression}")
 
     return _eval(node)
-
-
-def load_bundle(task_id: str) -> dict:
-    filename = TASK_BUNDLE.get(task_id)
-    if not filename:
-        raise ValueError(f"No corpus bundle mapped for task {task_id!r}")
-    path = BENCH / "corpus" / filename
-    if not path.exists():
-        raise FileNotFoundError(f"Corpus bundle not found: {path}")
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 class BenchmarkToolBackend:

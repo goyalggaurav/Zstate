@@ -13,12 +13,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 BENCH = ROOT / "benchmark_v0.1"
 
-TASK_BUNDLES: dict[str, str] = {
-    "GOOGL_footnote_reconciliation": "corpus/googl_q1_2026_bundle.json",
-    "PEP_fx_organic_growth": "corpus/pep_fy2025_bundle.json",
-    "AMZN_footnote_reconciliation": "corpus/amzn_fy2025_bundle.json",
-    "NFLX_guidance_drift": "corpus/nflx_q2q3_2025_bundle.json",
-}
+sys.path.insert(0, str(BENCH / "scripts"))
+from task_registry import all_task_ids, corpus_bundle_path  # noqa: E402
 
 # Contract §4 required phrases beyond GT citation snippets.
 CONTRACT_PHRASES: dict[str, list[str]] = {
@@ -274,7 +270,7 @@ def validate_policy_notes(bundle: dict, task_id: str) -> list[tuple[str, str, bo
 
 
 def validate_task(task_id: str) -> dict:
-    bundle_path = BENCH / TASK_BUNDLES[task_id]
+    bundle_path = corpus_bundle_path(task_id)
     manifest = load_json(BENCH / "manifest.json")
     task_entry = next(t for t in manifest["pilot_tasks"] if t["task_id"] == task_id)
 
@@ -338,7 +334,7 @@ def validate_task(task_id: str) -> dict:
 
 
 def validate_all() -> dict:
-    reports = [validate_task(task_id) for task_id in TASK_BUNDLES]
+    reports = [validate_task(task_id) for task_id in all_task_ids()]
     return {
         "tasks": [r["task_id"] for r in reports],
         "all_pass": all(r["all_pass"] for r in reports),
@@ -348,7 +344,7 @@ def validate_all() -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate corpus bundles for pilot tasks.")
-    parser.add_argument("--task", choices=list(TASK_BUNDLES))
+    parser.add_argument("--task", choices=all_task_ids())
     parser.add_argument("--all", action="store_true")
     args = parser.parse_args()
 

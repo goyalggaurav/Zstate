@@ -340,13 +340,6 @@ def run_live_task(
     return trace, structured_output, agent_submission, "openai"
 
 
-TASK_SCRIPTED_PLANS: dict[str, Path] = {
-    "GOOGL_footnote_reconciliation": BENCH / "examples/agents/googl_good_plan.json",
-    "PEP_fx_organic_growth": BENCH / "examples/agents/pep_good_plan.json",
-    "AMZN_footnote_reconciliation": BENCH / "examples/agents/amzn_good_plan.json",
-}
-
-
 def write_outputs(
     structured_output: dict,
     trace: dict,

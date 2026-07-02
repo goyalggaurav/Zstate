@@ -23,7 +23,19 @@ def validate() -> dict:
         if task.get("status") != "published":
             continue
         task_id = task["task_id"]
-        for key, rel_path in task.get("paths", {}).items():
+        path_keys = ("task", "ground_truth", "gold_path", "grader_rubric", "corpus_bundle", "verify_script")
+        for key in path_keys:
+            rel_path = task.get("paths", {}).get(key)
+            if not rel_path:
+                checks.append(
+                    {
+                        "task_id": task_id,
+                        "path_key": key,
+                        "path": None,
+                        "pass": False,
+                    }
+                )
+                continue
             full_path = BENCH / rel_path
             ok = full_path.exists()
             checks.append(
@@ -32,6 +44,17 @@ def validate() -> dict:
                     "path_key": key,
                     "path": rel_path,
                     "pass": ok,
+                }
+            )
+        scripted = task.get("paths", {}).get("scripted_plan")
+        if scripted:
+            full_path = BENCH / scripted
+            checks.append(
+                {
+                    "task_id": task_id,
+                    "path_key": "scripted_plan",
+                    "path": scripted,
+                    "pass": full_path.exists(),
                 }
             )
 

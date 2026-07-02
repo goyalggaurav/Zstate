@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
-**Version:** 0.4  
-**Last updated:** July 2026 (post P3-08 fracture registry + provenance pins — 4 published tasks, 27 smoke checks)
+**Version:** 0.5  
+**Last updated:** July 2026 (P3-11 task registry SSOT — 4 published tasks, 28 smoke checks)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -59,7 +59,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-07 | Trajectory JSONL schema — align A + B | Both | done | Eng | `schemas/trajectory_v1.json` |
 | P2-08 | Transcript API trial (5 pilot names) | A | todo | Eng | Guidance tasks; see LATER-06 for NFLX EDGAR bundle ingest |
 
-**Cap:** Do not expand beyond 3–5 MVD tasks until P1-10 demo trajectories exist. *(Cap lifted — P1-10 done; 2 tasks published.)*
+**Cap:** Do not expand beyond 3–5 MVD tasks until P1-10 demo trajectories exist. *(Cap lifted — P1-10 done; 4 tasks published. Complete P3-11/P3-12 before task #5.)*
 
 ### P2-04 sub-track (eval campaign)
 
@@ -93,11 +93,27 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 
 ## P3 — Env v1.1 + benchmark scale (weeks 10–20)
 
+### Architecture hardening (Jul 2026 review — before task #5)
+
+| ID | Item | Track | Status | Owner | Notes |
+|----|------|-------|--------|-------|-------|
+| P3-11 | **`task_registry.py` SSOT** — manifest-driven task wiring | A | done | Eng | `task_registry.py`; `corpus_bundle` + `scripted_plan` in manifest; 3× bundle maps removed |
+| P3-12 | **GT-native L1** — GOOGL + AMZN verifiers | A | todo | Eng | Migrate hardcoded `GT_Q1_2026` / AMZN constants to GT-loaded verify (PEP/NFLX pattern); keep `verify_benchmark_l1.py` router only |
+| P3-13 | **Doc sync from manifest** | Both | todo | Eng | `docs/ARCHITECTURE.md`, root `README.md`, spec status blocks — manifest is source of truth (4 published tasks); prune or gitignore stale root `/runs/` |
+| P3-14 | **Track B fracture registry** | B | todo | Eng | Extend `fracture_library_v1.json` + `fracture_registry.py` for Track B; retire inline `fracture_map` in `env_v1/scripts/score_episode.py` |
+| P3-15 | **Synthetic L3 eval mode** | A | todo | Eng | Campaign flag `synthetic_l3: true` + separate FI column in leaderboard (P3-09 bait exists; eval wiring not built) |
+| P3-16 | **Task special-case cleanup** | A | todo | Eng | Remove per-`task_id` sprawl in `run_benchmark_campaign.py`, `score_benchmark_run.py`, mock agent once P3-11 registry exists |
+| P3-17 | **Contract literals audit** | A | todo | Eng | Align `agent_output_contract.py` bootstrap/fixture literals with GT JSON; single source on GT edit |
+
+**Gate:** P3-03 (15 tasks) blocked until P3-11 + P3-12 are `done`. Full EDGAR ingest remains **LATER-06** (not split out).
+
+### Env + catalog scale
+
 | ID | Item | Track | Status | Owner | Notes |
 |----|------|-------|--------|-------|-------|
 | P3-01 | Guidance dispute dual-control episode (Scenario #2) | B | deferred | CFA + Eng | NFLX-style |
 | P3-02 | Real-ticker earnings-quality episode (PEP/KO) | B | deferred | CFA | Authored excerpts |
-| P3-03 | Scale MVD to 15 tasks (5 cos × 3 archetypes) | A | deferred | Associate | ≤6 hrs/task by task 5 |
+| P3-03 | Scale MVD to 15 tasks (5 cos × 3 archetypes) | A | deferred | Associate | ≤6 hrs/task by task 5; **blocked on P3-11, P3-12** |
 | P3-04 | LLM-judge calibration loop — adjust thresholds | B | deferred | CFA | After 20+ env runs |
 | P3-05 | PM policy v2 — optional LLM paraphrase on FSM | B | deferred | Eng | After branch miss metrics |
 | P3-06 | Add `earnings_quality_dispute` to task catalog | Both | deferred | Product | New archetype |
@@ -131,14 +147,15 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-03 | L1 Python verification pattern | done | Reuse in Outcome checker |
 | SH-04 | Component specs (corpus, registry, eval, scoring) | done | Target architecture; implement lightweight first |
 | SH-05 | Word/PDF export generator | done | Stakeholder docs |
-| SH-06 | Corpus service implementation | deferred | **Explore later** — see BACKLOG LATER-01 (EDGAR full ingest) |
+| SH-06 | Corpus service implementation | deferred | **Explore later** — implementation rolls into **LATER-06** (full EDGAR ingest pipeline) |
 | SH-07 | Eval orchestrator (model adapters) | done | OpenAI + Anthropic adapters; live 2×2×3 campaign complete |
 | SH-08 | Calibration dataset (5 tasks, dual-rater) | todo | Both benchmark L2 and env Defense |
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 27 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 28 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
+| SH-14 | Shared runtime extract (Track A/B dedupe) | todo | `safe_calc`, LLM retry, trace normalize — thin package before SH-06 corpus service |
 
 ---
 
@@ -146,9 +163,9 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 
 | ID | Item | Track | Notes |
 |----|------|-------|-------|
-| LATER-01 | **Track A — EDGAR corpus full ingest** | A | Unlock met (4 published tasks + lab demo). Defer until P3-03 scale or corpus service (SH-06). |
+| LATER-01 | **Track A — EDGAR corpus full ingest** | A | Unlock met (4 published tasks + lab demo). **Implementation: LATER-06**; service wrapper: SH-06. Defer until P3-03 scale. |
 | LATER-02 | Track A — transcript API (non-NFLX guidance tasks) | A | P2-08; vendor + IR fallback runbook. NFLX uses shareholder letter (no transcript). |
-| LATER-06 | **NFLX_guidance_drift — EDGAR verbatim bundle ingest** | A | Replace excerpt stubs in `nflx_q2q3_2025_bundle.json` with checksum-verified Q4 2024 letter + Q3 2025 10-Q text; set `ingest_status` + `checksum_sha256` in `corpus_manifest_v1.json`. GT signed off — ingest does not block published status. Depends on P2-08 / SH-06. |
+| LATER-06 | **Full EDGAR ingest pipeline** | A | **Single home for corpus automation** — `ingest_edgar_excerpt.py` (accession → slice → bundle + checksum), NFLX Q4 2024 letter + Q3 2025 10-Q verbatim in `nflx_q2q3_2025_bundle.json`, manifest `ingest_status` + `checksum_sha256`; extend to other pilot tickers. P3-10 excerpt SHA pins are interim. GT signed off — ingest does not block published status. Depends on P2-08 / SH-06. |
 | LATER-03 | Track A — eval orchestrator (SH-07) | A | done | Adapters + `pilot_eval_campaign_v1` live run complete |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
 | LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | PEP + NFLX separate models; AMZN L2 recall tightened (P2-12); 4-task headline live (P2-20) |
@@ -163,6 +180,9 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 - 14-week full platform Gantt
 - Competing on “research note agent” breadth vs Anthropic templates
 - Live web retrieval in env episodes (fixed bundle only)
+- Full platform microservices (`docs/specs/*`) before 10 tasks — manifest + scripts remain MVD
+- Merging Track A and B episode formats
+- LLM-judge for benchmark L2 before SH-08 calibration set
 
 ---
 
@@ -211,4 +231,5 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 1. **Weekly:** Pull only from P0/P1 unless env demo is shipped.  
 2. **Lab meeting prep:** P1-10, P1-11, P1-04 must be `done`.  
 3. **Investor / Zstate review:** P2-06 + roadmap Phase map.  
-4. **Update status** in this file when items complete; add new IDs sequentially.
+4. **Before task #5:** P3-11 → P3-12 → P3-13 (registry, GT L1, doc sync).  
+5. **Update status** in this file when items complete; add new IDs sequentially.

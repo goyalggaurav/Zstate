@@ -1114,6 +1114,34 @@ def check_fracture_registry() -> None:
     assert all_registered_fracture_codes() <= taxonomy_codes()
 
 
+def check_task_registry() -> None:
+    """P3-11 — manifest-driven task wiring SSOT."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from task_registry import (  # noqa: E402
+        all_task_ids,
+        corpus_bundle_path,
+        load_manifest,
+        published_task_ids,
+        scripted_plan_path,
+    )
+
+    manifest = load_manifest()
+    assert manifest["published_tasks"] == 4
+    task_ids = all_task_ids()
+    assert len(task_ids) == 4
+    for task_id in task_ids:
+        path = corpus_bundle_path(task_id)
+        assert path.exists(), task_id
+    for task_id in (
+        "GOOGL_footnote_reconciliation",
+        "PEP_fx_organic_growth",
+        "AMZN_footnote_reconciliation",
+    ):
+        assert scripted_plan_path(task_id) is not None, task_id
+    assert scripted_plan_path("NFLX_guidance_drift") is None
+    assert set(published_task_ids()) == set(task_ids)
+
+
 def check_archetype_roles() -> None:
     """P2-13 — path_role slugs + archetype schema alignment."""
     sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
@@ -1144,6 +1172,7 @@ def main() -> int:
         ("Fracture taxonomy registry", check_fracture_taxonomy_registry),
         ("Corpus manifest", check_corpus_manifest),
         ("Corpus bundles", check_corpus_bundles),
+        ("Task registry SSOT", check_task_registry),
         ("Archetype path roles", check_archetype_roles),
         ("Section retrieval contract", check_section_retrieval_contract),
         ("Benchmark agent output contract", check_benchmark_agent_contract),

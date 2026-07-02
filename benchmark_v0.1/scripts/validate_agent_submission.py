@@ -26,12 +26,6 @@ from archetype_roles import canonicalize_section_slug  # noqa: E402
 from benchmark_tool_backend import load_bundle  # noqa: E402
 from fracture_registry import fracture_codes as resolve_fracture_codes, layer_map  # noqa: E402
 
-TASK_BUNDLES = {
-    "GOOGL_footnote_reconciliation": "corpus/googl_q1_2026_bundle.json",
-    "PEP_fx_organic_growth": "corpus/pep_fy2025_bundle.json",
-    "AMZN_footnote_reconciliation": "corpus/amzn_fy2025_bundle.json",
-}
-
 FAILURE_FRACTURE = layer_map("L3")
 
 

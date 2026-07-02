@@ -16,6 +16,8 @@
         "ground_truth": "ground_truth/GOOGL_footnote_reconciliation_gt.json",
         "gold_path": "gold_paths/GOOGL_footnote_reconciliation.json",
         "grader_rubric": "rubrics/GOOGL_footnote_reconciliation_grader.md",
+        "corpus_bundle": "corpus/googl_q1_2026_bundle.json",
+        "scripted_plan": "examples/agents/googl_good_plan.json",
         "verify_script": "scripts/verify_benchmark_l1.py"
       }
     },
@@ -29,6 +31,8 @@
         "ground_truth": "ground_truth/PEP_fx_organic_growth_gt.json",
         "gold_path": "gold_paths/PEP_fx_organic_growth.json",
         "grader_rubric": "rubrics/PEP_fx_organic_growth_grader.md",
+        "corpus_bundle": "corpus/pep_fy2025_bundle.json",
+        "scripted_plan": "examples/agents/pep_good_plan.json",
         "verify_script": "scripts/verify_benchmark_l1.py",
         "verify_script_task_entry": "scripts/verify_pep_fx_organic_growth.py"
       }
@@ -43,6 +47,8 @@
         "ground_truth": "ground_truth/AMZN_footnote_reconciliation_gt.json",
         "gold_path": "gold_paths/AMZN_footnote_reconciliation.json",
         "grader_rubric": "rubrics/AMZN_footnote_reconciliation_grader.md",
+        "corpus_bundle": "corpus/amzn_fy2025_bundle.json",
+        "scripted_plan": "examples/agents/amzn_good_plan.json",
         "verify_script": "scripts/verify_benchmark_l1.py"
       }
     },
@@ -56,6 +62,7 @@
         "ground_truth": "ground_truth/NFLX_guidance_drift_gt.json",
         "gold_path": "gold_paths/NFLX_guidance_drift.json",
         "grader_rubric": "rubrics/NFLX_guidance_drift_grader.md",
+        "corpus_bundle": "corpus/nflx_q2q3_2025_bundle.json",
         "verify_script": "scripts/verify_benchmark_l1.py"
       }
     }

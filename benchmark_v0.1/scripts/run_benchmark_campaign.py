@@ -193,7 +193,6 @@ def execute_campaign(
 ) -> list[dict]:
     """Run agent loop for each campaign slot; return execution records."""
     from benchmark_agent_loop import (
-        TASK_SCRIPTED_PLANS,
         resolve_output_paths,
         run_anthropic_task,
         run_live_task,
@@ -202,6 +201,7 @@ def execute_campaign(
         run_scripted_task,
         write_outputs,
     )
+    from task_registry import scripted_plan_path
 
     pub = published_tasks(manifest)
     runs_dir = (BENCH / campaign["runs_dir"]).resolve()
@@ -244,8 +244,8 @@ def execute_campaign(
                     continue
                 try:
                     if agent_mode == "scripted":
-                        plan = TASK_SCRIPTED_PLANS.get(task_id)
-                        if not plan or not plan.exists():
+                        plan = scripted_plan_path(task_id)
+                        if not plan:
                             raise FileNotFoundError(f"No scripted plan for {task_id}")
                         trace, structured_output, agent_submission = run_scripted_task(
                             task_id, plan, model_id=model_id

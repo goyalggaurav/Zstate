@@ -40,22 +40,16 @@ def decoy_trap_modes() -> dict[str, str]:
     return mapping
 
 
-def _manifest_entry(task_id: str) -> dict:
-    manifest = load_json(BENCH / "manifest.json")
-    for entry in manifest.get("pilot_tasks", []):
-        if entry["task_id"] == task_id:
-            return entry
-    raise ValueError(f"No manifest entry for task {task_id!r}")
-
-
 def gold_path_for_task(task_id: str) -> dict:
-    entry = _manifest_entry(task_id)
-    return load_json(BENCH / entry["paths"]["gold_path"])
+    from task_registry import load_gold_path
+
+    return load_gold_path(task_id)
 
 
 def ground_truth_for_task(task_id: str) -> dict:
-    entry = _manifest_entry(task_id)
-    return load_json(BENCH / entry["paths"]["ground_truth"])
+    from task_registry import load_ground_truth
+
+    return load_ground_truth(task_id)
 
 
 def l1_map_for_task(task_id: str | None) -> dict[str, str]:
