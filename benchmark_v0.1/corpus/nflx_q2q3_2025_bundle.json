@@ -1,6 +1,6 @@
 {
   "bundle_id": "nflx_q2q3_2025_bundle",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "task_id": "NFLX_guidance_drift",
   "archetype": "F_guidance_drift",
   "guidance_spec": {
@@ -14,6 +14,12 @@
       "doc_type": "shareholder_letter",
       "section": "narrative_guidance",
       "name": "Q4 2024 shareholder letter — FY2025 cash content spend outlook",
+      "source_anchor": {
+        "filing_date": "2025-01-21",
+        "source_url": "https://cdn.arstechnica.net/wp-content/uploads/2025/01/FINAL-Q4-24-Shareholder-Letter.pdf",
+        "note": "Shareholder letter (8-K ex-99.1); accession varies by mirror"
+      },
+      "excerpt_sha256": "c2d8020900d09c4c10b5fe896f95ce6f13e10bc96c5d76bb3063697eb9930644",
       "excerpt": "Netflix, Inc. — Q4 2024 Shareholder Letter (January 21, 2025)\n\nCash Flow and Capital Structure\n\nFor 2025, assuming no material swings in F/X, we expect to generate FCF of about $8B. Our forecast assumes cash content spend of roughly $18B and an estimated $800M in cash outflows related to the timing of certain direct and indirect tax deposits, which is in addition to our typical annual tax obligations.\n\n(Forward-looking guidance — annual cash content spend, not quarterly GAAP actuals.)"
     },
     "quantitative_actuals_doc": {
@@ -21,20 +27,33 @@
       "doc_type": "10-Q",
       "section": "quantitative_actuals",
       "name": "Q3 2025 10-Q — YTD content cash payments and Q3 amortization",
+      "source_anchor": {
+        "sec_accession": "0001065280-25-000406",
+        "filing_date": "2025-10-17",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm"
+      },
+      "excerpt_sha256": "c5c8150dcc5b191a36e5bd6b59df056cef40a5c01d835d74aa59471e46f59b0b",
       "excerpt": "Netflix, Inc. — Form 10-Q (quarter ended September 30, 2025)\n\nConsolidated Statements of Cash Flows (unaudited)\n\nNine months ended September 30, 2025\n\nAdditions to content assets (cash) $ (12,039,405)\n\nThree months ended September 30, 2025\n\nAdditions to content assets (cash) $ (4,653,935)\n\nAmortization of content assets (nine months ended September 30, 2025) $ 11,657,930\n\nThe following table summarizes the amortization of content assets:\n\nThree months ended September 30, 2025\n\nTotal amortization of content assets $ 4,002,744\n\nManagement's Discussion and Analysis:\n\nPayments for content assets are included in net cash provided by operating activities. Content amortization on the income statement is not the same as content cash payments on the cash flow statement."
     },
-    "quantitative_prior_quarter_doc": {
-      "doc_id": "NFLX_10Q_2025Q3",
+    "quantitative_wrong_ytd_window_doc": {
+      "doc_id": "NFLX_10Q_2025Q2",
       "doc_type": "10-Q",
       "section": "quantitative_wrong_ytd_window",
-      "name": "Six months ended June 30, 2025 only (decoy)",
-      "excerpt": "Netflix, Inc. — Form 10-Q (quarter ended September 30, 2025)\n\nSix months ended June 30, 2025\n\nAdditions to content assets (cash) $ (7,385,470)\n\nAmortization of content assets (six months ended June 30, 2025) $ 7,655,186"
+      "name": "Q2 2025 10-Q — six-month YTD column (decoy)",
+      "source_anchor": {
+        "sec_accession": "0001065280-25-000323",
+        "filing_date": "2025-07-17",
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323.htm"
+      },
+      "excerpt_sha256": "97d9a11788efc7a491ad7b4152c3b09421143b15dbd5c7aeec109c473f9d6f8b",
+      "excerpt": "Netflix, Inc. — Form 10-Q (quarter ended June 30, 2025)\n\nConsolidated Statements of Cash Flows (unaudited)\n\nSix months ended June 30, 2025\n\nAdditions to content assets (cash) $ (7,385,470)\n\nAmortization of content assets (six months ended June 30, 2025) $ 7,655,186\n\n(Note: Q3 2025 10-Q reports nine-month and three-month columns only; six-month YTD is from this Q2 filing.)"
     }
   },
   "section_registry": [
     {
       "section_slug": "narrative_guidance",
       "path_role": "narrative_guidance",
+      "retrieval_period": "2024Q4",
       "section_id": "NFLX_shareholder_letter_2024Q4_guidance",
       "doc_id": "NFLX_shareholder_letter_2024Q4",
       "document_key": "narrative_guidance_doc",
@@ -45,6 +64,7 @@
     {
       "section_slug": "quantitative_actuals",
       "path_role": "quantitative_actuals",
+      "retrieval_period": "2025Q3",
       "section_id": "NFLX_10Q_2025Q3_content_actuals",
       "doc_id": "NFLX_10Q_2025Q3",
       "document_key": "quantitative_actuals_doc",
@@ -55,10 +75,11 @@
     {
       "section_slug": "quantitative_wrong_ytd_window",
       "path_role": "quantitative_wrong_ytd_window",
-      "section_id": "NFLX_10Q_2025Q2_ytd_decoy",
-      "doc_id": "NFLX_10Q_2025Q3",
-      "document_key": "quantitative_prior_quarter_doc",
-      "filing_label": "Six-month YTD column only (decoy)",
+      "retrieval_period": "2025Q2",
+      "section_id": "NFLX_10Q_2025Q2_six_month_decoy",
+      "doc_id": "NFLX_10Q_2025Q2",
+      "document_key": "quantitative_wrong_ytd_window_doc",
+      "filing_label": "Q2 2025 10-Q — six-month YTD column (decoy)",
       "required": false,
       "decoy_trap": "wrong_ytd_window",
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
@@ -78,7 +99,7 @@
     "Search_Filing": {
       "NFLX:2024Q4:narrative_guidance": "narrative_guidance_doc",
       "NFLX:2025Q3:quantitative_actuals": "quantitative_actuals_doc",
-      "NFLX:2025Q3:quantitative_wrong_ytd_window": "quantitative_prior_quarter_doc"
+      "NFLX:2025Q2:quantitative_wrong_ytd_window": "quantitative_wrong_ytd_window_doc"
     }
   }
 }

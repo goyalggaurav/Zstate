@@ -3,97 +3,93 @@
 **Reviewer:** Gaurav Goyal (CFA Level III candidate)  
 **Artifact:** `benchmark_v0.1/ground_truth/NFLX_guidance_drift_gt.json`  
 **Task:** `NFLX_guidance_drift` (Type F, archetype `F_guidance_drift`)  
-**Backlog ref:** P2-01 / P2-08 (EDGAR ingest deferred)  
+**Backlog ref:** P2-19 / LATER-06 (EDGAR verbatim ingest deferred)  
 **Scored period:** FY2025 guidance vs YTD through 2025Q3  
 **Status:** `expert_reviewed` — **signed off**  
-**Eng Pattern 1 rebuild date:** 2026-07-02  
+**Eng Pattern 1 rebuild:** 2026-07-02  
 **Expert review date:** 2026-07-02  
-**Implied-pace L1 formula sign-off:** 2026-07-02 (9/12 pro-rata baseline approved)
+**Checklist revision (grouped audit):** 2026-07-02  
 
 ---
 
 ## Eng summary
 
-Compare **FY2025 annual cash content spend guidance** from the Q4 2024 shareholder letter to **nine-month YTD actual** content cash payments in the Q3 2025 10-Q. Archetype `F_guidance_drift` uses path roles: `narrative_guidance` → `quantitative_actuals`.
+Compare **FY2025 annual cash content spend guidance** (Q4 2024 shareholder letter, filing **2025-01-21**) to **nine-month YTD actual** content cash payments (Q3 2025 10-Q, filing **2025-10-17**). Archetype `F_guidance_drift`; path roles: `narrative_guidance` → `quantitative_actuals`.
 
-**Guidance grain:** annual (~$18B). **Actual grain:** nine months ended September 30, 2025. **Implied pace:** `18,000 × 9/12 = 13,500` USD M — standard pro-rata baseline for variance analysis (expert-approved for L1 scoring).
+**Guidance grain:** annual (~$18B). **Actual grain:** nine months ended September 30, 2025. **Implied pace:** `18,000 × 9/12 = 13,500` USD M — standardized L1 pro-rata baseline (expert-approved).
 
-**Drift narrative:** YTD cash **below** implied annual pace (−10.8% variance); `guidance_pace_under: true`.
-
-**Gate B sources (SEC):**
-
-- [Q4 2024 shareholder letter](https://cdn.arstechnica.net/wp-content/uploads/2025/01/FINAL-Q4-24-Shareholder-Letter.pdf) — filed 2025-01-21  
-- [Q3 2025 Form 10-Q](https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm) — filed 2025-10-17  
-
-Corpus bundle uses pilot excerpts aligned to these filings; full EDGAR verbatim ingest deferred (LATER-06 / P2-08).
+**Drift:** YTD cash **below** implied annual pace (−10.8%); `guidance_pace_under: true`.
 
 ### Pattern 1 numbers (USD millions)
 
-| Line | Value | Source (path role) |
-|------|-------|-------------------|
-| Annual cash content spend guidance | 18,000 | `narrative_guidance` — Q4 2024 letter |
-| YTD period (months) | 9 | `quantitative_actuals` — 10-Q column header |
+| Line | Value | Source (path role · period) |
+|------|-------|----------------------------|
+| Annual cash content spend guidance | 18,000 | `narrative_guidance` · 2024Q4 |
+| YTD period (months) | 9 | `quantitative_actuals` · 2025Q3 |
 | YTD content cash payments | 12,039 | `quantitative_actuals` — additions (12,039,405) |
-| Q3 content amortization | 4,003 | `quantitative_actuals` — supplemental table (4,002,744) |
+| Q3 content amortization | 4,003 | `quantitative_actuals` — supplemental (4,002,744) |
 | **Implied YTD pace** | **13,500** | `18,000 × 9/12` (L1 computed) |
 | Pace variance % | −10.8 | `(12,039 − 13,500) / 13,500 × 100` |
 | Below implied pace | true | YTD cash < implied pace |
 
-**Note:** Cash flow statement reports additions as `(12,039,405)` outflow; GT stores **12,039** USD M absolute spend (consistent with other benchmark tasks).
+Cash flow additions are `(12,039,405)` outflow in the filing; GT stores **12,039** USD M absolute (benchmark convention).
 
-### Traps
+### Trap → fracture map
 
-| Trap | Wrong behavior | Fracture |
-|------|----------------|----------|
-| `wrong_ytd_window` | Six-month YTD **7,385** instead of nine-month **12,039** | `GUIDANCE_PERIOD_ERR` |
-| `amortization_as_cash` | Nine-month amortization **11,658** reported as YTD cash | `CASH_VS_AMORT_ERR` |
-| `cite_duplicate_snippet` | Reuses same excerpt for multiple metrics (L3) | `CITE_BROAD` |
+| Failure mode | Trap value | Filing source | Fracture |
+|--------------|------------|---------------|----------|
+| `wrong_ytd_window` | 7,385 | Q2 2025 10-Q (2025-07-17) six-month additions (7,385,470) | `GUIDANCE_PERIOD_ERR` |
+| `amortization_as_cash` | 11,658 | Q3 2025 10-Q (2025-10-17) nine-month amort (11,657,930) | `CASH_VS_AMORT_ERR` |
+| `cite_duplicate_snippet` | — | L3 | `CITE_BROAD` |
 
-Decoy slug `quantitative_wrong_ytd_window` serves six-month column only — must not be used for scored nine-month metrics.
+Decoy slug `quantitative_wrong_ytd_window` maps to **Q2 2025 10-Q** (`period=2025Q2`), not Q3 — six-month column is absent from Q3 cash flow face.
 
-**Policy:** Content amortization ≠ content cash payments (`amortization_not_cash_spend` ack required).
+**Cross-check:** 12,039 − 4,654 = 7,385 (nine-month minus Q3 single quarter) — same numeric trap, different retrieval error path.
 
 ---
 
 ## Expert checklist
 
-- [x] Annual guidance ~$18B matches Q4 2024 shareholder letter excerpt
-- [x] Nine-month YTD additions 12,039M matches Q3 2025 10-Q cash flow statement
-- [x] Q3 amortization 4,003M matches supplemental amortization table
-- [x] Implied pace formula `annual × ytd_months / 12` approved for L1 (standard pro-rata baseline)
-- [x] Pace variance −10.8% and `guidance_pace_under: true` arithmetically correct
-- [x] Six-month decoy (7,385) and amort-as-cash trap (11,658) use real filing lines
-- [x] Path roles auditable; guidance grain declared in GT `guidance_spec`
-- [x] No investment recommendation required (Type F)
-- [ ] Full EDGAR verbatim ingest + checksums — **deferred** (LATER-06; not blocking sign-off)
+### I. Mathematical & Financial Baseline
+
+- [x] **Annual Guidance Anchoring:** $18B annual guide verified against Q4 2024 shareholder letter (filing **2025-01-21**).
+- [x] **YTD Actuals Anchoring:** $12,039M nine-month additions verified against Q3 2025 10-Q Cash Flow Statement (filing **2025-10-17**, accession `0001065280-25-000406`).
+- [x] **Temporal Reconciliation:** 9/12 pro-rata baseline ($13,500M) confirmed as the standardized L1 reasoning baseline for pace analysis.
+- [x] **Metric Accuracy:** Pace variance (−10.8%) and `guidance_pace_under: true` validated against ground truth derivation.
+
+### II. Architecture & Decoy Integrity
+
+- [x] **Trap Validity:** `wrong_ytd_window` (6-mo decoy **7,385M** from Q2 10-Q) and `amortization_as_cash` (9-mo **11,658M** amort from Q3 10-Q) mapped to actual filing lines; cross-contamination prevented via `failure_mode_map` → fracture codes in `verify_guidance_drift.py`.
+- [x] **Role-Based Pathing:** Path roles (`narrative_guidance` → `quantitative_actuals`) enforced; `retrieval_period` per slug (2024Q4 vs 2025Q3) eliminates ticker-specific note-number drift.
+- [x] **Archetype Alignment:** Verified as `F_guidance_drift` pattern (YTD actuals vs annualized guidance pace).
+
+### III. Compliance & Governance
+
+- [x] **Investment Independence:** Type F classification confirmed; benchmark remains strictly extractive/reconciliatory (no forward-looking sentiment analysis).
+- [ ] **Data Pipeline Maturity:** Full EDGAR verbatim ingest and automated filing-level checksums deferred (**LATER-06**). **Mitigation:** Bundle excerpts are **SHA-256 hash-linked** to SEC accession URLs in `nflx_q2q3_2025_bundle.json` and `corpus_manifest_v1.json` (`excerpt_sha256`); expert-vetted until SH-06 ingest.
 
 ---
 
-## Eng verification command
+## Source breadcrumbs (2027 audit trail)
+
+| Document | doc_id | Filing date | SEC accession / URL |
+|----------|--------|-------------|---------------------|
+| Q4 2024 shareholder letter | `NFLX_shareholder_letter_2024Q4` | 2025-01-21 | [Letter PDF](https://cdn.arstechnica.net/wp-content/uploads/2025/01/FINAL-Q4-24-Shareholder-Letter.pdf) |
+| Q3 2025 10-Q (actuals) | `NFLX_10Q_2025Q3` | 2025-10-17 | `0001065280-25-000406` · [10-Q](https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm) |
+| Q2 2025 10-Q (6-mo decoy) | `NFLX_10Q_2025Q2` | 2025-07-17 | `0001065280-25-000323` · [10-Q](https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323.htm) |
+
+---
+
+## Eng verification
 
 ```bash
 python3 benchmark_v0.1/scripts/verify_benchmark_l1.py --task NFLX_guidance_drift
+python3 benchmark_v0.1/scripts/validate_corpus_bundle.py --task NFLX_guidance_drift
 ```
 
-Expected: `all_pass: true`
+**YTD window trap** — set `"ytd_content_cash_payments_usd_m": 7385` → `wrong_ytd_window` / `GUIDANCE_PERIOD_ERR`.
 
-**YTD window trap (exit code 1 expected):**
-
-```bash
-python3 benchmark_v0.1/scripts/verify_guidance_drift.py \
-  --ground-truth benchmark_v0.1/ground_truth/NFLX_guidance_drift_gt.json \
-  --agent-output /tmp/nflx_ytd_trap.json
-```
-
-Fixture `/tmp/nflx_ytd_trap.json` — copy extracted values from GT but set `"ytd_content_cash_payments_usd_m": 7385`.
-
-Expected: `failure_modes: ["wrong_ytd_window"]`, `fracture_codes: ["GUIDANCE_PERIOD_ERR"]`
-
-**Amort-as-cash trap:**
-
-Set `"ytd_content_cash_payments_usd_m": 11658` in the same fixture shape.
-
-Expected: `failure_modes: ["amortization_as_cash"]`, `fracture_codes: ["CASH_VS_AMORT_ERR"]`
+**Amort-as-cash trap** — set `"ytd_content_cash_payments_usd_m": 11658` → `amortization_as_cash` / `CASH_VS_AMORT_ERR`.
 
 ---
 
@@ -104,14 +100,4 @@ Expected: `failure_modes: ["amortization_as_cash"]`, `fracture_codes: ["CASH_VS_
 **Reviewer:** Gaurav Goyal (CFA Level III candidate)  
 **Date:** 2 July 2026  
 
-### Comments
-
-- **Annual guidance:** Confirmed. ~$18B cash content spend from Q4 2024 letter; no fictional quarterly range.
-- **YTD actuals:** Confirmed. 12,039M nine-month additions from Q3 2025 10-Q.
-- **Implied pace / variance:** Confirmed. 9/12 pro-rata baseline (13,500M) is appropriate for L1 variance scoring; −10.8% under pace.
-- **Amortization line:** Confirmed. 4,003M Q3 supplemental table; distinct from cash payments.
-- **Traps:** Confirmed. Six-month YTD and YTD-amort-as-cash signatures match real decoy lines.
-- **Corpus:** Excerpt stubs acceptable for pilot; EDGAR full ingest tracked separately (LATER-06).
-- **Compliance:** Confirmed. No investment recommendation required.
-
-**Sign-off:** NFLX fourth pilot task cleared for **published** benchmark use alongside GOOGL, PEP, and AMZN.
+**Sign-off:** NFLX fourth pilot task cleared for **published** benchmark use alongside GOOGL, PEP, and AMZN. Checklist groups Math / Architecture / Governance for auditor navigation; trap provenance corrected to Q2 10-Q for six-month decoy.

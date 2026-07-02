@@ -37,13 +37,13 @@
       "step": 1,
       "action": "Extract FY2025 annual cash content spend guidance",
       "tool": "Search_Filing",
-      "target": "narrative_guidance — roughly $18B annual cash content spend"
+      "target": "Search_Filing period=2024Q4 · narrative_guidance — roughly $18B annual cash content spend"
     },
     {
       "step": 2,
       "action": "Extract nine-month YTD content cash payments and Q3 amortization",
       "tool": "Search_Filing",
-      "target": "quantitative_actuals — nine months ended September 30, 2025 column"
+      "target": "Search_Filing period=2025Q3 · quantitative_actuals — nine months ended September 30, 2025"
     },
     {
       "step": 3,

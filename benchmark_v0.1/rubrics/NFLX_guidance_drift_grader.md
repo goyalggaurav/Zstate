@@ -8,7 +8,7 @@
 |--------|------|------|
 | Annual guidance | 18,000 USD M from Q4 2024 letter | Wrong figure or quarterly fiction |
 | YTD period | 9 months (through Q3 2025) | Six-month or single-quarter window |
-| YTD content cash | 12,039 USD M (9-month additions) | Six-month (7,385) or YTD amort (11,658) |
+| YTD content cash | 12,039 USD M (9-month additions) | Six-month Q2 10-Q (7,385) or YTD amort (11,658) |
 | Q3 amortization | 4,003 USD M (Q3 supplemental table) | N/A or swapped with cash |
 | Pace variance | ~−10.8% vs implied 13,500 USD M pace | Wrong formula or wrong grain |
 | Below pace | true (YTD under implied pace) | false when YTD < pace |

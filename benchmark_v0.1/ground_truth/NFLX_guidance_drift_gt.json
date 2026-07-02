@@ -91,6 +91,12 @@
     {
       "id": "wrong_ytd_window",
       "description": "Uses six-month YTD column instead of nine-month YTD",
+      "source": {
+        "doc_id": "NFLX_10Q_2025Q2",
+        "filing_date": "2025-07-17",
+        "sec_accession": "0001065280-25-000323",
+        "line": "Additions to content assets (six months ended June 30, 2025) (7,385,470)"
+      },
       "wrong_signatures": {
         "ytd_content_cash_payments_usd_m": 7385
       }
@@ -98,6 +104,12 @@
     {
       "id": "amortization_as_cash",
       "description": "Reports YTD content amortization as if it were YTD content cash payments",
+      "source": {
+        "doc_id": "NFLX_10Q_2025Q3",
+        "filing_date": "2025-10-17",
+        "sec_accession": "0001065280-25-000406",
+        "line": "Amortization of content assets (nine months) 11,657,930 — not additions"
+      },
       "wrong_signatures": {
         "ytd_content_cash_payments_usd_m": 11658
       }

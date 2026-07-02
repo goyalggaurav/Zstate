@@ -102,7 +102,8 @@
       "period_end": "2024-12-31",
       "filing_date": "2025-01-21",
       "source_url": "https://cdn.arstechnica.net/wp-content/uploads/2025/01/FINAL-Q4-24-Shareholder-Letter.pdf",
-      "ingest_status": "metadata_only",
+      "excerpt_sha256": "c2d8020900d09c4c10b5fe896f95ce6f13e10bc96c5d76bb3063697eb9930644",
+      "ingest_status": "excerpt_vetted",
       "checksum_sha256": null,
       "task_refs": ["NFLX_guidance_drift"],
       "note": "Guidance source for annual cash content spend (~$18B FY2025)"
@@ -119,6 +120,22 @@
       "note": "Deferred — P2-08 transcript API; not used by NFLX_guidance_drift v1.1"
     },
     {
+      "doc_id": "NFLX_10Q_2025Q2",
+      "ticker": "NFLX",
+      "doc_type": "10-Q",
+      "form_type": "10-Q",
+      "fiscal_period": "2025Q2",
+      "period_end": "2025-06-30",
+      "filing_date": "2025-07-17",
+      "sec_accession": "0001065280-25-000323",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000323.htm",
+      "excerpt_sha256": "97d9a11788efc7a491ad7b4152c3b09421143b15dbd5c7aeec109c473f9d6f8b",
+      "ingest_status": "excerpt_vetted",
+      "checksum_sha256": null,
+      "task_refs": ["NFLX_guidance_drift"],
+      "note": "Decoy source — six-month YTD column for wrong_ytd_window trap"
+    },
+    {
       "doc_id": "NFLX_10Q_2025Q3",
       "ticker": "NFLX",
       "doc_type": "10-Q",
@@ -126,8 +143,10 @@
       "fiscal_period": "2025Q3",
       "period_end": "2025-09-30",
       "filing_date": "2025-10-17",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000045/nflx-20250930.htm",
-      "ingest_status": "metadata_only",
+      "sec_accession": "0001065280-25-000406",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1065280/000106528025000406/nflx-20250930.htm",
+      "excerpt_sha256": "c5c8150dcc5b191a36e5bd6b59df056cef40a5c01d835d74aa59471e46f59b0b",
+      "ingest_status": "excerpt_vetted",
       "checksum_sha256": null,
       "task_refs": ["NFLX_guidance_drift"]
     },

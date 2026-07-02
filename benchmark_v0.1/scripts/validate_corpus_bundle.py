@@ -138,6 +138,7 @@ def validate_section_registry(
         results.append(("gold_path_in_registry", sid, sid in registry_section_ids))
 
     required_doc_ids = {d["doc_id"] for d in task_json.get("required_documents", [])}
+    bundle_doc_ids = {d.get("doc_id") for d in bundle.get("documents", {}).values()}
     slugs_in_registry = set()
     for entry in registry:
         slug = entry["section_slug"]
@@ -146,9 +147,12 @@ def validate_section_registry(
         results.append(
             ("registry_document_key", doc_key, doc_key in bundle.get("documents", {}))
         )
-        results.append(
-            ("registry_doc_id", entry.get("doc_id", ""), entry.get("doc_id") in required_doc_ids)
-        )
+        doc_id = entry.get("doc_id", "")
+        if entry.get("required", False):
+            doc_ok = doc_id in required_doc_ids
+        else:
+            doc_ok = doc_id in bundle_doc_ids
+        results.append(("registry_doc_id", doc_id, doc_ok))
         if entry.get("required", False):
             slug = entry["section_slug"]
             search_keys = bundle.get("retrieval_keys", {}).get("Search_Filing", {})

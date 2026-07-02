@@ -138,7 +138,9 @@ def registry_prompt_lines(bundle: dict) -> str:
         label = entry.get("filing_label") or entry.get("name", slug)
         suffix = " [decoy]" if entry.get("decoy_trap") else ""
         req = "required" if entry.get("required", False) else "optional"
-        lines.append(f"  - {slug} ({req}): {label}{suffix}")
+        period = entry.get("retrieval_period", "")
+        period_hint = f" · period={period}" if period else ""
+        lines.append(f"  - {slug} ({req}): {label}{suffix}{period_hint}")
     return "\n".join(lines)
 
 
