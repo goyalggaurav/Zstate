@@ -28,6 +28,7 @@
       "citation": {
         "doc_id": "AMZN_10K_2025",
         "note": "Note 10 — Segment Information",
+        "section_slug": "segment_financials",
         "snippet": "North America\nNet sales $ 426,305"
       }
     },
@@ -39,6 +40,7 @@
       "citation": {
         "doc_id": "AMZN_10K_2025",
         "note": "Note 10 — Segment Information",
+        "section_slug": "segment_financials",
         "snippet": "International\nNet sales $ 161,894"
       }
     },
@@ -50,6 +52,7 @@
       "citation": {
         "doc_id": "AMZN_10K_2025",
         "note": "Note 10 — Segment Information",
+        "section_slug": "segment_financials",
         "snippet": "AWS\nNet sales $ 128,725"
       }
     },
@@ -61,6 +64,7 @@
       "citation": {
         "doc_id": "AMZN_10K_2025",
         "note": "Consolidated Statements of Operations",
+        "section_slug": "consolidated_primary",
         "snippet": "Net sales $ 716,924"
       }
     },
@@ -110,7 +114,8 @@
       "description": "Uses FY2024 consolidated or segment column",
       "wrong_signatures": {
         "consolidated_net_sales": 637959
-      }
+      },
+      "fracture_code": "HALLUC_FILL"
     },
     {
       "id": "intl_fx_swap",
@@ -118,14 +123,27 @@
       "wrong_signatures": {
         "international_reported_growth_pct": 10.0,
         "international_cc_growth_pct": 13.0
-      }
+      },
+      "fracture_code": "CC_OMIT"
     },
     {
       "id": "treat_sbc_as_segment_line_item",
       "description": "Adds SBC expense to segment net sales sum or consolidated total",
       "wrong_signatures": {
         "consolidated_net_sales": 736391
-      }
+      },
+      "fracture_code": "SBC_ALLOCATION_ERR"
     }
-  ]
+  ],
+
+  "expert_sign_off": {
+    "status": "expert_reviewed",
+    "reviewer": "Gaurav Goyal (CFA Level III candidate)",
+    "review_date": "2026-07-02",
+    "review_doc": "docs/expert_drafts/AMZN_GT_REVIEW.md",
+    "notes": "Signed off FY2025 segment reconciliation + SBC $19,467M. Scale pass (2026-07-02): verification_schema, section_slug on citations, fracture_code parity — no numeric changes."
+  },
+
+  "review_status": "expert_reviewed",
+  "cfa_review_ref": "docs/expert_drafts/AMZN_GT_REVIEW.md"
 }

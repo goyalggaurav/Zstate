@@ -62,6 +62,8 @@ Decoy slug `segment_financials_prior_year` serves FY2024 column only — must no
 - [x] SBC allocation trap: consolidated **736,391** → `treat_sbc_as_segment_line_item` / `SBC_ALLOCATION_ERR`
 - [x] Live eval (Jul 2026, role slugs): L2 separates models that skip Note 8; L3 duplicate-snippet penalty on gpt-4o AMZN runs
 
+**Scale pass metadata (2026-07-02, no numeric changes):** `verification_schema`; `section_slug` on all extracted citations; `fracture_code` on each `failure_modes` entry (P3-14 parity with KO/GOOGL).
+
 ---
 
 ## Eng verification command
@@ -75,7 +77,8 @@ Expected: `all_pass: true`
 **SBC trap regression (exit code 1 expected):**
 
 ```bash
-python3 benchmark_v0.1/scripts/verify_amzn_footnote_reconciliation.py \
+python3 benchmark_v0.1/scripts/verify_footnote_exact.py \
+  --ground-truth benchmark_v0.1/ground_truth/AMZN_footnote_reconciliation_gt.json \
   --agent-output /tmp/amzn_sbc_trap.json
 ```
 
@@ -111,5 +114,6 @@ Expected: `failure_modes: ["treat_sbc_as_segment_line_item"]`, `fracture_codes: 
 - **SBC trap:** Confirmed. Agent output with consolidated 736,391 correctly fails L1 with `SBC_ALLOCATION_ERR`.
 - **Path roles / five-section gold path:** Confirmed. Issuer-agnostic slugs; Note 8 gate is fair.
 - **Compliance:** Confirmed. No investment recommendation required.
+- **Scale pass metadata (2026-07-02):** Confirmed. `verification_schema`, citation `section_slug` tokens, and `fracture_code` on failure modes — no numeric or snippet changes.
 
-**Sign-off:** AMZN third pilot task cleared for **published** benchmark use alongside GOOGL and PEP.
+**Sign-off:** AMZN third pilot task cleared for **published** benchmark use alongside GOOGL and PEP. GT artifact **`expert_reviewed`** as of 2026-07-02 (scale-pass metadata re-confirmed).
