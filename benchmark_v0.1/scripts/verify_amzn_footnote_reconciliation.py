@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 from fracture_registry import fracture_codes as resolve_fracture_codes, l1_map_for_task
+from verify_common import is_empty_agent_output
 
 FAILURE_FRACTURE = l1_map_for_task("AMZN_footnote_reconciliation")
 
@@ -87,6 +88,9 @@ def _sbc_trap_triggered(values: dict, gt: dict) -> bool:
 
 
 def classify_failure(values: dict, gt: dict) -> list[str]:
+    if is_empty_agent_output(values):
+        return ["submit_timeout"]
+
     consolidated = _get_field(values, "consolidated_net_sales")
     prior = gt.get("prior_consolidated_net_sales")
     if prior is not None and consolidated == prior:

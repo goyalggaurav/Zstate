@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 from fracture_registry import fracture_codes as resolve_fracture_codes, l1_map_for_task
+from verify_common import is_empty_agent_output
 
 # Back-compat alias — prefer fracture_registry.l1_map_for_task()
 FAILURE_FRACTURE = l1_map_for_task("NFLX_guidance_drift")
@@ -62,6 +63,8 @@ def _close(a, b, tol: float = 0) -> bool:
 
 
 def classify_failure(values: dict, gt: dict) -> list[str]:
+    if is_empty_agent_output(values):
+        return ["submit_timeout"]
     for mode_id, sigs in gt["traps"].items():
         if sigs and all(_get(values, k) == v for k, v in sigs.items()):
             return [mode_id]

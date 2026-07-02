@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 from fracture_registry import fracture_codes as resolve_fracture_codes, l1_map_for_task
+from verify_common import is_empty_agent_output
 
 FAILURE_FRACTURE = l1_map_for_task("PEP_fx_organic_growth")
 
@@ -110,6 +111,9 @@ def _spot_trap_triggered(values: dict, gt: dict) -> bool:
 
 
 def classify_failure(values: dict, gt: dict) -> list[str]:
+    if is_empty_agent_output(values):
+        return ["submit_timeout"]
+
     modes: list[str] = []
     expected = gt["values"]
     schema = gt["schema"]

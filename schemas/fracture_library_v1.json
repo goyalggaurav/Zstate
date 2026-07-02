@@ -37,6 +37,7 @@
   },
 
   "l1_global": {
+    "submit_timeout": "TIMEOUT",
     "segment_sum_mismatch": "RECON_OMIT",
     "hedging_as_segment": "RECON_OMIT",
     "spot_rate_method": "FX_METHOD_ERR",

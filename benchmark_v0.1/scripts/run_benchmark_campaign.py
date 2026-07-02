@@ -155,6 +155,17 @@ def published_tasks(manifest: dict) -> dict[str, dict]:
     }
 
 
+def filter_models_for_agent_mode(agent_mode: str, model_list: list[str]) -> list[str]:
+    """Restrict execute slots to models compatible with a fixed --agent provider."""
+    if agent_mode == "gemini":
+        return [m for m in model_list if is_gemini_model(m)]
+    if agent_mode == "openai":
+        return [m for m in model_list if is_openai_model(m)]
+    if agent_mode == "anthropic":
+        return [m for m in model_list if is_anthropic_model(m)]
+    return model_list
+
+
 def verify_cmd(task_entry: dict, agent_path: Path) -> list[str]:
     from verify_benchmark_l1 import l1_verify_argv
 
@@ -206,7 +217,7 @@ def execute_campaign(
     run_delay = float(os.environ.get("BENCHMARK_RUN_DELAY_SECONDS", "0"))
     eval_mode = eval_mode_enabled(campaign.get("eval_mode"))
 
-    model_list = models or campaign["models"]
+    model_list = filter_models_for_agent_mode(agent_mode, models or campaign["models"])
     task_list = tasks or campaign["tasks"]
 
     for model_id in model_list:
@@ -419,14 +430,21 @@ def main() -> int:
 
     if args.execute:
         models_to_run = model_filter or campaign["models"]
+        exec_models = filter_models_for_agent_mode(args.agent, models_to_run)
+        if args.agent in ("openai", "anthropic", "gemini") and not exec_models:
+            print(
+                f"ERROR: --agent {args.agent} matched no models in {models_to_run}",
+                file=sys.stderr,
+            )
+            return 1
         needs_openai = args.agent in ("openai",) or (
-            args.agent == "auto" and any(is_openai_model(m) for m in models_to_run)
+            args.agent == "auto" and any(is_openai_model(m) for m in exec_models)
         )
         needs_anthropic = args.agent in ("anthropic",) or (
-            args.agent == "auto" and any(is_anthropic_model(m) for m in models_to_run)
+            args.agent == "auto" and any(is_anthropic_model(m) for m in exec_models)
         )
         needs_gemini = args.agent in ("gemini",) or (
-            args.agent == "auto" and any(is_gemini_model(m) for m in models_to_run)
+            args.agent == "auto" and any(is_gemini_model(m) for m in exec_models)
         )
         if needs_openai and not os.environ.get("OPENAI_API_KEY"):
             print("ERROR: OPENAI_API_KEY not set for OpenAI model slots", file=sys.stderr)
@@ -446,7 +464,7 @@ def main() -> int:
             campaign,
             manifest,
             agent_mode=args.agent,
-            models=model_filter,
+            models=exec_models if args.agent in ("openai", "anthropic", "gemini") else model_filter,
             tasks=task_filter,
             skip_existing=args.skip_existing,
         )

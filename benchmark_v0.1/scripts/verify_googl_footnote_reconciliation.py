@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from fracture_registry import fracture_codes as resolve_fracture_codes, l1_map_for_task
+from verify_common import is_empty_agent_output
 
 FAILURE_FRACTURE = l1_map_for_task("GOOGL_footnote_reconciliation")
 
@@ -93,6 +94,9 @@ def _segments_match_gt(gs, gc, ob, gt: dict) -> bool:
 
 def classify_failure(values: dict, gt: dict) -> list[str]:
     """Return ordered failure_mode ids detected from agent output."""
+    if is_empty_agent_output(values):
+        return ["submit_timeout"]
+
     gs = _get_field(values, "google_services_revenue", "google_services_revenue_fy2024")
     gc = _get_field(values, "google_cloud_revenue", "google_cloud_revenue_fy2024")
     ob = _get_field(values, "other_bets_revenue", "other_bets_revenue_fy2024")

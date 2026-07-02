@@ -19,6 +19,7 @@ from agents.benchmark_tool_specs import (
     parse_submission_args,
     to_anthropic_tools,
 )
+from agents.retrieval_nudge import RetrievalNudgeTracker
 from agents.llm_retry import retry_sleep_seconds
 from benchmark_eval_mode import eval_mode_enabled
 
@@ -63,6 +64,8 @@ class AnthropicBenchmarkAgent:
         self.pending_tool_calls: list[dict] | None = None
         self._pending_index = 0
         self._pending_tool_results: list[dict] = []
+        self._retrieval_nudge = RetrievalNudgeTracker()
+        self._pending_nudge: str | None = None
 
     def _request(self, payload: dict) -> dict:
         if not self.api_key:
@@ -111,7 +114,11 @@ class AnthropicBenchmarkAgent:
 
     def _flush_tool_results(self) -> None:
         if self._pending_tool_results:
-            self.messages.append({"role": "user", "content": list(self._pending_tool_results)})
+            blocks: list[dict] = list(self._pending_tool_results)
+            if self._pending_nudge:
+                blocks.append({"type": "text", "text": self._pending_nudge})
+                self._pending_nudge = None
+            self.messages.append({"role": "user", "content": blocks})
             self._pending_tool_results = []
 
     def _parse_tool_calls(self, content: list[dict]) -> list[dict]:
@@ -174,6 +181,9 @@ class AnthropicBenchmarkAgent:
             "tool_use_id": tool_call_id,
             "content": output[:8000],
         })
+        nudge = self._retrieval_nudge.on_tool_result(name)
+        if nudge:
+            self._pending_nudge = nudge
 
     def _tool_call_to_action(self, call: dict) -> dict:
         name = call["name"]

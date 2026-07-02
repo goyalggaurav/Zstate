@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from fracture_registry import fracture_codes as resolve_fracture_codes, l1_map_for_task
+from verify_common import is_empty_agent_output
 
 
 def load_ground_truth(path: Path) -> dict:
@@ -107,6 +108,9 @@ def _sbc_trap_triggered(values: dict, gt: dict) -> bool:
 
 
 def classify_failure(values: dict, gt: dict) -> list[str]:
+    if is_empty_agent_output(values):
+        return ["submit_timeout"]
+
     schema = gt["schema"]
     consolidated_key = schema.get("consolidated_metric", "consolidated_net_sales")
     consolidated = _get_field(values, consolidated_key)

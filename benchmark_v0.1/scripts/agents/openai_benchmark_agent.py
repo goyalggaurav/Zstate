@@ -11,6 +11,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
+from agents.retrieval_nudge import RetrievalNudgeTracker
 from agents.llm_retry import retry_sleep_seconds
 
 from agents.benchmark_tool_specs import (
@@ -60,6 +61,7 @@ class OpenAIBenchmarkAgent:
         ]
         self.pending_tool_calls: list[dict] | None = None
         self._pending_index = 0
+        self._retrieval_nudge = RetrievalNudgeTracker()
 
     def _request(self, payload: dict) -> dict:
         if not self.api_key:
@@ -158,6 +160,9 @@ class OpenAIBenchmarkAgent:
             "name": name,
             "content": output[:8000],
         })
+        nudge = self._retrieval_nudge.on_tool_result(name)
+        if nudge:
+            self.messages.append({"role": "user", "content": nudge})
 
     def _tool_call_to_action(self, call: dict) -> dict:
         name = call["name"]

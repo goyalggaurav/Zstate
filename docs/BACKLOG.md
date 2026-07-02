@@ -163,7 +163,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 30 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 33 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 | SH-14 | Shared runtime extract (Track A/B dedupe) | done | `shared/` — `safe_calc`, `llm_retry`, `trace_utils`; backends import shared |
 

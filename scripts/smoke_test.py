@@ -1152,6 +1152,7 @@ def check_fracture_registry() -> None:
 
     assert fracture_code("cite_halluc", layer="L3") == "CITE_HALLUC"
     assert fracture_code("pushover", layer="ENV") == "ENGAGEMENT_FAIL"
+    assert fracture_code("submit_timeout", layer="L1") == "TIMEOUT"
     assert fracture_code("omit_prior_year", layer="ENV") == "SECTION_MISS"
     assert fracture_code("wrong_ytd_window", task_id="NFLX_guidance_drift", layer="L1") == "GUIDANCE_PERIOD_ERR"
     assert fracture_codes(["blind_sum", "sign_error"], task_id="GOOGL_footnote_reconciliation", layer="L1") == [
@@ -1218,6 +1219,66 @@ def check_ko_gt_draft() -> None:
     assert "omit_bottling_investments" in trap_report["failure_modes"], trap_report
 
 
+def check_submit_timeout_failure_mode() -> None:
+    """Empty agent output maps to submit_timeout → TIMEOUT, not wrong_period."""
+    import tempfile
+
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from verify_common import is_empty_agent_output  # noqa: E402
+
+    assert is_empty_agent_output({}) is True
+    assert is_empty_agent_output({"consolidated_net_revenues": None}) is True
+    assert is_empty_agent_output({"consolidated_net_revenues": 47_941}) is False
+
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
+        json.dump({}, tmp)
+        empty_path = tmp.name
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_benchmark_l1.py",
+        "--task",
+        "KO_footnote_reconciliation",
+        "--agent-output",
+        empty_path,
+    ])
+    Path(empty_path).unlink(missing_ok=True)
+    assert report["all_pass"] is False, report
+    assert report["failure_modes"] == ["submit_timeout"], report
+    assert report["fracture_codes"] == ["TIMEOUT"], report
+
+
+def check_retrieval_nudge_tracker() -> None:
+    """Post-retrieval nudge fires once after filing pulls without Python/submit."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from agents.retrieval_nudge import NUDGE_AFTER_RETRIEVALS, RetrievalNudgeTracker  # noqa: E402
+
+    tracker = RetrievalNudgeTracker()
+    for _ in range(NUDGE_AFTER_RETRIEVALS - 1):
+        assert tracker.on_tool_result("Search_Filing") is None
+    nudge = tracker.on_tool_result("Search_Filing")
+    assert nudge is not None
+    assert tracker.on_tool_result("Search_Filing") is None
+
+    tracker2 = RetrievalNudgeTracker()
+    for _ in range(NUDGE_AFTER_RETRIEVALS - 1):
+        tracker2.on_tool_result("PDF_Parser")
+    assert tracker2.on_tool_result("Python_Interpreter") is None
+    assert tracker2.nudge_sent is False
+    assert tracker2.on_tool_result("Search_Filing") is None
+
+
+def check_agent_mode_model_filter() -> None:
+    """--agent gemini/openai/anthropic must not execute non-matching model slots."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from run_benchmark_campaign import filter_models_for_agent_mode  # noqa: E402
+
+    models = ["gpt-4o", "claude-sonnet-4-5", "gemini-2.5-flash"]
+    assert filter_models_for_agent_mode("gemini", models) == ["gemini-2.5-flash"]
+    assert filter_models_for_agent_mode("openai", models) == ["gpt-4o"]
+    assert filter_models_for_agent_mode("anthropic", models) == ["claude-sonnet-4-5"]
+    assert filter_models_for_agent_mode("auto", models) == models
+
+
 def check_task_registry() -> None:
     """P3-11 — manifest-driven task wiring SSOT."""
     sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
@@ -1276,6 +1337,9 @@ def main() -> int:
         ("AMZN footnote ground truth L1", check_amzn_gt),
         ("NFLX guidance drift L1", check_nflx_gt),
         ("KO footnote draft L1", check_ko_gt_draft),
+        ("Submit timeout failure mode", check_submit_timeout_failure_mode),
+        ("Retrieval nudge tracker", check_retrieval_nudge_tracker),
+        ("Agent mode model filter", check_agent_mode_model_filter),
         ("Shared runtime (SH-14)", check_shared_runtime),
         ("Fracture taxonomy registry", check_fracture_taxonomy_registry),
         ("Corpus manifest", check_corpus_manifest),

@@ -7,4 +7,11 @@ TRAJECTORY_REQUIRED = ("trajectory_id", "episode_or_task_id", "track", "terminat
 
 def validate_trajectory_v1_minimal(trace: dict) -> list[str]:
     """Return list of missing required fields for trajectory_v1."""
-    return [field for field in TRAJECTORY_REQUIRED if not trace.get(field)]
+    missing: list[str] = []
+    for field in TRAJECTORY_REQUIRED:
+        if field == "steps":
+            if field not in trace or trace[field] is None:
+                missing.append(field)
+        elif not trace.get(field):
+            missing.append(field)
+    return missing
