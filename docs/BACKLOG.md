@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.4  
-**Last updated:** July 2026 (post P2-20 four-task eval — 4 published tasks, 25 smoke checks)
+**Last updated:** July 2026 (post P2-06 actionable leaderboard — 4 published tasks, 26 smoke checks)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -55,7 +55,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-03 | AMZN footnote task (Type F) | A | done | Eng | `AMZN_footnote_reconciliation` — 4-section L2 path; pilot draft |
 | P2-04 | Eval campaign — 2 models × core tasks × 3 runs | A | done | Eng | `gpt-4o` + `claude-sonnet-4-5` × GOOGL + PEP × 3; 12/12 composite 1.0; see `runs/pilot_eval_campaign_v1/` |
 | P2-05 | Fracture report v0 | Both | done | Eng | `docs/FRACTURE_REPORT_v0.md` — frontier v1–v3 |
-| P2-06 | Leaderboard v0 publish | A | todo | Product | Not the lab headline |
+| P2-06 | Leaderboard v0 publish | A | done | Product | [LEADERBOARD_v0.md](../benchmark_v0.1/docs/LEADERBOARD_v0.md) — composite rank + FI + fracture delta |
 | P2-07 | Trajectory JSONL schema — align A + B | Both | done | Eng | `schemas/trajectory_v1.json` |
 | P2-08 | Transcript API trial (5 pilot names) | A | todo | Eng | Guidance tasks; see LATER-06 for NFLX EDGAR bundle ingest |
 
@@ -134,7 +134,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 25 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 26 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 
 ---

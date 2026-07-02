@@ -1084,6 +1084,28 @@ def check_amzn_l2_path() -> None:
         assert bad_l2["l2_score"] < l2["l2_score"], (bad_l2, l2)
 
 
+def check_leaderboard_v0() -> None:
+    """P2-06 — actionable leaderboard from scored campaign report."""
+    script = ROOT / "benchmark_v0.1" / "scripts" / "generate_leaderboard.py"
+    proc = subprocess.run(
+        [sys.executable, str(script)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert proc.returncode == 0, proc.stderr
+    doc = json.loads((ROOT / "benchmark_v0.1" / "docs" / "LEADERBOARD_v0.json").read_text())
+    assert doc["schema_version"] == "leaderboard_v0"
+    assert doc["campaign_id"] == "pilot_eval_4task_v1"
+    assert len(doc["rankings"]) >= 2
+    leader = doc["leader_model_id"]
+    assert leader == doc["rankings"][0]["model_id"]
+    gpt = next(r for r in doc["rankings"] if r["model_id"] == "gpt-4o")
+    assert gpt["gap_task"]["task_id"] == "NFLX_guidance_drift"
+    assert gpt["fracture_intensity"] >= doc["rankings"][0]["fracture_intensity"]
+
+
 def check_archetype_roles() -> None:
     """P2-13 — path_role slugs + archetype schema alignment."""
     sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
@@ -1132,6 +1154,7 @@ def main() -> int:
         ("Discrimination v2 rescore", check_discrimination_v2_rescore),
         ("AMZN L2 path variance", check_amzn_l2_path),
         ("Campaign execute scripted", check_campaign_execute_scripted),
+        ("Leaderboard v0 generator", check_leaderboard_v0),
     ]
     failed = 0
     for name, fn in checks:

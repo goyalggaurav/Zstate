@@ -83,7 +83,7 @@ Fourth published task — annual FY2025 cash content guidance (~$18B) vs nine-mo
 
 ## Next eval actions
 
-1. **P2-06** — leaderboard v0 from `pilot_eval_4task_v1` headline composites.
+1. ~~**P2-06** — leaderboard v0~~ → [LEADERBOARD_v0.md](./LEADERBOARD_v0.md) (actionable fracture view)
 2. Add `gpt-4o-mini` for wider model spread.
 3. **LATER-06** — NFLX EDGAR verbatim ingest (excerpt SHA-256 mitigates until then).
 4. Tighten gpt-4o L3 on NFLX (distinct snippet enforcement already in eval_mode).

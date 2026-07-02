@@ -1,0 +1,129 @@
+{
+  "schema_version": "leaderboard_v0",
+  "campaign_id": "pilot_eval_4task_v1",
+  "generated_at": "2026-07-02T00:53:13.568124+00:00",
+  "source_report": "2026-07-02T00:36:35.579447+00:00",
+  "git_commit": "8e493ba",
+  "methodology": {
+    "primary_rank": "headline_weighted_composite",
+    "headline_tasks": [
+      "PEP_fx_organic_growth",
+      "AMZN_footnote_reconciliation",
+      "NFLX_guidance_drift"
+    ],
+    "excluded_from_headline": [
+      "GOOGL_footnote_reconciliation"
+    ],
+    "runs_per_task": 3,
+    "task_aggregation": "median",
+    "headline_aggregation": "task_weighted_mean_of_task_medians",
+    "fracture_intensity": {
+      "scope": "headline runs only",
+      "formula": "median per-run sum of severity weights",
+      "severity_weights": {
+        "critical": 1.0,
+        "high": 0.6,
+        "medium": 0.3,
+        "low": 0.1
+      },
+      "diagnostic_only": true
+    }
+  },
+  "fracture_labels": {
+    "RECON_OMIT": "Reconciliation item omitted",
+    "SIGN_ERR": "Sign inversion",
+    "HALLUC_FILL": "Wrong period or interpolated data",
+    "SECTION_MISS": "Required section or document not retrieved",
+    "OUTCOME_FAIL": "Incorrect numeric outcome",
+    "ENGAGEMENT_FAIL": "PM engagement failure",
+    "TIMEOUT": "Turn budget exhausted without submit",
+    "PM_OOD": "Agent outside PM script \u2014 fallback branch",
+    "LOOP_TOOL": "Repeated tool calls on large tables",
+    "BLOAT_CTX": "Full document load vs targeted sections",
+    "CITE_BROAD": "Non-auditable citation",
+    "CITE_HALLUC": "Citation snippet not in bundle excerpt",
+    "POLICY_OMIT": "Required policy acknowledgement missing",
+    "SCOPE_ERR": "Wrong segment or region scope",
+    "CC_OMIT": "Constant-currency adjustment omitted",
+    "FX_METHOD_ERR": "Wrong FX translation method",
+    "METHOD_ALT": "Alternate methodology within tolerance",
+    "GUIDE_CONFUSE": "Guidance conflated with actuals or wrong KPI line",
+    "GUIDANCE_PERIOD_ERR": "Guidance actual compared using wrong fiscal period column",
+    "CASH_VS_AMORT_ERR": "Content amortization reported as guided cash spend",
+    "SBC_ALLOCATION_ERR": "Stock-based compensation added to segment net sales reconciliation"
+  },
+  "leader_model_id": "claude-sonnet-4-5",
+  "rankings": [
+    {
+      "model_id": "claude-sonnet-4-5",
+      "headline_composite": 0.966,
+      "fracture_intensity": 0.0,
+      "task_composites": {
+        "PEP_fx_organic_growth": 0.898,
+        "AMZN_footnote_reconciliation": 1.0,
+        "NFLX_guidance_drift": 1.0
+      },
+      "headline_run_count": 9,
+      "fracture_profile": {
+        "L1": {},
+        "L2": {},
+        "L3": {
+          "CITE_BROAD": 3
+        }
+      },
+      "fracture_codes_union": [
+        "CITE_BROAD"
+      ],
+      "rank": 1,
+      "is_leader": true,
+      "gap_task": null,
+      "fracture_delta_vs_leader": {}
+    },
+    {
+      "model_id": "gpt-4o",
+      "headline_composite": 0.8167,
+      "fracture_intensity": 1.0,
+      "task_composites": {
+        "PEP_fx_organic_growth": 0.864,
+        "AMZN_footnote_reconciliation": 0.9575,
+        "NFLX_guidance_drift": 0.6286
+      },
+      "headline_run_count": 9,
+      "fracture_profile": {
+        "L1": {
+          "GUIDANCE_PERIOD_ERR": 2
+        },
+        "L2": {},
+        "L3": {
+          "CITE_HALLUC": 3,
+          "CITE_BROAD": 8
+        }
+      },
+      "fracture_codes_union": [
+        "CITE_BROAD",
+        "CITE_HALLUC",
+        "GUIDANCE_PERIOD_ERR"
+      ],
+      "rank": 2,
+      "is_leader": false,
+      "gap_task": {
+        "task_id": "NFLX_guidance_drift",
+        "leader_composite": 1.0,
+        "model_composite": 0.6286,
+        "delta": 0.3714
+      },
+      "fracture_delta_vs_leader": {
+        "PEP_fx_organic_growth": [
+          "CITE_HALLUC"
+        ],
+        "AMZN_footnote_reconciliation": [
+          "CITE_BROAD"
+        ],
+        "NFLX_guidance_drift": [
+          "CITE_BROAD",
+          "GUIDANCE_PERIOD_ERR"
+        ]
+      }
+    }
+  ]
+}

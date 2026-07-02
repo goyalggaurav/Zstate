@@ -71,6 +71,20 @@ python3 benchmark_v0.1/scripts/run_benchmark_campaign.py
 
 Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json) — includes `composite_score_median` per campaign.
 
+### Leaderboard v0 (P2-06)
+
+Four-task campaign: [campaigns/pilot_eval_4task_v1.json](./campaigns/pilot_eval_4task_v1.json). After scoring, generate the actionable leaderboard (composite rank + Fracture Intensity + gap task + fracture delta):
+
+```bash
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_4task_v1.json
+
+python3 benchmark_v0.1/scripts/generate_leaderboard.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_4task_v1.json
+```
+
+Publish artifacts: [docs/LEADERBOARD_v0.md](./docs/LEADERBOARD_v0.md) · [docs/PILOT_EVAL_JUL2026.md](./docs/PILOT_EVAL_JUL2026.md)
+
 **Discrimination campaign (P2-09):** [campaigns/pilot_eval_discrimination_v1.json](./campaigns/pilot_eval_discrimination_v1.json) sets `"eval_mode": true` (generic citation rules, no task-specific examples) and uses L2 gold-path scoring (section recall + access order + tool coverage) plus L3 partial credit on citations.
 
 **Three-task campaign (P2-10):** [campaigns/pilot_eval_3task_v1.json](./campaigns/pilot_eval_3task_v1.json) — five-section AMZN path, PEP distinct L3 snippets, **headline excludes GOOGL** (P2-18). Full write-up: [docs/PILOT_EVAL_JUL2026.md](./docs/PILOT_EVAL_JUL2026.md).
