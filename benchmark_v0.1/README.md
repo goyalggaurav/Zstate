@@ -24,13 +24,15 @@ Contract: [docs/CORPUS_BUNDLE_CONTRACT.md](./docs/CORPUS_BUNDLE_CONTRACT.md)
 
 ## Published tasks
 
+<!-- MANIFEST:SYNC:START published_tasks_table -->
 | Task | Type | Period | Status |
 |------|------|--------|--------|
-| [GOOGL_footnote_reconciliation](./tasks/GOOGL_footnote_reconciliation.json) | F — Forensics | **Q1 2026** (10-Q filed 2026-04-30) | **Published** (expert-reviewed 2026-07-01) |
-| [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** (10-K filed 2026-02-03) | **Published** (expert-reviewed 2026-07-01) |
-| [AMZN_footnote_reconciliation](./tasks/AMZN_footnote_reconciliation.json) | F — Forensics | **FY2025** (10-K filed 2026-02-06) | **Published** (expert-reviewed 2026-07-02) |
-| [NFLX_guidance_drift](./tasks/NFLX_guidance_drift.json) | F — Guidance drift | **2024Q4 guide → 2025Q3 YTD** (SEC excerpts) | **Published** ([expert review](../docs/expert_drafts/NFLX_GT_REVIEW.md)) |
-| [KO_footnote_reconciliation](./tasks/KO_footnote_reconciliation.json) | F — Forensics | **FY2025** (10-K filed 2026-02-20) | **Published** ([expert review](../docs/expert_drafts/KO_GT_REVIEW.md)) |
+| [GOOGL_footnote_reconciliation](./tasks/GOOGL_footnote_reconciliation.json) | F — Forensics | **2026Q1** | **Published** ([expert review](../docs/expert_drafts/GOOGL_GT_REVIEW.md)) |
+| [PEP_fx_organic_growth](./tasks/PEP_fx_organic_growth.json) | M — Modeling | **FY2025** | **Published** ([expert review](../docs/expert_drafts/PEP_FX_GT_REVIEW.md)) |
+| [AMZN_footnote_reconciliation](./tasks/AMZN_footnote_reconciliation.json) | F — Forensics | **FY2025** | **Published** ([expert review](../docs/expert_drafts/AMZN_GT_REVIEW.md)) |
+| [NFLX_guidance_drift](./tasks/NFLX_guidance_drift.json) | F — Forensics | **2024Q4** | **Published** ([expert review](../docs/expert_drafts/NFLX_GT_REVIEW.md)) |
+| [KO_footnote_reconciliation](./tasks/KO_footnote_reconciliation.json) | F — Forensics | **FY2025** | **Published** ([expert review](../docs/expert_drafts/KO_GT_REVIEW.md)) |
+<!-- MANIFEST:SYNC:END published_tasks_table -->
 
 ### GOOGL — footnote reconciliation
 

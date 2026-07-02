@@ -832,8 +832,8 @@ def check_agent_submission_validator() -> None:
         "--all",
     ])
     assert report["all_pass"] is True, report
-    assert report["gold_pass_count"] == 3
-    assert report["trap_fail_count"] == 5
+    assert report["gold_pass_count"] == 4
+    assert report["trap_fail_count"] == 6
 
     fixture_dir = ROOT / "benchmark_v0.1" / "contract_fixtures"
     trap_specs = [
@@ -1279,6 +1279,51 @@ def check_agent_mode_model_filter() -> None:
     assert filter_models_for_agent_mode("auto", models) == models
 
 
+def check_l3_citation_hardening() -> None:
+    """P3-29 — column/row-aware L3 rules (9B); KO template + archetype baselines."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from l3_citation_rules import merge_l3_rules, numeric_in_snippet  # noqa: E402
+
+    ko_rules = merge_l3_rules("F_exact", {
+        "metric_citation_anchors": {"emea_net_revenues": {"row_label": "EMEA"}},
+    })
+    assert ko_rules["require_numeric_in_snippet"] is True
+    assert "emea_net_revenues" in ko_rules["metric_citation_anchors"]
+    assert numeric_in_snippet(-4.7, "(4.7)%") is True
+
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/validate_agent_submission.py",
+        "--task",
+        "KO_footnote_reconciliation",
+        "--submission",
+        str(ROOT / "benchmark_v0.1/contract_fixtures/KO_footnote_reconciliation_submission_gold.json"),
+    ])
+    assert report["l3_pass"] is True, report
+
+    trap = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/validate_agent_submission.py",
+        "--task",
+        "KO_footnote_reconciliation",
+        "--submission",
+        str(ROOT / "benchmark_v0.1/contract_fixtures/KO_footnote_reconciliation_submission_trap_note_only.json"),
+    ])
+    assert trap["l3_pass"] is False, trap
+    assert "cite_broad" in trap["failure_modes"] or "cite_halluc" in trap["failure_modes"], trap
+
+
+def check_doc_sync() -> None:
+    """P3-28 — manifest-driven README/ARCHITECTURE blocks stay in sync."""
+    proc = subprocess.run(
+        [sys.executable, "benchmark_v0.1/scripts/sync_track_a_docs.py", "--check"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert proc.returncode == 0, proc.stderr or proc.stdout
+
+
 def check_task_registry() -> None:
     """P3-11 — manifest-driven task wiring SSOT."""
     sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
@@ -1339,6 +1384,8 @@ def main() -> int:
         ("KO footnote draft L1", check_ko_gt_draft),
         ("Submit timeout failure mode", check_submit_timeout_failure_mode),
         ("Retrieval nudge tracker", check_retrieval_nudge_tracker),
+        ("L3 citation hardening (9B)", check_l3_citation_hardening),
+        ("Doc sync from manifest", check_doc_sync),
         ("Agent mode model filter", check_agent_mode_model_filter),
         ("Shared runtime (SH-14)", check_shared_runtime),
         ("Fracture taxonomy registry", check_fracture_taxonomy_registry),

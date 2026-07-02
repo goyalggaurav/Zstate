@@ -16,7 +16,9 @@ Design-phase repository for **AlphaNote-Bench**: credentialed-expert equity rese
 
 | Track | Path | Status |
 |-------|------|--------|
+<!-- MANIFEST:SYNC:START pilot_summary -->
 | **A — Eval benchmark** | [benchmark_v0.1/](benchmark_v0.1/) | **5 published tasks** (GOOGL, PEP, AMZN, NFLX, KO) — expert-reviewed Jul 2026 |
+<!-- MANIFEST:SYNC:END pilot_summary -->
 | **A — Leaderboard** | [LEADERBOARD_v0.md](benchmark_v0.1/docs/LEADERBOARD_v0.md) | `pilot_eval_5task_v1` — headline excludes GOOGL ceiling |
 | **B — RL environment** | [env_v1/](env_v1/) | Solaris v1.1 + frontier campaign |
 
@@ -25,7 +27,7 @@ Published tasks are listed in [benchmark_v0.1/manifest.json](benchmark_v0.1/mani
 ## Quick commands
 
 ```bash
-# Smoke test (28 checks — Track A L1/L2/L3 + Track B scorer)
+# Smoke test (35 checks — Track A L1/L2/L3 + Track B scorer)
 python3 scripts/smoke_test.py
 
 # Track A — unified L1 verify (any published task)

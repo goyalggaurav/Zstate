@@ -15,6 +15,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import Any
 
 SCRIPTS = Path(__file__).resolve().parent
 BENCH = SCRIPTS.parent
@@ -25,6 +26,13 @@ sys.path.insert(0, str(SCRIPTS))
 from archetype_roles import canonicalize_section_slug  # noqa: E402
 from benchmark_tool_backend import load_bundle  # noqa: E402
 from fracture_registry import fracture_codes as resolve_fracture_codes, layer_map  # noqa: E402
+from l3_citation_rules import (  # noqa: E402
+    anchor_ok,
+    is_note_number_only,
+    merge_l3_rules,
+    numeric_in_snippet,
+    numeric_optional,
+)
 
 FAILURE_FRACTURE = layer_map("L3")
 
@@ -81,14 +89,6 @@ def required_policy_ids(bundle: dict) -> list[str]:
     ]
 
 
-def required_policy_ids(bundle: dict) -> list[str]:
-    return [
-        note["policy_id"]
-        for note in bundle.get("policy_notes", [])
-        if note.get("agent_ack_required")
-    ]
-
-
 def load_gold_path(task_id: str) -> dict:
     manifest = load_json(BENCH / "manifest.json")
     for entry in manifest.get("pilot_tasks", []):
@@ -97,15 +97,69 @@ def load_gold_path(task_id: str) -> dict:
     return {}
 
 
-def l3_citation_rules(task_id: str, gold_path: dict | None = None) -> dict:
+def l3_citation_rules(task_id: str, gold_path: dict | None = None, task: dict | None = None) -> dict:
     gold_path = gold_path if gold_path is not None else load_gold_path(task_id)
-    return dict(gold_path.get("l3_citation_rules") or {})
+    task = task or load_task(task_id)
+    archetype = gold_path.get("archetype") or task.get("archetype", "")
+    return merge_l3_rules(archetype, gold_path.get("l3_citation_rules"))
+
+
+def _apply_citation_hardening(
+    *,
+    metric_id: str | None,
+    snippet: str,
+    section_slug: str | None,
+    metric_value: Any,
+    l3_rules: dict,
+    prefix: str,
+    checks: list[dict],
+    failure_modes: list[str],
+) -> bool:
+    ok = True
+    max_chars = l3_rules.get("max_snippet_chars")
+    if max_chars and len(snippet) > int(max_chars):
+        failure_modes.append("cite_broad")
+        checks.append({
+            "check": f"{prefix}.snippet_length",
+            "pass": False,
+            "max_chars": max_chars,
+            "actual_chars": len(snippet),
+        })
+        ok = False
+
+    if l3_rules.get("forbid_note_number_only") and is_note_number_only(snippet):
+        failure_modes.append("cite_broad")
+        checks.append({"check": f"{prefix}.note_only", "pass": False})
+        ok = False
+
+    if l3_rules.get("require_numeric_in_snippet") and metric_id and not numeric_optional(metric_id, l3_rules):
+        if not numeric_in_snippet(metric_value, snippet):
+            failure_modes.append("cite_halluc")
+            checks.append({"check": f"{prefix}.numeric_anchor", "pass": False, "metric_id": metric_id})
+            ok = False
+
+    anchors = l3_rules.get("metric_citation_anchors") or {}
+    if metric_id and metric_id in anchors:
+        anchor_pass, reason = anchor_ok(snippet, anchors[metric_id], section_slug=section_slug)
+        if not anchor_pass:
+            failure_modes.append("cite_broad")
+            checks.append({
+                "check": f"{prefix}.{reason}",
+                "pass": False,
+                "metric_id": metric_id,
+            })
+            ok = False
+        else:
+            checks.append({"check": f"{prefix}.citation_anchor", "pass": True, "metric_id": metric_id})
+
+    return ok
 
 
 def validate_submission(submission: dict, *, task_id: str, task: dict | None = None, bundle: dict | None = None) -> dict:
     task = task or load_task(task_id)
     bundle = bundle or load_bundle(task_id)
-    l3_rules = l3_citation_rules(task_id)
+    gold_path = load_gold_path(task_id)
+    l3_rules = l3_citation_rules(task_id, gold_path, task)
     checks: list[dict] = []
     failure_modes: list[str] = []
 
@@ -184,6 +238,17 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
             cite_ok = False
         else:
             checks.append({"check": f"{prefix}.snippet", "pass": True})
+            if not _apply_citation_hardening(
+                metric_id=metric_id,
+                snippet=snippet,
+                section_slug=section_slug,
+                metric_value=metrics.get(metric_id) if metric_id else None,
+                l3_rules=l3_rules,
+                prefix=prefix,
+                checks=checks,
+                failure_modes=failure_modes,
+            ):
+                cite_ok = False
 
         if metric_id:
             metric_citation_ok[metric_id] = metric_citation_ok.get(metric_id, True) and cite_ok
@@ -289,6 +354,7 @@ def validate_all_fixtures() -> dict:
         "GOOGL_footnote_reconciliation_submission_gold.json",
         "PEP_fx_organic_growth_submission_gold.json",
         "AMZN_footnote_reconciliation_submission_gold.json",
+        "KO_footnote_reconciliation_submission_gold.json",
     }
     expected_traps = {
         "GOOGL_footnote_reconciliation_submission_trap_fake_snippet.json",
@@ -296,6 +362,7 @@ def validate_all_fixtures() -> dict:
         "PEP_fx_organic_growth_submission_trap_missing_policy.json",
         "PEP_fx_organic_growth_submission_trap_halluc_snippet.json",
         "PEP_fx_organic_growth_submission_trap_duplicate_snippet.json",
+        "KO_footnote_reconciliation_submission_trap_note_only.json",
     }
     found = {Path(r["submission_path"]).name for r in results}
     missing = (expected_gold | expected_traps) - found
@@ -303,7 +370,7 @@ def validate_all_fixtures() -> dict:
     traps_ok = expected_traps <= {Path(r["submission_path"]).name for r in traps}
 
     return {
-        "all_pass": not missing and gold_ok and traps_ok and len(gold) >= 3 and len(traps) >= 5,
+        "all_pass": not missing and gold_ok and traps_ok and len(gold) >= 4 and len(traps) >= 6,
         "fixtures_checked": len(results),
         "gold_pass_count": len([r for r in results if Path(r["submission_path"]).name in expected_gold and r["l3_pass"]]),
         "trap_fail_count": len([r for r in results if Path(r["submission_path"]).name in expected_traps and not r["l3_pass"]]),

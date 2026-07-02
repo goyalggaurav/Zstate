@@ -2,7 +2,9 @@
 
 **Version:** 1.2  
 **Owner:** Engineering  
+<!-- MANIFEST:SYNC:START architecture_status -->
 **Status:** Active — 5 published Track A tasks (GOOGL, PEP, AMZN, NFLX, KO); pilot eval + leaderboard v0 live
+<!-- MANIFEST:SYNC:END architecture_status -->
 
 Canonical technical map. Product requirements live in [Framework v0.2](./ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md). Priorities live in [Roadmap](./ROADMAP.md) and [Backlog](./BACKLOG.md).
 

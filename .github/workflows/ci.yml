@@ -37,5 +37,8 @@ jobs:
             python3 benchmark_v0.1/scripts/validate_publish_task.py --task "$task"
           done
 
+      - name: Doc sync check (manifest → README)
+        run: python3 benchmark_v0.1/scripts/sync_track_a_docs.py --check
+
       - name: Leaderboard from pinned campaign report
         run: python3 benchmark_v0.1/scripts/generate_leaderboard.py

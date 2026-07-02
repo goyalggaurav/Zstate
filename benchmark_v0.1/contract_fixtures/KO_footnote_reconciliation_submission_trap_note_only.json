@@ -1,0 +1,24 @@
+{
+  "schema_version": "agent_submission_v1",
+  "metrics": {
+    "emea_net_revenues": 11513,
+    "consolidated_net_revenues": 47941
+  },
+  "citations": [
+    {
+      "metric_id": "emea_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "Note 20"
+    },
+    {
+      "metric_id": "consolidated_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "Note 20"
+    }
+  ],
+  "policy_acknowledgements": [
+    "global_ventures_sunset_2025"
+  ]
+}

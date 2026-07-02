@@ -18,89 +18,78 @@
       "metric_id": "emea_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "Total net operating revenues | 11,513",
-      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
+      "snippet": "EMEA...Total net operating revenues | 11,513",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "latin_america_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "6,334 | 19,586",
-      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
+      "snippet": "Latin America...6,334",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "north_america_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "19,586 | 5,638",
-      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
+      "snippet": "North America...19,586",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "asia_pacific_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "5,638 | 5,735",
-      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
+      "snippet": "Asia Pacific...5,638",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "bottling_investments_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "5,735 | 48,806",
-      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
+      "snippet": "Bottling Investments...5,735",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "corporate_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "48,806 | 144",
-      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
+      "snippet": "Corporate...144",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "intersegment_eliminations",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "144 | (1,009)",
-      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
+      "snippet": "Eliminations...144 | (1,009)",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "consolidated_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "(1,009) | 47,941",
-      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
+      "snippet": "Consolidated...47,941",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "latin_america_net_revenue_change_pct",
       "doc_id": "KO_10K_2025",
       "section_slug": "narrative_fx",
-      "snippet": "Latin America | (1) | 11 | (12) | \u2014 | (2)",
-      "filing_label": "MD&A \u2014 net operating revenues percent change decomposition table",
-      "note": "MD&A \u2014 net operating revenues percent change decomposition table"
+      "snippet": "Latin America | (1) | 11 | (12) | — | (2)",
+      "filing_label": "MD&A — net operating revenues percent change decomposition table"
     },
     {
       "metric_id": "latin_america_fx_impact_pct",
       "doc_id": "KO_10K_2025",
       "section_slug": "narrative_fx",
-      "snippet": "(12) | \u2014 | (2)",
-      "filing_label": "MD&A \u2014 net operating revenues percent change decomposition table",
-      "note": "MD&A \u2014 net operating revenues percent change decomposition table"
+      "snippet": "Latin America | (1) | 11 | (12)",
+      "filing_label": "MD&A — net operating revenues percent change decomposition table"
     },
     {
       "metric_id": "segment_net_revenues_sum",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "Operating Segments Total",
-      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments \u2014 segment revenues subtotal column header"
+      "snippet": "Operating Segments Total...47,941",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     }
   ],
   "policy_acknowledgements": [

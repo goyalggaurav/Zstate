@@ -142,6 +142,27 @@
   },
 
   "l3_citation_rules": {
-    "distinct_snippets_required": true
+    "distinct_snippets_required": true,
+    "column_aware_table": true,
+    "fiscal_column_header": "2025",
+    "metric_citation_anchors": {
+      "emea_net_revenues": {"row_label": "EMEA"},
+      "latin_america_net_revenues": {"row_label": "Latin America"},
+      "north_america_net_revenues": {"row_label": "North America"},
+      "asia_pacific_net_revenues": {"row_label": "Asia Pacific"},
+      "bottling_investments_net_revenues": {"row_label": "Bottling Investments"},
+      "corporate_net_revenues": {"row_label": "Corporate"},
+      "intersegment_eliminations": {"row_label": "Eliminations"},
+      "consolidated_net_revenues": {"row_label": "Consolidated"},
+      "latin_america_net_revenue_change_pct": {
+        "row_label": "Latin America",
+        "section_slug": "narrative_fx"
+      },
+      "latin_america_fx_impact_pct": {
+        "row_label": "Latin America",
+        "section_slug": "narrative_fx"
+      },
+      "segment_net_revenues_sum": {"row_label": "Operating Segments Total"}
+    }
   }
 }

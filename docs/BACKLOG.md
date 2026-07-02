@@ -99,10 +99,12 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 |----|------|-------|--------|-------|-------|
 | P3-11 | **`task_registry.py` SSOT** — manifest-driven task wiring | A | done | Eng | `task_registry.py`; `corpus_bundle` + `scripted_plan` in manifest; 3× bundle maps removed |
 | P3-12 | **GT-native L1** — GOOGL + AMZN verifiers | A | done | Eng | GT-loaded verify; `verify_benchmark_l1.py` router + `l1_verify_argv()`; hardcoded constants removed |
-| P3-13 | **Doc sync from manifest** | Both | done | Eng | `ARCHITECTURE.md` v1.2, root `README.md` — 4 tasks, leaderboard/campaign commands |
+| P3-13 | **Doc sync from manifest** | Both | done | Eng | Manual sync done; **P3-28** adds `sync_track_a_docs.py` automation |
 | P3-14 | **Track B fracture registry** | B | done | Eng | `fracture_library_v1.json` env map; `score_episode.py` uses `fracture_registry` |
 | P3-15 | **Synthetic L3 eval mode** | A | todo | Eng | Campaign flag `synthetic_l3: true` + separate FI column in leaderboard (P3-09 bait exists; eval wiring not built) |
 | P3-16 | **Task special-case cleanup** | A | in_progress | Eng | GOOGL `--period` sprawl removed from campaign/scorer via `l1_verify_argv()`; mock agent still GOOGL-only |
+| P3-28 | **`sync_track_a_docs.py`** | Both | done | Eng | Manifest-driven blocks in root README, benchmark README, ARCHITECTURE; `--check` in CI |
+| P3-29 | **L3 citation hardening (9B)** | A | done | Eng | Archetype baselines + KO column/row anchors; `l3_citation_rules.py`; KO trap fixture |
 | P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
 | P3-17b | **Contract GT fixtures (legacy + KO L1)** | A | done | Eng | L1 gold from `l1_values_from_gt()` for all 5 tasks; submission fixtures hand-maintained where computed metrics need distinct L3 citations |
 | P3-18 | **KO_footnote_reconciliation — hardened template** | A | done | Associate | Published 2026-07-02; EDGAR elimination bridge; [KO_GT_REVIEW.md](./expert_drafts/KO_GT_REVIEW.md) |
@@ -163,7 +165,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 33 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 35 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 | SH-14 | Shared runtime extract (Track A/B dedupe) | done | `shared/` — `safe_calc`, `llm_retry`, `trace_utils`; backends import shared |
 
@@ -178,7 +180,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | LATER-06 | **Full EDGAR ingest pipeline** | A | **Single home for corpus automation** — `ingest_edgar_excerpt.py` (accession → slice → bundle + checksum), NFLX Q4 2024 letter + Q3 2025 10-Q verbatim in `nflx_q2q3_2025_bundle.json`, manifest `ingest_status` + `checksum_sha256`; extend to other pilot tickers. P3-10 excerpt SHA pins are interim. GT signed off — ingest does not block published status. Depends on P2-08 / SH-06. |
 | LATER-03 | Track A — eval orchestrator (SH-07) | A | done | Adapters + `pilot_eval_campaign_v1` live run complete |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
-| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | PEP + NFLX separate models; AMZN L2 recall tightened (P2-12); 4-task headline live (P2-20) |
+| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | **9B chosen** (P3-29): harden citation rules, not L3 weight (9A deferred); KO template first; re-score pilot after live re-run |
 
 ---
 
