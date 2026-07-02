@@ -1,0 +1,114 @@
+{
+  "bundle_id": "ko_fy2025_bundle",
+  "version": "1.0.0-draft",
+  "task_id": "KO_footnote_reconciliation",
+  "archetype": "F_exact",
+  "documents": {
+    "segment_policy_doc": {
+      "doc_id": "KO_10K_2025",
+      "doc_type": "10-K",
+      "section": "segment_policy",
+      "name": "Item 1 — Business (segment overview)",
+      "excerpt": "Item 1. Business\n\nThe Company operates through six geographic operating segments: Europe, Middle East & Africa; Latin America; North America; Asia Pacific; Global Ventures; and Bottling Investments.\n\nGlobal Ventures includes Costa Limited, innocent Limited, and other emerging beverage brands. Bottling Investments includes the Company's majority-owned bottling operations.\n\nThe Company sells beverage concentrates and syrups, and in some cases finished beverages, to authorized bottling partners."
+    },
+    "segment_financials_doc": {
+      "doc_id": "KO_10K_2025",
+      "doc_type": "10-K",
+      "section": "segment_financials",
+      "name": "Note 19 — Operating Segments",
+      "excerpt": "Note 19 — Operating Segments\n\nYear Ended December 31, 2025\n(in millions)\n\nEurope, Middle East & Africa\nNet revenues $ 9,842\n\nLatin America\nNet revenues $ 6,115\n\nNorth America\nNet revenues $ 18,256\n\nAsia Pacific\nNet revenues $ 5,934\n\nGlobal Ventures\nNet revenues $ 3,218\n\nBottling Investments\nNet revenues $ 6,891\n\nConsolidated\nNet operating revenues $ 50,256"
+    },
+    "segment_financials_prior_year_doc": {
+      "doc_id": "KO_10K_2025",
+      "doc_type": "10-K",
+      "section": "segment_financials_prior_year",
+      "name": "Note 19 — Operating Segments (FY2024 column only)",
+      "excerpt": "Note 19 — Operating Segments\n\nYear Ended December 31, 2024\n(in millions)\n\nEurope, Middle East & Africa\nNet revenues $ 9,410\n\nLatin America\nNet revenues $ 5,462\n\nNorth America\nNet revenues $ 17,842\n\nAsia Pacific\nNet revenues $ 5,612\n\nGlobal Ventures\nNet revenues $ 3,045\n\nBottling Investments\nNet revenues $ 6,536\n\nConsolidated\nNet operating revenues $ 46,905"
+    },
+    "consolidated_primary_doc": {
+      "doc_id": "KO_10K_2025",
+      "doc_type": "10-K",
+      "section": "consolidated_primary",
+      "name": "Consolidated Statement of Income",
+      "excerpt": "THE COCA-COLA COMPANY AND SUBSIDIARIES\nConsolidated Statements of Income\n(in millions except per share data)\n\nYear Ended December 31, 2025\n\nNet operating revenues $ 50,256\nGross profit 31,842\nOperating income 12,418\nNet income $ 10,892"
+    },
+    "narrative_fx_doc": {
+      "doc_id": "KO_10K_2025",
+      "doc_type": "10-K",
+      "section": "narrative_fx",
+      "name": "MD&A — Latin America net revenue growth",
+      "excerpt": "Management's Discussion and Analysis of Financial Condition and Results of Operations\n\nLatin America\n\nLatin America segment net revenues increased 12% year-over-year, or increased 15% on a comparable currency neutral basis, driven by concentrate sales volume growth and favorable pricing.\n\nEurope, Middle East & Africa segment net revenues increased 5% year-over-year."
+    }
+  },
+  "section_registry": [
+    {
+      "section_slug": "segment_policy",
+      "path_role": "segment_policy",
+      "section_id": "KO_10K_2025_segment_policy",
+      "doc_id": "KO_10K_2025",
+      "document_key": "segment_policy_doc",
+      "filing_label": "Item 1 — six operating segments including Global Ventures",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
+      "section_slug": "segment_financials",
+      "path_role": "segment_financials",
+      "section_id": "KO_10K_2025_note_19",
+      "doc_id": "KO_10K_2025",
+      "document_key": "segment_financials_doc",
+      "filing_label": "Note 19 — Operating Segments (FY2025 column)",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
+      "section_slug": "segment_financials_prior_year",
+      "path_role": "segment_financials_prior_year",
+      "section_id": "KO_10K_2025_note_19_py",
+      "doc_id": "KO_10K_2025",
+      "document_key": "segment_financials_prior_year_doc",
+      "filing_label": "Note 19 — Operating Segments (FY2024 column only)",
+      "required": false,
+      "decoy_trap": "prior_year_column",
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
+      "section_slug": "consolidated_primary",
+      "path_role": "consolidated_primary",
+      "section_id": "KO_10K_2025_income_statement",
+      "doc_id": "KO_10K_2025",
+      "document_key": "consolidated_primary_doc",
+      "filing_label": "Consolidated Statement of Income",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    },
+    {
+      "section_slug": "narrative_fx",
+      "path_role": "narrative_fx",
+      "section_id": "KO_10K_2025_mdna_latam",
+      "doc_id": "KO_10K_2025",
+      "document_key": "narrative_fx_doc",
+      "filing_label": "MD&A — Latin America reported vs currency-neutral growth",
+      "required": true,
+      "allowed_tools": ["Search_Filing", "PDF_Parser"]
+    }
+  ],
+  "policy_notes": [
+    {
+      "policy_id": "global_ventures_is_reportable_segment",
+      "doc_id": "KO_10K_2025",
+      "statement": "Global Ventures is a reportable operating segment (Costa, innocent, and other emerging brands) and must be included in the segment net revenue reconciliation.",
+      "agent_ack_required": true,
+      "anti_pattern": "omit_global_ventures"
+    }
+  ],
+  "retrieval_keys": {
+    "Search_Filing": {
+      "KO:FY2025:segment_policy": "segment_policy_doc",
+      "KO:FY2025:segment_financials": "segment_financials_doc",
+      "KO:FY2025:segment_financials_prior_year": "segment_financials_prior_year_doc",
+      "KO:FY2025:consolidated_primary": "consolidated_primary_doc",
+      "KO:FY2025:narrative_fx": "narrative_fx_doc"
+    }
+  }
+}

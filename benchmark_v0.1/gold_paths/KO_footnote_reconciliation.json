@@ -1,0 +1,128 @@
+{
+  "task_id": "KO_footnote_reconciliation",
+  "version": "0.1.0-draft",
+  "archetype": "F_exact",
+  "task_type": "F",
+  "fiscal_period": "FY2025",
+
+  "minimal_section_set": [
+    {
+      "section_id": "KO_10K_2025_segment_policy",
+      "name": "Item 1 — six operating segments",
+      "required": true,
+      "reason": "Confirm Global Ventures and Bottling Investments are reportable before extracting Note 19"
+    },
+    {
+      "section_id": "KO_10K_2025_note_19",
+      "name": "Note 19 — Operating Segments",
+      "required": true,
+      "reason": "FY2025 net revenues for all six operating segments"
+    },
+    {
+      "section_id": "KO_10K_2025_income_statement",
+      "name": "Consolidated Statement of Income",
+      "required": true,
+      "reason": "Cross-check consolidated net operating revenues"
+    },
+    {
+      "section_id": "KO_10K_2025_mdna_latam",
+      "name": "MD&A — Latin America growth",
+      "required": true,
+      "reason": "Reported vs currency-neutral Latin America growth"
+    }
+  ],
+
+  "required_tool_classes": ["Search_Filing", "PDF_Parser", "Python_Interpreter"],
+
+  "required_outputs": ["reconciliation_table", "latin_america_fx_summary", "citations"],
+
+  "reference_workflow": [
+    {
+      "step": 1,
+      "action": "Read segment definitions",
+      "tool": "Search_Filing",
+      "target": "Item 1 — six segments including Global Ventures and Bottling Investments"
+    },
+    {
+      "step": 2,
+      "action": "Extract FY2025 segment net revenues",
+      "tool": "Search_Filing",
+      "target": "Note 19 — all six segments, Year Ended December 31, 2025"
+    },
+    {
+      "step": 3,
+      "action": "Cross-check consolidated net operating revenues",
+      "tool": "Search_Filing",
+      "target": "Consolidated Statement of Income — 2025 column"
+    },
+    {
+      "step": 4,
+      "action": "Extract Latin America FX growth",
+      "tool": "Search_Filing",
+      "target": "MD&A — 12% reported vs 15% currency neutral"
+    },
+    {
+      "step": 5,
+      "action": "Verify six-segment sum equals consolidated",
+      "tool": "Python_Interpreter",
+      "target": "9842 + 6115 + 18256 + 5934 + 3218 + 6891 == 50256"
+    }
+  ],
+
+  "anti_patterns": [
+    "use_fy2024_column_instead_of_fy2025",
+    "use_decoy_note_19_prior_year_slug",
+    "omit_global_ventures_segment",
+    "omit_bottling_investments_segment",
+    "swap_latin_america_reported_and_cc_growth",
+    "produce_buy_hold_sell_recommendation"
+  ],
+
+  "failure_mode_map": [
+    {
+      "failure_mode_id": "wrong_period",
+      "anti_pattern": "use_fy2024_column_instead_of_fy2025",
+      "fracture_code": "HALLUC_FILL"
+    },
+    {
+      "failure_mode_id": "omit_global_ventures",
+      "anti_pattern": "omit_global_ventures_segment",
+      "fracture_code": "RECON_OMIT"
+    },
+    {
+      "failure_mode_id": "omit_bottling_investments",
+      "anti_pattern": "omit_bottling_investments_segment",
+      "fracture_code": "RECON_OMIT"
+    },
+    {
+      "failure_mode_id": "latin_fx_swap",
+      "anti_pattern": "swap_latin_america_reported_and_cc_growth",
+      "fracture_code": "CC_OMIT"
+    },
+    {
+      "failure_mode_id": "segment_sum_mismatch",
+      "anti_pattern": "segment_net_revenues_sum_not_equal_consolidated",
+      "fracture_code": "RECON_OMIT"
+    }
+  ],
+
+  "l2_gold_path": {
+    "weights": {
+      "section_recall": 0.35,
+      "section_order": 0.40,
+      "tool_coverage": 0.25
+    },
+    "expected_section_order": [
+      "segment_policy",
+      "segment_financials",
+      "consolidated_primary",
+      "narrative_fx"
+    ],
+    "strict_first_section": "segment_policy",
+    "required_tools": ["Search_Filing", "Python_Interpreter"]
+  },
+
+  "l3_citation_rules": {
+    "distinct_snippets_required": true
+  }
+}

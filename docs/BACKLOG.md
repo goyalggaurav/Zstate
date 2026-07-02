@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.5  
-**Last updated:** July 2026 (P3-12 GT-native L1 + P3-13 doc sync — 4 published tasks, 28 smoke checks)
+**Last updated:** July 2026 (P3-18 KO footnote draft + P3-17 GT fixtures — 4 published + 1 draft, 29 smoke checks)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -103,7 +103,9 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-14 | **Track B fracture registry** | B | todo | Eng | Extend `fracture_library_v1.json` + `fracture_registry.py` for Track B; retire inline `fracture_map` in `env_v1/scripts/score_episode.py` |
 | P3-15 | **Synthetic L3 eval mode** | A | todo | Eng | Campaign flag `synthetic_l3: true` + separate FI column in leaderboard (P3-09 bait exists; eval wiring not built) |
 | P3-16 | **Task special-case cleanup** | A | in_progress | Eng | GOOGL `--period` sprawl removed from campaign/scorer via `l1_verify_argv()`; mock agent still GOOGL-only |
-| P3-17 | **Contract literals audit** | A | todo | Eng | Align `agent_output_contract.py` bootstrap/fixture literals with GT JSON; single source on GT edit |
+| P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
+| P3-17b | **Contract literals retrofit (legacy 4 tasks)** | A | todo | Eng | Migrate GOOGL/AMZN/PEP hand-typed literals to GT-derived; smoke asserts GT parity |
+| P3-18 | **KO_footnote_reconciliation — hardened template** | A | in_progress | Associate | Draft package: GT + bundle + gold_path + `verify_footnote_exact.py`; expert sign-off pending |
 
 **Gate:** P3-03 (15 tasks) blocked until P3-16 mock-agent generalization (optional). P3-11 + P3-12 done. Full EDGAR ingest remains **LATER-06**.
 
@@ -153,7 +155,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 28 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 29 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 | SH-14 | Shared runtime extract (Track A/B dedupe) | todo | `safe_calc`, LLM retry, trace normalize — thin package before SH-06 corpus service |
 

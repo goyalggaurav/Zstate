@@ -3,7 +3,7 @@
   "mvd_target_tasks": 15,
   "mvd_pilot_companies": 5,
   "published_tasks": 4,
-  "draft_tasks": 0,
+  "draft_tasks": 1,
   "corpus_manifest": "corpus/corpus_manifest_v1.json",
   "pilot_tasks": [
     {
@@ -63,6 +63,20 @@
         "gold_path": "gold_paths/NFLX_guidance_drift.json",
         "grader_rubric": "rubrics/NFLX_guidance_drift_grader.md",
         "corpus_bundle": "corpus/nflx_q2q3_2025_bundle.json",
+        "verify_script": "scripts/verify_benchmark_l1.py"
+      }
+    },
+    {
+      "task_id": "KO_footnote_reconciliation",
+      "task_type": "F",
+      "status": "draft",
+      "cfa_review": "docs/expert_drafts/KO_GT_REVIEW.md",
+      "paths": {
+        "task": "tasks/KO_footnote_reconciliation.json",
+        "ground_truth": "ground_truth/KO_footnote_reconciliation_gt.json",
+        "gold_path": "gold_paths/KO_footnote_reconciliation.json",
+        "grader_rubric": "rubrics/KO_footnote_reconciliation_grader.md",
+        "corpus_bundle": "corpus/ko_fy2025_bundle.json",
         "verify_script": "scripts/verify_benchmark_l1.py"
       }
     }

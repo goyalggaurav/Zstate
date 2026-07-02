@@ -1,0 +1,83 @@
+{
+  "schema_version": "agent_submission_v1",
+  "metrics": {
+    "emea_net_revenues": 9842,
+    "latin_america_net_revenues": 6115,
+    "north_america_net_revenues": 18256,
+    "asia_pacific_net_revenues": 5934,
+    "global_ventures_net_revenues": 3218,
+    "bottling_investments_net_revenues": 6891,
+    "consolidated_net_revenues": 50256,
+    "latin_america_reported_growth_pct": 12.0,
+    "latin_america_cc_growth_pct": 15.0,
+    "segment_net_revenues_sum": 50256
+  },
+  "citations": [
+    {
+      "metric_id": "emea_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "Europe, Middle East & Africa\nNet revenues $ 9,842",
+      "note": "Note 19 \u2014 Operating Segments"
+    },
+    {
+      "metric_id": "latin_america_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "Latin America\nNet revenues $ 6,115",
+      "note": "Note 19 \u2014 Operating Segments"
+    },
+    {
+      "metric_id": "north_america_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "North America\nNet revenues $ 18,256",
+      "note": "Note 19 \u2014 Operating Segments"
+    },
+    {
+      "metric_id": "asia_pacific_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "Asia Pacific\nNet revenues $ 5,934",
+      "note": "Note 19 \u2014 Operating Segments"
+    },
+    {
+      "metric_id": "global_ventures_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "Global Ventures\nNet revenues $ 3,218",
+      "note": "Note 19 \u2014 Operating Segments"
+    },
+    {
+      "metric_id": "bottling_investments_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "Bottling Investments\nNet revenues $ 6,891",
+      "note": "Note 19 \u2014 Operating Segments"
+    },
+    {
+      "metric_id": "consolidated_net_revenues",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "consolidated_primary",
+      "snippet": "Net operating revenues $ 50,256",
+      "note": "Consolidated Statement of Income"
+    },
+    {
+      "metric_id": "latin_america_reported_growth_pct",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "narrative_fx",
+      "snippet": "Latin America segment net revenues increased 12%",
+      "note": "MD&A \u2014 Latin America"
+    },
+    {
+      "metric_id": "latin_america_cc_growth_pct",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "narrative_fx",
+      "snippet": "increased 15% on a comparable currency neutral basis",
+      "note": "MD&A \u2014 Latin America"
+    }
+  ],
+  "policy_acknowledgements": [
+    "global_ventures_is_reportable_segment"
+  ]
+}

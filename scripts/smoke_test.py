@@ -1114,6 +1114,47 @@ def check_fracture_registry() -> None:
     assert all_registered_fracture_codes() <= taxonomy_codes()
 
 
+def check_ko_gt_draft() -> None:
+    """P3-18 — KO footnote draft L1 + GT-derived fixtures."""
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_benchmark_l1.py",
+        "--task",
+        "KO_footnote_reconciliation",
+    ])
+    assert report["all_pass"] is True, report
+    assert report["fracture_codes"] == []
+
+    import tempfile
+
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from agent_output_contract import l1_values_from_gt, submission_from_gt  # noqa: E402
+
+    metrics = l1_values_from_gt("KO_footnote_reconciliation")
+    assert metrics["consolidated_net_revenues"] == 50_256
+    sub = submission_from_gt("KO_footnote_reconciliation")
+    assert sub["schema_version"] == "agent_submission_v1"
+    assert len(sub["citations"]) >= 6
+    assert "global_ventures_is_reportable_segment" in sub["policy_acknowledgements"]
+
+    trap_values = l1_values_from_gt("KO_footnote_reconciliation")
+    trap_values["global_ventures_net_revenues"] = None
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
+        json.dump(trap_values, tmp)
+        trap_path = tmp.name
+    trap_report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_footnote_exact.py",
+        "--ground-truth",
+        str(ROOT / "benchmark_v0.1" / "ground_truth" / "KO_footnote_reconciliation_gt.json"),
+        "--agent-output",
+        trap_path,
+    ])
+    Path(trap_path).unlink(missing_ok=True)
+    assert trap_report["all_pass"] is False, trap_report
+    assert "omit_global_ventures" in trap_report["failure_modes"], trap_report
+
+
 def check_task_registry() -> None:
     """P3-11 — manifest-driven task wiring SSOT."""
     sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
@@ -1127,8 +1168,9 @@ def check_task_registry() -> None:
 
     manifest = load_manifest()
     assert manifest["published_tasks"] == 4
+    assert manifest["draft_tasks"] == 1
     task_ids = all_task_ids()
-    assert len(task_ids) == 4
+    assert len(task_ids) == 5
     for task_id in task_ids:
         path = corpus_bundle_path(task_id)
         assert path.exists(), task_id
@@ -1139,7 +1181,8 @@ def check_task_registry() -> None:
     ):
         assert scripted_plan_path(task_id) is not None, task_id
     assert scripted_plan_path("NFLX_guidance_drift") is None
-    assert set(published_task_ids()) == set(task_ids)
+    assert len(published_task_ids()) == 4
+    assert "KO_footnote_reconciliation" not in published_task_ids()
 
 
 def check_archetype_roles() -> None:
@@ -1169,6 +1212,7 @@ def main() -> int:
         ("PEP FX ground truth L1", check_pep_fx_gt),
         ("AMZN footnote ground truth L1", check_amzn_gt),
         ("NFLX guidance drift L1", check_nflx_gt),
+        ("KO footnote draft L1", check_ko_gt_draft),
         ("Fracture taxonomy registry", check_fracture_taxonomy_registry),
         ("Corpus manifest", check_corpus_manifest),
         ("Corpus bundles", check_corpus_bundles),

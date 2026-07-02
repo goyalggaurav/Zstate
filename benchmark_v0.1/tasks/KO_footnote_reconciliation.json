@@ -1,0 +1,76 @@
+{
+  "task_id": "KO_footnote_reconciliation",
+  "version": "0.1.0-draft",
+  "status": "draft",
+  "benchmark_version": "benchmark_v0.1",
+
+  "ticker": "KO",
+  "cik": "0000021344",
+  "sector": "consumer",
+  "archetype": "F_exact",
+  "task_type": "F",
+  "difficulty_tier": "L3",
+
+  "prompt": {
+    "text": "Using The Coca-Cola Company's Form 10-K for the fiscal year ended December 31, 2025 (filed February 20, 2026), reconcile operating segment net revenues to consolidated net operating revenues for FY2025 and summarize Latin America FX effects.\n\nRetrieve filing sections by path_role slug:\n1. segment_policy — six reportable operating segments (include Global Ventures and Bottling Investments).\n2. segment_financials — FY2025 net revenues for all six segments (Note 19).\n3. consolidated_primary — consolidated net operating revenues cross-check.\n4. narrative_fx — Latin America reported vs comparable currency neutral growth %.\n5. Python — verify the six-segment net revenue sum equals consolidated net operating revenues.\n6. Produce reconciliation table (USD millions) and short narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Do not use decoy slug segment_financials_prior_year for scored metrics.\n- Global Ventures is a reportable segment — do not omit it from the reconciliation.\n- Each citation must use a distinct verbatim snippet.\n- Acknowledge required policy notes in your submission.",
+    "constraints": [
+      "Document: KO 10-K FY2025 only",
+      "Role-ordered workflow: segment_policy → segment_financials → consolidated_primary → narrative_fx",
+      "No Buy/Hold/Sell or price target"
+    ]
+  },
+
+  "required_documents": [
+    {
+      "doc_id": "KO_10K_2025",
+      "form_type": "10-K",
+      "fiscal_period": "FY2025",
+      "period_end": "2025-12-31",
+      "filing_date": "2026-02-20",
+      "sec_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134426000008/ko-20251231.htm",
+      "role": "primary"
+    }
+  ],
+
+  "allowed_tools": ["Search_Filing", "PDF_Parser", "Python_Interpreter"],
+
+  "mandate_profile": null,
+  "compliance_baseline": "citation_only",
+
+  "expected_outputs": {
+    "schema_ref": "forensics_report_v1",
+    "required_sections": ["reconciliation_table", "latin_america_fx_summary", "citations"],
+    "structured_fields": [
+      "emea_net_revenues",
+      "latin_america_net_revenues",
+      "north_america_net_revenues",
+      "asia_pacific_net_revenues",
+      "global_ventures_net_revenues",
+      "bottling_investments_net_revenues",
+      "consolidated_net_revenues",
+      "latin_america_reported_growth_pct",
+      "latin_america_cc_growth_pct"
+    ]
+  },
+
+  "execution_limits": {
+    "max_tool_calls": 35,
+    "max_tokens": 90000,
+    "timeout_seconds": 720,
+    "required_stages": [1, 2, 3, 4]
+  },
+
+  "scoring": {
+    "task_type_weights": { "layer1": 0.50, "layer2": 0.35, "layer3": 0.15 },
+    "finra_required": false,
+    "layer2_method": "gold_path_automated"
+  },
+
+  "ground_truth_ref": "../ground_truth/KO_footnote_reconciliation_gt.json",
+  "gold_path_ref": "../gold_paths/KO_footnote_reconciliation.json",
+  "grader_rubric_ref": "../rubrics/KO_footnote_reconciliation_grader.md",
+
+  "authored_by": "pilot_template_p3_18",
+  "review_status": "draft_pending_expert",
+  "updated_at": "2026-07-02T12:00:00Z"
+}

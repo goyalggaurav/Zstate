@@ -1,0 +1,197 @@
+{
+  "task_id": "KO_footnote_reconciliation",
+  "version": "0.1.0-draft",
+  "fiscal_period": "FY2025",
+  "period_end": "2025-12-31",
+  "unit": "USD_millions",
+
+  "verification_schema": {
+    "archetype": "F_exact",
+    "segment_metrics": [
+      "emea_net_revenues",
+      "latin_america_net_revenues",
+      "north_america_net_revenues",
+      "asia_pacific_net_revenues",
+      "global_ventures_net_revenues",
+      "bottling_investments_net_revenues"
+    ],
+    "consolidated_metric": "consolidated_net_revenues",
+    "fx_metrics": {
+      "reported": "latin_america_reported_growth_pct",
+      "cc": "latin_america_cc_growth_pct"
+    }
+  },
+
+  "extracted_values": [
+    {
+      "metric_id": "emea_net_revenues",
+      "value": 9842,
+      "label": "Europe, Middle East & Africa net revenues — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "KO_10K_2025",
+        "section_slug": "segment_financials",
+        "note": "Note 19 — Operating Segments",
+        "snippet": "Europe, Middle East & Africa\nNet revenues $ 9,842"
+      }
+    },
+    {
+      "metric_id": "latin_america_net_revenues",
+      "value": 6115,
+      "label": "Latin America net revenues — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "KO_10K_2025",
+        "section_slug": "segment_financials",
+        "note": "Note 19 — Operating Segments",
+        "snippet": "Latin America\nNet revenues $ 6,115"
+      }
+    },
+    {
+      "metric_id": "north_america_net_revenues",
+      "value": 18256,
+      "label": "North America net revenues — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "KO_10K_2025",
+        "section_slug": "segment_financials",
+        "note": "Note 19 — Operating Segments",
+        "snippet": "North America\nNet revenues $ 18,256"
+      }
+    },
+    {
+      "metric_id": "asia_pacific_net_revenues",
+      "value": 5934,
+      "label": "Asia Pacific net revenues — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "KO_10K_2025",
+        "section_slug": "segment_financials",
+        "note": "Note 19 — Operating Segments",
+        "snippet": "Asia Pacific\nNet revenues $ 5,934"
+      }
+    },
+    {
+      "metric_id": "global_ventures_net_revenues",
+      "value": 3218,
+      "label": "Global Ventures net revenues — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "KO_10K_2025",
+        "section_slug": "segment_financials",
+        "note": "Note 19 — Operating Segments",
+        "snippet": "Global Ventures\nNet revenues $ 3,218"
+      }
+    },
+    {
+      "metric_id": "bottling_investments_net_revenues",
+      "value": 6891,
+      "label": "Bottling Investments net revenues — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "KO_10K_2025",
+        "section_slug": "segment_financials",
+        "note": "Note 19 — Operating Segments",
+        "snippet": "Bottling Investments\nNet revenues $ 6,891"
+      }
+    },
+    {
+      "metric_id": "consolidated_net_revenues",
+      "value": 50256,
+      "label": "Consolidated net revenues — FY2025",
+      "tolerance": 0,
+      "citation": {
+        "doc_id": "KO_10K_2025",
+        "section_slug": "consolidated_primary",
+        "note": "Consolidated Statement of Income",
+        "snippet": "Net operating revenues $ 50,256"
+      }
+    },
+    {
+      "metric_id": "latin_america_reported_growth_pct",
+      "value": 12.0,
+      "label": "Latin America reported net revenue growth — FY2025 vs FY2024",
+      "tolerance": 0.05,
+      "citation": {
+        "doc_id": "KO_10K_2025",
+        "section_slug": "narrative_fx",
+        "note": "MD&A — Latin America",
+        "snippet": "Latin America segment net revenues increased 12%"
+      }
+    },
+    {
+      "metric_id": "latin_america_cc_growth_pct",
+      "value": 15.0,
+      "label": "Latin America comparable currency neutral growth — FY2025 vs FY2024",
+      "tolerance": 0.05,
+      "citation": {
+        "doc_id": "KO_10K_2025",
+        "section_slug": "narrative_fx",
+        "note": "MD&A — Latin America",
+        "snippet": "increased 15% on a comparable currency neutral basis"
+      }
+    }
+  ],
+
+  "computed_values": [
+    {
+      "metric_id": "segment_net_revenues_sum",
+      "value": 50256,
+      "label": "Sum of six operating segment net revenues",
+      "formula": "emea + latin_america + north_america + asia_pacific + global_ventures + bottling_investments"
+    }
+  ],
+
+  "reference_constants": {
+    "concentrate_finished_product_note": "Company sells concentrate and finished beverages; Bottling Investments reflects majority-owned bottlers.",
+    "prior_fy_consolidated_net_revenues_usd_m": 46905
+  },
+
+  "required_policy_acknowledgements": ["global_ventures_is_reportable_segment"],
+
+  "failure_modes": [
+    {
+      "id": "wrong_period",
+      "description": "Uses FY2024 consolidated or segment column",
+      "wrong_signatures": {
+        "consolidated_net_revenues": 46905
+      },
+      "fracture_code": "HALLUC_FILL"
+    },
+    {
+      "id": "omit_global_ventures",
+      "description": "Omits Global Ventures (Costa, innocent, etc.) from segment sum while using consolidated total",
+      "wrong_signatures": {
+        "global_ventures_net_revenues": null,
+        "consolidated_net_revenues": 50256
+      },
+      "fracture_code": "RECON_OMIT"
+    },
+    {
+      "id": "omit_bottling_investments",
+      "description": "Omits Bottling Investments segment from operating segment table",
+      "wrong_signatures": {
+        "bottling_investments_net_revenues": null,
+        "consolidated_net_revenues": 50256
+      },
+      "fracture_code": "RECON_OMIT"
+    },
+    {
+      "id": "latin_fx_swap",
+      "description": "Swaps reported and currency-neutral Latin America growth",
+      "wrong_signatures": {
+        "latin_america_reported_growth_pct": 15.0,
+        "latin_america_cc_growth_pct": 12.0
+      },
+      "fracture_code": "CC_OMIT"
+    }
+  ],
+
+  "expert_sign_off": {
+    "status": "draft",
+    "reviewer": null,
+    "review_date": null,
+    "review_doc": "docs/expert_drafts/KO_GT_REVIEW.md",
+    "notes": "Pilot draft — expert must verify Note 19 excerpts against KO 10-K FY2025 before publish."
+  }
+}

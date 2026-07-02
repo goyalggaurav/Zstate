@@ -60,6 +60,20 @@ CONTRACT_PHRASES: dict[str, list[str]] = {
         "Content amortization on the income statement is not the same as content cash payments",
         "7,385,470",
     ],
+    "KO_footnote_reconciliation": [
+        "9,842",
+        "6,115",
+        "18,256",
+        "5,934",
+        "3,218",
+        "6,891",
+        "50,256",
+        "46,905",
+        "Global Ventures",
+        "Bottling Investments",
+        "increased 12%",
+        "increased 15% on a comparable currency neutral basis",
+    ],
 }
 
 

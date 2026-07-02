@@ -161,7 +161,7 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/21344/000002134426000008/ko-20251231.htm",
       "ingest_status": "metadata_only",
       "checksum_sha256": null,
-      "task_refs": []
+      "task_refs": ["KO_footnote_reconciliation"]
     }
   ],
   "acquisition_summary": {

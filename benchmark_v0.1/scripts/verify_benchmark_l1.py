@@ -51,6 +51,14 @@ def verify_task(task_id: str, values: dict, *, period: str | None = None) -> dic
         return report
 
     if archetype == "F_exact":
+        gt_raw = json.loads(gt_path.read_text(encoding="utf-8"))
+        if gt_raw.get("verification_schema", {}).get("segment_metrics"):
+            from verify_footnote_exact import load_ground_truth, verify as verify_exact
+
+            gt_doc = load_ground_truth(gt_path)
+            report = verify_exact(values, gt_doc)
+            report["task_id"] = task_id
+            return report
         from verify_amzn_footnote_reconciliation import load_ground_truth, verify
 
         gt_doc = load_ground_truth(gt_path)
@@ -90,6 +98,12 @@ def default_gold_values(task_id: str, *, period: str | None = None) -> dict:
         gt = load_ground_truth(gt_path, period=verify_period)
         return gt["values"]
     if archetype == "F_exact":
+        gt_raw = json.loads(gt_path.read_text(encoding="utf-8"))
+        if gt_raw.get("verification_schema", {}).get("segment_metrics"):
+            from verify_footnote_exact import load_ground_truth
+
+            gt = load_ground_truth(gt_path)
+            return gt["values"]
         from verify_amzn_footnote_reconciliation import load_ground_truth
 
         gt = load_ground_truth(gt_path)

@@ -5,10 +5,14 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
 
 BENCH = Path(__file__).resolve().parent.parent
 PEP_GT_PATH = BENCH / "ground_truth" / "PEP_fx_organic_growth_gt.json"
+
+# Tasks created after P3-17 use GT-derived fixtures only (no hand-typed metric literals).
+GT_DERIVED_TASKS = frozenset({"KO_footnote_reconciliation"})
 
 SLOT_RE = re.compile(r"^(.+)_run(\d+)\.json$")
 
@@ -59,6 +63,61 @@ def parse_slot(slot: str, campaign: dict) -> tuple[str, str, int]:
 def agent_output_path(campaign: dict, model_id: str, task_id: str, run_index: int) -> Path:
     runs_dir = (BENCH / campaign["runs_dir"]).resolve()
     return runs_dir / model_slug(model_id) / f"{task_id}_run{run_index:02d}.json"
+
+
+def ground_truth_path_for_task(task_id: str) -> Path:
+    scripts = BENCH / "scripts"
+    if str(scripts) not in sys.path:
+        sys.path.insert(0, str(scripts))
+    from task_registry import bench_path
+
+    return bench_path(task_id, "ground_truth")
+
+
+def load_ground_truth_doc(task_id: str, gt_path: Path | None = None) -> dict:
+    path = gt_path or ground_truth_path_for_task(task_id)
+    return load_json(path)
+
+
+def l1_values_from_gt(task_id: str, gt_path: Path | None = None) -> dict:
+    """Build L1 agent-output dict from GT extracted + computed values (P3-17)."""
+    doc = load_ground_truth_doc(task_id, gt_path)
+    values: dict = {}
+    for section in ("extracted_values", "computed_values"):
+        for item in doc.get(section, []):
+            if isinstance(item.get("value"), bool):
+                continue
+            values[item["metric_id"]] = item["value"]
+    return values
+
+
+def submission_from_gt(task_id: str, gt_path: Path | None = None) -> dict:
+    """Build agent_submission_v1 from GT citations (P3-17 — hardened template)."""
+    doc = load_ground_truth_doc(task_id, gt_path)
+    metrics = l1_values_from_gt(task_id, gt_path)
+    citations: list[dict] = []
+    for item in doc.get("extracted_values", []):
+        cite = item.get("citation") or {}
+        snippet = cite.get("snippet")
+        if not snippet:
+            continue
+        entry: dict = {
+            "metric_id": item["metric_id"],
+            "doc_id": cite.get("doc_id", ""),
+            "section_slug": cite.get("section_slug", "segment_financials"),
+            "snippet": snippet,
+        }
+        if cite.get("note"):
+            entry["note"] = cite["note"]
+        citations.append(entry)
+
+    policy_ids = doc.get("required_policy_acknowledgements") or []
+    return {
+        "schema_version": "agent_submission_v1",
+        "metrics": metrics,
+        "citations": citations,
+        "policy_acknowledgements": list(policy_ids),
+    }
 
 
 def googl_gold_values() -> dict:
@@ -285,6 +344,8 @@ SUBMISSION_TRAP_MODES: dict[str, dict] = {
 
 def submission_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict:
     if mode == "submission_gold" or mode == "gold":
+        if task_id in GT_DERIVED_TASKS:
+            return submission_from_gt(task_id)
         if task_id == "GOOGL_footnote_reconciliation":
             return googl_gold_submission()
         if task_id == "PEP_fx_organic_growth":
@@ -348,6 +409,7 @@ def write_contract_submission_fixtures() -> list[Path]:
         ("PEP_fx_organic_growth", "trap_l3_halluc_snippet", "PEP_fx_organic_growth_submission_trap_halluc_snippet.json"),
         ("PEP_fx_organic_growth", "trap_l3_duplicate_snippet", "PEP_fx_organic_growth_submission_trap_duplicate_snippet.json"),
         ("AMZN_footnote_reconciliation", "submission_gold", "AMZN_footnote_reconciliation_submission_gold.json"),
+        ("KO_footnote_reconciliation", "submission_gold", "KO_footnote_reconciliation_submission_gold.json"),
     ]
     for task_id, mode, filename in specs:
         path = contract_dir / filename
@@ -363,6 +425,8 @@ def submission_output_path(agent_output_path: Path) -> Path:
 
 def payload_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict | None:
     if mode == "gold":
+        if task_id in GT_DERIVED_TASKS:
+            return l1_values_from_gt(task_id)
         if task_id == "GOOGL_footnote_reconciliation":
             return googl_gold_values()
         if task_id == "PEP_fx_organic_growth":
@@ -406,6 +470,19 @@ def payload_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict | 
         values["emea_net_revenue_fy2025"] = 25_000
         return values
 
+    if mode == "trap_ko_omit_global_ventures":
+        if task_id != "KO_footnote_reconciliation":
+            raise ValueError("trap_ko_omit_global_ventures applies to KO_footnote_reconciliation only")
+        doc = load_ground_truth_doc(task_id)
+        values = l1_values_from_gt(task_id)
+        trap = next(
+            fm["wrong_signatures"]
+            for fm in doc["failure_modes"]
+            if fm["id"] == "omit_global_ventures"
+        )
+        values.update(trap)
+        return values
+
     if mode in ("malformed", "missing"):
         return None
 
@@ -413,7 +490,15 @@ def payload_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict | 
 
 
 CONTRACT_MODES: dict[str, dict] = {
-    "gold": {"tasks": ["GOOGL_footnote_reconciliation", "PEP_fx_organic_growth", "AMZN_footnote_reconciliation"], "expect_fractures": []},
+    "gold": {
+        "tasks": [
+            "GOOGL_footnote_reconciliation",
+            "PEP_fx_organic_growth",
+            "AMZN_footnote_reconciliation",
+            "KO_footnote_reconciliation",
+        ],
+        "expect_fractures": [],
+    },
     "trap_googl_sign": {
         "tasks": ["GOOGL_footnote_reconciliation"],
         "expect_fractures": ["SIGN_ERR"],
@@ -433,6 +518,11 @@ CONTRACT_MODES: dict[str, dict] = {
         "tasks": ["PEP_fx_organic_growth"],
         "expect_fractures": ["SCOPE_ERR"],
         "expect_failure_modes": ["wrong_region"],
+    },
+    "trap_ko_omit_global_ventures": {
+        "tasks": ["KO_footnote_reconciliation"],
+        "expect_fractures": ["RECON_OMIT"],
+        "expect_failure_modes": ["omit_global_ventures"],
     },
 }
 
