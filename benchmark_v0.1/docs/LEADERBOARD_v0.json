@@ -1,9 +1,9 @@
 {
   "schema_version": "leaderboard_v0",
   "campaign_id": "pilot_eval_4task_v1",
-  "generated_at": "2026-07-02T00:53:23.971805+00:00",
+  "generated_at": "2026-07-02T01:20:13.833223+00:00",
   "source_report": "2026-07-02T00:36:35.579447+00:00",
-  "git_commit": "c8ffa1c",
+  "git_commit": "61fcb9a",
   "methodology": {
     "primary_rank": "headline_weighted_composite",
     "headline_tasks": [
@@ -50,6 +50,7 @@
     "GUIDE_CONFUSE": "Guidance conflated with actuals or wrong KPI line",
     "GUIDANCE_PERIOD_ERR": "Guidance actual compared using wrong fiscal period column",
     "CASH_VS_AMORT_ERR": "Content amortization reported as guided cash spend",
+    "PATH_INEFF": "Suboptimal tool path or section order",
     "SBC_ALLOCATION_ERR": "Stock-based compensation added to segment net sales reconciliation"
   },
   "leader_model_id": "claude-sonnet-4-5",

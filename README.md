@@ -16,27 +16,33 @@ Design-phase repository for **AlphaNote-Bench**: credentialed-expert equity rese
 
 | Track | Path | Status |
 |-------|------|--------|
-| **A — Eval benchmark** | [benchmark_v0.1/](benchmark_v0.1/) | GOOGL + PEP published (expert-reviewed 2026-07-01) |
-| **B — RL environment** | [env_v1/](env_v1/) | Solaris v1.0 published + agent loop |
+| **A — Eval benchmark** | [benchmark_v0.1/](benchmark_v0.1/) | **4 published tasks** (GOOGL, PEP, AMZN, NFLX) — expert-reviewed Jul 2026 |
+| **A — Leaderboard** | [LEADERBOARD_v0.md](benchmark_v0.1/docs/LEADERBOARD_v0.md) | `pilot_eval_4task_v1` — composite + Fracture Intensity |
+| **B — RL environment** | [env_v1/](env_v1/) | Solaris v1.1 + frontier campaign |
+
+Published tasks are listed in [benchmark_v0.1/manifest.json](benchmark_v0.1/manifest.json) (source of truth).
 
 ## Quick commands
 
 ```bash
-# Smoke test (Track A L1 + Track B scorer + scripted agent)
+# Smoke test (28 checks — Track A L1/L2/L3 + Track B scorer)
 python3 scripts/smoke_test.py
 
-# Track A — verify GOOGL ground truth
-python3 benchmark_v0.1/scripts/verify_googl_footnote_reconciliation.py --period q1_2026
+# Track A — unified L1 verify (any published task)
+python3 benchmark_v0.1/scripts/verify_benchmark_l1.py --task GOOGL_footnote_reconciliation
+python3 benchmark_v0.1/scripts/verify_benchmark_l1.py --task NFLX_guidance_drift
+
+# Track A — score campaign + regenerate leaderboard
+python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
+  --campaign benchmark_v0.1/campaigns/pilot_eval_4task_v1.json
+python3 benchmark_v0.1/scripts/generate_leaderboard.py
 
 # Track B — demo trajectories (schema-enriched traces)
 python3 env_v1/scripts/run_episode.py --mode all
 
-# Track B — scripted agent (P1-12 prep)
+# Track B — scripted agent
 python3 env_v1/scripts/agent_loop.py --agent scripted \
   --plan env_v1/examples/agents/solaris_good_plan.json
-
-# Track B — mock weak agent (offline, no API key)
-python3 env_v1/scripts/agent_loop.py --agent mock
 
 # Track B — frontier model batch (requires OPENAI_API_KEY)
 python3 scripts/run_frontier_batch.py --model-id gpt-4o --seeds 3 --start-index 2

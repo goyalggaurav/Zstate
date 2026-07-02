@@ -43,17 +43,9 @@ def load_gold_path(task_id: str) -> dict:
 
 
 def run_l1_verify(task_id: str, agent_path: Path, manifest: dict) -> dict:
-    script = BENCH / "scripts" / "verify_benchmark_l1.py"
-    cmd = [
-        sys.executable,
-        str(script),
-        "--task",
-        task_id,
-        "--agent-output",
-        str(agent_path),
-    ]
-    if task_id == "GOOGL_footnote_reconciliation":
-        cmd.extend(["--period", "q1_2026"])
+    from verify_benchmark_l1 import l1_verify_argv
+
+    cmd = l1_verify_argv(task_id, agent_path)
     proc = subprocess.run(cmd, cwd=BENCH.parent, capture_output=True, text=True)
     if proc.returncode not in (0, 1):
         return {"error": proc.stderr.strip() or proc.stdout.strip(), "exit_code": proc.returncode}

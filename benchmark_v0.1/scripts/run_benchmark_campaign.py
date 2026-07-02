@@ -151,19 +151,9 @@ def published_tasks(manifest: dict) -> dict[str, dict]:
 
 
 def verify_cmd(task_entry: dict, agent_path: Path) -> list[str]:
-    task_id = task_entry["task_id"]
-    script = BENCH / "scripts" / "verify_benchmark_l1.py"
-    cmd = [
-        sys.executable,
-        str(script),
-        "--task",
-        task_id,
-        "--agent-output",
-        str(agent_path),
-    ]
-    if task_id == "GOOGL_footnote_reconciliation":
-        cmd.extend(["--period", "q1_2026"])
-    return cmd
+    from verify_benchmark_l1 import l1_verify_argv
+
+    return l1_verify_argv(task_entry["task_id"], agent_path)
 
 
 def run_verify(task_entry: dict, agent_path: Path) -> dict:

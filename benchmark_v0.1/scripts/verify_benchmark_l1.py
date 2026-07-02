@@ -20,33 +20,48 @@ sys.path.insert(0, str(SCRIPTS))
 
 from archetype_roles import ground_truth_path, task_archetype  # noqa: E402
 
+_FISCAL_PERIOD_MAP = {
+    "2026Q1": "q1_2026",
+    "FY2025": "fy2025",
+}
+
+
+def default_verify_period(task_id: str) -> str | None:
+    """Map task GT fiscal_period to verifier --period token when applicable."""
+    if task_archetype(task_id) != "F_adjustment":
+        return None
+    gt_path = ground_truth_path(task_id)
+    doc = json.loads(gt_path.read_text(encoding="utf-8"))
+    fiscal = doc.get("fiscal_period", "")
+    return _FISCAL_PERIOD_MAP.get(fiscal)
+
 
 def verify_task(task_id: str, values: dict, *, period: str | None = None) -> dict:
     archetype = task_archetype(task_id)
+    gt_path = ground_truth_path(task_id)
 
     if archetype == "F_adjustment":
-        from verify_googl_footnote_reconciliation import GT_FY2025, GT_Q1_2026, verify
+        from verify_googl_footnote_reconciliation import load_ground_truth, verify
 
-        gt = GT_FY2025 if period == "fy2025" else GT_Q1_2026
-        report = verify(values, gt)
+        verify_period = period or default_verify_period(task_id) or "q1_2026"
+        gt_doc = load_ground_truth(gt_path, period=verify_period)
+        report = verify(values, gt_doc)
         report["task_id"] = task_id
-        report["archetype"] = archetype
-        if period:
-            report["period"] = period
+        report["period"] = verify_period
         return report
 
     if archetype == "F_exact":
-        from verify_amzn_footnote_reconciliation import GT_FY2025, verify
+        from verify_amzn_footnote_reconciliation import load_ground_truth, verify
 
-        report = verify(values, GT_FY2025)
+        gt_doc = load_ground_truth(gt_path)
+        report = verify(values, gt_doc)
         report["task_id"] = task_id
-        report["archetype"] = archetype
         return report
 
     if archetype == "M_organic":
         from verify_fx_organic_growth import load_ground_truth, verify as verify_organic
 
-        gt_doc = load_ground_truth(ground_truth_path(task_id))
+        gt_doc = load_ground_truth(gt_path)
         report = verify_organic(values, gt_doc)
         report["task_id"] = task_id
         report["archetype"] = archetype
@@ -55,7 +70,7 @@ def verify_task(task_id: str, values: dict, *, period: str | None = None) -> dic
     if archetype == "F_guidance_drift":
         from verify_guidance_drift import load_ground_truth, verify as verify_guidance
 
-        gt_doc = load_ground_truth(ground_truth_path(task_id))
+        gt_doc = load_ground_truth(gt_path)
         report = verify_guidance(values, gt_doc)
         report["task_id"] = task_id
         report["archetype"] = archetype
@@ -66,28 +81,49 @@ def verify_task(task_id: str, values: dict, *, period: str | None = None) -> dic
 
 def default_gold_values(task_id: str, *, period: str | None = None) -> dict:
     archetype = task_archetype(task_id)
+    gt_path = ground_truth_path(task_id)
+
     if archetype == "F_adjustment":
-        from verify_googl_footnote_reconciliation import GT_FY2025, GT_Q1_2026
+        from verify_googl_footnote_reconciliation import load_ground_truth
 
-        return GT_FY2025 if period == "fy2025" else GT_Q1_2026
+        verify_period = period or default_verify_period(task_id) or "q1_2026"
+        gt = load_ground_truth(gt_path, period=verify_period)
+        return gt["values"]
     if archetype == "F_exact":
-        from verify_amzn_footnote_reconciliation import GT_FY2025
+        from verify_amzn_footnote_reconciliation import load_ground_truth
 
-        return GT_FY2025
+        gt = load_ground_truth(gt_path)
+        return gt["values"]
     if archetype == "M_organic":
         from verify_fx_organic_growth import load_ground_truth
 
-        gt = load_ground_truth(ground_truth_path(task_id))
+        gt = load_ground_truth(gt_path)
         return gt["values"]
     if archetype == "F_guidance_drift":
         from verify_guidance_drift import load_ground_truth
 
-        gt = load_ground_truth(ground_truth_path(task_id))
+        gt = load_ground_truth(gt_path)
         vals = {k: v for k, v in gt["values"].items() if not isinstance(v, bool)}
         if "guidance_pace_under" in gt["values"]:
             vals["guidance_pace_under"] = gt["values"]["guidance_pace_under"]
         return vals
     raise ValueError(f"No default values for {task_id!r}")
+
+
+def l1_verify_argv(task_id: str, agent_output: Path, *, period: str | None = None) -> list[str]:
+    """Build subprocess argv for unified L1 verify (P3-16 — no task_id sprawl)."""
+    cmd = [
+        sys.executable,
+        str(SCRIPTS / "verify_benchmark_l1.py"),
+        "--task",
+        task_id,
+        "--agent-output",
+        str(agent_output),
+    ]
+    verify_period = period or default_verify_period(task_id)
+    if verify_period:
+        cmd.extend(["--period", verify_period])
+    return cmd
 
 
 def main() -> int:

@@ -1,8 +1,8 @@
 # Zstate — System Architecture
 
-**Version:** 1.1  
+**Version:** 1.2  
 **Owner:** Engineering  
-**Status:** Active — Week 0 hygiene; 2 published eval tasks (GOOGL, PEP)
+**Status:** Active — 4 published Track A tasks (GOOGL, PEP, AMZN, NFLX); pilot eval + leaderboard v0 live
 
 Canonical technical map. Product requirements live in [Framework v0.2](./ZSTATE_EQUITY_RESEARCH_BENCHMARK_FRAMEWORK.md). Priorities live in [Roadmap](./ROADMAP.md) and [Backlog](./BACKLOG.md).
 
@@ -88,7 +88,7 @@ Zstate/
 | L2 Judgment / section recall | Rules + gold path | 25% |
 | L3 Trust / citations | Citation audit | 20% |
 
-Implementation target: `benchmark_v0.1/scripts/verify_*.py` (L1); scoring engine spec for L2/L3.
+Implementation: `benchmark_v0.1/scripts/verify_benchmark_l1.py` (archetype router) + GT-driven `verify_*.py` (L1); `score_benchmark_run.py` (L2/L3); `generate_leaderboard.py`.
 
 ### Track B — 4-component (env)
 
@@ -137,9 +137,9 @@ See [schemas/trajectory_v1.json](../schemas/trajectory_v1.json). Env traces are 
 | Spec (`docs/specs/`) | Pilot implementation | When to build full service |
 |----------------------|----------------------|----------------------------|
 | corpus-service | EDGAR JSON + `corpus/` bundles | v0.1b scale (15 cos) |
-| task-registry | `benchmark_v0.1/tasks/*.json` | Expert Workbench |
-| eval-orchestrator | `run_benchmark_campaign.py` + contract stubs (LATER-03) | Model adapters |
-| scoring-engine | `verify_*.py` (L1 only, Track A) + `score_episode.py` | L2/L3 + automated campaigns |
+| task-registry | `manifest.json` + `scripts/task_registry.py` (P3-11) | Expert Workbench |
+| eval-orchestrator | `run_benchmark_campaign.py` + OpenAI/Anthropic adapters | Live campaigns |
+| scoring-engine | `verify_benchmark_l1.py` + `score_benchmark_run.py` + `score_episode.py` | LLM-judge L2 |
 | expert-workbench | Markdown drafts + sheets | P3 |
 
 Specs describe **target architecture**; `benchmark_v0.1/` and `env_v1/` are **MVD implementations**.
@@ -150,7 +150,7 @@ Specs describe **target architecture**; `benchmark_v0.1/` and `env_v1/` are **MV
 
 | Type | Track | Stages | Example |
 |------|-------|--------|---------|
-| **F** Forensics | A | 1–2 | GOOGL footnote reconciliation |
+| **F** Forensics | A | 1–2 | GOOGL footnote reconciliation; AMZN footnote; NFLX guidance drift |
 | **M** Modeling | A | 1–3 | PEP FX organic growth |
 | **C** Coverage | A (v0.5+) | 1–4 | Initiation memo + reco |
 | **D** Dual-control dispute | B | tools ↔ PM | Solaris earnings quality |

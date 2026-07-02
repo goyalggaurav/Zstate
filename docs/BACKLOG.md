@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.5  
-**Last updated:** July 2026 (P3-11 task registry SSOT — 4 published tasks, 28 smoke checks)
+**Last updated:** July 2026 (P3-12 GT-native L1 + P3-13 doc sync — 4 published tasks, 28 smoke checks)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -98,14 +98,14 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | ID | Item | Track | Status | Owner | Notes |
 |----|------|-------|--------|-------|-------|
 | P3-11 | **`task_registry.py` SSOT** — manifest-driven task wiring | A | done | Eng | `task_registry.py`; `corpus_bundle` + `scripted_plan` in manifest; 3× bundle maps removed |
-| P3-12 | **GT-native L1** — GOOGL + AMZN verifiers | A | todo | Eng | Migrate hardcoded `GT_Q1_2026` / AMZN constants to GT-loaded verify (PEP/NFLX pattern); keep `verify_benchmark_l1.py` router only |
-| P3-13 | **Doc sync from manifest** | Both | todo | Eng | `docs/ARCHITECTURE.md`, root `README.md`, spec status blocks — manifest is source of truth (4 published tasks); prune or gitignore stale root `/runs/` |
+| P3-12 | **GT-native L1** — GOOGL + AMZN verifiers | A | done | Eng | GT-loaded verify; `verify_benchmark_l1.py` router + `l1_verify_argv()`; hardcoded constants removed |
+| P3-13 | **Doc sync from manifest** | Both | done | Eng | `ARCHITECTURE.md` v1.2, root `README.md` — 4 tasks, leaderboard/campaign commands |
 | P3-14 | **Track B fracture registry** | B | todo | Eng | Extend `fracture_library_v1.json` + `fracture_registry.py` for Track B; retire inline `fracture_map` in `env_v1/scripts/score_episode.py` |
 | P3-15 | **Synthetic L3 eval mode** | A | todo | Eng | Campaign flag `synthetic_l3: true` + separate FI column in leaderboard (P3-09 bait exists; eval wiring not built) |
-| P3-16 | **Task special-case cleanup** | A | todo | Eng | Remove per-`task_id` sprawl in `run_benchmark_campaign.py`, `score_benchmark_run.py`, mock agent once P3-11 registry exists |
+| P3-16 | **Task special-case cleanup** | A | in_progress | Eng | GOOGL `--period` sprawl removed from campaign/scorer via `l1_verify_argv()`; mock agent still GOOGL-only |
 | P3-17 | **Contract literals audit** | A | todo | Eng | Align `agent_output_contract.py` bootstrap/fixture literals with GT JSON; single source on GT edit |
 
-**Gate:** P3-03 (15 tasks) blocked until P3-11 + P3-12 are `done`. Full EDGAR ingest remains **LATER-06** (not split out).
+**Gate:** P3-03 (15 tasks) blocked until P3-16 mock-agent generalization (optional). P3-11 + P3-12 done. Full EDGAR ingest remains **LATER-06**.
 
 ### Env + catalog scale
 
@@ -113,7 +113,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 |----|------|-------|--------|-------|-------|
 | P3-01 | Guidance dispute dual-control episode (Scenario #2) | B | deferred | CFA + Eng | NFLX-style |
 | P3-02 | Real-ticker earnings-quality episode (PEP/KO) | B | deferred | CFA | Authored excerpts |
-| P3-03 | Scale MVD to 15 tasks (5 cos × 3 archetypes) | A | deferred | Associate | ≤6 hrs/task by task 5; **blocked on P3-11, P3-12** |
+| P3-03 | Scale MVD to 15 tasks (5 cos × 3 archetypes) | A | deferred | Associate | ≤6 hrs/task by task 5; **P3-11/P3-12 done** |
 | P3-04 | LLM-judge calibration loop — adjust thresholds | B | deferred | CFA | After 20+ env runs |
 | P3-05 | PM policy v2 — optional LLM paraphrase on FSM | B | deferred | Eng | After branch miss metrics |
 | P3-06 | Add `earnings_quality_dispute` to task catalog | Both | deferred | Product | New archetype |
