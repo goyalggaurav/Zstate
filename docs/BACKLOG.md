@@ -109,8 +109,8 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-32 | **Computed-metric L3 policy** | A | done | Eng | `computed_citations` in gold path; `submission_from_gt()` auto-builds computed citations |
 | P3-33 | **Scripted plans NFLX/KO** | A | done | Eng | `nflx_good_plan.json`, `ko_good_plan.json`; publish gate requires scripted_plan |
 | P3-34 | **Metric unit typing (L3)** | A | done | Eng | `infer_metric_unit` / `build_metric_units`; unit-aware `numeric_in_snippet` |
-| P3-35 | **KO `reconciliation_bridge_total` rename (v0.2)** | A | deferred | Eng | Rename `segment_net_revenues_sum` → `reconciliation_bridge_total` (GT, task schema, fixtures, pinned runs, L3 rules). Expert-confirmed semantics 2026-07-02; defer to avoid destabilizing green pilot. Blast radius: schema + `pilot_eval_5task_v1` rescore |
-| P3-36 | **L3 anchor resilience (v0.2)** | A | deferred | Eng | **Bundle with P3-35.** (1) **Anchor regression CI** — GT + submission-gold citations must pass `anchor_ok` + excerpt checks on corpus refresh; fail CI before publish. (2) **Token-set row matching** — `{north, america}` ⊆ snippet tokens; handles punctuation drift without LLM. (3) **GT-derived default anchors** — infer `row_label` from GT citation snippet; gold path overrides only for discrimination. Optional: `anchor_mode` strict/relaxed per campaign |
+| P3-35 | **KO `reconciliation_bridge_total` rename (v0.2)** | A | done | Eng | Renamed from `segment_net_revenues_sum` across GT, task schema, fixtures, pinned runs, L3 rules. Expert-confirmed bridge semantics 2026-07-02 |
+| P3-36 | **L3 anchor resilience (v0.2)** | A | done | Eng | GT-derived default anchors + token-set `row_label_match`; `validate_l3_anchor_regression.py` in smoke; AMZN explicit anchors removed (GT SSOT) |
 | P3-28 | **`sync_track_a_docs.py`** | Both | done | Eng | Manifest-driven blocks in root README, benchmark README, ARCHITECTURE; `--check` in CI |
 | P3-29 | **L3 citation hardening (9B)** | A | done | Eng | Archetype baselines + KO column/row anchors; `l3_citation_rules.py`; KO trap fixture |
 | P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
@@ -125,7 +125,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-26 | **Doc sync (5-task pilot SSOT)** | A | done | Eng | Root README, benchmark README, smoke leaderboard assert |
 | P3-27 | **Track A trajectory_v1 validation** | A | done | Eng | `shared/trace_utils.py`; validate on benchmark trace write |
 
-**Gate:** P3 architecture hardening **complete for pilot**; **scale pass open** (P3-30–34 done). **v0.2 schema pass:** P3-35 + P3-36 (deferred). P3-03 (15 tasks) unblocked — scripted plan + publish gate per task. Full EDGAR ingest remains **LATER-06**.
+**Gate:** P3 architecture hardening **complete for pilot**; **v0.2 schema pass done** (P3-35 + P3-36). P3-03 (15 tasks) unblocked — scripted plan + publish gate per task. Full EDGAR ingest remains **LATER-06**.
 
 ### Env + catalog scale
 

@@ -161,32 +161,6 @@
   "l3_citation_rules": {
     "distinct_snippets_required": true,
     "column_aware_table": true,
-    "fiscal_column_header": "2025",
-    "metric_citation_anchors": {
-      "north_america_net_sales": {
-        "row_label": "North America",
-        "section_slug": "segment_financials"
-      },
-      "international_net_sales": {
-        "row_label": "International",
-        "section_slug": "segment_financials"
-      },
-      "aws_net_sales": {
-        "row_label": "AWS",
-        "section_slug": "segment_financials"
-      },
-      "consolidated_net_sales": {
-        "row_label": "Net sales",
-        "section_slug": "consolidated_primary"
-      },
-      "international_reported_growth_pct": {
-        "row_label": "International",
-        "section_slug": "narrative_fx"
-      },
-      "international_cc_growth_pct": {
-        "row_label": "excluding",
-        "section_slug": "narrative_fx"
-      }
-    }
+    "fiscal_column_header": "2025"
   }
 }

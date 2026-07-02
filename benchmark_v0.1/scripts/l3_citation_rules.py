@@ -73,6 +73,83 @@ def normalize(text: str) -> str:
     return re.sub(r"\s+", " ", text.strip())
 
 
+def tokenize(text: str) -> set[str]:
+    """Lowercase word tokens for subset row-label matching (P3-36)."""
+    norm = normalize(text).lower()
+    norm = re.sub(r"\.\.\.", " ", norm)
+    tokens: set[str] = set()
+    for part in re.split(r"[\s|,;]+", norm):
+        part = part.strip("()$%")
+        if not part or part.isdigit():
+            continue
+        if re.fullmatch(r"[\d,\.]+", part):
+            continue
+        tokens.add(part)
+    return tokens
+
+
+def derive_row_label_from_snippet(snippet: str) -> str | None:
+    """Infer default row label from GT citation snippet (first meaningful line)."""
+    if not snippet:
+        return None
+    if "..." in snippet:
+        tail = snippet.split("...")[-1].strip().split("\n")[0].strip()
+        tail = re.sub(r"\$\s*[\d,\.\(\)]+$", "", tail).strip()
+        if tail and re.search(r"[a-zA-Z]{2,}", tail):
+            return tail
+    first_line = snippet.split("\n")[0].strip()
+    if "|" in first_line:
+        for part in first_line.split("|"):
+            part = part.strip()
+            if part and re.search(r"[a-zA-Z]{2,}", part):
+                return part
+    if re.fullmatch(r"[\d\(\)\|,\s\.\$%-]+", first_line):
+        return None
+    if re.search(r"[a-zA-Z]", first_line):
+        return first_line
+    return None
+
+
+def resolve_metric_anchors(
+    gt_doc: dict | None,
+    gold_anchors: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Merge gold-path anchors with GT-derived defaults; gold path overrides win (P3-36)."""
+    resolved: dict[str, Any] = dict(gold_anchors or {})
+    if not gt_doc:
+        return resolved
+    for item in gt_doc.get("extracted_values", []):
+        mid = item.get("metric_id")
+        if not mid or mid in resolved or item.get("formula"):
+            continue
+        cite = item.get("citation") or {}
+        snippet = cite.get("snippet")
+        if not snippet:
+            continue
+        row_label = derive_row_label_from_snippet(snippet)
+        if not row_label:
+            continue
+        entry: dict[str, Any] = {"row_label": row_label}
+        if cite.get("section_slug"):
+            entry["section_slug"] = cite["section_slug"]
+        resolved[mid] = entry
+    return resolved
+
+
+def row_label_match(snippet: str, anchor: dict[str, Any]) -> bool:
+    label = anchor.get("row_label")
+    if not label:
+        return True
+    mode = anchor.get("row_label_match", "token_set")
+    norm_snip = normalize(snippet)
+    if mode == "substring":
+        return str(label).lower() in norm_snip.lower()
+    required = set(anchor.get("row_label_tokens") or tokenize(str(label)))
+    if not required:
+        return str(label).lower() in norm_snip.lower()
+    return required <= tokenize(snippet)
+
+
 def is_note_number_only(snippet: str) -> bool:
     return bool(NOTE_ONLY_RE.match(normalize(snippet)))
 
@@ -146,7 +223,13 @@ def numeric_forms(value: int | float, unit: str | None = None) -> list[str]:
 
 def numeric_optional(metric_id: str, l3_rules: dict) -> bool:
     optional = set(l3_rules.get("numeric_optional_metrics") or [])
-    optional.update({"segment_sum", "reconciling_item_amount", "segment_net_revenues_sum", "segment_net_sales_sum"})
+    optional.update({
+        "segment_sum",
+        "reconciling_item_amount",
+        "reconciliation_bridge_total",
+        "reconciliation_bridge_total",
+        "segment_net_sales_sum",
+    })
     return metric_id in optional
 
 
@@ -180,10 +263,8 @@ def anchor_ok(
 ) -> tuple[bool, str | None]:
     if section_slug and anchor.get("section_slug") and anchor["section_slug"] != section_slug:
         return True, None
-    norm_lower = normalize(snippet).lower()
     if anchor.get("row_label"):
-        label = str(anchor["row_label"])
-        if label.lower() not in norm_lower:
+        if not row_label_match(snippet, anchor):
             return False, "missing_row_label"
     if anchor.get("column_header"):
         header = str(anchor["column_header"])

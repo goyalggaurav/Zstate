@@ -138,7 +138,7 @@
 
   "computed_values": [
     {
-      "metric_id": "segment_net_revenues_sum",
+      "metric_id": "reconciliation_bridge_total",
       "value": 47941,
       "label": "Total segment net operating revenues plus Corporate and eliminations",
       "formula": "emea + latin_america + north_america + asia_pacific + bottling_investments + corporate + intersegment_eliminations"

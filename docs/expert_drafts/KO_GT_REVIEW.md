@@ -121,10 +121,10 @@ Note 20 FY2025 **Total net operating revenues** row decomposes as:
 | Eliminations | (1,009) | Intersegment elimination |
 | **Consolidated** | **47,941** | Face + Note 20 Consolidated column |
 
-L1 `segment_net_revenues_sum` (computed) = **full Python bridge** (five segments + Corporate + Eliminations) = **47,941** — same as `consolidated_net_revenues`, **not** the 48,806 operating subtotal.
+L1 `reconciliation_bridge_total` (computed) = **full Python bridge** (five segments + Corporate + Eliminations) = **47,941** — same as `consolidated_net_revenues`, **not** the 48,806 operating subtotal.
 
 **L3 citation policy:** computed sum cites `(1,009) | 47,941` — anchors the **Eliminations → Consolidated** tail of the Total row, proving the agent bridged intersegment eliminations. Operating subtotal **48,806** remains visible in segment-line citations (e.g. Bottling → `48,806`).
 
-`segment_net_revenues_sum` in task `structured_fields` approved (GOOGL `segment_sum` parity).
+`reconciliation_bridge_total` in task `structured_fields` approved (GOOGL `segment_sum` parity).
 
 **Expert confirmation (2026-07-02):** Citation `(1,009) | 47,941` locked in — proves eliminations bridged to consolidated. Rename to `reconciliation_bridge_total` deferred → **P3-35** (v0.2 schema pass).

@@ -148,6 +148,17 @@ def validate_publish_task(task_id: str) -> dict:
     else:
         record("contract_submission_metrics_parity", status != "published", "missing submission fixture")
 
+    try:
+        anchor_report = run_json([
+            sys.executable,
+            str(SCRIPTS / "validate_l3_anchor_regression.py"),
+            "--task",
+            task_id,
+        ])
+        record("l3_anchor_regression", anchor_report.get("all_pass", False))
+    except RuntimeError as exc:
+        record("l3_anchor_regression", False, str(exc))
+
     scripted = paths.get("scripted_plan")
     if status == "published":
         record("scripted_plan", bool(scripted and (BENCH / scripted).exists()), scripted or "required for published")

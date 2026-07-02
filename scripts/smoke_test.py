@@ -1297,6 +1297,11 @@ def check_l3_citation_hardening() -> None:
     assert "emea_net_revenues" in ko_rules["metric_citation_anchors"]
     assert numeric_in_snippet(-4.7, "(4.7)%") is True
 
+    from l3_citation_rules import row_label_match  # noqa: E402
+
+    assert row_label_match("North America, net | 426,305", {"row_label": "North America"}) is True
+    assert row_label_match("NA | 426,305", {"row_label": "North America"}) is False
+
     report = run([
         sys.executable,
         "benchmark_v0.1/scripts/validate_agent_submission.py",
@@ -1393,10 +1398,20 @@ def check_submission_from_gt_computed() -> None:
                 "cash_vs_guidance_pace_variance_pct",
                 "guidance_pace_under",
             },
-            "KO_footnote_reconciliation": {"segment_net_revenues_sum"},
+            "KO_footnote_reconciliation": {"reconciliation_bridge_total"},
         }[task_id]
         got = {c["metric_id"] for c in sub["citations"]}
         assert computed_ids <= got, (task_id, got)
+
+
+def check_l3_anchor_regression() -> None:
+    """P3-36 — GT + submission-gold citations satisfy resolved L3 anchors."""
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/validate_l3_anchor_regression.py",
+        "--all",
+    ])
+    assert report["all_pass"] is True, report
 
 
 def check_synthetic_l3_eval() -> None:
@@ -1526,6 +1541,7 @@ def main() -> int:
         ("L3 citation hardening (9B)", check_l3_citation_hardening),
         ("Mock agents (published tasks)", check_mock_agents_published),
         ("Submission from GT (computed L3)", check_submission_from_gt_computed),
+        ("L3 anchor regression", check_l3_anchor_regression),
         ("Synthetic L3 eval", check_synthetic_l3_eval),
         ("Scaffold task CLI", check_scaffold_task),
         ("Doc sync from manifest", check_doc_sync),

@@ -34,6 +34,7 @@ from l3_citation_rules import (  # noqa: E402
     merge_l3_rules,
     numeric_in_snippet,
     numeric_optional,
+    resolve_metric_anchors,
 )
 from synthetic_l3 import check_synthetic_l3_submission, synthetic_l3_skipped  # noqa: E402
 from task_registry import load_bundle, load_gold_path, load_task  # noqa: E402
@@ -166,6 +167,10 @@ def validate_submission(
         gt_doc = registry_load_gt(task_id)
     except ValueError:
         gt_doc = {}
+    l3_rules = dict(l3_rules)
+    l3_rules["metric_citation_anchors"] = resolve_metric_anchors(
+        gt_doc, l3_rules.get("metric_citation_anchors")
+    )
     metric_units = build_metric_units(gt_doc, l3_rules)
     checks: list[dict] = []
     failure_modes: list[str] = []
