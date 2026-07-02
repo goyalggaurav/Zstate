@@ -22,7 +22,12 @@ def _metric_properties(task_id: str) -> dict[str, dict]:
     sample = gt_metric_values(task_id)
     props: dict[str, dict] = {}
     for key, val in sample.items():
-        props[key] = {"type": "integer" if isinstance(val, int) else "number"}
+        if isinstance(val, bool):
+            props[key] = {"type": "boolean"}
+        elif isinstance(val, int):
+            props[key] = {"type": "integer"}
+        else:
+            props[key] = {"type": "number"}
     return props
 
 
@@ -187,7 +192,7 @@ def build_tool_definitions(task: dict, bundle: dict, *, eval_mode: bool | None =
         "properties": {
             "metrics": {
                 "type": "object",
-                "description": f"Flat L1 numeric fields ({n_metrics} required keys).",
+                "description": f"Flat L1 fields ({n_metrics} required keys; booleans must be true/false, not dollar amounts).",
                 "properties": metric_props,
                 "required": metric_ids,
                 "additionalProperties": False,
