@@ -24,6 +24,12 @@ from statistics import median
 
 BENCH = Path(__file__).resolve().parent.parent
 REPO = BENCH.parent
+sys.path.insert(0, str(BENCH / "scripts"))
+from task_registry import (  # noqa: E402
+    default_campaign_path,
+    pinned_campaign_report_path,
+    resolve_campaign_headline_tasks,
+)
 TAXONOMY_PATH = REPO / "schemas" / "fracture_taxonomy_v1.json"
 DOCS = BENCH / "docs"
 
@@ -189,8 +195,12 @@ def build_leaderboard(campaign: dict, report: dict) -> dict:
         for entry in load_json(TAXONOMY_PATH)["codes"]
     }
 
-    headline_tasks = campaign.get("headline_tasks") or campaign["tasks"]
-    task_weights = campaign.get("task_weights") or {tid: 1.0 for tid in headline_tasks}
+    headline_tasks = resolve_campaign_headline_tasks(campaign, campaign["tasks"])
+    raw_weights = campaign.get("task_weights") or {}
+    task_weights = {
+        tid: float(raw_weights.get(tid, 1.0))
+        for tid in headline_tasks
+    }
     models = report.get("models") or campaign["models"]
     runs = [r for r in report.get("runs", []) if r.get("status") == "scored" and r.get("composite")]
 
@@ -369,7 +379,7 @@ def main() -> int:
     parser.add_argument(
         "--campaign",
         type=Path,
-        default=BENCH / "campaigns" / "pilot_eval_4task_v1.json",
+        default=default_campaign_path(),
     )
     parser.add_argument(
         "--report",
@@ -392,7 +402,11 @@ def main() -> int:
     campaign = load_json(campaign_path)
     report_path = args.report
     if report_path is None:
-        report_path = BENCH / campaign["runs_dir"] / f"{campaign['campaign_id']}.json"
+        pinned = pinned_campaign_report_path()
+        if pinned and pinned.exists():
+            report_path = pinned
+        else:
+            report_path = BENCH / campaign["runs_dir"] / f"{campaign['campaign_id']}.json"
     elif not report_path.is_absolute():
         report_path = BENCH / report_path
     if not report_path.exists():

@@ -11,8 +11,15 @@ from pathlib import Path
 BENCH = Path(__file__).resolve().parent.parent
 PEP_GT_PATH = BENCH / "ground_truth" / "PEP_fx_organic_growth_gt.json"
 
-# Tasks created after P3-17 use GT-derived fixtures only (no hand-typed metric literals).
-GT_DERIVED_TASKS = frozenset({"KO_footnote_reconciliation"})
+# All published tasks use GT-derived gold/trap bases (P3-17b).
+def gt_derived_task_ids() -> frozenset[str]:
+    from task_registry import published_task_ids
+
+    return frozenset(published_task_ids())
+
+
+# Back-compat alias
+GT_DERIVED_TASKS = gt_derived_task_ids()
 
 SLOT_RE = re.compile(r"^(.+)_run(\d+)\.json$")
 
@@ -79,16 +86,23 @@ def load_ground_truth_doc(task_id: str, gt_path: Path | None = None) -> dict:
     return load_json(path)
 
 
-def l1_values_from_gt(task_id: str, gt_path: Path | None = None) -> dict:
-    """Build L1 agent-output dict from GT extracted + computed values (P3-17)."""
-    doc = load_ground_truth_doc(task_id, gt_path)
+def _values_from_gt_doc(doc: dict, allowed: set[str]) -> dict:
     values: dict = {}
     for section in ("extracted_values", "computed_values"):
         for item in doc.get(section, []):
-            if isinstance(item.get("value"), bool):
-                continue
-            values[item["metric_id"]] = item["value"]
+            mid = item.get("metric_id")
+            if mid in allowed:
+                values[mid] = item["value"]
     return values
+
+
+def l1_values_from_gt(task_id: str, gt_path: Path | None = None) -> dict:
+    """Build L1 agent-output dict from GT extracted + computed values (P3-17)."""
+    from agents.benchmark_tool_specs import metric_keys
+
+    allowed = metric_keys(task_id)
+    doc = load_ground_truth_doc(task_id, gt_path)
+    return _values_from_gt_doc(doc, allowed)
 
 
 def filing_label_for_slug(bundle: dict, section_slug: str) -> str | None:
@@ -134,195 +148,54 @@ def submission_from_gt(task_id: str, gt_path: Path | None = None) -> dict:
 
 
 def googl_gold_values() -> dict:
-    return {
-        "google_services_revenue": 89_637,
-        "google_cloud_revenue": 20_028,
-        "other_bets_revenue": 411,
-        "hedging_gains_losses": -180,
-        "consolidated_total_revenue": 109_896,
-    }
+    doc = load_ground_truth_doc("GOOGL_footnote_reconciliation")
+    return _values_from_gt_doc(
+        doc,
+        {
+            "google_services_revenue",
+            "google_cloud_revenue",
+            "other_bets_revenue",
+            "segment_sum",
+            "hedging_gains_losses",
+            "reconciling_item_amount",
+            "consolidated_total_revenue",
+        },
+    )
 
 
 def amzn_gold_values() -> dict:
-    return {
-        "north_america_net_sales": 426_305,
-        "international_net_sales": 161_894,
-        "aws_net_sales": 128_725,
-        "consolidated_net_sales": 716_924,
-        "international_reported_growth_pct": 13.0,
-        "international_cc_growth_pct": 10.0,
-    }
+    return l1_values_from_gt("AMZN_footnote_reconciliation")
 
 
 def pep_gold_values(gt: dict | None = None) -> dict:
-    doc = gt if gt is not None else load_json(PEP_GT_PATH)
-    values: dict = {}
-    for section in ("extracted_values", "computed_values"):
-        for item in doc.get(section, []):
-            if isinstance(item.get("value"), bool):
-                continue
-            values[item["metric_id"]] = item["value"]
-    return values
+    if gt is not None:
+        values: dict = {}
+        for section in ("extracted_values", "computed_values"):
+            for item in gt.get(section, []):
+                if isinstance(item.get("value"), bool):
+                    continue
+                values[item["metric_id"]] = item["value"]
+        return values
+    return l1_values_from_gt("PEP_fx_organic_growth")
+
+
+def submission_fixture(task_id: str, name: str) -> dict:
+    path = BENCH / "contract_fixtures" / f"{task_id}_{name}.json"
+    return load_json(path)
 
 
 def googl_gold_submission() -> dict:
-    metrics = googl_gold_values()
-    return {
-        "schema_version": "agent_submission_v1",
-        "metrics": metrics,
-        "citations": [
-            {
-                "metric_id": "google_services_revenue",
-                "doc_id": "GOOGL_10Q_2026Q1",
-                "section_slug": "segment_financials",
-                "note": "Note 15 — Information about Segments and Geographic Areas",
-                "snippet": "Google Services $ 89,637",
-            },
-            {
-                "metric_id": "google_cloud_revenue",
-                "doc_id": "GOOGL_10Q_2026Q1",
-                "section_slug": "segment_financials",
-                "snippet": "Google Cloud 20,028",
-            },
-            {
-                "metric_id": "other_bets_revenue",
-                "doc_id": "GOOGL_10Q_2026Q1",
-                "section_slug": "segment_financials",
-                "snippet": "Other Bets 411",
-            },
-            {
-                "metric_id": "hedging_gains_losses",
-                "doc_id": "GOOGL_10Q_2026Q1",
-                "section_slug": "segment_financials",
-                "snippet": "Hedging gains (losses) (180)",
-            },
-            {
-                "metric_id": "consolidated_total_revenue",
-                "doc_id": "GOOGL_10Q_2026Q1",
-                "section_slug": "revenue_disaggregation",
-                "snippet": "Total revenues $ 109,896",
-            },
-        ],
-        "policy_acknowledgements": [],
-    }
+    return submission_fixture("GOOGL_footnote_reconciliation", "submission_gold")
 
 
 def pep_gold_submission(gt: dict | None = None) -> dict:
-    metrics = pep_gold_values(gt)
-    return {
-        "schema_version": "agent_submission_v1",
-        "metrics": metrics,
-        "citations": [
-            {
-                "metric_id": "emea_net_revenue_fy2025",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "segment_financials",
-                "snippet": "EMEA $ 18,025",
-            },
-            {
-                "metric_id": "emea_net_revenue_fy2024",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "segment_financials",
-                "snippet": "EMEA $ 16,658",
-            },
-            {
-                "metric_id": "latam_foods_net_revenue_fy2025",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "segment_financials",
-                "snippet": "LatAm Foods $ 10,549",
-            },
-            {
-                "metric_id": "latam_foods_net_revenue_fy2024",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "segment_financials",
-                "snippet": "LatAm Foods $ 10,568",
-            },
-            {
-                "metric_id": "emea_reported_growth_pct",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "narrative_organic",
-                "snippet": "EMEA                            8%",
-            },
-            {
-                "metric_id": "emea_fx_impact_pct",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "narrative_organic",
-                "snippet": "2%",
-            },
-            {
-                "metric_id": "emea_organic_cc_growth_pct",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "narrative_organic",
-                "snippet": "6%",
-            },
-            {
-                "metric_id": "latam_foods_reported_growth_pct",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "narrative_organic",
-                "snippet": "(0.2)%",
-            },
-            {
-                "metric_id": "latam_foods_fx_impact_pct",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "narrative_organic",
-                "snippet": "(4.7)%",
-            },
-            {
-                "metric_id": "latam_foods_organic_cc_growth_pct",
-                "doc_id": "PEP_10K_2025",
-                "section_slug": "narrative_organic",
-                "snippet": "4.5%",
-            },
-        ],
-        "policy_acknowledgements": ["no_wae_fx_table"],
-    }
+    if gt is not None:
+        return submission_from_gt("PEP_fx_organic_growth")
+    return submission_from_gt("PEP_fx_organic_growth")
 
 
 def amzn_gold_submission() -> dict:
-    metrics = amzn_gold_values()
-    return {
-        "schema_version": "agent_submission_v1",
-        "metrics": metrics,
-        "citations": [
-            {
-                "metric_id": "north_america_net_sales",
-                "doc_id": "AMZN_10K_2025",
-                "section_slug": "segment_financials",
-                "snippet": "North America\nNet sales $ 426,305",
-            },
-            {
-                "metric_id": "international_net_sales",
-                "doc_id": "AMZN_10K_2025",
-                "section_slug": "segment_financials",
-                "snippet": "International\nNet sales $ 161,894",
-            },
-            {
-                "metric_id": "aws_net_sales",
-                "doc_id": "AMZN_10K_2025",
-                "section_slug": "segment_financials",
-                "snippet": "AWS\nNet sales $ 128,725",
-            },
-            {
-                "metric_id": "consolidated_net_sales",
-                "doc_id": "AMZN_10K_2025",
-                "section_slug": "consolidated_primary",
-                "snippet": "Net sales $ 716,924",
-            },
-            {
-                "metric_id": "international_reported_growth_pct",
-                "doc_id": "AMZN_10K_2025",
-                "section_slug": "narrative_fx",
-                "snippet": "International segment sales increased 13%",
-            },
-            {
-                "metric_id": "international_cc_growth_pct",
-                "doc_id": "AMZN_10K_2025",
-                "section_slug": "narrative_fx",
-                "snippet": "increased 10% excluding changes in foreign exchange rates",
-            },
-        ],
-        "policy_acknowledgements": ["sbc_not_in_segment_oi"],
-    }
+    return submission_from_gt("AMZN_footnote_reconciliation")
 
 
 SUBMISSION_TRAP_MODES: dict[str, dict] = {
@@ -356,16 +229,8 @@ SUBMISSION_TRAP_MODES: dict[str, dict] = {
 
 
 def submission_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict:
-    if mode == "submission_gold" or mode == "gold":
-        if task_id in GT_DERIVED_TASKS:
-            return submission_from_gt(task_id)
-        if task_id == "GOOGL_footnote_reconciliation":
-            return googl_gold_submission()
-        if task_id == "PEP_fx_organic_growth":
-            return pep_gold_submission(gt)
-        if task_id == "AMZN_footnote_reconciliation":
-            return amzn_gold_submission()
-        raise ValueError(f"No gold submission for task {task_id!r}")
+    if mode in ("submission_gold", "gold"):
+        return submission_from_gt(task_id)
 
     if mode == "trap_l3_fake_snippet":
         sub = googl_gold_submission()
@@ -438,29 +303,25 @@ def submission_output_path(agent_output_path: Path) -> Path:
 
 def payload_for_mode(mode: str, task_id: str, gt: dict | None = None) -> dict | None:
     if mode == "gold":
-        if task_id in GT_DERIVED_TASKS:
-            return l1_values_from_gt(task_id)
-        if task_id == "GOOGL_footnote_reconciliation":
-            return googl_gold_values()
-        if task_id == "PEP_fx_organic_growth":
-            return pep_gold_values(gt)
-        if task_id == "AMZN_footnote_reconciliation":
-            return amzn_gold_values()
-        raise ValueError(f"No gold payload for task {task_id!r}")
+        return l1_values_from_gt(task_id)
 
     if mode == "trap_googl_sign":
         if task_id != "GOOGL_footnote_reconciliation":
             raise ValueError("trap_googl_sign applies to GOOGL_footnote_reconciliation only")
-        values = googl_gold_values()
+        values = l1_values_from_gt(task_id)
         values["hedging_gains_losses"] = 180
+        if "reconciling_item_amount" in values:
+            values["reconciling_item_amount"] = 180
         return values
 
     if mode == "trap_googl_blind_sum":
         if task_id != "GOOGL_footnote_reconciliation":
             raise ValueError("trap_googl_blind_sum applies to GOOGL_footnote_reconciliation only")
-        values = googl_gold_values()
+        values = l1_values_from_gt(task_id)
         values["consolidated_total_revenue"] = 110_076
         values["hedging_gains_losses"] = None
+        if "reconciling_item_amount" in values:
+            values["reconciling_item_amount"] = None
         return values
 
     if mode == "trap_pep_reported_only":

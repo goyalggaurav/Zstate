@@ -80,17 +80,16 @@ Output: [runs/pilot_eval_campaign_v1/pilot_eval_campaign_v1.json](./runs/pilot_e
 
 ### Leaderboard v0 (P2-06)
 
-**Full 5-task pilot** (3 models × 3 runs): [campaigns/pilot_eval_5task_v1.json](./campaigns/pilot_eval_5task_v1.json)
-
-Four-task campaign: [campaigns/pilot_eval_4task_v1.json](./campaigns/pilot_eval_4task_v1.json). After scoring, generate the actionable leaderboard (composite rank + Fracture Intensity + gap task + fracture delta):
+**Full 5-task pilot** (3 models × 3 runs): [campaigns/pilot_eval_5task_v1.json](./campaigns/pilot_eval_5task_v1.json). Headline rank excludes GOOGL (`headline_eligible: false` in manifest). After scoring, generate the actionable leaderboard:
 
 ```bash
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
-  --campaign benchmark_v0.1/campaigns/pilot_eval_4task_v1.json
+  --campaign benchmark_v0.1/campaigns/pilot_eval_5task_v1.json
 
-python3 benchmark_v0.1/scripts/generate_leaderboard.py \
-  --campaign benchmark_v0.1/campaigns/pilot_eval_4task_v1.json
+python3 benchmark_v0.1/scripts/generate_leaderboard.py
 ```
+
+Legacy four-task campaign: [campaigns/pilot_eval_4task_v1.json](./campaigns/pilot_eval_4task_v1.json).
 
 Publish artifacts: [docs/LEADERBOARD_v0.md](./docs/LEADERBOARD_v0.md) · [docs/PILOT_EVAL_JUL2026.md](./docs/PILOT_EVAL_JUL2026.md)
 

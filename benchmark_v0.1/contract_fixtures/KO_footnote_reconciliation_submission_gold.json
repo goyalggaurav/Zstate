@@ -93,6 +93,14 @@
       "snippet": "(12) | \u2014 | (2)",
       "filing_label": "MD&A \u2014 net operating revenues percent change decomposition table",
       "note": "MD&A \u2014 net operating revenues percent change decomposition table"
+    },
+    {
+      "metric_id": "segment_net_revenues_sum",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "Operating Segments Total",
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments \u2014 segment revenues subtotal column header"
     }
   ],
   "policy_acknowledgements": [

@@ -94,9 +94,8 @@ def main() -> int:
 
     if args.write_contract_fixtures:
         paths = write_contract_fixtures()
-        sub_paths = write_contract_submission_fixtures()
         print(
-            f"Wrote {len(paths)} agent output + {len(sub_paths)} submission fixtures "
+            f"Wrote {len(paths)} agent output fixtures "
             f"under {CONTRACT_DIR.relative_to(BENCH.parent)}"
         )
         return 0

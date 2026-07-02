@@ -3,5 +3,7 @@
   "google_cloud_revenue": 20028,
   "other_bets_revenue": 411,
   "hedging_gains_losses": -180,
-  "consolidated_total_revenue": 109896
+  "consolidated_total_revenue": 109896,
+  "segment_sum": 110076,
+  "reconciling_item_amount": -180
 }

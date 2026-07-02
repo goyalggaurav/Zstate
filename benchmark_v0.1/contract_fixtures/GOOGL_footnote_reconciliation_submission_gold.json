@@ -5,14 +5,16 @@
     "google_cloud_revenue": 20028,
     "other_bets_revenue": 411,
     "hedging_gains_losses": -180,
-    "consolidated_total_revenue": 109896
+    "consolidated_total_revenue": 109896,
+    "segment_sum": 110076,
+    "reconciling_item_amount": -180
   },
   "citations": [
     {
       "metric_id": "google_services_revenue",
       "doc_id": "GOOGL_10Q_2026Q1",
       "section_slug": "segment_financials",
-      "note": "Note 15 \u2014 Information about Segments and Geographic Areas",
+      "note": "Note 15 — Information about Segments and Geographic Areas",
       "snippet": "Google Services $ 89,637"
     },
     {
@@ -38,6 +40,18 @@
       "doc_id": "GOOGL_10Q_2026Q1",
       "section_slug": "revenue_disaggregation",
       "snippet": "Total revenues $ 109,896"
+    },
+    {
+      "metric_id": "segment_sum",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "section_slug": "segment_financials",
+      "snippet": "Google Services $ 89,637...Google Cloud 20,028...Other Bets 411"
+    },
+    {
+      "metric_id": "reconciling_item_amount",
+      "doc_id": "GOOGL_10Q_2026Q1",
+      "section_slug": "segment_financials",
+      "snippet": "Additionally, hedging gains (losses) related to revenue are not allocated to our segments."
     }
   ],
   "policy_acknowledgements": []

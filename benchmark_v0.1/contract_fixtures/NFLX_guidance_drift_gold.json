@@ -1,0 +1,9 @@
+{
+  "guidance_content_cash_annual_usd_m": 18000,
+  "ytd_period_months": 9,
+  "ytd_content_cash_payments_usd_m": 12039,
+  "q3_content_amortization_usd_m": 4003,
+  "cash_vs_guidance_pace_variance_pct": -10.8,
+  "implied_ytd_pace_usd_m": 13500,
+  "guidance_pace_under": true
+}

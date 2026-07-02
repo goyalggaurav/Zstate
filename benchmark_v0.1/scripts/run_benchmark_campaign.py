@@ -75,7 +75,8 @@ def _campaign_summary(scored: list[dict], campaign: dict, task_list: list[str]) 
                 r["task_id"], []
             ).append(r["composite_score"])
 
-    weights = _task_weights(campaign, task_list)
+    headline_tasks = resolve_campaign_headline_tasks(campaign, task_list)
+    weights = _task_weights(campaign, headline_tasks)
     by_model_task_median = {
         model: {
             tid: median(rates) if rates else None
@@ -84,12 +85,14 @@ def _campaign_summary(scored: list[dict], campaign: dict, task_list: list[str]) 
         for model, tasks in by_model_task_composite.items()
     }
     weighted_by_model = {
-        model: _weighted_mean(task_medians, weights)
+        model: _weighted_mean(
+            {tid: score for tid, score in task_medians.items() if tid in headline_tasks},
+            weights,
+        )
         for model, task_medians in by_model_task_median.items()
         if weights
     }
 
-    headline_tasks = campaign.get("headline_tasks") or task_list
     headline_scores = [
         r["composite_score"]
         for r in scored
@@ -141,6 +144,7 @@ from agent_output_contract import (  # noqa: E402
 from score_benchmark_run import score_run  # noqa: E402
 from agents.benchmark_tool_specs import is_anthropic_model, is_gemini_model, is_openai_model  # noqa: E402
 from benchmark_eval_mode import eval_mode_enabled  # noqa: E402
+from task_registry import resolve_campaign_headline_tasks  # noqa: E402
 
 
 def published_tasks(manifest: dict) -> dict[str, dict]:

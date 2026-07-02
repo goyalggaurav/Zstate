@@ -16,8 +16,8 @@ Design-phase repository for **AlphaNote-Bench**: credentialed-expert equity rese
 
 | Track | Path | Status |
 |-------|------|--------|
-| **A — Eval benchmark** | [benchmark_v0.1/](benchmark_v0.1/) | **4 published tasks** (GOOGL, PEP, AMZN, NFLX) — expert-reviewed Jul 2026 |
-| **A — Leaderboard** | [LEADERBOARD_v0.md](benchmark_v0.1/docs/LEADERBOARD_v0.md) | `pilot_eval_4task_v1` — composite + Fracture Intensity |
+| **A — Eval benchmark** | [benchmark_v0.1/](benchmark_v0.1/) | **5 published tasks** (GOOGL, PEP, AMZN, NFLX, KO) — expert-reviewed Jul 2026 |
+| **A — Leaderboard** | [LEADERBOARD_v0.md](benchmark_v0.1/docs/LEADERBOARD_v0.md) | `pilot_eval_5task_v1` — headline excludes GOOGL ceiling |
 | **B — RL environment** | [env_v1/](env_v1/) | Solaris v1.1 + frontier campaign |
 
 Published tasks are listed in [benchmark_v0.1/manifest.json](benchmark_v0.1/manifest.json) (source of truth).
@@ -32,9 +32,9 @@ python3 scripts/smoke_test.py
 python3 benchmark_v0.1/scripts/verify_benchmark_l1.py --task GOOGL_footnote_reconciliation
 python3 benchmark_v0.1/scripts/verify_benchmark_l1.py --task NFLX_guidance_drift
 
-# Track A — score campaign + regenerate leaderboard
+# Track A — score campaign + regenerate leaderboard (uses pinned report by default)
 python3 benchmark_v0.1/scripts/run_benchmark_campaign.py \
-  --campaign benchmark_v0.1/campaigns/pilot_eval_4task_v1.json
+  --campaign benchmark_v0.1/campaigns/pilot_eval_5task_v1.json
 python3 benchmark_v0.1/scripts/generate_leaderboard.py
 
 # Track B — demo trajectories (schema-enriched traces)

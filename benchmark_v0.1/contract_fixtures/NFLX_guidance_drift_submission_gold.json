@@ -1,0 +1,59 @@
+{
+  "schema_version": "agent_submission_v1",
+  "metrics": {
+    "guidance_content_cash_annual_usd_m": 18000,
+    "ytd_period_months": 9,
+    "ytd_content_cash_payments_usd_m": 12039,
+    "q3_content_amortization_usd_m": 4003,
+    "cash_vs_guidance_pace_variance_pct": -10.8,
+    "implied_ytd_pace_usd_m": 13500,
+    "guidance_pace_under": true
+  },
+  "citations": [
+    {
+      "metric_id": "guidance_content_cash_annual_usd_m",
+      "doc_id": "NFLX_shareholder_letter_2024Q4",
+      "section_slug": "narrative_guidance",
+      "snippet": "cash content spend of roughly $18B"
+    },
+    {
+      "metric_id": "ytd_period_months",
+      "doc_id": "NFLX_10Q_2025Q3",
+      "section_slug": "quantitative_actuals",
+      "snippet": "Nine months ended September 30, 2025"
+    },
+    {
+      "metric_id": "ytd_content_cash_payments_usd_m",
+      "doc_id": "NFLX_10Q_2025Q3",
+      "section_slug": "quantitative_actuals",
+      "snippet": "Additions to content assets (cash) $ (12,039,405)"
+    },
+    {
+      "metric_id": "q3_content_amortization_usd_m",
+      "doc_id": "NFLX_10Q_2025Q3",
+      "section_slug": "quantitative_actuals",
+      "snippet": "Total amortization of content assets $ 4,002,744"
+    },
+    {
+      "metric_id": "cash_vs_guidance_pace_variance_pct",
+      "doc_id": "NFLX_10Q_2025Q3",
+      "section_slug": "quantitative_actuals",
+      "snippet": "Content amortization on the income statement is not the same as content cash payments on the cash flow statement."
+    },
+    {
+      "metric_id": "implied_ytd_pace_usd_m",
+      "doc_id": "NFLX_shareholder_letter_2024Q4",
+      "section_slug": "narrative_guidance",
+      "snippet": "roughly $18B"
+    },
+    {
+      "metric_id": "guidance_pace_under",
+      "doc_id": "NFLX_10Q_2025Q3",
+      "section_slug": "quantitative_actuals",
+      "snippet": "Payments for content assets are included in net cash provided by operating activities."
+    }
+  ],
+  "policy_acknowledgements": [
+    "amortization_not_cash_spend"
+  ]
+}

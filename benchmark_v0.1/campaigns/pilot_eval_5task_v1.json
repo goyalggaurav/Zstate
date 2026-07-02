@@ -16,18 +16,6 @@
     "NFLX_guidance_drift",
     "KO_footnote_reconciliation"
   ],
-  "headline_tasks": [
-    "PEP_fx_organic_growth",
-    "AMZN_footnote_reconciliation",
-    "NFLX_guidance_drift",
-    "KO_footnote_reconciliation"
-  ],
-  "task_weights": {
-    "PEP_fx_organic_growth": 1.0,
-    "AMZN_footnote_reconciliation": 1.0,
-    "NFLX_guidance_drift": 1.0,
-    "KO_footnote_reconciliation": 1.0
-  },
   "runs_per_task": 3,
   "aggregation": {
     "composite_score": "median",

@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.5  
-**Last updated:** July 2026 (P3-20 schema fix + 5-task pilot eval; P3-21 horizontal table note)
+**Last updated:** July 2026 (P3-22–26 architecture hardening; P3-20 schema fix + 5-task pilot eval)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -104,10 +104,15 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-15 | **Synthetic L3 eval mode** | A | todo | Eng | Campaign flag `synthetic_l3: true` + separate FI column in leaderboard (P3-09 bait exists; eval wiring not built) |
 | P3-16 | **Task special-case cleanup** | A | in_progress | Eng | GOOGL `--period` sprawl removed from campaign/scorer via `l1_verify_argv()`; mock agent still GOOGL-only |
 | P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
-| P3-17b | **Contract literals retrofit (legacy 4 tasks)** | A | todo | Eng | Migrate GOOGL/AMZN/PEP hand-typed literals to GT-derived; smoke asserts GT parity |
+| P3-17b | **Contract GT fixtures (legacy + KO L1)** | A | done | Eng | L1 gold from `l1_values_from_gt()` for all 5 tasks; submission fixtures hand-maintained where computed metrics need distinct L3 citations |
 | P3-18 | **KO_footnote_reconciliation — hardened template** | A | done | Associate | Published 2026-07-02; EDGAR elimination bridge; [KO_GT_REVIEW.md](./expert_drafts/KO_GT_REVIEW.md) |
 | P3-20 | **Per-task submit metric schema fidelity** | A | done | Eng | F_exact GT-driven metric keys in `archetype_roles.py`; `validate_task_metrics` + tool_error retry; KO re-run post-fix (`pilot_eval_5task_v1`) |
 | P3-21 | **Horizontal segment tables (KO Note 20)** | A | noted | Associate | **Horizontal layout adds real difficulty** — segments-as-columns vs vertical Note 10-style tables; filing-faithful, keep for discrimination. Not a scoring failure mode after P3-20; optional normalized row view deferred to LATER-06. |
+| P3-22 | **`headline_eligible` manifest flag** | A | done | Eng | GOOGL `false`; PEP/AMZN/NFLX/KO explicit `true`; campaigns/leaderboard use `resolve_campaign_headline_tasks()` |
+| P3-23 | **Publish gate (`validate_publish_task.py`)** | A | done | Eng | GT L1 verify, submit schema, contract fixture parity, L3 submission fixture |
+| P3-24 | **Pin scored campaign report** | A | done | Eng | `manifest.pinned_campaign_report`; gitignore exception for `pilot_eval_5task_v1.json` only |
+| P3-25 | **CI — smoke + validators (no live API)** | A | done | Eng | `.github/workflows/ci.yml` |
+| P3-26 | **Doc sync (5-task pilot SSOT)** | A | done | Eng | Root README, benchmark README, smoke leaderboard assert |
 
 **Gate:** P3-03 (15 tasks) blocked until P3-16 mock-agent generalization (optional). P3-11 + P3-12 done. Full EDGAR ingest remains **LATER-06**.
 

@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  track-a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Smoke test (no live API)
+        env:
+          OPENAI_API_KEY: ""
+          ANTHROPIC_API_KEY: ""
+          GEMINI_API_KEY: ""
+        run: python3 scripts/smoke_test.py
+
+      - name: Manifest validator
+        run: python3 benchmark_v0.1/scripts/validate_manifest.py
+
+      - name: Publish gates (all published tasks)
+        run: |
+          for task in \
+            GOOGL_footnote_reconciliation \
+            PEP_fx_organic_growth \
+            AMZN_footnote_reconciliation \
+            NFLX_guidance_drift \
+            KO_footnote_reconciliation
+          do
+            python3 benchmark_v0.1/scripts/validate_publish_task.py --task "$task"
+          done
+
+      - name: Leaderboard from pinned campaign report
+        run: python3 benchmark_v0.1/scripts/generate_leaderboard.py

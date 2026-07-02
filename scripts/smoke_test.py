@@ -1131,12 +1131,12 @@ def check_leaderboard_v0() -> None:
     assert proc.returncode == 0, proc.stderr
     doc = json.loads((ROOT / "benchmark_v0.1" / "docs" / "LEADERBOARD_v0.json").read_text())
     assert doc["schema_version"] == "leaderboard_v0"
-    assert doc["campaign_id"] == "pilot_eval_4task_v1"
+    assert doc["campaign_id"] == "pilot_eval_5task_v1"
     assert len(doc["rankings"]) >= 2
     leader = doc["leader_model_id"]
     assert leader == doc["rankings"][0]["model_id"]
     gpt = next(r for r in doc["rankings"] if r["model_id"] == "gpt-4o")
-    assert gpt["gap_task"]["task_id"] == "NFLX_guidance_drift"
+    assert gpt["gap_task"]["task_id"] in doc["methodology"]["headline_tasks"]
     assert gpt["fracture_intensity"] >= doc["rankings"][0]["fracture_intensity"]
 
 

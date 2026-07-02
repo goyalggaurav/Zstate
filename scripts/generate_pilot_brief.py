@@ -169,12 +169,14 @@ def findings_table_rows(
     leaderboard: dict | None,
 ) -> list[dict]:
     fracture_labels = (leaderboard or {}).get("fracture_labels") or {}
+    from task_registry import headline_task_ids  # noqa: WPS433
+
     task_order = report.get("tasks") or []
     model_order = model_rank_order(leaderboard) or report.get("models") or []
     headline_tasks = set(
         (leaderboard or {}).get("methodology", {}).get("headline_tasks")
         or (report.get("summary") or {}).get("headline_tasks")
-        or []
+        or headline_task_ids(task_order)
     )
 
     headline_by_model: dict[str, float] = {}

@@ -4,12 +4,16 @@
   "mvd_pilot_companies": 5,
   "published_tasks": 5,
   "draft_tasks": 0,
+  "default_campaign": "campaigns/pilot_eval_5task_v1.json",
+  "pinned_campaign_report": "runs/pilot_eval_5task_v1/pilot_eval_5task_v1.json",
   "corpus_manifest": "corpus/corpus_manifest_v1.json",
   "pilot_tasks": [
     {
       "task_id": "GOOGL_footnote_reconciliation",
       "task_type": "F",
       "status": "published",
+      "headline_eligible": false,
+      "headline_note": "Ceiling task — all frontier models median 1.0; excluded from headline rank.",
       "cfa_review": "docs/expert_drafts/GOOGL_GT_REVIEW.md",
       "paths": {
         "task": "tasks/GOOGL_footnote_reconciliation.json",
@@ -25,6 +29,7 @@
       "task_id": "PEP_fx_organic_growth",
       "task_type": "M",
       "status": "published",
+      "headline_eligible": true,
       "cfa_review": "docs/expert_drafts/PEP_FX_GT_REVIEW.md",
       "paths": {
         "task": "tasks/PEP_fx_organic_growth.json",
@@ -41,6 +46,7 @@
       "task_id": "AMZN_footnote_reconciliation",
       "task_type": "F",
       "status": "published",
+      "headline_eligible": true,
       "cfa_review": "docs/expert_drafts/AMZN_GT_REVIEW.md",
       "paths": {
         "task": "tasks/AMZN_footnote_reconciliation.json",
@@ -56,6 +62,7 @@
       "task_id": "NFLX_guidance_drift",
       "task_type": "F",
       "status": "published",
+      "headline_eligible": true,
       "cfa_review": "docs/expert_drafts/NFLX_GT_REVIEW.md",
       "paths": {
         "task": "tasks/NFLX_guidance_drift.json",
@@ -70,6 +77,7 @@
       "task_id": "KO_footnote_reconciliation",
       "task_type": "F",
       "status": "published",
+      "headline_eligible": true,
       "cfa_review": "docs/expert_drafts/KO_GT_REVIEW.md",
       "paths": {
         "task": "tasks/KO_footnote_reconciliation.json",

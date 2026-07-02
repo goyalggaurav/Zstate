@@ -1,9 +1,9 @@
 # Track A Leaderboard v0 — Actionable Fracture View
 
 **Campaign:** `pilot_eval_5task_v1`  
-**Generated:** 2026-07-02T13:46:27.747507+00:00  
-**Git:** `2a20fff`  
-**Source report:** 2026-07-02T13:31:22.426125+00:00  
+**Generated:** 2026-07-02T14:29:13.714163+00:00  
+**Git:** `8071b42`  
+**Source report:** 2026-07-02T14:22:32.262009+00:00  
 
 > **Primary rank:** headline weighted composite (PEP + AMZN + NFLX).  
 > **Fracture Intensity (FI):** diagnostic only — severity-weighted fracture load on headline runs (lower is cleaner).
