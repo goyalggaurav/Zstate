@@ -105,6 +105,28 @@ Per-company customization is **bundle-only** (excerpt text, `filing_label`, deco
 
 `submission_from_gt()` resolves display labels from the bundle registry — GT must not duplicate note numbers.
 
+### 1e. F_exact reconciliation schema (GT `verification_schema` — universal)
+
+Layer-1 footnote reconciliation uses optional bridge lines so one verifier handles both simple and intersegment filers:
+
+| Field | Required | Role |
+|-------|----------|------|
+| `segment_metrics[]` | Yes | Per reportable segment net revenue (or net sales) lines |
+| `additive_metrics[]` | No | Lines added to bridge (e.g. `corporate_net_revenues`) |
+| `elimination_metrics[]` | No | Intersegment eliminations / consolidation adjustments (signed; typically negative) |
+| `consolidated_metric` | Yes | Face-statement or Note consolidated total |
+
+**Verifier rule (`verify_footnote_exact.py`):**  
+`sum(segment_metrics) + sum(additive_metrics) + sum(elimination_metrics) == consolidated`
+
+| Filer pattern | Example | Schema |
+|---------------|---------|--------|
+| Segments sum directly | AMZN (3 segments) | `segment_metrics` only |
+| Segments + Corporate | Some filers | `segment_metrics` + `additive_metrics` |
+| Segments + Corporate + Eliminations | KO Note 20 Total row | all three optional lists |
+
+Task prompts and gold paths stay slug-only; wedge shape is encoded in GT `verification_schema`, not issuer names.
+
 **Drift failures (backend returns, does not guess):**
 
 | Agent input | Result |

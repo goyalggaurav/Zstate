@@ -2,7 +2,7 @@
 """
 Archetype L1 verification — footnote reconciliation (F_exact).
 
-Segment net revenues sum to consolidated; FX growth pair optional.
+Segment net revenues (+ optional additive / elimination bridge lines) sum to consolidated; FX growth pair optional.
 All metric IDs, tolerances, and traps load from ground truth JSON + verification_schema.
 
 Usage:
@@ -63,8 +63,17 @@ def _close(a: float | None, b: float, tol: float = 0.05) -> bool:
     return abs(float(a) - float(b)) <= tol
 
 
-def _segment_sum(values: dict, segment_metrics: list[str], additive_metrics: list[str] | None = None) -> int | float | None:
-    metrics = list(segment_metrics) + list(additive_metrics or [])
+def _reconciliation_sum(
+    values: dict,
+    segment_metrics: list[str],
+    additive_metrics: list[str] | None = None,
+    elimination_metrics: list[str] | None = None,
+) -> int | float | None:
+    metrics = (
+        list(segment_metrics)
+        + list(additive_metrics or [])
+        + list(elimination_metrics or [])
+    )
     parts = [_get_field(values, m) for m in metrics]
     if any(p is None for p in parts):
         return None
@@ -132,7 +141,10 @@ def classify_failure(values: dict, gt: dict) -> list[str]:
 
     segment_metrics = schema.get("segment_metrics", [])
     additive_metrics = schema.get("additive_metrics") or []
-    segment_sum = _segment_sum(values, segment_metrics, additive_metrics)
+    elimination_metrics = schema.get("elimination_metrics") or []
+    segment_sum = _reconciliation_sum(
+        values, segment_metrics, additive_metrics, elimination_metrics
+    )
     if segment_sum is not None and consolidated is not None and segment_sum != consolidated:
         return ["segment_sum_mismatch"]
 
@@ -143,12 +155,14 @@ def verify(values: dict, gt: dict) -> dict:
     schema = gt["schema"]
     expected = gt["values"]
     segment_metrics = schema.get("segment_metrics", [])
+    additive_metrics = schema.get("additive_metrics") or []
+    elimination_metrics = schema.get("elimination_metrics") or []
     consolidated_key = schema.get("consolidated_metric", "consolidated_net_sales")
     fx = schema.get("fx_metrics") or {}
 
-    segment_metrics = schema.get("segment_metrics", [])
-    additive_metrics = schema.get("additive_metrics") or []
-    segment_sum = _segment_sum(values, segment_metrics, additive_metrics)
+    segment_sum = _reconciliation_sum(
+        values, segment_metrics, additive_metrics, elimination_metrics
+    )
     consolidated = _get_field(values, consolidated_key)
     balanced = segment_sum is not None and consolidated is not None and segment_sum == consolidated
 
@@ -167,7 +181,7 @@ def verify(values: dict, gt: dict) -> dict:
             "critical": critical,
         })
 
-    for metric_id in segment_metrics + additive_metrics:
+    for metric_id in segment_metrics + additive_metrics + elimination_metrics:
         add(metric_id, expected.get(metric_id), _get_field(values, metric_id))
 
     add(consolidated_key, expected.get(consolidated_key), consolidated, critical=True)

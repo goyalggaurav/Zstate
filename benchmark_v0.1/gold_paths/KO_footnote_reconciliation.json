@@ -1,6 +1,6 @@
 {
   "task_id": "KO_footnote_reconciliation",
-  "version": "0.2.0-draft",
+  "version": "0.3.0-draft",
   "archetype": "F_exact",
   "task_type": "F",
   "fiscal_period": "FY2025",
@@ -10,19 +10,19 @@
       "section_id": "KO_10K_2025_segment_policy",
       "name": "segment_policy — five operating segments post Global Ventures sunset",
       "required": true,
-      "reason": "Confirm Global Ventures sunset and five reportable segments before extracting Note 20 table"
+      "reason": "Confirm segment structure before Note 20 extraction"
     },
     {
       "section_id": "KO_10K_2025_segment_financials",
-      "name": "segment_financials — third-party net operating revenues",
+      "name": "segment_financials — Total net operating revenues + Eliminations",
       "required": true,
-      "reason": "FY2025 third-party net operating revenues for five segments plus Corporate (Note 20 in bundle filing_label)"
+      "reason": "FY2025 Total row by segment, Corporate, and Eliminations (Note 20 in bundle filing_label)"
     },
     {
       "section_id": "KO_10K_2025_income_statement",
-      "name": "consolidated_primary — Consolidated Statement of Income",
+      "name": "consolidated_primary — Consolidated Statement of Income cross-check",
       "required": true,
-      "reason": "Cross-check consolidated net operating revenues"
+      "reason": "Independent face-statement cross-check of consolidated net operating revenues"
     },
     {
       "section_id": "KO_10K_2025_mdna_latam",
@@ -41,31 +41,37 @@
       "step": 1,
       "action": "Read segment structure and Global Ventures sunset",
       "tool": "Search_Filing",
-      "target": "segment_policy — five segments; Global Ventures sunset effective 2025-01-01"
+      "target": "segment_policy — five segments; Global Ventures sunset 2025-01-01"
     },
     {
       "step": 2,
-      "action": "Extract FY2025 third-party net operating revenues",
+      "action": "Extract FY2025 Total net operating revenues by segment",
       "tool": "Search_Filing",
-      "target": "segment_financials — Third party row, Year Ended December 31, 2025"
+      "target": "segment_financials — Total net operating revenues row, Year Ended December 31, 2025"
     },
     {
       "step": 3,
-      "action": "Cross-check consolidated net operating revenues",
+      "action": "Extract Corporate and Eliminations from Note 20",
       "tool": "Search_Filing",
-      "target": "consolidated_primary — 2025 column"
+      "target": "segment_financials — Corporate and Eliminations columns on Total row"
     },
     {
       "step": 4,
-      "action": "Extract Latin America net revenue change decomposition",
+      "action": "Cross-check consolidated on income statement face",
+      "tool": "Search_Filing",
+      "target": "consolidated_primary — Net Operating Revenues 2025 column"
+    },
+    {
+      "step": 5,
+      "action": "Extract Latin America MD&A decomposition",
       "tool": "Search_Filing",
       "target": "narrative_fx — Latin America Total (2)% vs FX (12)%"
     },
     {
-      "step": 5,
-      "action": "Verify five segments plus Corporate equals consolidated",
+      "step": 6,
+      "action": "Verify segment bridge",
       "tool": "Python_Interpreter",
-      "target": "10833 + 6331 + 19579 + 5328 + 5726 + 144 == 47941"
+      "target": "11513 + 6334 + 19586 + 5638 + 5735 + 144 - 1009 == 47941"
     }
   ],
 
@@ -73,9 +79,10 @@
     "use_fy2024_column_instead_of_fy2025",
     "use_decoy_segment_financials_prior_year_slug",
     "legacy_global_ventures_segment",
-    "use_total_not_third_party_column",
+    "use_third_party_row_instead_of_total",
     "omit_bottling_investments_segment",
     "omit_corporate_net_revenues",
+    "omit_intersegment_eliminations",
     "swap_latin_america_total_and_fx_impact",
     "produce_buy_hold_sell_recommendation"
   ],
@@ -97,8 +104,13 @@
       "fracture_code": "RECON_OMIT"
     },
     {
-      "failure_mode_id": "total_column_not_third_party",
-      "anti_pattern": "use_total_not_third_party_column",
+      "failure_mode_id": "omit_eliminations",
+      "anti_pattern": "omit_intersegment_eliminations",
+      "fracture_code": "RECON_OMIT"
+    },
+    {
+      "failure_mode_id": "third_party_row_instead_of_total",
+      "anti_pattern": "use_third_party_row_instead_of_total",
       "fracture_code": "RECON_OMIT"
     },
     {

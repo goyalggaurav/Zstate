@@ -1,12 +1,13 @@
 {
   "schema_version": "agent_submission_v1",
   "metrics": {
-    "emea_net_revenues": 10833,
-    "latin_america_net_revenues": 6331,
-    "north_america_net_revenues": 19579,
-    "asia_pacific_net_revenues": 5328,
-    "bottling_investments_net_revenues": 5726,
+    "emea_net_revenues": 11513,
+    "latin_america_net_revenues": 6334,
+    "north_america_net_revenues": 19586,
+    "asia_pacific_net_revenues": 5638,
+    "bottling_investments_net_revenues": 5735,
     "corporate_net_revenues": 144,
+    "intersegment_eliminations": -1009,
     "consolidated_net_revenues": 47941,
     "latin_america_net_revenue_change_pct": -2.0,
     "latin_america_fx_impact_pct": -12.0,
@@ -17,57 +18,65 @@
       "metric_id": "emea_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "Third party | $ | 10,833",
-      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
+      "snippet": "Total net operating revenues | 11,513",
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "latin_america_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "6,331 | $ | 19,579",
-      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
+      "snippet": "6,334 | 19,586",
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "north_america_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "19,579 | $ | 5,328",
-      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
+      "snippet": "19,586 | 5,638",
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "asia_pacific_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "5,328 | $ | 5,726",
-      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
+      "snippet": "5,638 | 5,735",
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "bottling_investments_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "5,726 | $ | 47,797",
-      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
+      "snippet": "5,735 | 48,806",
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "corporate_net_revenues",
       "doc_id": "KO_10K_2025",
       "section_slug": "segment_financials",
-      "snippet": "47,797 | $ | 144",
-      "filing_label": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)",
-      "note": "Note 20 \u2014 Operating Segments (third-party net operating revenues, FY2025)"
+      "snippet": "48,806 | 144",
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
+    },
+    {
+      "metric_id": "intersegment_eliminations",
+      "doc_id": "KO_10K_2025",
+      "section_slug": "segment_financials",
+      "snippet": "144 | (1,009)",
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "consolidated_net_revenues",
       "doc_id": "KO_10K_2025",
-      "section_slug": "consolidated_primary",
-      "snippet": "Net Operating Revenues | $ | 47,941",
-      "filing_label": "Consolidated Statement of Income",
-      "note": "Consolidated Statement of Income"
+      "section_slug": "segment_financials",
+      "snippet": "(1,009) | 47,941",
+      "filing_label": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)",
+      "note": "Note 20 \u2014 Operating Segments (Total net operating revenues + Eliminations, FY2025)"
     },
     {
       "metric_id": "latin_america_net_revenue_change_pct",

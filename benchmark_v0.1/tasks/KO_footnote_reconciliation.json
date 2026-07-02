@@ -1,6 +1,6 @@
 {
   "task_id": "KO_footnote_reconciliation",
-  "version": "0.2.0-draft",
+  "version": "0.3.0-draft",
   "status": "draft",
   "benchmark_version": "benchmark_v0.1",
 
@@ -12,11 +12,11 @@
   "difficulty_tier": "L3",
 
   "prompt": {
-    "text": "Using The Coca-Cola Company's Form 10-K for the fiscal year ended December 31, 2025 (filed February 20, 2026), reconcile third-party operating segment net operating revenues plus Corporate to consolidated net operating revenues for FY2025 and summarize Latin America net revenue change drivers.\n\nRetrieve filing sections by path_role slug (not note numbers):\n1. segment_policy — five reportable operating segments after the Global Ventures sunset (effective January 1, 2025).\n2. segment_financials — FY2025 **third-party** net operating revenues for all five operating segments plus Corporate from Note 20 (do not use the Total net operating revenues row that includes intersegment).\n3. consolidated_primary — consolidated net operating revenues cross-check.\n4. narrative_fx — Latin America total net operating revenue change % vs foreign currency exchange rate impact % from the MD&A percent-change table.\n5. Python — verify five segment third-party net revenues plus Corporate equal consolidated net operating revenues.\n6. Produce reconciliation table (USD millions) and short narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Pass canonical section_slug tokens to Search_Filing (e.g. segment_financials), never display names like \"Note 20\".\n- Do not use decoy slug segment_financials_prior_year for scored metrics.\n- Global Ventures is **not** a separate reportable segment for FY2025 — acknowledge the sunset policy note.\n- Include Corporate third-party net revenues in the reconciliation bridge.\n- Each citation must use a distinct verbatim snippet and the correct section_slug.\n- Acknowledge required policy notes in your submission.",
+    "text": "Using The Coca-Cola Company's Form 10-K for the fiscal year ended December 31, 2025 (filed February 20, 2026), reconcile operating segment net operating revenues to consolidated net operating revenues for FY2025 and summarize Latin America net revenue change drivers.\n\nRetrieve filing sections by path_role slug (not note numbers):\n1. segment_policy — five reportable operating segments after the Global Ventures sunset (effective January 1, 2025).\n2. segment_financials — FY2025 **Total net operating revenues** for all five operating segments from Note 20, plus the **Corporate** and **Eliminations** columns on the same Total row.\n3. consolidated_primary — independent cross-check of consolidated net operating revenues on the Consolidated Statement of Income.\n4. narrative_fx — Latin America total net operating revenue change % vs foreign currency exchange rate impact % from the MD&A percent-change table.\n5. Python — verify: sum of five segment Total net operating revenues + Corporate + Eliminations = consolidated net operating revenues.\n6. Produce reconciliation table (USD millions) and short narrative (no investment recommendation).\n\nConstraints:\n- Use only the specified 10-K and cited sections within it.\n- Pass canonical section_slug tokens to Search_Filing (e.g. segment_financials), never display names like \"Note 20\".\n- Do not use decoy slug segment_financials_prior_year for scored metrics.\n- Use the **Total net operating revenues** row (includes intersegment transfers) — not the Third party row alone.\n- **Eliminations** must be included in the bridge (typically negative).\n- Global Ventures is **not** a separate reportable segment for FY2025 — acknowledge the sunset policy note.\n- Each citation must use a distinct verbatim snippet and the correct section_slug.\n- Acknowledge required policy notes in your submission.",
     "constraints": [
       "Document: KO 10-K FY2025 only",
       "Role-ordered workflow: segment_policy → segment_financials → consolidated_primary → narrative_fx",
-      "Third-party net operating revenues row only (not intersegment Total row)",
+      "Total net operating revenues row + Corporate + Eliminations bridge",
       "No Buy/Hold/Sell or price target"
     ]
   },
@@ -49,6 +49,7 @@
       "asia_pacific_net_revenues",
       "bottling_investments_net_revenues",
       "corporate_net_revenues",
+      "intersegment_eliminations",
       "consolidated_net_revenues",
       "latin_america_net_revenue_change_pct",
       "latin_america_fx_impact_pct"
@@ -74,5 +75,5 @@
 
   "authored_by": "pilot_template_p3_18",
   "review_status": "draft_pending_expert",
-  "updated_at": "2026-07-02T18:00:00Z"
+  "updated_at": "2026-07-02T19:00:00Z"
 }

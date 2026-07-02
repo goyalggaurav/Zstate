@@ -1,6 +1,6 @@
 {
   "bundle_id": "ko_fy2025_bundle",
-  "version": "1.1.0-draft",
+  "version": "1.2.0-draft",
   "task_id": "KO_footnote_reconciliation",
   "archetype": "F_exact",
   "documents": {
@@ -57,7 +57,7 @@
       "section_id": "KO_10K_2025_segment_financials",
       "doc_id": "KO_10K_2025",
       "document_key": "segment_financials_doc",
-      "filing_label": "Note 20 — Operating Segments (third-party net operating revenues, FY2025)",
+      "filing_label": "Note 20 — Operating Segments (Total net operating revenues + Eliminations, FY2025)",
       "legacy_section_slugs": ["note_20"],
       "required": true,
       "allowed_tools": ["Search_Filing", "PDF_Parser"]
