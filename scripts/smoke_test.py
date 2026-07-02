@@ -115,6 +115,34 @@ def check_nflx_gt() -> None:
     assert "amortization_as_cash" in trap_report["failure_modes"], trap_report
     assert trap_report["fracture_codes"] == ["CASH_VS_AMORT_ERR"], trap_report
 
+    float_months = {**base, "ytd_period_months": 9.0}
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
+        json.dump(float_months, tmp)
+        float_path = tmp.name
+    float_report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_guidance_drift.py",
+        "--ground-truth", str(gt_path),
+        "--agent-output", float_path,
+    ])
+    Path(float_path).unlink(missing_ok=True)
+    assert float_report["all_pass"] is True, float_report
+
+    rounding_fail = {**base, "q3_content_amortization_usd_m": 4002}
+    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as tmp:
+        json.dump(rounding_fail, tmp)
+        rounding_path = tmp.name
+    rounding_report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/verify_guidance_drift.py",
+        "--ground-truth", str(gt_path),
+        "--agent-output", rounding_path,
+    ])
+    Path(rounding_path).unlink(missing_ok=True)
+    assert rounding_report["all_pass"] is False, rounding_report
+    assert rounding_report["failure_modes"] == [], rounding_report
+    assert rounding_report["fracture_codes"] == [], rounding_report
+
 
 def check_fracture_taxonomy_registry() -> None:
     """Benchmark verify scripts must only emit codes registered in fracture_taxonomy_v1.json."""

@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.4  
-**Last updated:** July 2026 (post P2-19 NFLX expert sign-off — 4 published tasks, 25 smoke checks)
+**Last updated:** July 2026 (post P2-20 four-task eval — 4 published tasks, 25 smoke checks)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -84,6 +84,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-17 | **Jul 2026 eval write-up** — pilot report + fracture report Track A | done | `benchmark_v0.1/docs/PILOT_EVAL_JUL2026.md` |
 | P2-18 | **GOOGL L3 hardening + headline policy** — distinct snippets; GOOGL out of headline | done | `l3_citation_rules` on GOOGL; `headline_tasks` on 3-task campaign |
 | P2-19 | **NFLX expert sign-off** — Pattern 1 GT + `NFLX_GT_REVIEW.md` | done | Fourth published task; annual vs YTD pace archetype |
+| P2-20 | **4-task eval campaign** — `pilot_eval_4task_v1` live + NFLX re-run | done | 24/24 scored; headline gpt-4o 0.817 vs claude 0.966; boolean submit fix |
 
 ---
 
@@ -147,7 +148,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | LATER-06 | **NFLX_guidance_drift — EDGAR verbatim bundle ingest** | A | Replace excerpt stubs in `nflx_q2q3_2025_bundle.json` with checksum-verified Q4 2024 letter + Q3 2025 10-Q text; set `ingest_status` + `checksum_sha256` in `corpus_manifest_v1.json`. GT signed off — ingest does not block published status. Depends on P2-08 / SH-06. |
 | LATER-03 | Track A — eval orchestrator (SH-07) | A | done | Adapters + `pilot_eval_campaign_v1` live run complete |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
-| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | PEP L3 separates models; AMZN L2 recall tightened (P2-12) — re-run live for fresh signal |
+| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | PEP + NFLX separate models; AMZN L2 recall tightened (P2-12); 4-task headline live (P2-20) |
 
 ---
 

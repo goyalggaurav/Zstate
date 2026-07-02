@@ -51,16 +51,21 @@ def _get(values: dict, key: str):
 def _close(a, b, tol: float = 0) -> bool:
     if a is None or b is None:
         return False
+    if isinstance(a, bool) or isinstance(b, bool):
+        return a == b
     if tol:
         return abs(float(a) - float(b)) <= tol
-    return a == b
+    try:
+        return float(a) == float(b)
+    except (TypeError, ValueError):
+        return a == b
 
 
 def classify_failure(values: dict, gt: dict) -> list[str]:
     for mode_id, sigs in gt["traps"].items():
         if sigs and all(_get(values, k) == v for k, v in sigs.items()):
             return [mode_id]
-    return ["wrong_ytd_window"]
+    return []
 
 
 def verify(values: dict, gt: dict) -> dict:
