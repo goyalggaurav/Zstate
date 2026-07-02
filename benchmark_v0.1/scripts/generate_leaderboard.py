@@ -219,6 +219,14 @@ def build_leaderboard(campaign: dict, report: dict) -> dict:
         ]
         run_fi = [fracture_intensity(all_run_codes(r["composite"]), severities) for r in headline_runs]
         fi_value = round(median(run_fi), 4) if run_fi else 0.0
+        synthetic_fi_runs = []
+        for rec in headline_runs:
+            syn = (rec.get("composite") or {}).get("synthetic_l3") or {}
+            if syn.get("synthetic_l3_evaluated") and not syn.get("synthetic_l3_pass", True):
+                synthetic_fi_runs.append(
+                    fracture_intensity(syn.get("fracture_codes") or ["CITE_HALLUC"], severities)
+                )
+        synthetic_fi_value = round(median(synthetic_fi_runs), 4) if synthetic_fi_runs else 0.0
         task_medians = task_medians_by_model[model_id]
         headline_score = headline_weighted_composite(task_medians, headline_tasks, task_weights)
         summary_weighted = (report.get("summary") or {}).get("weighted_composite_by_model", {}).get(model_id)
@@ -229,6 +237,7 @@ def build_leaderboard(campaign: dict, report: dict) -> dict:
             "model_id": model_id,
             "headline_composite": headline_score,
             "fracture_intensity": fi_value,
+            "synthetic_fracture_intensity": synthetic_fi_value,
             "task_composites": task_medians,
             "headline_run_count": len(headline_runs),
             "fracture_profile": aggregate_layer_profile(headline_runs),
@@ -277,6 +286,11 @@ def build_leaderboard(campaign: dict, report: dict) -> dict:
                 "scope": "headline runs only",
                 "formula": "median per-run sum of severity weights",
                 "severity_weights": SEVERITY_WEIGHT,
+            },
+            "synthetic_fracture_intensity": {
+                "scope": "headline runs when campaign.synthetic_l3_eval is true",
+                "formula": "median per-run FI from decoy bait citation hits only",
+                "note": "Separate from headline FI — measures susceptibility to synthetic L3 decoys (P3-15)",
                 "diagnostic_only": True,
             },
         },
@@ -340,6 +354,10 @@ def render_markdown(doc: dict) -> str:
         lines.append("")
         lines.append(f"- **Headline composite:** {row['headline_composite']}")
         lines.append(f"- **Fracture Intensity:** {row['fracture_intensity']} *(diagnostic)*")
+        if row.get("synthetic_fracture_intensity") is not None:
+            lines.append(
+                f"- **Synthetic L3 FI:** {row['synthetic_fracture_intensity']} *(decoy bait hits only)*"
+            )
         if row.get("gap_task"):
             g = row["gap_task"]
             lines.append(

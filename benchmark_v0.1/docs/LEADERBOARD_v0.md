@@ -1,8 +1,8 @@
 # Track A Leaderboard v0 — Actionable Fracture View
 
 **Campaign:** `pilot_eval_5task_v1`  
-**Generated:** 2026-07-02T15:24:41.170026+00:00  
-**Git:** `1208d81`  
+**Generated:** 2026-07-02T16:08:01.597673+00:00  
+**Git:** `d9cc861`  
 **Source report:** 2026-07-02T15:18:14.991727+00:00  
 
 > **Primary rank:** headline weighted composite (PEP + AMZN + NFLX).  
@@ -26,6 +26,7 @@
 
 - **Headline composite:** 0.9436
 - **Fracture Intensity:** 0.0 *(diagnostic)*
+- **Synthetic L3 FI:** 0.0 *(decoy bait hits only)*
 
 **Layer profile (headline runs):**
 - **L3:** `CITE_HALLUC`×4, `CITE_BROAD`×1
@@ -34,6 +35,7 @@
 
 - **Headline composite:** 0.9256
 - **Fracture Intensity:** 0.15 *(diagnostic)*
+- **Synthetic L3 FI:** 0.0 *(decoy bait hits only)*
 - **Gap task vs leader:** `NFLX_guidance_drift` (0.83 vs leader 0.8786, Δ 0.0486)
 
 **Layer profile (headline runs):**
@@ -49,6 +51,7 @@
 
 - **Headline composite:** 0.881
 - **Fracture Intensity:** 0.8 *(diagnostic)*
+- **Synthetic L3 FI:** 0.0 *(decoy bait hits only)*
 - **Gap task vs leader:** `PEP_fx_organic_growth` (0.864 vs leader 1.0, Δ 0.136)
 
 **Layer profile (headline runs):**

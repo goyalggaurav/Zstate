@@ -101,8 +101,14 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-12 | **GT-native L1** — GOOGL + AMZN verifiers | A | done | Eng | GT-loaded verify; `verify_benchmark_l1.py` router + `l1_verify_argv()`; hardcoded constants removed |
 | P3-13 | **Doc sync from manifest** | Both | done | Eng | Manual sync done; **P3-28** adds `sync_track_a_docs.py` automation |
 | P3-14 | **Track B fracture registry** | B | done | Eng | `fracture_library_v1.json` env map; `score_episode.py` uses `fracture_registry` |
-| P3-15 | **Synthetic L3 eval mode** | A | todo | Eng | Campaign flag `synthetic_l3: true` + separate FI column in leaderboard (P3-09 bait exists; eval wiring not built) |
-| P3-16 | **Task special-case cleanup** | A | in_progress | Eng | GOOGL `--period` sprawl removed via `l1_verify_argv()`; mock agent still GOOGL-only (optional — smoke uses scripted plans) |
+| P3-15 | **Synthetic L3 eval mode** | A | done | Eng | `synthetic_l3_eval` campaign flag; `synthetic_l3.py`; separate Synthetic L3 FI in leaderboard |
+| P3-16 | **Task special-case cleanup** | A | done | Eng | `l1_verify_argv()`; mock agent generalized to all 5 published tasks via `mock_benchmark_agents.py` |
+| P3-29b | **L3 AMZN/NFLX row/column anchors** | A | done | Eng | `metric_citation_anchors` on AMZN/NFLX gold paths; NFLX numeric_optional for derived metrics; billion/thousands numeric forms |
+| P3-30 | **Archetype L1 consolidation** | A | done | Eng | AMZN `verification_schema` → `verify_footnote_exact`; dropped `verify_amzn_footnote_reconciliation.py` |
+| P3-31 | **`scaffold_task.py`** | A | done | Eng | Archetype skeleton for task/GT/gold_path under `_scaffold/` |
+| P3-32 | **Computed-metric L3 policy** | A | done | Eng | `computed_citations` in gold path; `submission_from_gt()` auto-builds computed citations |
+| P3-33 | **Scripted plans NFLX/KO** | A | done | Eng | `nflx_good_plan.json`, `ko_good_plan.json`; publish gate requires scripted_plan |
+| P3-34 | **Metric unit typing (L3)** | A | done | Eng | `infer_metric_unit` / `build_metric_units`; unit-aware `numeric_in_snippet` |
 | P3-28 | **`sync_track_a_docs.py`** | Both | done | Eng | Manifest-driven blocks in root README, benchmark README, ARCHITECTURE; `--check` in CI |
 | P3-29 | **L3 citation hardening (9B)** | A | done | Eng | Archetype baselines + KO column/row anchors; `l3_citation_rules.py`; KO trap fixture |
 | P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
@@ -117,7 +123,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-26 | **Doc sync (5-task pilot SSOT)** | A | done | Eng | Root README, benchmark README, smoke leaderboard assert |
 | P3-27 | **Track A trajectory_v1 validation** | A | done | Eng | `shared/trace_utils.py`; validate on benchmark trace write |
 
-**Gate:** P3-03 (15 tasks) unblocked for associate scale — require scripted plan + publish gate per task (P3-16 mock generalization optional). P3-11 + P3-12 done. Full EDGAR ingest remains **LATER-06**.
+**Gate:** P3 architecture hardening **complete for pilot**; **scale pass open** (P3-30–34 done). P3-03 (15 tasks) unblocked — scripted plan + publish gate per task. Full EDGAR ingest remains **LATER-06**.
 
 ### Env + catalog scale
 
@@ -180,7 +186,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | LATER-06 | **Full EDGAR ingest pipeline** | A | **Single home for corpus automation** — `ingest_edgar_excerpt.py` (accession → slice → bundle + checksum), NFLX Q4 2024 letter + Q3 2025 10-Q verbatim in `nflx_q2q3_2025_bundle.json`, manifest `ingest_status` + `checksum_sha256`; extend to other pilot tickers. P3-10 excerpt SHA pins are interim. GT signed off — ingest does not block published status. Depends on P2-08 / SH-06. |
 | LATER-03 | Track A — eval orchestrator (SH-07) | A | done | Adapters + `pilot_eval_campaign_v1` live run complete |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
-| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | **9B shipped** (P3-29); pinned post-9B rescore in `pilot_eval_5task_v1.json`. **Next:** P3-29b AMZN/NFLX anchors (optional); 9A weight bump deferred |
+| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | **9B shipped** (P3-29/29b); scale pass (P3-30–34) done; pinned post-9B rescore in `pilot_eval_5task_v1.json`. Enable `synthetic_l3_eval` on next live campaign; 9A weight bump deferred |
 
 ---
 

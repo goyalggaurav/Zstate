@@ -70,6 +70,7 @@
         "gold_path": "gold_paths/NFLX_guidance_drift.json",
         "grader_rubric": "rubrics/NFLX_guidance_drift_grader.md",
         "corpus_bundle": "corpus/nflx_q2q3_2025_bundle.json",
+        "scripted_plan": "examples/agents/nflx_good_plan.json",
         "verify_script": "scripts/verify_benchmark_l1.py"
       }
     },
@@ -85,6 +86,7 @@
         "gold_path": "gold_paths/KO_footnote_reconciliation.json",
         "grader_rubric": "rubrics/KO_footnote_reconciliation_grader.md",
         "corpus_bundle": "corpus/ko_fy2025_bundle.json",
+        "scripted_plan": "examples/agents/ko_good_plan.json",
         "verify_script": "scripts/verify_benchmark_l1.py"
       }
     }

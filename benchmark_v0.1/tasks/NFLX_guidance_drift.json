@@ -63,7 +63,8 @@
       "ytd_content_cash_payments_usd_m",
       "q3_content_amortization_usd_m",
       "cash_vs_guidance_pace_variance_pct",
-      "guidance_pace_under"
+      "guidance_pace_under",
+      "implied_ytd_pace_usd_m"
     ]
   },
 

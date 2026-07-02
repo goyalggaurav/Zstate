@@ -149,7 +149,9 @@ def validate_publish_task(task_id: str) -> dict:
         record("contract_submission_metrics_parity", status != "published", "missing submission fixture")
 
     scripted = paths.get("scripted_plan")
-    if scripted:
+    if status == "published":
+        record("scripted_plan", bool(scripted and (BENCH / scripted).exists()), scripted or "required for published")
+    elif scripted:
         record("scripted_plan", (BENCH / scripted).exists(), scripted)
 
     record(

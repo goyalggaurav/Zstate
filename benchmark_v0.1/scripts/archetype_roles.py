@@ -34,23 +34,21 @@ def load_json(path: Path) -> dict:
 
 
 def task_json_path(task_id: str) -> Path:
-    return BENCH / "tasks" / f"{task_id}.json"
+    from task_registry import bench_path
+
+    return bench_path(task_id, "task")
 
 
 def ground_truth_path(task_id: str) -> Path:
-    manifest = load_json(BENCH / "manifest.json")
-    for entry in manifest.get("pilot_tasks", []):
-        if entry["task_id"] == task_id:
-            return BENCH / entry["paths"]["ground_truth"]
-    raise ValueError(f"No ground truth for task {task_id!r}")
+    from task_registry import bench_path
+
+    return bench_path(task_id, "ground_truth")
 
 
 def gold_path_path(task_id: str) -> Path:
-    manifest = load_json(BENCH / "manifest.json")
-    for entry in manifest.get("pilot_tasks", []):
-        if entry["task_id"] == task_id:
-            return BENCH / entry["paths"]["gold_path"]
-    raise ValueError(f"No gold path for task {task_id!r}")
+    from task_registry import bench_path
+
+    return bench_path(task_id, "gold_path")
 
 
 def task_archetype(task_id: str) -> str:
@@ -63,28 +61,21 @@ def task_archetype(task_id: str) -> str:
     raise ValueError(f"No archetype on task or gold path for {task_id!r}")
 
 
+VERIFY_ONLY_METRICS = frozenset({"reconciliation_balanced", "reconciling_item_label"})
+
+
 def gt_metric_values(task_id: str) -> dict:
-    from agent_output_contract import googl_gold_values, pep_gold_values
-
-    archetype = task_archetype(task_id)
-    if archetype == "F_adjustment":
-        return googl_gold_values()
-    if archetype == "F_exact":
-        from verify_footnote_exact import load_ground_truth
-
-        gt = load_ground_truth(ground_truth_path(task_id))
-        return dict(gt["values"])
-    if archetype == "M_organic":
-        return pep_gold_values(load_json(ground_truth_path(task_id)))
-    if archetype == "F_guidance_drift":
-        from verify_guidance_drift import load_ground_truth
-
-        gt = load_ground_truth(ground_truth_path(task_id))
-        vals = {k: v for k, v in gt["values"].items() if not isinstance(v, bool)}
-        if "guidance_pace_under" in gt["values"]:
-            vals["guidance_pace_under"] = gt["values"]["guidance_pace_under"]
-        return vals
-    raise ValueError(f"No metric loader for archetype {archetype!r}")
+    task = load_json(task_json_path(task_id))
+    allowed = set(task.get("expected_outputs", {}).get("structured_fields") or [])
+    allowed -= VERIFY_ONLY_METRICS
+    doc = load_json(ground_truth_path(task_id))
+    values: dict = {}
+    for section in ("extracted_values", "computed_values"):
+        for item in doc.get(section, []):
+            mid = item.get("metric_id")
+            if mid in allowed:
+                values[mid] = item["value"]
+    return values
 
 
 def legacy_slug_map(bundle: dict) -> dict[str, str]:

@@ -85,6 +85,46 @@
   },
 
   "l3_citation_rules": {
-    "distinct_snippets_required": true
+    "distinct_snippets_required": true,
+    "numeric_optional_metrics": [
+      "ytd_period_months",
+      "cash_vs_guidance_pace_variance_pct",
+      "implied_ytd_pace_usd_m",
+      "guidance_pace_under"
+    ],
+    "metric_citation_anchors": {
+      "guidance_content_cash_annual_usd_m": {
+        "section_slug": "narrative_guidance"
+      },
+      "ytd_period_months": {
+        "row_label": "Nine months",
+        "section_slug": "quantitative_actuals"
+      },
+      "ytd_content_cash_payments_usd_m": {
+        "row_label": "Additions to content assets",
+        "section_slug": "quantitative_actuals"
+      },
+      "q3_content_amortization_usd_m": {
+        "row_label": "Total amortization of content assets",
+        "section_slug": "quantitative_actuals"
+      }
+    },
+    "computed_citations": {
+      "implied_ytd_pace_usd_m": {
+        "cite_metric": "guidance_content_cash_annual_usd_m",
+        "snippet": "roughly $18B",
+        "numeric_optional": true
+      },
+      "cash_vs_guidance_pace_variance_pct": {
+        "cite_metric": "ytd_content_cash_payments_usd_m",
+        "numeric_optional": true
+      },
+      "guidance_pace_under": {
+        "cite_policy_id": "amortization_not_cash_spend",
+        "section_slug": "quantitative_actuals",
+        "snippet": "Payments for content assets are included in net cash provided by operating activities.",
+        "numeric_optional": true
+      }
+    }
   }
 }

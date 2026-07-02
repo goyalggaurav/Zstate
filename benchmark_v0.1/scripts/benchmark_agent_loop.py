@@ -202,14 +202,13 @@ def _ensure_plan_submission(task_id: str, plan: dict) -> None:
         return
     if actions[-1].get("submission"):
         return
-    builders = {
-        "GOOGL_footnote_reconciliation": googl_gold_submission,
-        "PEP_fx_organic_growth": pep_gold_submission,
-        "AMZN_footnote_reconciliation": amzn_gold_submission,
-    }
-    builder = builders.get(task_id)
-    if builder:
-        actions[-1]["submission"] = builder()
+    fixture = BENCH / "contract_fixtures" / f"{task_id}_submission_gold.json"
+    if fixture.exists():
+        actions[-1]["submission"] = load_json(fixture)
+        return
+    from agent_output_contract import submission_from_gt
+
+    actions[-1]["submission"] = submission_from_gt(task_id)
 
 
 def run_scripted_task(
@@ -243,61 +242,30 @@ def run_scripted_task(
 
 
 class MockBlindSumAgent:
-    """Weak GOOGL agent — sums segments, omits hedging reconciling item."""
+    """Back-compat alias — GOOGL blind-sum weak agent."""
 
     plan_id = "mock_blind_sum_v1"
 
     def __init__(self, task: dict) -> None:
-        self.task = task
-        self._step = 0
-        ticker = task["ticker"]
-        period = task["required_documents"][0]["fiscal_period"]
-        self._actions: list[dict] = [
-            {
-                "type": "tool_call",
-                "tool": "Search_Filing",
-                "input": {"ticker": ticker, "period": period, "section": "segment_financials"},
-            },
-            {
-                "type": "tool_call",
-                "tool": "Search_Filing",
-                "input": {"ticker": ticker, "period": period, "section": "revenue_disaggregation"},
-            },
-            {
-                "type": "tool_call",
-                "tool": "Python_Interpreter",
-                "input": {"expression": "89637 + 20028 + 411"},
-            },
-            {
-                "type": "submit_structured_output",
-                "structured_output": {
-                    "google_services_revenue": 89_637,
-                    "google_cloud_revenue": 20_028,
-                    "other_bets_revenue": 411,
-                    "hedging_gains_losses": None,
-                    "consolidated_total_revenue": 110_076,
-                },
-            },
-        ]
+        from agents.mock_benchmark_agents import make_mock_agent
 
-    def next_action(self, _context: dict[str, Any]) -> dict | None:
-        if self._step >= len(self._actions):
-            return None
-        action = self._actions[self._step]
-        self._step += 1
-        return action
+        self._inner = make_mock_agent("GOOGL_footnote_reconciliation", task)
+        self.plan_id = self._inner.plan_id
+
+    def next_action(self, context: dict[str, Any]) -> dict | None:
+        return self._inner.next_action(context)
 
 
 def run_mock_task(task_id: str) -> tuple[dict, dict, dict | None]:
-    if task_id != "GOOGL_footnote_reconciliation":
-        raise NotImplementedError(f"mock agent supports GOOGL_footnote_reconciliation only, got {task_id!r}")
+    from agents.mock_benchmark_agents import make_mock_agent
+
     task = load_task(task_id)
-    agent = MockBlindSumAgent(task)
+    agent = make_mock_agent(task_id, task)
     return run_benchmark_task(
         task_id,
         agent,
         agent_mode="mock",
-        model_id="mock_blind_sum_v1",
+        model_id=agent.plan_id,
         plan_id=agent.plan_id,
     )
 

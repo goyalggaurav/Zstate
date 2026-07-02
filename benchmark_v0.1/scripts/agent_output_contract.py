@@ -112,38 +112,130 @@ def filing_label_for_slug(bundle: dict, section_slug: str) -> str | None:
     return None
 
 
+def _default_section_slug(cite: dict, metric_id: str) -> str:
+    if cite.get("section_slug"):
+        return cite["section_slug"]
+    if "guidance" in metric_id or "annual" in metric_id:
+        return "narrative_guidance"
+    if "amortization" in metric_id or "ytd" in metric_id or "cash" in metric_id:
+        return "quantitative_actuals"
+    if "growth" in metric_id or "fx" in metric_id or "pct" in metric_id:
+        return "narrative_fx"
+    if "consolidated" in metric_id:
+        return "consolidated_primary"
+    return "segment_financials"
+
+
+def _build_citation_entry(
+    metric_id: str,
+    cite: dict,
+    bundle: dict,
+) -> dict:
+    section_slug = _default_section_slug(cite, metric_id)
+    entry: dict = {
+        "metric_id": metric_id,
+        "doc_id": cite.get("doc_id", ""),
+        "section_slug": section_slug,
+        "snippet": cite["snippet"],
+    }
+    label = filing_label_for_slug(bundle, section_slug)
+    if label:
+        entry["filing_label"] = label
+        entry["note"] = cite.get("note") or label
+    return entry
+
+
+def _section_slug_for_doc(bundle: dict, doc_id: str) -> str | None:
+    for entry in bundle.get("section_registry", []):
+        if entry.get("doc_id") == doc_id:
+            return entry.get("section_slug")
+    return None
+
+
+def _computed_citation(
+    metric_id: str,
+    policy: dict,
+    extracted_map: dict[str, dict],
+    bundle: dict,
+) -> dict | None:
+    if policy.get("cite_metric"):
+        base = extracted_map.get(policy["cite_metric"])
+        if not base:
+            return None
+        entry = dict(base)
+        entry["metric_id"] = metric_id
+        if policy.get("snippet"):
+            entry["snippet"] = policy["snippet"]
+        if policy.get("section_slug"):
+            entry["section_slug"] = policy["section_slug"]
+            label = filing_label_for_slug(bundle, entry["section_slug"])
+            if label:
+                entry["filing_label"] = label
+                entry["note"] = label
+        return entry
+    if policy.get("cite_policy_id"):
+        policy_id = policy["cite_policy_id"]
+        for note in bundle.get("policy_notes", []):
+            if note.get("policy_id") != policy_id:
+                continue
+            doc_id = note.get("doc_id", "")
+            section_slug = policy.get("section_slug") or _section_slug_for_doc(bundle, doc_id) or "quantitative_actuals"
+            return {
+                "metric_id": metric_id,
+                "doc_id": doc_id,
+                "section_slug": section_slug,
+                "snippet": policy.get("snippet") or note.get("statement", ""),
+            }
+    return None
+
+
 def submission_from_gt(task_id: str, gt_path: Path | None = None) -> dict:
-    """Build agent_submission_v1 from GT citations (P3-17 — hardened template)."""
+    """Build agent_submission_v1 from GT citations + gold_path computed_citations (P3-32)."""
     doc = load_ground_truth_doc(task_id, gt_path)
     metrics = l1_values_from_gt(task_id, gt_path)
-    from task_registry import load_bundle
+    from task_registry import load_bundle, load_gold_path
 
     bundle = load_bundle(task_id)
+    gold_path = load_gold_path(task_id)
+    computed_policy = (gold_path.get("l3_citation_rules") or {}).get("computed_citations") or {}
+
+    extracted_map: dict[str, dict] = {}
     citations: list[dict] = []
     for item in doc.get("extracted_values", []):
         cite = item.get("citation") or {}
         snippet = cite.get("snippet")
         if not snippet:
             continue
-        section_slug = cite.get("section_slug", "segment_financials")
-        entry: dict = {
-            "metric_id": item["metric_id"],
-            "doc_id": cite.get("doc_id", ""),
-            "section_slug": section_slug,
-            "snippet": snippet,
-        }
-        label = filing_label_for_slug(bundle, section_slug)
-        if label:
-            entry["filing_label"] = label
-            entry["note"] = label
+        entry = _build_citation_entry(item["metric_id"], cite, bundle)
+        extracted_map[item["metric_id"]] = entry
         citations.append(entry)
 
+    for item in doc.get("computed_values", []):
+        mid = item["metric_id"]
+        policy = computed_policy.get(mid)
+        if not policy:
+            continue
+        entry = _computed_citation(mid, policy, extracted_map, bundle)
+        if entry:
+            citations.append(entry)
+
+    cite_by_metric = {c["metric_id"]: c for c in citations}
+    ordered_citations = [cite_by_metric[mid] for mid in metrics if mid in cite_by_metric]
+    seen = {c["metric_id"] for c in ordered_citations}
+    for c in citations:
+        if c["metric_id"] not in seen:
+            ordered_citations.append(c)
+            seen.add(c["metric_id"])
+
     policy_ids = doc.get("required_policy_acknowledgements") or []
+    for note in bundle.get("policy_notes", []):
+        if note.get("agent_ack_required") and note.get("policy_id") not in policy_ids:
+            policy_ids.append(note["policy_id"])
     return {
         "schema_version": "agent_submission_v1",
         "metrics": metrics,
-        "citations": citations,
-        "policy_acknowledgements": list(policy_ids),
+        "citations": ordered_citations,
+        "policy_acknowledgements": list(dict.fromkeys(policy_ids)),
     }
 
 

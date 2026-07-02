@@ -275,8 +275,6 @@ def execute_campaign(
                         )
                         rec["agent_mode"] = routed
                     elif agent_mode == "mock":
-                        if task_id != "GOOGL_footnote_reconciliation":
-                            raise NotImplementedError("mock execute supports GOOGL only")
                         trace, structured_output, agent_submission = run_mock_task(task_id)
                     else:
                         raise ValueError(f"Unknown agent mode {agent_mode!r}")
@@ -341,6 +339,7 @@ def score_campaign(
                     trace_path=trace_path if trace_path.exists() else None,
                     submission_path=submission_path if submission_path.exists() else None,
                     manifest=manifest,
+                    synthetic_l3_eval=bool(campaign.get("synthetic_l3_eval")),
                 )
                 l1_report = composite_report["l1"]["report"]
                 rec["composite"] = composite_report

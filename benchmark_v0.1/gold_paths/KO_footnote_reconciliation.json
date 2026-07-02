@@ -163,6 +163,12 @@
         "section_slug": "narrative_fx"
       },
       "segment_net_revenues_sum": {"row_label": "Operating Segments Total"}
+    },
+    "computed_citations": {
+      "segment_net_revenues_sum": {
+        "cite_metric": "consolidated_net_revenues",
+        "snippet": "Operating Segments Total...47,941"
+      }
     }
   }
 }

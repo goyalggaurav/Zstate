@@ -25,21 +25,10 @@ sys.path.insert(0, str(SCRIPTS))
 
 from agent_output_contract import load_json  # noqa: E402
 from archetype_roles import canonicalize_section_slug  # noqa: E402
-from benchmark_tool_backend import load_bundle, normalize_section_slug  # noqa: E402
+from benchmark_tool_backend import normalize_section_slug  # noqa: E402
+from task_registry import load_bundle, load_gold_path, load_task  # noqa: E402
 from validate_agent_submission import validate_submission  # noqa: E402
 from fracture_registry import fracture_codes as resolve_fracture_codes  # noqa: E402
-
-
-def load_task(task_id: str) -> dict:
-    return load_json(BENCH / "tasks" / f"{task_id}.json")
-
-
-def load_gold_path(task_id: str) -> dict:
-    manifest = load_json(BENCH / "manifest.json")
-    for entry in manifest.get("pilot_tasks", []):
-        if entry["task_id"] == task_id:
-            return load_json(BENCH / entry["paths"]["gold_path"])
-    raise ValueError(f"No gold path for task {task_id!r}")
 
 
 def run_l1_verify(task_id: str, agent_path: Path, manifest: dict) -> dict:
@@ -278,7 +267,12 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
     }
 
 
-def score_l3_submission(submission: dict | None, *, task_id: str) -> dict:
+def score_l3_submission(
+    submission: dict | None,
+    *,
+    task_id: str,
+    synthetic_l3_eval: bool = False,
+) -> dict:
     if submission is None:
         return {
             "l3_pass": False,
@@ -287,7 +281,7 @@ def score_l3_submission(submission: dict | None, *, task_id: str) -> dict:
             "fracture_codes": resolve_fracture_codes(["submission_missing"], layer="L3"),
             "status": "missing_submission",
         }
-    report = validate_submission(submission, task_id=task_id)
+    report = validate_submission(submission, task_id=task_id, synthetic_l3_eval=synthetic_l3_eval)
     l3_score = float(report.get("l3_score", 1.0 if report["l3_pass"] else 0.0))
     return {
         "l3_pass": report["l3_pass"],
@@ -296,6 +290,7 @@ def score_l3_submission(submission: dict | None, *, task_id: str) -> dict:
         "fracture_codes": report.get("fracture_codes", []),
         "status": "scored",
         "validation": report,
+        "synthetic_l3": report.get("synthetic_l3"),
     }
 
 
@@ -348,6 +343,7 @@ def score_run(
     trace_path: Path | None = None,
     submission_path: Path | None = None,
     manifest: dict | None = None,
+    synthetic_l3_eval: bool = False,
 ) -> dict:
     manifest = manifest or load_json(BENCH / "manifest.json")
     task = load_task(task_id)
@@ -362,7 +358,7 @@ def score_run(
     submission = load_json(submission_path) if submission_path and submission_path.exists() else None
 
     l2_report = score_l2_section_recall(trace, task_id=task_id, gold_path=gold_path, bundle=bundle)
-    l3_report = score_l3_submission(submission, task_id=task_id)
+    l3_report = score_l3_submission(submission, task_id=task_id, synthetic_l3_eval=synthetic_l3_eval)
 
     composite = composite_score(
         l1_score,
@@ -396,6 +392,7 @@ def score_run(
         },
         "l2": l2_report,
         "l3": l3_report,
+        "synthetic_l3": l3_report.get("validation", {}).get("synthetic_l3") or l3_report.get("synthetic_l3"),
         "composite_score": composite,
         "failure_modes": failure_modes,
         "fracture_codes": fracture_codes,

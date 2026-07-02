@@ -1,9 +1,9 @@
 {
   "schema_version": "leaderboard_v0",
   "campaign_id": "pilot_eval_5task_v1",
-  "generated_at": "2026-07-02T15:24:41.170026+00:00",
+  "generated_at": "2026-07-02T16:08:01.597673+00:00",
   "source_report": "2026-07-02T15:18:14.991727+00:00",
-  "git_commit": "1208d81",
+  "git_commit": "d9cc861",
   "methodology": {
     "primary_rank": "headline_weighted_composite",
     "headline_tasks": [
@@ -26,7 +26,12 @@
         "high": 0.6,
         "medium": 0.3,
         "low": 0.1
-      },
+      }
+    },
+    "synthetic_fracture_intensity": {
+      "scope": "headline runs when campaign.synthetic_l3_eval is true",
+      "formula": "median per-run FI from decoy bait citation hits only",
+      "note": "Separate from headline FI \u2014 measures susceptibility to synthetic L3 decoys (P3-15)",
       "diagnostic_only": true
     }
   },
@@ -60,6 +65,7 @@
       "model_id": "claude-sonnet-4-5",
       "headline_composite": 0.9436,
       "fracture_intensity": 0.0,
+      "synthetic_fracture_intensity": 0.0,
       "task_composites": {
         "PEP_fx_organic_growth": 1.0,
         "AMZN_footnote_reconciliation": 1.0,
@@ -88,6 +94,7 @@
       "model_id": "gemini-2.5-flash",
       "headline_composite": 0.9256,
       "fracture_intensity": 0.15,
+      "synthetic_fracture_intensity": 0.0,
       "task_composites": {
         "PEP_fx_organic_growth": 1.0,
         "AMZN_footnote_reconciliation": 1.0,
@@ -134,6 +141,7 @@
       "model_id": "gpt-4o",
       "headline_composite": 0.881,
       "fracture_intensity": 0.8,
+      "synthetic_fracture_intensity": 0.0,
       "task_composites": {
         "PEP_fx_organic_growth": 0.864,
         "AMZN_footnote_reconciliation": 0.9575,

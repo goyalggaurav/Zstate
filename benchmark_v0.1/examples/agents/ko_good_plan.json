@@ -1,0 +1,47 @@
+{
+  "plan_id": "ko_good_v1",
+  "description": "Reference scripted agent — role-ordered gold path (F_exact / KO Note 20)",
+  "actions": [
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "KO", "period": "FY2025", "section": "segment_policy"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "KO", "period": "FY2025", "section": "segment_financials"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "KO", "period": "FY2025", "section": "consolidated_primary"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "KO", "period": "FY2025", "section": "narrative_fx"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Python_Interpreter",
+      "input": {"expression": "11513 + 6334 + 19586 + 5638 + 5735 + 144 - 1009"}
+    },
+    {
+      "type": "submit_structured_output",
+      "structured_output": {
+        "emea_net_revenues": 11513,
+        "latin_america_net_revenues": 6334,
+        "north_america_net_revenues": 19586,
+        "asia_pacific_net_revenues": 5638,
+        "bottling_investments_net_revenues": 5735,
+        "corporate_net_revenues": 144,
+        "intersegment_eliminations": -1009,
+        "consolidated_net_revenues": 47941,
+        "latin_america_net_revenue_change_pct": -2.0,
+        "latin_america_fx_impact_pct": -12.0,
+        "segment_net_revenues_sum": 47941
+      }
+    }
+  ]
+}

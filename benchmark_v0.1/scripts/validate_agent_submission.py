@@ -24,15 +24,19 @@ ROOT = BENCH.parent
 sys.path.insert(0, str(SCRIPTS))
 
 from archetype_roles import canonicalize_section_slug  # noqa: E402
-from benchmark_tool_backend import load_bundle  # noqa: E402
+from benchmark_tool_backend import load_bundle  # noqa: E402 — re-export for tests
 from fracture_registry import fracture_codes as resolve_fracture_codes, layer_map  # noqa: E402
 from l3_citation_rules import (  # noqa: E402
     anchor_ok,
+    build_metric_units,
+    infer_metric_unit,
     is_note_number_only,
     merge_l3_rules,
     numeric_in_snippet,
     numeric_optional,
 )
+from synthetic_l3 import check_synthetic_l3_submission, synthetic_l3_skipped  # noqa: E402
+from task_registry import load_bundle, load_gold_path, load_task  # noqa: E402
 
 FAILURE_FRACTURE = layer_map("L3")
 
@@ -57,11 +61,6 @@ def snippet_present(excerpt: str, snippet: str) -> bool:
             pos = idx + len(part)
         return True
     return normalize(snippet) in norm_excerpt
-
-
-def load_task(task_id: str) -> dict:
-    path = BENCH / "tasks" / f"{task_id}.json"
-    return load_json(path)
 
 
 def excerpt_for_slug(bundle: dict, section_slug: str) -> str | None:
@@ -89,15 +88,7 @@ def required_policy_ids(bundle: dict) -> list[str]:
     ]
 
 
-def load_gold_path(task_id: str) -> dict:
-    manifest = load_json(BENCH / "manifest.json")
-    for entry in manifest.get("pilot_tasks", []):
-        if entry["task_id"] == task_id:
-            return load_json(BENCH / entry["paths"]["gold_path"])
-    return {}
-
-
-def l3_citation_rules(task_id: str, gold_path: dict | None = None, task: dict | None = None) -> dict:
+def l3_citation_rules_for_task(task_id: str, gold_path: dict | None = None, task: dict | None = None) -> dict:
     gold_path = gold_path if gold_path is not None else load_gold_path(task_id)
     task = task or load_task(task_id)
     archetype = gold_path.get("archetype") or task.get("archetype", "")
@@ -111,6 +102,7 @@ def _apply_citation_hardening(
     section_slug: str | None,
     metric_value: Any,
     l3_rules: dict,
+    metric_units: dict[str, str],
     prefix: str,
     checks: list[dict],
     failure_modes: list[str],
@@ -133,7 +125,8 @@ def _apply_citation_hardening(
         ok = False
 
     if l3_rules.get("require_numeric_in_snippet") and metric_id and not numeric_optional(metric_id, l3_rules):
-        if not numeric_in_snippet(metric_value, snippet):
+        unit = infer_metric_unit(metric_id, metric_units) if metric_id else None
+        if not numeric_in_snippet(metric_value, snippet, unit=unit):
             failure_modes.append("cite_halluc")
             checks.append({"check": f"{prefix}.numeric_anchor", "pass": False, "metric_id": metric_id})
             ok = False
@@ -155,11 +148,25 @@ def _apply_citation_hardening(
     return ok
 
 
-def validate_submission(submission: dict, *, task_id: str, task: dict | None = None, bundle: dict | None = None) -> dict:
+def validate_submission(
+    submission: dict,
+    *,
+    task_id: str,
+    task: dict | None = None,
+    bundle: dict | None = None,
+    synthetic_l3_eval: bool = False,
+) -> dict:
     task = task or load_task(task_id)
     bundle = bundle or load_bundle(task_id)
     gold_path = load_gold_path(task_id)
-    l3_rules = l3_citation_rules(task_id, gold_path, task)
+    l3_rules = l3_citation_rules_for_task(task_id, gold_path, task)
+    from task_registry import load_ground_truth as registry_load_gt
+
+    try:
+        gt_doc = registry_load_gt(task_id)
+    except ValueError:
+        gt_doc = {}
+    metric_units = build_metric_units(gt_doc, l3_rules)
     checks: list[dict] = []
     failure_modes: list[str] = []
 
@@ -244,6 +251,7 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
                 section_slug=section_slug,
                 metric_value=metrics.get(metric_id) if metric_id else None,
                 l3_rules=l3_rules,
+                metric_units=metric_units,
                 prefix=prefix,
                 checks=checks,
                 failure_modes=failure_modes,
@@ -301,6 +309,13 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
         else:
             failure_modes.append("policy_omit")
 
+    if synthetic_l3_eval:
+        synthetic_report = check_synthetic_l3_submission(submission, bundle)
+        if not synthetic_report["synthetic_l3_pass"]:
+            failure_modes.extend(synthetic_report["failure_modes"])
+    else:
+        synthetic_report = synthetic_l3_skipped()
+
     failure_modes = list(dict.fromkeys(failure_modes))
     fracture_codes_list = resolve_fracture_codes(failure_modes, layer="L3")
     l3_pass = not failure_modes
@@ -322,6 +337,7 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
         "checks": checks,
         "citation_count": len(citations),
         "metrics_cited": sorted(cited_metrics),
+        "synthetic_l3": synthetic_report,
         "components": {
             "citation_fraction": round(citation_fraction, 4),
             "policy_fraction": round(policy_fraction, 4),
@@ -354,6 +370,7 @@ def validate_all_fixtures() -> dict:
         "GOOGL_footnote_reconciliation_submission_gold.json",
         "PEP_fx_organic_growth_submission_gold.json",
         "AMZN_footnote_reconciliation_submission_gold.json",
+        "NFLX_guidance_drift_submission_gold.json",
         "KO_footnote_reconciliation_submission_gold.json",
     }
     expected_traps = {

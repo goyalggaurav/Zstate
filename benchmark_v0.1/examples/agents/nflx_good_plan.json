@@ -1,0 +1,33 @@
+{
+  "plan_id": "nflx_good_v1",
+  "description": "Reference scripted agent — guidance drift gold path (F_guidance_drift)",
+  "actions": [
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "NFLX", "period": "2024Q4", "section": "narrative_guidance"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Search_Filing",
+      "input": {"ticker": "NFLX", "period": "2025Q3", "section": "quantitative_actuals"}
+    },
+    {
+      "type": "tool_call",
+      "tool": "Python_Interpreter",
+      "input": {"expression": "(12039 - 18000 * 9 / 12) / (18000 * 9 / 12) * 100"}
+    },
+    {
+      "type": "submit_structured_output",
+      "structured_output": {
+        "guidance_content_cash_annual_usd_m": 18000,
+        "ytd_period_months": 9,
+        "ytd_content_cash_payments_usd_m": 12039,
+        "q3_content_amortization_usd_m": 4003,
+        "cash_vs_guidance_pace_variance_pct": -10.8,
+        "implied_ytd_pace_usd_m": 13500,
+        "guidance_pace_under": true
+      }
+    }
+  ]
+}

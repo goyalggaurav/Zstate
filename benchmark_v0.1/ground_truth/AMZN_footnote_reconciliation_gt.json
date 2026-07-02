@@ -5,6 +5,20 @@
   "period_end": "2025-12-31",
   "unit": "USD_millions",
 
+  "verification_schema": {
+    "archetype": "F_exact",
+    "segment_metrics": [
+      "north_america_net_sales",
+      "international_net_sales",
+      "aws_net_sales"
+    ],
+    "consolidated_metric": "consolidated_net_sales",
+    "fx_metrics": {
+      "reported": "international_reported_growth_pct",
+      "cc": "international_cc_growth_pct"
+    }
+  },
+
   "extracted_values": [
     {
       "metric_id": "north_america_net_sales",
@@ -58,6 +72,7 @@
       "citation": {
         "doc_id": "AMZN_10K_2025",
         "note": "MD&A — International",
+        "section_slug": "narrative_fx",
         "snippet": "International segment sales increased 13%"
       }
     },
@@ -69,6 +84,7 @@
       "citation": {
         "doc_id": "AMZN_10K_2025",
         "note": "MD&A — International",
+        "section_slug": "narrative_fx",
         "snippet": "increased 10% excluding changes in foreign exchange rates"
       }
     }
