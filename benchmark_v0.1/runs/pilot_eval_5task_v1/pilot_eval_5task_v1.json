@@ -1,6 +1,6 @@
 {
   "campaign_id": "pilot_eval_5task_v1",
-  "created_at": "2026-07-02T14:22:32.262009+00:00",
+  "created_at": "2026-07-02T15:18:14.991727+00:00",
   "status": "execute_ready",
   "models": [
     "gpt-4o",
@@ -23,8 +23,8 @@
     "l1_all_pass_count": 44,
     "l1_pass_rate_median": 1.0,
     "l2_score_median": 1.0,
-    "l3_score_median": 1.0,
-    "composite_score_median": 1.0,
+    "l3_score_median": 0.7167,
+    "composite_score_median": 0.9575,
     "by_task_l1_pass_rate_median": {
       "GOOGL_footnote_reconciliation": 1.0,
       "PEP_fx_organic_growth": 1.0,
@@ -36,14 +36,15 @@
       "GOOGL_footnote_reconciliation": 1.0,
       "PEP_fx_organic_growth": 1.0,
       "AMZN_footnote_reconciliation": 1.0,
-      "NFLX_guidance_drift": 0.9271,
-      "KO_footnote_reconciliation": 0.9884
+      "NFLX_guidance_drift": 0.83,
+      "KO_footnote_reconciliation": 0.8725
     },
     "fracture_counts": {
-      "CITE_HALLUC": 6,
-      "CITE_BROAD": 16
+      "CITE_HALLUC": 13,
+      "CITE_BROAD": 17,
+      "TIMEOUT": 1
     },
-    "headline_composite_score_median": 0.98205,
+    "headline_composite_score_median": 0.8813500000000001,
     "headline_tasks": [
       "PEP_fx_organic_growth",
       "AMZN_footnote_reconciliation",
@@ -51,7 +52,7 @@
       "KO_footnote_reconciliation"
     ],
     "by_model_composite_median": {
-      "gpt-4o": 0.8841,
+      "gpt-4o": 0.8725,
       "claude-sonnet-4-5": 1.0,
       "gemini-2.5-flash": 1.0
     },
@@ -60,28 +61,28 @@
         "GOOGL_footnote_reconciliation": 1.0,
         "PEP_fx_organic_growth": 0.864,
         "AMZN_footnote_reconciliation": 0.9575,
-        "NFLX_guidance_drift": 0.8786,
-        "KO_footnote_reconciliation": 0.8841
+        "NFLX_guidance_drift": 0.83,
+        "KO_footnote_reconciliation": 0.8725
       },
       "claude-sonnet-4-5": {
         "GOOGL_footnote_reconciliation": 1.0,
         "PEP_fx_organic_growth": 1.0,
         "AMZN_footnote_reconciliation": 1.0,
-        "NFLX_guidance_drift": 0.9757,
-        "KO_footnote_reconciliation": 1.0
+        "NFLX_guidance_drift": 0.8786,
+        "KO_footnote_reconciliation": 0.8957
       },
       "gemini-2.5-flash": {
         "GOOGL_footnote_reconciliation": 1.0,
         "PEP_fx_organic_growth": 1.0,
         "AMZN_footnote_reconciliation": 1.0,
-        "NFLX_guidance_drift": 0.9271,
-        "KO_footnote_reconciliation": 1.0
+        "NFLX_guidance_drift": 0.83,
+        "KO_footnote_reconciliation": 0.8725
       }
     },
     "weighted_composite_by_model": {
-      "gpt-4o": 0.89605,
-      "claude-sonnet-4-5": 0.993925,
-      "gemini-2.5-flash": 0.9817750000000001
+      "gpt-4o": 0.881,
+      "claude-sonnet-4-5": 0.943575,
+      "gemini-2.5-flash": 0.925625
     },
     "task_weights": {
       "PEP_fx_organic_growth": 1.0,
@@ -3115,6 +3116,7 @@
           "l3_pass": false,
           "l3_score": 0.7167,
           "failure_modes": [
+            "cite_broad",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
@@ -3128,6 +3130,7 @@
             "l3_score": 0.7167,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
@@ -3242,6 +3245,12 @@
                 "pass": true
               },
               {
+                "check": "citation[4].snippet_length",
+                "pass": false,
+                "max_chars": 140,
+                "actual_chars": 145
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "international_cc_growth_pct"
@@ -3259,6 +3268,12 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].snippet_length",
+                "pass": false,
+                "max_chars": 140,
+                "actual_chars": 145
               },
               {
                 "check": "metric_cited.north_america_net_sales.distinct_snippet",
@@ -3311,6 +3326,7 @@
         },
         "composite_score": 0.9575,
         "failure_modes": [
+          "cite_broad",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
@@ -3403,6 +3419,7 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
@@ -3945,6 +3962,7 @@
           "l3_pass": false,
           "l3_score": 0.7167,
           "failure_modes": [
+            "cite_broad",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
@@ -3958,6 +3976,7 @@
             "l3_score": 0.7167,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
@@ -4072,6 +4091,12 @@
                 "pass": true
               },
               {
+                "check": "citation[4].snippet_length",
+                "pass": false,
+                "max_chars": 140,
+                "actual_chars": 145
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "international_cc_growth_pct"
@@ -4089,6 +4114,12 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].snippet_length",
+                "pass": false,
+                "max_chars": 140,
+                "actual_chars": 145
               },
               {
                 "check": "metric_cited.north_america_net_sales.distinct_snippet",
@@ -4141,6 +4172,7 @@
         },
         "composite_score": 0.9575,
         "failure_modes": [
+          "cite_broad",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
@@ -4233,6 +4265,7 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
@@ -4347,11 +4380,14 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.3929,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_broad",
+            "cite_halluc",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
+            "CITE_HALLUC",
             "CITE_BROAD"
           ],
           "status": "scored",
@@ -4359,12 +4395,15 @@
             "task_id": "NFLX_guidance_drift",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.3929,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
+              "cite_halluc",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
+              "CITE_HALLUC",
               "CITE_BROAD"
             ],
             "checks": [
@@ -4400,6 +4439,17 @@
                 "pass": true
               },
               {
+                "check": "citation[0].snippet_length",
+                "pass": false,
+                "max_chars": 160,
+                "actual_chars": 222
+              },
+              {
+                "check": "citation[0].numeric_anchor",
+                "pass": false,
+                "metric_id": "guidance_content_cash_annual_usd_m"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "ytd_period_months"
@@ -4417,6 +4467,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].numeric_anchor",
+                "pass": false,
+                "metric_id": "ytd_period_months"
               },
               {
                 "check": "citation[2].metric_id",
@@ -4457,6 +4512,11 @@
                 "pass": true
               },
               {
+                "check": "citation[3].numeric_anchor",
+                "pass": false,
+                "metric_id": "q3_content_amortization_usd_m"
+              },
+              {
                 "check": "citation[4].metric_id",
                 "pass": true,
                 "metric_id": "cash_vs_guidance_pace_variance_pct"
@@ -4476,6 +4536,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].numeric_anchor",
+                "pass": false,
+                "metric_id": "cash_vs_guidance_pace_variance_pct"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "implied_ytd_pace_usd_m"
@@ -4493,6 +4558,17 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].snippet_length",
+                "pass": false,
+                "max_chars": 160,
+                "actual_chars": 222
+              },
+              {
+                "check": "citation[5].numeric_anchor",
+                "pass": false,
+                "metric_id": "implied_ytd_pace_usd_m"
               },
               {
                 "check": "citation[6].metric_id",
@@ -4564,18 +4640,21 @@
               "ytd_period_months"
             ],
             "components": {
-              "citation_fraction": 0.2857,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 2,
+              "metrics_with_valid_citation": 0,
               "metric_count": 7
             }
           }
         },
-        "composite_score": 0.8786,
+        "composite_score": 0.83,
         "failure_modes": [
+          "cite_broad",
+          "cite_halluc",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
+          "CITE_HALLUC",
           "CITE_BROAD"
         ],
         "paths": {
@@ -4584,11 +4663,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gpt-4o/NFLX_guidance_drift_run01_submission.json"
         }
       },
-      "composite_score": 0.8786,
+      "composite_score": 0.83,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.3929,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "NFLX_guidance_drift",
         "archetype": "F_guidance_drift",
@@ -4651,9 +4730,12 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
+        "cite_halluc",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
+        "CITE_HALLUC",
         "CITE_BROAD"
       ],
       "status": "scored"
@@ -4765,11 +4847,14 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.3929,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_broad",
+            "cite_halluc",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
+            "CITE_HALLUC",
             "CITE_BROAD"
           ],
           "status": "scored",
@@ -4777,12 +4862,15 @@
             "task_id": "NFLX_guidance_drift",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.3929,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
+              "cite_halluc",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
+              "CITE_HALLUC",
               "CITE_BROAD"
             ],
             "checks": [
@@ -4818,6 +4906,17 @@
                 "pass": true
               },
               {
+                "check": "citation[0].snippet_length",
+                "pass": false,
+                "max_chars": 160,
+                "actual_chars": 222
+              },
+              {
+                "check": "citation[0].numeric_anchor",
+                "pass": false,
+                "metric_id": "guidance_content_cash_annual_usd_m"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "ytd_period_months"
@@ -4835,6 +4934,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].numeric_anchor",
+                "pass": false,
+                "metric_id": "ytd_period_months"
               },
               {
                 "check": "citation[2].metric_id",
@@ -4875,6 +4979,11 @@
                 "pass": true
               },
               {
+                "check": "citation[3].numeric_anchor",
+                "pass": false,
+                "metric_id": "q3_content_amortization_usd_m"
+              },
+              {
                 "check": "citation[4].metric_id",
                 "pass": true,
                 "metric_id": "cash_vs_guidance_pace_variance_pct"
@@ -4894,6 +5003,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].numeric_anchor",
+                "pass": false,
+                "metric_id": "cash_vs_guidance_pace_variance_pct"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "implied_ytd_pace_usd_m"
@@ -4911,6 +5025,17 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].snippet_length",
+                "pass": false,
+                "max_chars": 160,
+                "actual_chars": 222
+              },
+              {
+                "check": "citation[5].numeric_anchor",
+                "pass": false,
+                "metric_id": "implied_ytd_pace_usd_m"
               },
               {
                 "check": "citation[6].metric_id",
@@ -4982,18 +5107,21 @@
               "ytd_period_months"
             ],
             "components": {
-              "citation_fraction": 0.2857,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 2,
+              "metrics_with_valid_citation": 0,
               "metric_count": 7
             }
           }
         },
-        "composite_score": 0.8786,
+        "composite_score": 0.83,
         "failure_modes": [
+          "cite_broad",
+          "cite_halluc",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
+          "CITE_HALLUC",
           "CITE_BROAD"
         ],
         "paths": {
@@ -5002,11 +5130,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gpt-4o/NFLX_guidance_drift_run02_submission.json"
         }
       },
-      "composite_score": 0.8786,
+      "composite_score": 0.83,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.3929,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "NFLX_guidance_drift",
         "archetype": "F_guidance_drift",
@@ -5069,9 +5197,12 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
+        "cite_halluc",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
+        "CITE_HALLUC",
         "CITE_BROAD"
       ],
       "status": "scored"
@@ -5183,11 +5314,14 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.3929,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_broad",
+            "cite_halluc",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
+            "CITE_HALLUC",
             "CITE_BROAD"
           ],
           "status": "scored",
@@ -5195,12 +5329,15 @@
             "task_id": "NFLX_guidance_drift",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.3929,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
+              "cite_halluc",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
+              "CITE_HALLUC",
               "CITE_BROAD"
             ],
             "checks": [
@@ -5236,6 +5373,17 @@
                 "pass": true
               },
               {
+                "check": "citation[0].snippet_length",
+                "pass": false,
+                "max_chars": 160,
+                "actual_chars": 222
+              },
+              {
+                "check": "citation[0].numeric_anchor",
+                "pass": false,
+                "metric_id": "guidance_content_cash_annual_usd_m"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "ytd_period_months"
@@ -5253,6 +5401,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].numeric_anchor",
+                "pass": false,
+                "metric_id": "ytd_period_months"
               },
               {
                 "check": "citation[2].metric_id",
@@ -5293,6 +5446,11 @@
                 "pass": true
               },
               {
+                "check": "citation[3].numeric_anchor",
+                "pass": false,
+                "metric_id": "q3_content_amortization_usd_m"
+              },
+              {
                 "check": "citation[4].metric_id",
                 "pass": true,
                 "metric_id": "cash_vs_guidance_pace_variance_pct"
@@ -5312,6 +5470,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].numeric_anchor",
+                "pass": false,
+                "metric_id": "cash_vs_guidance_pace_variance_pct"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "implied_ytd_pace_usd_m"
@@ -5329,6 +5492,17 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].snippet_length",
+                "pass": false,
+                "max_chars": 160,
+                "actual_chars": 222
+              },
+              {
+                "check": "citation[5].numeric_anchor",
+                "pass": false,
+                "metric_id": "implied_ytd_pace_usd_m"
               },
               {
                 "check": "citation[6].metric_id",
@@ -5400,18 +5574,21 @@
               "ytd_period_months"
             ],
             "components": {
-              "citation_fraction": 0.2857,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 2,
+              "metrics_with_valid_citation": 0,
               "metric_count": 7
             }
           }
         },
-        "composite_score": 0.8786,
+        "composite_score": 0.83,
         "failure_modes": [
+          "cite_broad",
+          "cite_halluc",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
+          "CITE_HALLUC",
           "CITE_BROAD"
         ],
         "paths": {
@@ -5420,11 +5597,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gpt-4o/NFLX_guidance_drift_run03_submission.json"
         }
       },
-      "composite_score": 0.8786,
+      "composite_score": 0.83,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.3929,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "NFLX_guidance_drift",
         "archetype": "F_guidance_drift",
@@ -5487,9 +5664,12 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
+        "cite_halluc",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
+        "CITE_HALLUC",
         "CITE_BROAD"
       ],
       "status": "scored"
@@ -5647,8 +5827,9 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.2273,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_broad",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
@@ -5659,9 +5840,10 @@
             "task_id": "KO_footnote_reconciliation",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.2273,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
@@ -5700,6 +5882,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].missing_row_label",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "bottling_investments_net_revenues"
@@ -5717,6 +5904,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].missing_row_label",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
               },
               {
                 "check": "citation[2].metric_id",
@@ -5738,6 +5930,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].missing_row_label",
+                "pass": false,
+                "metric_id": "consolidated_net_revenues"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "corporate_net_revenues"
@@ -5755,6 +5952,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].missing_row_label",
+                "pass": false,
+                "metric_id": "corporate_net_revenues"
               },
               {
                 "check": "citation[4].metric_id",
@@ -5776,6 +5978,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].missing_row_label",
+                "pass": false,
+                "metric_id": "emea_net_revenues"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "intersegment_eliminations"
@@ -5793,6 +6000,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].missing_row_label",
+                "pass": false,
+                "metric_id": "intersegment_eliminations"
               },
               {
                 "check": "citation[6].metric_id",
@@ -5814,6 +6026,11 @@
                 "pass": true
               },
               {
+                "check": "citation[6].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_fx_impact_pct"
+              },
+              {
                 "check": "citation[7].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenue_change_pct"
@@ -5831,6 +6048,11 @@
               {
                 "check": "citation[7].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[7].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_net_revenue_change_pct"
               },
               {
                 "check": "citation[8].metric_id",
@@ -5852,6 +6074,11 @@
                 "pass": true
               },
               {
+                "check": "citation[8].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_net_revenues"
+              },
+              {
                 "check": "citation[9].metric_id",
                 "pass": true,
                 "metric_id": "north_america_net_revenues"
@@ -5871,6 +6098,11 @@
                 "pass": true
               },
               {
+                "check": "citation[9].missing_row_label",
+                "pass": false,
+                "metric_id": "north_america_net_revenues"
+              },
+              {
                 "check": "citation[10].metric_id",
                 "pass": true,
                 "metric_id": "segment_net_revenues_sum"
@@ -5888,6 +6120,11 @@
               {
                 "check": "citation[10].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[10].missing_row_label",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "metric_cited.asia_pacific_net_revenues.distinct_snippet",
@@ -5970,15 +6207,16 @@
               "segment_net_revenues_sum"
             ],
             "components": {
-              "citation_fraction": 0.0909,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 1,
+              "metrics_with_valid_citation": 0,
               "metric_count": 11
             }
           }
         },
-        "composite_score": 0.8841,
+        "composite_score": 0.8725,
         "failure_modes": [
+          "cite_broad",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
@@ -5990,11 +6228,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gpt-4o/KO_footnote_reconciliation_run01_submission.json"
         }
       },
-      "composite_score": 0.8841,
+      "composite_score": 0.8725,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.2273,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "KO_footnote_reconciliation",
         "archetype": "F_exact",
@@ -6099,6 +6337,7 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
@@ -6259,8 +6498,9 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.2273,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_broad",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
@@ -6271,9 +6511,10 @@
             "task_id": "KO_footnote_reconciliation",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.2273,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
@@ -6312,6 +6553,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].missing_row_label",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "bottling_investments_net_revenues"
@@ -6329,6 +6575,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].missing_row_label",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
               },
               {
                 "check": "citation[2].metric_id",
@@ -6350,6 +6601,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].missing_row_label",
+                "pass": false,
+                "metric_id": "consolidated_net_revenues"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "corporate_net_revenues"
@@ -6367,6 +6623,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].missing_row_label",
+                "pass": false,
+                "metric_id": "corporate_net_revenues"
               },
               {
                 "check": "citation[4].metric_id",
@@ -6388,6 +6649,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].missing_row_label",
+                "pass": false,
+                "metric_id": "emea_net_revenues"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "intersegment_eliminations"
@@ -6405,6 +6671,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].missing_row_label",
+                "pass": false,
+                "metric_id": "intersegment_eliminations"
               },
               {
                 "check": "citation[6].metric_id",
@@ -6426,6 +6697,11 @@
                 "pass": true
               },
               {
+                "check": "citation[6].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_fx_impact_pct"
+              },
+              {
                 "check": "citation[7].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenue_change_pct"
@@ -6443,6 +6719,11 @@
               {
                 "check": "citation[7].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[7].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_net_revenue_change_pct"
               },
               {
                 "check": "citation[8].metric_id",
@@ -6464,6 +6745,11 @@
                 "pass": true
               },
               {
+                "check": "citation[8].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_net_revenues"
+              },
+              {
                 "check": "citation[9].metric_id",
                 "pass": true,
                 "metric_id": "north_america_net_revenues"
@@ -6483,6 +6769,11 @@
                 "pass": true
               },
               {
+                "check": "citation[9].missing_row_label",
+                "pass": false,
+                "metric_id": "north_america_net_revenues"
+              },
+              {
                 "check": "citation[10].metric_id",
                 "pass": true,
                 "metric_id": "segment_net_revenues_sum"
@@ -6500,6 +6791,11 @@
               {
                 "check": "citation[10].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[10].missing_row_label",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "metric_cited.asia_pacific_net_revenues.distinct_snippet",
@@ -6582,15 +6878,16 @@
               "segment_net_revenues_sum"
             ],
             "components": {
-              "citation_fraction": 0.0909,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 1,
+              "metrics_with_valid_citation": 0,
               "metric_count": 11
             }
           }
         },
-        "composite_score": 0.8841,
+        "composite_score": 0.8725,
         "failure_modes": [
+          "cite_broad",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
@@ -6602,11 +6899,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gpt-4o/KO_footnote_reconciliation_run02_submission.json"
         }
       },
-      "composite_score": 0.8841,
+      "composite_score": 0.8725,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.2273,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "KO_footnote_reconciliation",
         "archetype": "F_exact",
@@ -6711,6 +7008,7 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
@@ -6871,8 +7169,9 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.2273,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_broad",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
@@ -6883,9 +7182,10 @@
             "task_id": "KO_footnote_reconciliation",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.2273,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
@@ -6924,6 +7224,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].missing_row_label",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "bottling_investments_net_revenues"
@@ -6941,6 +7246,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].missing_row_label",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
               },
               {
                 "check": "citation[2].metric_id",
@@ -6962,6 +7272,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].missing_row_label",
+                "pass": false,
+                "metric_id": "consolidated_net_revenues"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "corporate_net_revenues"
@@ -6979,6 +7294,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].missing_row_label",
+                "pass": false,
+                "metric_id": "corporate_net_revenues"
               },
               {
                 "check": "citation[4].metric_id",
@@ -7000,6 +7320,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].missing_row_label",
+                "pass": false,
+                "metric_id": "emea_net_revenues"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "intersegment_eliminations"
@@ -7017,6 +7342,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].missing_row_label",
+                "pass": false,
+                "metric_id": "intersegment_eliminations"
               },
               {
                 "check": "citation[6].metric_id",
@@ -7038,6 +7368,11 @@
                 "pass": true
               },
               {
+                "check": "citation[6].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_fx_impact_pct"
+              },
+              {
                 "check": "citation[7].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenue_change_pct"
@@ -7055,6 +7390,11 @@
               {
                 "check": "citation[7].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[7].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_net_revenue_change_pct"
               },
               {
                 "check": "citation[8].metric_id",
@@ -7076,6 +7416,11 @@
                 "pass": true
               },
               {
+                "check": "citation[8].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_net_revenues"
+              },
+              {
                 "check": "citation[9].metric_id",
                 "pass": true,
                 "metric_id": "north_america_net_revenues"
@@ -7095,6 +7440,11 @@
                 "pass": true
               },
               {
+                "check": "citation[9].missing_row_label",
+                "pass": false,
+                "metric_id": "north_america_net_revenues"
+              },
+              {
                 "check": "citation[10].metric_id",
                 "pass": true,
                 "metric_id": "segment_net_revenues_sum"
@@ -7112,6 +7462,11 @@
               {
                 "check": "citation[10].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[10].missing_row_label",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "metric_cited.asia_pacific_net_revenues.distinct_snippet",
@@ -7194,15 +7549,16 @@
               "segment_net_revenues_sum"
             ],
             "components": {
-              "citation_fraction": 0.0909,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 1,
+              "metrics_with_valid_citation": 0,
               "metric_count": 11
             }
           }
         },
-        "composite_score": 0.8841,
+        "composite_score": 0.8725,
         "failure_modes": [
+          "cite_broad",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
@@ -7214,11 +7570,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gpt-4o/KO_footnote_reconciliation_run03_submission.json"
         }
       },
-      "composite_score": 0.8841,
+      "composite_score": 0.8725,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.2273,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "KO_footnote_reconciliation",
         "archetype": "F_exact",
@@ -7323,6 +7679,7 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
@@ -11448,11 +11805,13 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.7571,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_halluc",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
+            "CITE_HALLUC",
             "CITE_BROAD"
           ],
           "status": "scored",
@@ -11460,12 +11819,14 @@
             "task_id": "NFLX_guidance_drift",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.7571,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_halluc",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
+              "CITE_HALLUC",
               "CITE_BROAD"
             ],
             "checks": [
@@ -11501,6 +11862,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].numeric_anchor",
+                "pass": false,
+                "metric_id": "guidance_content_cash_annual_usd_m"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "ytd_period_months"
@@ -11518,6 +11884,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].numeric_anchor",
+                "pass": false,
+                "metric_id": "ytd_period_months"
               },
               {
                 "check": "citation[2].metric_id",
@@ -11558,6 +11929,11 @@
                 "pass": true
               },
               {
+                "check": "citation[3].numeric_anchor",
+                "pass": false,
+                "metric_id": "implied_ytd_pace_usd_m"
+              },
+              {
                 "check": "citation[4].metric_id",
                 "pass": true,
                 "metric_id": "cash_vs_guidance_pace_variance_pct"
@@ -11575,6 +11951,11 @@
               {
                 "check": "citation[4].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[4].numeric_anchor",
+                "pass": false,
+                "metric_id": "cash_vs_guidance_pace_variance_pct"
               },
               {
                 "check": "citation[5].metric_id",
@@ -11613,6 +11994,11 @@
               {
                 "check": "citation[6].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[6].numeric_anchor",
+                "pass": false,
+                "metric_id": "q3_content_amortization_usd_m"
               },
               {
                 "check": "metric_cited.guidance_content_cash_annual_usd_m.distinct_snippet",
@@ -11661,18 +12047,20 @@
               "ytd_period_months"
             ],
             "components": {
-              "citation_fraction": 0.7143,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 5,
+              "metrics_with_valid_citation": 0,
               "metric_count": 7
             }
           }
         },
-        "composite_score": 0.9514,
+        "composite_score": 0.83,
         "failure_modes": [
+          "cite_halluc",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
+          "CITE_HALLUC",
           "CITE_BROAD"
         ],
         "paths": {
@@ -11681,11 +12069,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/NFLX_guidance_drift_run01_submission.json"
         }
       },
-      "composite_score": 0.9514,
+      "composite_score": 0.83,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.7571,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "NFLX_guidance_drift",
         "archetype": "F_guidance_drift",
@@ -11748,9 +12136,11 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_halluc",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
+        "CITE_HALLUC",
         "CITE_BROAD"
       ],
       "status": "scored"
@@ -11861,19 +12251,27 @@
           }
         },
         "l3": {
-          "l3_pass": true,
-          "l3_score": 1.0,
-          "failure_modes": [],
-          "fracture_codes": [],
+          "l3_pass": false,
+          "l3_score": 0.3929,
+          "failure_modes": [
+            "cite_halluc"
+          ],
+          "fracture_codes": [
+            "CITE_HALLUC"
+          ],
           "status": "scored",
           "validation": {
             "task_id": "NFLX_guidance_drift",
             "layer": "L3",
-            "l3_pass": true,
-            "l3_score": 1.0,
-            "all_pass": true,
-            "failure_modes": [],
-            "fracture_codes": [],
+            "l3_pass": false,
+            "l3_score": 0.3929,
+            "all_pass": false,
+            "failure_modes": [
+              "cite_halluc"
+            ],
+            "fracture_codes": [
+              "CITE_HALLUC"
+            ],
             "checks": [
               {
                 "check": "schema_version",
@@ -11905,6 +12303,11 @@
               {
                 "check": "citation[0].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[0].numeric_anchor",
+                "pass": false,
+                "metric_id": "guidance_content_cash_annual_usd_m"
               },
               {
                 "check": "citation[1].metric_id",
@@ -11945,6 +12348,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].numeric_anchor",
+                "pass": false,
+                "metric_id": "ytd_period_months"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "q3_content_amortization_usd_m"
@@ -11962,6 +12370,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].numeric_anchor",
+                "pass": false,
+                "metric_id": "q3_content_amortization_usd_m"
               },
               {
                 "check": "citation[4].metric_id",
@@ -11983,6 +12396,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].numeric_anchor",
+                "pass": false,
+                "metric_id": "implied_ytd_pace_usd_m"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "cash_vs_guidance_pace_variance_pct"
@@ -12000,6 +12418,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].numeric_anchor",
+                "pass": false,
+                "metric_id": "cash_vs_guidance_pace_variance_pct"
               },
               {
                 "check": "citation[6].metric_id",
@@ -12065,27 +12488,31 @@
               "ytd_period_months"
             ],
             "components": {
-              "citation_fraction": 1.0,
+              "citation_fraction": 0.2857,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 7,
+              "metrics_with_valid_citation": 2,
               "metric_count": 7
             }
           }
         },
-        "composite_score": 1.0,
-        "failure_modes": [],
-        "fracture_codes": [],
+        "composite_score": 0.8786,
+        "failure_modes": [
+          "cite_halluc"
+        ],
+        "fracture_codes": [
+          "CITE_HALLUC"
+        ],
         "paths": {
           "agent_output": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/NFLX_guidance_drift_run02.json",
           "trace": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/NFLX_guidance_drift_run02_trace.json",
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/NFLX_guidance_drift_run02_submission.json"
         }
       },
-      "composite_score": 1.0,
+      "composite_score": 0.8786,
       "l2_pass": true,
       "l2_score": 1.0,
-      "l3_pass": true,
-      "l3_score": 1.0,
+      "l3_pass": false,
+      "l3_score": 0.3929,
       "verify": {
         "task_id": "NFLX_guidance_drift",
         "archetype": "F_guidance_drift",
@@ -12147,8 +12574,12 @@
       },
       "l1_all_pass": true,
       "l1_pass": true,
-      "failure_modes": [],
-      "fracture_codes": [],
+      "failure_modes": [
+        "cite_halluc"
+      ],
+      "fracture_codes": [
+        "CITE_HALLUC"
+      ],
       "status": "scored"
     },
     {
@@ -12258,7 +12689,7 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.8786,
+          "l3_score": 0.3929,
           "failure_modes": [
             "cite_halluc"
           ],
@@ -12270,7 +12701,7 @@
             "task_id": "NFLX_guidance_drift",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.8786,
+            "l3_score": 0.3929,
             "all_pass": false,
             "failure_modes": [
               "cite_halluc"
@@ -12311,6 +12742,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].numeric_anchor",
+                "pass": false,
+                "metric_id": "guidance_content_cash_annual_usd_m"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "ytd_period_months"
@@ -12328,6 +12764,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].numeric_anchor",
+                "pass": false,
+                "metric_id": "ytd_period_months"
               },
               {
                 "check": "citation[2].metric_id",
@@ -12366,6 +12807,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].numeric_anchor",
+                "pass": false,
+                "metric_id": "implied_ytd_pace_usd_m"
               },
               {
                 "check": "citation[4].metric_id",
@@ -12426,6 +12872,11 @@
                 "pass": true
               },
               {
+                "check": "citation[6].numeric_anchor",
+                "pass": false,
+                "metric_id": "q3_content_amortization_usd_m"
+              },
+              {
                 "check": "metric_cited.guidance_content_cash_annual_usd_m.distinct_snippet",
                 "pass": true
               },
@@ -12470,14 +12921,14 @@
               "ytd_period_months"
             ],
             "components": {
-              "citation_fraction": 0.8571,
+              "citation_fraction": 0.2857,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 6,
+              "metrics_with_valid_citation": 2,
               "metric_count": 7
             }
           }
         },
-        "composite_score": 0.9757,
+        "composite_score": 0.8786,
         "failure_modes": [
           "cite_halluc"
         ],
@@ -12490,11 +12941,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/NFLX_guidance_drift_run03_submission.json"
         }
       },
-      "composite_score": 0.9757,
+      "composite_score": 0.8786,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.8786,
+      "l3_score": 0.3929,
       "verify": {
         "task_id": "NFLX_guidance_drift",
         "archetype": "F_guidance_drift",
@@ -12717,8 +13168,9 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.9227,
+          "l3_score": 0.2273,
           "failure_modes": [
+            "cite_broad",
             "cite_halluc"
           ],
           "fracture_codes": [
@@ -12729,9 +13181,10 @@
             "task_id": "KO_footnote_reconciliation",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.9227,
+            "l3_score": 0.2273,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
               "cite_halluc"
             ],
             "fracture_codes": [
@@ -12770,6 +13223,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].missing_row_label",
+                "pass": false,
+                "metric_id": "emea_net_revenues"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenues"
@@ -12787,6 +13245,22 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].snippet_length",
+                "pass": false,
+                "max_chars": 140,
+                "actual_chars": 263
+              },
+              {
+                "check": "citation[1].numeric_anchor",
+                "pass": false,
+                "metric_id": "latin_america_net_revenues"
+              },
+              {
+                "check": "citation[1].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_net_revenues"
               },
               {
                 "check": "citation[2].metric_id",
@@ -12808,6 +13282,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].missing_row_label",
+                "pass": false,
+                "metric_id": "north_america_net_revenues"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "asia_pacific_net_revenues"
@@ -12825,6 +13304,16 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].numeric_anchor",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
+              },
+              {
+                "check": "citation[3].missing_row_label",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
               },
               {
                 "check": "citation[4].metric_id",
@@ -12846,6 +13335,16 @@
                 "pass": true
               },
               {
+                "check": "citation[4].numeric_anchor",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
+              },
+              {
+                "check": "citation[4].missing_row_label",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "segment_net_revenues_sum"
@@ -12863,6 +13362,16 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].numeric_anchor",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
+              },
+              {
+                "check": "citation[5].missing_row_label",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "citation[6].metric_id",
@@ -12904,6 +13413,11 @@
                 "pass": true
               },
               {
+                "check": "citation[7].missing_row_label",
+                "pass": false,
+                "metric_id": "intersegment_eliminations"
+              },
+              {
                 "check": "citation[8].metric_id",
                 "pass": true,
                 "metric_id": "consolidated_net_revenues"
@@ -12921,6 +13435,11 @@
               {
                 "check": "citation[8].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[8].missing_row_label",
+                "pass": false,
+                "metric_id": "consolidated_net_revenues"
               },
               {
                 "check": "citation[9].metric_id",
@@ -12942,6 +13461,11 @@
                 "pass": true
               },
               {
+                "check": "citation[9].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_net_revenue_change_pct"
+              },
+              {
                 "check": "citation[10].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_fx_impact_pct"
@@ -12959,6 +13483,17 @@
               {
                 "check": "citation[10].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[10].snippet_length",
+                "pass": false,
+                "max_chars": 140,
+                "actual_chars": 234
+              },
+              {
+                "check": "citation[10].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_fx_impact_pct"
               },
               {
                 "check": "metric_cited.emea_net_revenues.distinct_snippet",
@@ -13025,15 +13560,16 @@
               "segment_net_revenues_sum"
             ],
             "components": {
-              "citation_fraction": 0.9091,
+              "citation_fraction": 0.0909,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 10,
+              "metrics_with_valid_citation": 1,
               "metric_count": 11
             }
           }
         },
-        "composite_score": 0.9884,
+        "composite_score": 0.8841,
         "failure_modes": [
+          "cite_broad",
           "cite_halluc"
         ],
         "fracture_codes": [
@@ -13045,11 +13581,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/KO_footnote_reconciliation_run01_submission.json"
         }
       },
-      "composite_score": 0.9884,
+      "composite_score": 0.8841,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.9227,
+      "l3_score": 0.2273,
       "verify": {
         "task_id": "KO_footnote_reconciliation",
         "archetype": "F_exact",
@@ -13154,6 +13690,7 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
         "cite_halluc"
       ],
       "fracture_codes": [
@@ -13313,18 +13850,22 @@
           }
         },
         "l3": {
-          "l3_pass": true,
-          "l3_score": 1.0,
-          "failure_modes": [],
+          "l3_pass": false,
+          "l3_score": 0.3045,
+          "failure_modes": [
+            "cite_broad"
+          ],
           "fracture_codes": [],
           "status": "scored",
           "validation": {
             "task_id": "KO_footnote_reconciliation",
             "layer": "L3",
-            "l3_pass": true,
-            "l3_score": 1.0,
-            "all_pass": true,
-            "failure_modes": [],
+            "l3_pass": false,
+            "l3_score": 0.3045,
+            "all_pass": false,
+            "failure_modes": [
+              "cite_broad"
+            ],
             "fracture_codes": [],
             "checks": [
               {
@@ -13359,6 +13900,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].missing_row_label",
+                "pass": false,
+                "metric_id": "emea_net_revenues"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenues"
@@ -13376,6 +13922,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_net_revenues"
               },
               {
                 "check": "citation[2].metric_id",
@@ -13397,6 +13948,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].missing_row_label",
+                "pass": false,
+                "metric_id": "north_america_net_revenues"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "asia_pacific_net_revenues"
@@ -13414,6 +13970,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].missing_row_label",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
               },
               {
                 "check": "citation[4].metric_id",
@@ -13435,6 +13996,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].missing_row_label",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "segment_net_revenues_sum"
@@ -13452,6 +14018,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].missing_row_label",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "citation[6].metric_id",
@@ -13473,6 +14044,11 @@
                 "pass": true
               },
               {
+                "check": "citation[6].missing_row_label",
+                "pass": false,
+                "metric_id": "corporate_net_revenues"
+              },
+              {
                 "check": "citation[7].metric_id",
                 "pass": true,
                 "metric_id": "intersegment_eliminations"
@@ -13490,6 +14066,11 @@
               {
                 "check": "citation[7].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[7].missing_row_label",
+                "pass": false,
+                "metric_id": "intersegment_eliminations"
               },
               {
                 "check": "citation[8].metric_id",
@@ -13511,6 +14092,11 @@
                 "pass": true
               },
               {
+                "check": "citation[8].missing_row_label",
+                "pass": false,
+                "metric_id": "consolidated_net_revenues"
+              },
+              {
                 "check": "citation[9].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenue_change_pct"
@@ -13530,6 +14116,11 @@
                 "pass": true
               },
               {
+                "check": "citation[9].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_net_revenue_change_pct"
+              },
+              {
                 "check": "citation[10].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_fx_impact_pct"
@@ -13547,6 +14138,11 @@
               {
                 "check": "citation[10].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[10].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_fx_impact_pct"
               },
               {
                 "check": "metric_cited.emea_net_revenues.distinct_snippet",
@@ -13613,15 +14209,17 @@
               "segment_net_revenues_sum"
             ],
             "components": {
-              "citation_fraction": 1.0,
+              "citation_fraction": 0.1818,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 11,
+              "metrics_with_valid_citation": 2,
               "metric_count": 11
             }
           }
         },
-        "composite_score": 1.0,
-        "failure_modes": [],
+        "composite_score": 0.8957,
+        "failure_modes": [
+          "cite_broad"
+        ],
         "fracture_codes": [],
         "paths": {
           "agent_output": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/KO_footnote_reconciliation_run02.json",
@@ -13629,11 +14227,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/KO_footnote_reconciliation_run02_submission.json"
         }
       },
-      "composite_score": 1.0,
+      "composite_score": 0.8957,
       "l2_pass": true,
       "l2_score": 1.0,
-      "l3_pass": true,
-      "l3_score": 1.0,
+      "l3_pass": false,
+      "l3_score": 0.3045,
       "verify": {
         "task_id": "KO_footnote_reconciliation",
         "archetype": "F_exact",
@@ -13737,7 +14335,9 @@
       },
       "l1_all_pass": true,
       "l1_pass": true,
-      "failure_modes": [],
+      "failure_modes": [
+        "cite_broad"
+      ],
       "fracture_codes": [],
       "status": "scored"
     },
@@ -13893,18 +14493,22 @@
           }
         },
         "l3": {
-          "l3_pass": true,
-          "l3_score": 1.0,
-          "failure_modes": [],
+          "l3_pass": false,
+          "l3_score": 0.3045,
+          "failure_modes": [
+            "cite_broad"
+          ],
           "fracture_codes": [],
           "status": "scored",
           "validation": {
             "task_id": "KO_footnote_reconciliation",
             "layer": "L3",
-            "l3_pass": true,
-            "l3_score": 1.0,
-            "all_pass": true,
-            "failure_modes": [],
+            "l3_pass": false,
+            "l3_score": 0.3045,
+            "all_pass": false,
+            "failure_modes": [
+              "cite_broad"
+            ],
             "fracture_codes": [],
             "checks": [
               {
@@ -13939,6 +14543,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].missing_row_label",
+                "pass": false,
+                "metric_id": "emea_net_revenues"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenues"
@@ -13956,6 +14565,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_net_revenues"
               },
               {
                 "check": "citation[2].metric_id",
@@ -13977,6 +14591,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].missing_row_label",
+                "pass": false,
+                "metric_id": "north_america_net_revenues"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "asia_pacific_net_revenues"
@@ -13994,6 +14613,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].missing_row_label",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
               },
               {
                 "check": "citation[4].metric_id",
@@ -14015,6 +14639,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].missing_row_label",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "segment_net_revenues_sum"
@@ -14032,6 +14661,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].missing_row_label",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "citation[6].metric_id",
@@ -14053,6 +14687,11 @@
                 "pass": true
               },
               {
+                "check": "citation[6].missing_row_label",
+                "pass": false,
+                "metric_id": "corporate_net_revenues"
+              },
+              {
                 "check": "citation[7].metric_id",
                 "pass": true,
                 "metric_id": "intersegment_eliminations"
@@ -14070,6 +14709,11 @@
               {
                 "check": "citation[7].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[7].missing_row_label",
+                "pass": false,
+                "metric_id": "intersegment_eliminations"
               },
               {
                 "check": "citation[8].metric_id",
@@ -14091,6 +14735,11 @@
                 "pass": true
               },
               {
+                "check": "citation[8].missing_row_label",
+                "pass": false,
+                "metric_id": "consolidated_net_revenues"
+              },
+              {
                 "check": "citation[9].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenue_change_pct"
@@ -14110,6 +14759,11 @@
                 "pass": true
               },
               {
+                "check": "citation[9].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_net_revenue_change_pct"
+              },
+              {
                 "check": "citation[10].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_fx_impact_pct"
@@ -14127,6 +14781,11 @@
               {
                 "check": "citation[10].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[10].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_fx_impact_pct"
               },
               {
                 "check": "metric_cited.emea_net_revenues.distinct_snippet",
@@ -14193,15 +14852,17 @@
               "segment_net_revenues_sum"
             ],
             "components": {
-              "citation_fraction": 1.0,
+              "citation_fraction": 0.1818,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 11,
+              "metrics_with_valid_citation": 2,
               "metric_count": 11
             }
           }
         },
-        "composite_score": 1.0,
-        "failure_modes": [],
+        "composite_score": 0.8957,
+        "failure_modes": [
+          "cite_broad"
+        ],
         "fracture_codes": [],
         "paths": {
           "agent_output": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/KO_footnote_reconciliation_run03.json",
@@ -14209,11 +14870,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/claude-sonnet-4-5/KO_footnote_reconciliation_run03_submission.json"
         }
       },
-      "composite_score": 1.0,
+      "composite_score": 0.8957,
       "l2_pass": true,
       "l2_score": 1.0,
-      "l3_pass": true,
-      "l3_score": 1.0,
+      "l3_pass": false,
+      "l3_score": 0.3045,
       "verify": {
         "task_id": "KO_footnote_reconciliation",
         "archetype": "F_exact",
@@ -14317,7 +14978,9 @@
       },
       "l1_all_pass": true,
       "l1_pass": true,
-      "failure_modes": [],
+      "failure_modes": [
+        "cite_broad"
+      ],
       "fracture_codes": [],
       "status": "scored"
     },
@@ -18459,11 +19122,14 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.6357,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_halluc",
+            "cite_broad",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
+            "CITE_HALLUC",
             "CITE_BROAD"
           ],
           "status": "scored",
@@ -18471,12 +19137,15 @@
             "task_id": "NFLX_guidance_drift",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.6357,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_halluc",
+              "cite_broad",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
+              "CITE_HALLUC",
               "CITE_BROAD"
             ],
             "checks": [
@@ -18510,6 +19179,11 @@
               {
                 "check": "citation[0].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[0].numeric_anchor",
+                "pass": false,
+                "metric_id": "guidance_content_cash_annual_usd_m"
               },
               {
                 "check": "citation[1].metric_id",
@@ -18550,6 +19224,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].numeric_anchor",
+                "pass": false,
+                "metric_id": "q3_content_amortization_usd_m"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "ytd_period_months"
@@ -18567,6 +19246,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].numeric_anchor",
+                "pass": false,
+                "metric_id": "ytd_period_months"
               },
               {
                 "check": "citation[4].metric_id",
@@ -18588,6 +19272,17 @@
                 "pass": true
               },
               {
+                "check": "citation[4].snippet_length",
+                "pass": false,
+                "max_chars": 160,
+                "actual_chars": 308
+              },
+              {
+                "check": "citation[4].numeric_anchor",
+                "pass": false,
+                "metric_id": "implied_ytd_pace_usd_m"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "cash_vs_guidance_pace_variance_pct"
@@ -18605,6 +19300,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].numeric_anchor",
+                "pass": false,
+                "metric_id": "cash_vs_guidance_pace_variance_pct"
               },
               {
                 "check": "citation[6].metric_id",
@@ -18674,18 +19374,21 @@
               "ytd_period_months"
             ],
             "components": {
-              "citation_fraction": 0.5714,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 4,
+              "metrics_with_valid_citation": 0,
               "metric_count": 7
             }
           }
         },
-        "composite_score": 0.9271,
+        "composite_score": 0.83,
         "failure_modes": [
+          "cite_halluc",
+          "cite_broad",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
+          "CITE_HALLUC",
           "CITE_BROAD"
         ],
         "paths": {
@@ -18694,11 +19397,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gemini-2_5-flash/NFLX_guidance_drift_run01_submission.json"
         }
       },
-      "composite_score": 0.9271,
+      "composite_score": 0.83,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.6357,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "NFLX_guidance_drift",
         "archetype": "F_guidance_drift",
@@ -18761,9 +19464,12 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_halluc",
+        "cite_broad",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
+        "CITE_HALLUC",
         "CITE_BROAD"
       ],
       "status": "scored"
@@ -18875,11 +19581,14 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.6357,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_halluc",
+            "cite_broad",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
+            "CITE_HALLUC",
             "CITE_BROAD"
           ],
           "status": "scored",
@@ -18887,12 +19596,15 @@
             "task_id": "NFLX_guidance_drift",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.6357,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_halluc",
+              "cite_broad",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
+              "CITE_HALLUC",
               "CITE_BROAD"
             ],
             "checks": [
@@ -18926,6 +19638,11 @@
               {
                 "check": "citation[0].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[0].numeric_anchor",
+                "pass": false,
+                "metric_id": "guidance_content_cash_annual_usd_m"
               },
               {
                 "check": "citation[1].metric_id",
@@ -18966,6 +19683,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].numeric_anchor",
+                "pass": false,
+                "metric_id": "q3_content_amortization_usd_m"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "ytd_period_months"
@@ -18983,6 +19705,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].numeric_anchor",
+                "pass": false,
+                "metric_id": "ytd_period_months"
               },
               {
                 "check": "citation[4].metric_id",
@@ -19004,6 +19731,17 @@
                 "pass": true
               },
               {
+                "check": "citation[4].snippet_length",
+                "pass": false,
+                "max_chars": 160,
+                "actual_chars": 308
+              },
+              {
+                "check": "citation[4].numeric_anchor",
+                "pass": false,
+                "metric_id": "implied_ytd_pace_usd_m"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "cash_vs_guidance_pace_variance_pct"
@@ -19021,6 +19759,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].numeric_anchor",
+                "pass": false,
+                "metric_id": "cash_vs_guidance_pace_variance_pct"
               },
               {
                 "check": "citation[6].metric_id",
@@ -19090,18 +19833,21 @@
               "ytd_period_months"
             ],
             "components": {
-              "citation_fraction": 0.5714,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 4,
+              "metrics_with_valid_citation": 0,
               "metric_count": 7
             }
           }
         },
-        "composite_score": 0.9271,
+        "composite_score": 0.83,
         "failure_modes": [
+          "cite_halluc",
+          "cite_broad",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
+          "CITE_HALLUC",
           "CITE_BROAD"
         ],
         "paths": {
@@ -19110,11 +19856,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gemini-2_5-flash/NFLX_guidance_drift_run02_submission.json"
         }
       },
-      "composite_score": 0.9271,
+      "composite_score": 0.83,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.6357,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "NFLX_guidance_drift",
         "archetype": "F_guidance_drift",
@@ -19177,9 +19923,12 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_halluc",
+        "cite_broad",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [
+        "CITE_HALLUC",
         "CITE_BROAD"
       ],
       "status": "scored"
@@ -19201,16 +19950,24 @@
           "score": 0.0,
           "all_pass": false,
           "l1_pass": false,
-          "failure_modes": [],
-          "fracture_codes": [],
+          "failure_modes": [
+            "submit_timeout"
+          ],
+          "fracture_codes": [
+            "TIMEOUT"
+          ],
           "report": {
             "task_id": "NFLX_guidance_drift",
             "archetype": "F_guidance_drift",
             "all_pass": false,
             "l1_pass": false,
             "critical_fail": true,
-            "failure_modes": [],
-            "fracture_codes": [],
+            "failure_modes": [
+              "submit_timeout"
+            ],
+            "fracture_codes": [
+              "TIMEOUT"
+            ],
             "checks": [
               {
                 "metric_id": "guidance_content_cash_annual_usd_m",
@@ -19302,9 +20059,11 @@
         },
         "composite_score": 0.0,
         "failure_modes": [
+          "submit_timeout",
           "submission_missing"
         ],
         "fracture_codes": [
+          "TIMEOUT",
           "CITE_BROAD"
         ],
         "paths": {
@@ -19324,8 +20083,12 @@
         "all_pass": false,
         "l1_pass": false,
         "critical_fail": true,
-        "failure_modes": [],
-        "fracture_codes": [],
+        "failure_modes": [
+          "submit_timeout"
+        ],
+        "fracture_codes": [
+          "TIMEOUT"
+        ],
         "checks": [
           {
             "metric_id": "guidance_content_cash_annual_usd_m",
@@ -19380,9 +20143,11 @@
       "l1_all_pass": false,
       "l1_pass": false,
       "failure_modes": [
+        "submit_timeout",
         "submission_missing"
       ],
       "fracture_codes": [
+        "TIMEOUT",
         "CITE_BROAD"
       ],
       "status": "scored"
@@ -19539,19 +20304,29 @@
           }
         },
         "l3": {
-          "l3_pass": true,
-          "l3_score": 1.0,
-          "failure_modes": [],
-          "fracture_codes": [],
+          "l3_pass": false,
+          "l3_score": 0.15,
+          "failure_modes": [
+            "cite_broad",
+            "cite_duplicate_snippet"
+          ],
+          "fracture_codes": [
+            "CITE_BROAD"
+          ],
           "status": "scored",
           "validation": {
             "task_id": "KO_footnote_reconciliation",
             "layer": "L3",
-            "l3_pass": true,
-            "l3_score": 1.0,
-            "all_pass": true,
-            "failure_modes": [],
-            "fracture_codes": [],
+            "l3_pass": false,
+            "l3_score": 0.15,
+            "all_pass": false,
+            "failure_modes": [
+              "cite_broad",
+              "cite_duplicate_snippet"
+            ],
+            "fracture_codes": [
+              "CITE_BROAD"
+            ],
             "checks": [
               {
                 "check": "schema_version",
@@ -19568,7 +20343,7 @@
               {
                 "check": "citation[0].metric_id",
                 "pass": true,
-                "metric_id": "emea_net_revenues"
+                "metric_id": "asia_pacific_net_revenues"
               },
               {
                 "check": "citation[0].doc_id",
@@ -19585,9 +20360,14 @@
                 "pass": true
               },
               {
+                "check": "citation[0].missing_row_label",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
-                "metric_id": "latin_america_net_revenues"
+                "metric_id": "bottling_investments_net_revenues"
               },
               {
                 "check": "citation[1].doc_id",
@@ -19604,9 +20384,14 @@
                 "pass": true
               },
               {
+                "check": "citation[1].missing_row_label",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
+              },
+              {
                 "check": "citation[2].metric_id",
                 "pass": true,
-                "metric_id": "north_america_net_revenues"
+                "metric_id": "consolidated_net_revenues"
               },
               {
                 "check": "citation[2].doc_id",
@@ -19616,16 +20401,21 @@
               {
                 "check": "citation[2].section_slug",
                 "pass": true,
-                "section_slug": "segment_financials"
+                "section_slug": "consolidated_primary"
               },
               {
                 "check": "citation[2].snippet",
                 "pass": true
               },
               {
+                "check": "citation[2].missing_row_label",
+                "pass": false,
+                "metric_id": "consolidated_net_revenues"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
-                "metric_id": "asia_pacific_net_revenues"
+                "metric_id": "corporate_net_revenues"
               },
               {
                 "check": "citation[3].doc_id",
@@ -19642,9 +20432,14 @@
                 "pass": true
               },
               {
+                "check": "citation[3].missing_row_label",
+                "pass": false,
+                "metric_id": "corporate_net_revenues"
+              },
+              {
                 "check": "citation[4].metric_id",
                 "pass": true,
-                "metric_id": "bottling_investments_net_revenues"
+                "metric_id": "emea_net_revenues"
               },
               {
                 "check": "citation[4].doc_id",
@@ -19661,9 +20456,14 @@
                 "pass": true
               },
               {
+                "check": "citation[4].missing_row_label",
+                "pass": false,
+                "metric_id": "emea_net_revenues"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
-                "metric_id": "segment_net_revenues_sum"
+                "metric_id": "intersegment_eliminations"
               },
               {
                 "check": "citation[5].doc_id",
@@ -19680,9 +20480,14 @@
                 "pass": true
               },
               {
+                "check": "citation[5].missing_row_label",
+                "pass": false,
+                "metric_id": "intersegment_eliminations"
+              },
+              {
                 "check": "citation[6].metric_id",
                 "pass": true,
-                "metric_id": "corporate_net_revenues"
+                "metric_id": "latin_america_fx_impact_pct"
               },
               {
                 "check": "citation[6].doc_id",
@@ -19692,16 +20497,21 @@
               {
                 "check": "citation[6].section_slug",
                 "pass": true,
-                "section_slug": "segment_financials"
+                "section_slug": "narrative_fx"
               },
               {
                 "check": "citation[6].snippet",
                 "pass": true
               },
               {
+                "check": "citation[6].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_fx_impact_pct"
+              },
+              {
                 "check": "citation[7].metric_id",
                 "pass": true,
-                "metric_id": "intersegment_eliminations"
+                "metric_id": "latin_america_net_revenue_change_pct"
               },
               {
                 "check": "citation[7].doc_id",
@@ -19711,16 +20521,21 @@
               {
                 "check": "citation[7].section_slug",
                 "pass": true,
-                "section_slug": "segment_financials"
+                "section_slug": "narrative_fx"
               },
               {
                 "check": "citation[7].snippet",
                 "pass": true
               },
               {
+                "check": "citation[7].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_net_revenue_change_pct"
+              },
+              {
                 "check": "citation[8].metric_id",
                 "pass": true,
-                "metric_id": "consolidated_net_revenues"
+                "metric_id": "latin_america_net_revenues"
               },
               {
                 "check": "citation[8].doc_id",
@@ -19730,16 +20545,21 @@
               {
                 "check": "citation[8].section_slug",
                 "pass": true,
-                "section_slug": "consolidated_primary"
+                "section_slug": "segment_financials"
               },
               {
                 "check": "citation[8].snippet",
                 "pass": true
               },
               {
+                "check": "citation[8].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_net_revenues"
+              },
+              {
                 "check": "citation[9].metric_id",
                 "pass": true,
-                "metric_id": "latin_america_net_revenue_change_pct"
+                "metric_id": "north_america_net_revenues"
               },
               {
                 "check": "citation[9].doc_id",
@@ -19749,16 +20569,21 @@
               {
                 "check": "citation[9].section_slug",
                 "pass": true,
-                "section_slug": "narrative_fx"
+                "section_slug": "segment_financials"
               },
               {
                 "check": "citation[9].snippet",
                 "pass": true
               },
               {
+                "check": "citation[9].missing_row_label",
+                "pass": false,
+                "metric_id": "north_america_net_revenues"
+              },
+              {
                 "check": "citation[10].metric_id",
                 "pass": true,
-                "metric_id": "latin_america_fx_impact_pct"
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "citation[10].doc_id",
@@ -19768,23 +20593,16 @@
               {
                 "check": "citation[10].section_slug",
                 "pass": true,
-                "section_slug": "narrative_fx"
+                "section_slug": "segment_financials"
               },
               {
                 "check": "citation[10].snippet",
                 "pass": true
               },
               {
-                "check": "metric_cited.emea_net_revenues.distinct_snippet",
-                "pass": true
-              },
-              {
-                "check": "metric_cited.latin_america_net_revenues.distinct_snippet",
-                "pass": true
-              },
-              {
-                "check": "metric_cited.north_america_net_revenues.distinct_snippet",
-                "pass": true
+                "check": "citation[10].missing_row_label",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "metric_cited.asia_pacific_net_revenues.distinct_snippet",
@@ -19792,31 +20610,59 @@
               },
               {
                 "check": "metric_cited.bottling_investments_net_revenues.distinct_snippet",
-                "pass": true
-              },
-              {
-                "check": "metric_cited.segment_net_revenues_sum.distinct_snippet",
-                "pass": true
-              },
-              {
-                "check": "metric_cited.corporate_net_revenues.distinct_snippet",
-                "pass": true
-              },
-              {
-                "check": "metric_cited.intersegment_eliminations.distinct_snippet",
-                "pass": true
+                "pass": false,
+                "duplicate_of": "asia_pacific_net_revenues",
+                "snippet_norm": "Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 "
               },
               {
                 "check": "metric_cited.consolidated_net_revenues.distinct_snippet",
                 "pass": true
               },
               {
-                "check": "metric_cited.latin_america_net_revenue_change_pct.distinct_snippet",
-                "pass": true
+                "check": "metric_cited.corporate_net_revenues.distinct_snippet",
+                "pass": false,
+                "duplicate_of": "asia_pacific_net_revenues",
+                "snippet_norm": "Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 "
+              },
+              {
+                "check": "metric_cited.emea_net_revenues.distinct_snippet",
+                "pass": false,
+                "duplicate_of": "asia_pacific_net_revenues",
+                "snippet_norm": "Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 "
+              },
+              {
+                "check": "metric_cited.intersegment_eliminations.distinct_snippet",
+                "pass": false,
+                "duplicate_of": "asia_pacific_net_revenues",
+                "snippet_norm": "Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 "
               },
               {
                 "check": "metric_cited.latin_america_fx_impact_pct.distinct_snippet",
                 "pass": true
+              },
+              {
+                "check": "metric_cited.latin_america_net_revenue_change_pct.distinct_snippet",
+                "pass": false,
+                "duplicate_of": "latin_america_fx_impact_pct",
+                "snippet_norm": "| Latin America | (1) | 11 | (12) | \u2014 | (2) |"
+              },
+              {
+                "check": "metric_cited.latin_america_net_revenues.distinct_snippet",
+                "pass": false,
+                "duplicate_of": "asia_pacific_net_revenues",
+                "snippet_norm": "Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 "
+              },
+              {
+                "check": "metric_cited.north_america_net_revenues.distinct_snippet",
+                "pass": false,
+                "duplicate_of": "asia_pacific_net_revenues",
+                "snippet_norm": "Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 "
+              },
+              {
+                "check": "metric_cited.segment_net_revenues_sum.distinct_snippet",
+                "pass": false,
+                "duplicate_of": "asia_pacific_net_revenues",
+                "snippet_norm": "Total net operating revenues | 11,513 | 6,334 | 19,586 | 5,638 | 5,735 | 48,806 "
               },
               {
                 "check": "policy_ack.global_ventures_sunset_2025",
@@ -19839,27 +20685,32 @@
               "segment_net_revenues_sum"
             ],
             "components": {
-              "citation_fraction": 1.0,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 11,
+              "metrics_with_valid_citation": 0,
               "metric_count": 11
             }
           }
         },
-        "composite_score": 1.0,
-        "failure_modes": [],
-        "fracture_codes": [],
+        "composite_score": 0.8725,
+        "failure_modes": [
+          "cite_broad",
+          "cite_duplicate_snippet"
+        ],
+        "fracture_codes": [
+          "CITE_BROAD"
+        ],
         "paths": {
           "agent_output": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gemini-2_5-flash/KO_footnote_reconciliation_run01.json",
           "trace": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gemini-2_5-flash/KO_footnote_reconciliation_run01_trace.json",
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gemini-2_5-flash/KO_footnote_reconciliation_run01_submission.json"
         }
       },
-      "composite_score": 1.0,
+      "composite_score": 0.8725,
       "l2_pass": true,
       "l2_score": 1.0,
-      "l3_pass": true,
-      "l3_score": 1.0,
+      "l3_pass": false,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "KO_footnote_reconciliation",
         "archetype": "F_exact",
@@ -19963,8 +20814,13 @@
       },
       "l1_all_pass": true,
       "l1_pass": true,
-      "failure_modes": [],
-      "fracture_codes": [],
+      "failure_modes": [
+        "cite_broad",
+        "cite_duplicate_snippet"
+      ],
+      "fracture_codes": [
+        "CITE_BROAD"
+      ],
       "status": "scored"
     },
     {
@@ -20119,18 +20975,22 @@
           }
         },
         "l3": {
-          "l3_pass": true,
-          "l3_score": 1.0,
-          "failure_modes": [],
+          "l3_pass": false,
+          "l3_score": 0.15,
+          "failure_modes": [
+            "cite_broad"
+          ],
           "fracture_codes": [],
           "status": "scored",
           "validation": {
             "task_id": "KO_footnote_reconciliation",
             "layer": "L3",
-            "l3_pass": true,
-            "l3_score": 1.0,
-            "all_pass": true,
-            "failure_modes": [],
+            "l3_pass": false,
+            "l3_score": 0.15,
+            "all_pass": false,
+            "failure_modes": [
+              "cite_broad"
+            ],
             "fracture_codes": [],
             "checks": [
               {
@@ -20165,6 +21025,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].missing_row_label",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "bottling_investments_net_revenues"
@@ -20182,6 +21047,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].missing_row_label",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
               },
               {
                 "check": "citation[2].metric_id",
@@ -20203,6 +21073,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].missing_row_label",
+                "pass": false,
+                "metric_id": "consolidated_net_revenues"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "corporate_net_revenues"
@@ -20220,6 +21095,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].missing_row_label",
+                "pass": false,
+                "metric_id": "corporate_net_revenues"
               },
               {
                 "check": "citation[4].metric_id",
@@ -20241,6 +21121,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].missing_row_label",
+                "pass": false,
+                "metric_id": "emea_net_revenues"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "intersegment_eliminations"
@@ -20258,6 +21143,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].missing_row_label",
+                "pass": false,
+                "metric_id": "intersegment_eliminations"
               },
               {
                 "check": "citation[6].metric_id",
@@ -20279,6 +21169,11 @@
                 "pass": true
               },
               {
+                "check": "citation[6].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_fx_impact_pct"
+              },
+              {
                 "check": "citation[7].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenue_change_pct"
@@ -20296,6 +21191,11 @@
               {
                 "check": "citation[7].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[7].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_net_revenue_change_pct"
               },
               {
                 "check": "citation[8].metric_id",
@@ -20317,6 +21217,11 @@
                 "pass": true
               },
               {
+                "check": "citation[8].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_net_revenues"
+              },
+              {
                 "check": "citation[9].metric_id",
                 "pass": true,
                 "metric_id": "north_america_net_revenues"
@@ -20336,6 +21241,11 @@
                 "pass": true
               },
               {
+                "check": "citation[9].missing_row_label",
+                "pass": false,
+                "metric_id": "north_america_net_revenues"
+              },
+              {
                 "check": "citation[10].metric_id",
                 "pass": true,
                 "metric_id": "segment_net_revenues_sum"
@@ -20353,6 +21263,11 @@
               {
                 "check": "citation[10].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[10].missing_row_label",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "metric_cited.asia_pacific_net_revenues.distinct_snippet",
@@ -20419,15 +21334,17 @@
               "segment_net_revenues_sum"
             ],
             "components": {
-              "citation_fraction": 1.0,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 11,
+              "metrics_with_valid_citation": 0,
               "metric_count": 11
             }
           }
         },
-        "composite_score": 1.0,
-        "failure_modes": [],
+        "composite_score": 0.8725,
+        "failure_modes": [
+          "cite_broad"
+        ],
         "fracture_codes": [],
         "paths": {
           "agent_output": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gemini-2_5-flash/KO_footnote_reconciliation_run02.json",
@@ -20435,11 +21352,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gemini-2_5-flash/KO_footnote_reconciliation_run02_submission.json"
         }
       },
-      "composite_score": 1.0,
+      "composite_score": 0.8725,
       "l2_pass": true,
       "l2_score": 1.0,
-      "l3_pass": true,
-      "l3_score": 1.0,
+      "l3_pass": false,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "KO_footnote_reconciliation",
         "archetype": "F_exact",
@@ -20543,7 +21460,9 @@
       },
       "l1_all_pass": true,
       "l1_pass": true,
-      "failure_modes": [],
+      "failure_modes": [
+        "cite_broad"
+      ],
       "fracture_codes": [],
       "status": "scored"
     },
@@ -20700,8 +21619,9 @@
         },
         "l3": {
           "l3_pass": false,
-          "l3_score": 0.2273,
+          "l3_score": 0.15,
           "failure_modes": [
+            "cite_broad",
             "cite_duplicate_snippet"
           ],
           "fracture_codes": [
@@ -20712,9 +21632,10 @@
             "task_id": "KO_footnote_reconciliation",
             "layer": "L3",
             "l3_pass": false,
-            "l3_score": 0.2273,
+            "l3_score": 0.15,
             "all_pass": false,
             "failure_modes": [
+              "cite_broad",
               "cite_duplicate_snippet"
             ],
             "fracture_codes": [
@@ -20753,6 +21674,11 @@
                 "pass": true
               },
               {
+                "check": "citation[0].missing_row_label",
+                "pass": false,
+                "metric_id": "asia_pacific_net_revenues"
+              },
+              {
                 "check": "citation[1].metric_id",
                 "pass": true,
                 "metric_id": "bottling_investments_net_revenues"
@@ -20770,6 +21696,11 @@
               {
                 "check": "citation[1].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[1].missing_row_label",
+                "pass": false,
+                "metric_id": "bottling_investments_net_revenues"
               },
               {
                 "check": "citation[2].metric_id",
@@ -20791,6 +21722,11 @@
                 "pass": true
               },
               {
+                "check": "citation[2].missing_row_label",
+                "pass": false,
+                "metric_id": "consolidated_net_revenues"
+              },
+              {
                 "check": "citation[3].metric_id",
                 "pass": true,
                 "metric_id": "corporate_net_revenues"
@@ -20808,6 +21744,11 @@
               {
                 "check": "citation[3].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[3].missing_row_label",
+                "pass": false,
+                "metric_id": "corporate_net_revenues"
               },
               {
                 "check": "citation[4].metric_id",
@@ -20829,6 +21770,11 @@
                 "pass": true
               },
               {
+                "check": "citation[4].missing_row_label",
+                "pass": false,
+                "metric_id": "emea_net_revenues"
+              },
+              {
                 "check": "citation[5].metric_id",
                 "pass": true,
                 "metric_id": "intersegment_eliminations"
@@ -20846,6 +21792,11 @@
               {
                 "check": "citation[5].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[5].missing_row_label",
+                "pass": false,
+                "metric_id": "intersegment_eliminations"
               },
               {
                 "check": "citation[6].metric_id",
@@ -20867,6 +21818,11 @@
                 "pass": true
               },
               {
+                "check": "citation[6].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_fx_impact_pct"
+              },
+              {
                 "check": "citation[7].metric_id",
                 "pass": true,
                 "metric_id": "latin_america_net_revenue_change_pct"
@@ -20884,6 +21840,11 @@
               {
                 "check": "citation[7].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[7].citation_anchor",
+                "pass": true,
+                "metric_id": "latin_america_net_revenue_change_pct"
               },
               {
                 "check": "citation[8].metric_id",
@@ -20905,6 +21866,11 @@
                 "pass": true
               },
               {
+                "check": "citation[8].missing_row_label",
+                "pass": false,
+                "metric_id": "latin_america_net_revenues"
+              },
+              {
                 "check": "citation[9].metric_id",
                 "pass": true,
                 "metric_id": "north_america_net_revenues"
@@ -20924,6 +21890,11 @@
                 "pass": true
               },
               {
+                "check": "citation[9].missing_row_label",
+                "pass": false,
+                "metric_id": "north_america_net_revenues"
+              },
+              {
                 "check": "citation[10].metric_id",
                 "pass": true,
                 "metric_id": "segment_net_revenues_sum"
@@ -20941,6 +21912,11 @@
               {
                 "check": "citation[10].snippet",
                 "pass": true
+              },
+              {
+                "check": "citation[10].missing_row_label",
+                "pass": false,
+                "metric_id": "segment_net_revenues_sum"
               },
               {
                 "check": "metric_cited.asia_pacific_net_revenues.distinct_snippet",
@@ -21023,15 +21999,16 @@
               "segment_net_revenues_sum"
             ],
             "components": {
-              "citation_fraction": 0.0909,
+              "citation_fraction": 0.0,
               "policy_fraction": 1.0,
-              "metrics_with_valid_citation": 1,
+              "metrics_with_valid_citation": 0,
               "metric_count": 11
             }
           }
         },
-        "composite_score": 0.8841,
+        "composite_score": 0.8725,
         "failure_modes": [
+          "cite_broad",
           "cite_duplicate_snippet"
         ],
         "fracture_codes": [
@@ -21043,11 +22020,11 @@
           "submission": "/Users/gauravgoyal/Zstate/benchmark_v0.1/runs/pilot_eval_5task_v1/gemini-2_5-flash/KO_footnote_reconciliation_run03_submission.json"
         }
       },
-      "composite_score": 0.8841,
+      "composite_score": 0.8725,
       "l2_pass": true,
       "l2_score": 1.0,
       "l3_pass": false,
-      "l3_score": 0.2273,
+      "l3_score": 0.15,
       "verify": {
         "task_id": "KO_footnote_reconciliation",
         "archetype": "F_exact",
@@ -21152,6 +22129,7 @@
       "l1_all_pass": true,
       "l1_pass": true,
       "failure_modes": [
+        "cite_broad",
         "cite_duplicate_snippet"
       ],
       "fracture_codes": [

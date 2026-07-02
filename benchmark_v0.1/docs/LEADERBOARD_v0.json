@@ -1,9 +1,9 @@
 {
   "schema_version": "leaderboard_v0",
   "campaign_id": "pilot_eval_5task_v1",
-  "generated_at": "2026-07-02T14:40:12.988935+00:00",
-  "source_report": "2026-07-02T14:22:32.262009+00:00",
-  "git_commit": "c306bec",
+  "generated_at": "2026-07-02T15:24:41.170026+00:00",
+  "source_report": "2026-07-02T15:18:14.991727+00:00",
+  "git_commit": "1208d81",
   "methodology": {
     "primary_rank": "headline_weighted_composite",
     "headline_tasks": [
@@ -58,21 +58,21 @@
   "rankings": [
     {
       "model_id": "claude-sonnet-4-5",
-      "headline_composite": 0.9939,
+      "headline_composite": 0.9436,
       "fracture_intensity": 0.0,
       "task_composites": {
         "PEP_fx_organic_growth": 1.0,
         "AMZN_footnote_reconciliation": 1.0,
-        "NFLX_guidance_drift": 0.9757,
-        "KO_footnote_reconciliation": 1.0
+        "NFLX_guidance_drift": 0.8786,
+        "KO_footnote_reconciliation": 0.8957
       },
       "headline_run_count": 12,
       "fracture_profile": {
         "L1": {},
         "L2": {},
         "L3": {
-          "CITE_BROAD": 1,
-          "CITE_HALLUC": 2
+          "CITE_HALLUC": 4,
+          "CITE_BROAD": 1
         }
       },
       "fracture_codes_union": [
@@ -86,38 +86,44 @@
     },
     {
       "model_id": "gemini-2.5-flash",
-      "headline_composite": 0.9818,
-      "fracture_intensity": 0.0,
+      "headline_composite": 0.9256,
+      "fracture_intensity": 0.15,
       "task_composites": {
         "PEP_fx_organic_growth": 1.0,
         "AMZN_footnote_reconciliation": 1.0,
-        "NFLX_guidance_drift": 0.9271,
-        "KO_footnote_reconciliation": 1.0
+        "NFLX_guidance_drift": 0.83,
+        "KO_footnote_reconciliation": 0.8725
       },
       "headline_run_count": 12,
       "fracture_profile": {
-        "L1": {},
+        "L1": {
+          "TIMEOUT": 1
+        },
         "L2": {},
         "L3": {
-          "CITE_HALLUC": 1,
-          "CITE_BROAD": 4
+          "CITE_HALLUC": 3,
+          "CITE_BROAD": 5
         }
       },
       "fracture_codes_union": [
         "CITE_BROAD",
-        "CITE_HALLUC"
+        "CITE_HALLUC",
+        "TIMEOUT"
       ],
       "rank": 2,
       "is_leader": false,
       "gap_task": {
         "task_id": "NFLX_guidance_drift",
-        "leader_composite": 0.9757,
-        "model_composite": 0.9271,
+        "leader_composite": 0.8786,
+        "model_composite": 0.83,
         "delta": 0.0486
       },
       "fracture_delta_vs_leader": {
         "PEP_fx_organic_growth": [
           "CITE_HALLUC"
+        ],
+        "NFLX_guidance_drift": [
+          "TIMEOUT"
         ],
         "KO_footnote_reconciliation": [
           "CITE_BROAD"
@@ -126,20 +132,20 @@
     },
     {
       "model_id": "gpt-4o",
-      "headline_composite": 0.8961,
-      "fracture_intensity": 0.3,
+      "headline_composite": 0.881,
+      "fracture_intensity": 0.8,
       "task_composites": {
         "PEP_fx_organic_growth": 0.864,
         "AMZN_footnote_reconciliation": 0.9575,
-        "NFLX_guidance_drift": 0.8786,
-        "KO_footnote_reconciliation": 0.8841
+        "NFLX_guidance_drift": 0.83,
+        "KO_footnote_reconciliation": 0.8725
       },
       "headline_run_count": 12,
       "fracture_profile": {
         "L1": {},
         "L2": {},
         "L3": {
-          "CITE_HALLUC": 3,
+          "CITE_HALLUC": 6,
           "CITE_BROAD": 11
         }
       },
