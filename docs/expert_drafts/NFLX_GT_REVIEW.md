@@ -101,3 +101,15 @@ python3 benchmark_v0.1/scripts/validate_corpus_bundle.py --task NFLX_guidance_dr
 **Date:** 2 July 2026  
 
 **Sign-off:** NFLX fourth pilot task cleared for **published** benchmark use alongside GOOGL, PEP, and AMZN. Checklist groups Math / Architecture / Governance for auditor navigation; trap provenance corrected to Q2 10-Q for six-month decoy.
+
+### L3 computed-citation policy (scale pass, 2026-07-02)
+
+**Verdict:** approve (expert-delegated; no GT numeric changes)
+
+| Computed metric | Citation policy | Rationale |
+|-----------------|-----------------|-----------|
+| `implied_ytd_pace_usd_m` | Guidance snippet `"roughly $18B"` | Anchors pro-rata baseline to annual guide |
+| `cash_vs_guidance_pace_variance_pct` | Inherits YTD cash citation; numeric optional | Derived metric — variance not verbatim in filing |
+| `guidance_pace_under` | Policy note on cash vs amortization | Boolean conclusion requires policy acknowledgment |
+
+Source: `gold_paths/NFLX_guidance_drift.json` → `l3_citation_rules.computed_citations`.
