@@ -16,10 +16,10 @@ import json
 import sys
 from pathlib import Path
 
-FAILURE_FRACTURE = {
-    "wrong_ytd_window": "GUIDANCE_PERIOD_ERR",
-    "amortization_as_cash": "CASH_VS_AMORT_ERR",
-}
+from fracture_registry import fracture_codes as resolve_fracture_codes, l1_map_for_task
+
+# Back-compat alias — prefer fracture_registry.l1_map_for_task()
+FAILURE_FRACTURE = l1_map_for_task("NFLX_guidance_drift")
 
 
 def load_ground_truth(path: Path) -> dict:
@@ -122,7 +122,7 @@ def verify(values: dict, gt: dict) -> dict:
     all_pass = all(c["pass"] for c in checks)
     critical_fail = any(not c["pass"] and c["critical"] for c in checks)
     failure_modes = [] if all_pass else classify_failure(values, gt)
-    fracture_codes = list(dict.fromkeys(FAILURE_FRACTURE[m] for m in failure_modes if m in FAILURE_FRACTURE))
+    fracture_codes_list = resolve_fracture_codes(failure_modes, task_id=gt["task_id"], layer="L1")
 
     return {
         "task_id": gt["task_id"],
@@ -131,7 +131,7 @@ def verify(values: dict, gt: dict) -> dict:
         "l1_pass": all_pass or not critical_fail,
         "critical_fail": critical_fail,
         "failure_modes": failure_modes,
-        "fracture_codes": fracture_codes,
+        "fracture_codes": fracture_codes_list,
         "checks": checks,
         "computed": {
             "implied_ytd_pace_usd_m": implied_pace,

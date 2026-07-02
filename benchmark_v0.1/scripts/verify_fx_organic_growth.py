@@ -15,13 +15,9 @@ import json
 import sys
 from pathlib import Path
 
-FAILURE_FRACTURE = {
-    "spot_rate_method": "FX_METHOD_ERR",
-    "wrong_region": "SCOPE_ERR",
-    "reported_only": "CC_OMIT",
-    "wrong_period": "HALLUC_FILL",
-    "method_alt": "METHOD_ALT",
-}
+from fracture_registry import fracture_codes as resolve_fracture_codes, l1_map_for_task
+
+FAILURE_FRACTURE = l1_map_for_task("PEP_fx_organic_growth")
 
 
 def load_ground_truth(path: Path) -> dict:
@@ -239,7 +235,7 @@ def verify(values: dict, gt: dict) -> dict:
     failure_modes = [] if l1_pass else classify_failure(values, gt)
     if method_alt_metrics and not all_pass:
         failure_modes.append("method_alt")
-    fracture_codes = list(dict.fromkeys(FAILURE_FRACTURE[m] for m in failure_modes if m in FAILURE_FRACTURE))
+    fracture_codes_list = resolve_fracture_codes(failure_modes, task_id=gt["task_id"], layer="L1")
 
     return {
         "task_id": gt["task_id"],
@@ -249,7 +245,7 @@ def verify(values: dict, gt: dict) -> dict:
         "critical_fail": critical_fail,
         "method_alt_metrics": method_alt_metrics,
         "failure_modes": failure_modes,
-        "fracture_codes": fracture_codes,
+        "fracture_codes": fracture_codes_list,
         "checks": checks,
         "computed": computed,
     }

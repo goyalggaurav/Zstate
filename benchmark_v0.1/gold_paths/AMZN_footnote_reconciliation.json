@@ -126,6 +126,11 @@
       "fracture_code": "SECTION_MISS"
     },
     {
+      "failure_mode_id": "segment_sum_mismatch",
+      "anti_pattern": "segment_net_sales_sum_not_equal_consolidated",
+      "fracture_code": "RECON_OMIT"
+    },
+    {
       "failure_mode_id": "treat_sbc_as_segment_line_item",
       "anti_pattern": "treat_sbc_as_segment_line_item",
       "fracture_code": "SBC_ALLOCATION_ERR"

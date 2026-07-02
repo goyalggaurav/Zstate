@@ -134,6 +134,13 @@
       "example": "NFLX Q3 amortization (3980) used as content cash payments"
     },
     {
+      "code": "PATH_INEFF",
+      "label": "Suboptimal tool path or section order",
+      "tracks": ["benchmark"],
+      "severity": "medium",
+      "example": "Required sections retrieved but wrong order or missing tool class"
+    },
+    {
       "code": "SBC_ALLOCATION_ERR",
       "label": "Stock-based compensation added to segment net sales reconciliation",
       "tracks": ["benchmark"],

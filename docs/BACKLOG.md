@@ -1,7 +1,7 @@
 # Zstate Equity Research — Unified Backlog
 
 **Version:** 0.4  
-**Last updated:** July 2026 (post P2-06 actionable leaderboard — 4 published tasks, 26 smoke checks)
+**Last updated:** July 2026 (post P3-08 fracture registry + provenance pins — 4 published tasks, 27 smoke checks)
 
 Single backlog for **eval benchmark (Track A)**, **dual-control RL env (Track B)**, and **shared platform**. Priorities: **P0** (now) → **P4** (later).
 
@@ -85,6 +85,9 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P2-18 | **GOOGL L3 hardening + headline policy** — distinct snippets; GOOGL out of headline | done | `l3_citation_rules` on GOOGL; `headline_tasks` on 3-task campaign |
 | P2-19 | **NFLX expert sign-off** — Pattern 1 GT + `NFLX_GT_REVIEW.md` | done | Fourth published task; annual vs YTD pace archetype |
 | P2-20 | **4-task eval campaign** — `pilot_eval_4task_v1` live + NFLX re-run | done | 24/24 scored; headline gpt-4o 0.817 vs claude 0.966; boolean submit fix |
+| P3-08 | **Fracture registry SSOT** — `fracture_library_v1.json` + `fracture_registry.py` | done | L2/L3 central maps; L1 from gold_path + GT; verifiers migrated |
+| P3-09 | **Synthetic L3 bait pilot** — decoy-only hallucination traps | done | NFLX decoy `synthetic_l3_bait` + validator isolation from required excerpts |
+| P3-10 | **EDGAR excerpt provenance pins** — SHA-256 recompute in bundle validator | done | `excerpt_sha256` + manifest accession sync; full ingest remains LATER-06/SH-06 |
 
 ---
 
@@ -134,7 +137,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 26 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 27 checks |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 
 ---

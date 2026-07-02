@@ -85,6 +85,16 @@
       "failure_mode_id": "wrong_period",
       "anti_pattern": "use_fy2024_10k_as_primary",
       "fracture_code": "HALLUC_FILL"
+    },
+    {
+      "failure_mode_id": "spot_rate_method",
+      "anti_pattern": "use_spot_fx_rates_instead_of_mdna_bridge",
+      "fracture_code": "FX_METHOD_ERR"
+    },
+    {
+      "failure_mode_id": "method_alt",
+      "anti_pattern": "valid_alternate_cc_derivation",
+      "fracture_code": "METHOD_ALT"
     }
   ],
 

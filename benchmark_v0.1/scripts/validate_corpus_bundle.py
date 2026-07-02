@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -167,6 +168,96 @@ def validate_section_registry(
     return results
 
 
+def excerpt_sha256(excerpt: str) -> str:
+    return hashlib.sha256(normalize(excerpt).encode("utf-8")).hexdigest()
+
+
+def manifest_by_doc_id(manifest: dict) -> dict[str, dict]:
+    return {doc["doc_id"]: doc for doc in manifest.get("documents", [])}
+
+
+def validate_excerpt_provenance(
+    bundle: dict,
+    manifest: dict,
+) -> list[tuple[str, str, bool]]:
+    """Recompute excerpt_sha256 and cross-check manifest accession metadata."""
+    results: list[tuple[str, str, bool]] = []
+    manifest_docs = manifest_by_doc_id(manifest)
+    for doc_key, doc in bundle.get("documents", {}).items():
+        excerpt = doc.get("excerpt", "")
+        doc_id = doc.get("doc_id", doc_key)
+        if not excerpt:
+            continue
+        digest = excerpt_sha256(excerpt)
+        expected = doc.get("excerpt_sha256")
+        if expected:
+            results.append((f"excerpt_sha256.{doc_id}", expected[:16], digest == expected))
+        manifest_row = manifest_docs.get(doc_id)
+        if manifest_row and manifest_row.get("excerpt_sha256"):
+            results.append(
+                (
+                    f"manifest_excerpt_sha256.{doc_id}",
+                    manifest_row["excerpt_sha256"][:16],
+                    manifest_row["excerpt_sha256"] == digest,
+                )
+            )
+        anchor = doc.get("source_anchor") or {}
+        accession = anchor.get("sec_accession")
+        if accession and manifest_row:
+            manifest_acc = manifest_row.get("sec_accession")
+            if manifest_acc:
+                results.append(
+                    (f"manifest_accession.{doc_id}", accession, accession == manifest_acc)
+                )
+    return results
+
+
+def required_section_excerpts(bundle: dict) -> str:
+    required_slugs = {
+        entry["section_slug"]
+        for entry in bundle.get("section_registry", [])
+        if entry.get("required", True)
+    }
+    parts: list[str] = []
+    for entry in bundle.get("section_registry", []):
+        if entry.get("section_slug") not in required_slugs:
+            continue
+        doc_key = entry.get("document_key", "")
+        doc = bundle.get("documents", {}).get(doc_key, {})
+        parts.append(doc.get("excerpt", ""))
+    return normalize("\n".join(parts))
+
+
+def validate_synthetic_l3_bait(bundle: dict) -> list[tuple[str, str, bool]]:
+    """Synthetic bait must live in decoy excerpts only — never in required sections."""
+    results: list[tuple[str, str, bool]] = []
+    required_text = required_section_excerpts(bundle)
+    for entry in bundle.get("section_registry", []):
+        for bait in entry.get("synthetic_l3_bait", []) or []:
+            bait_id = bait.get("bait_id", "unknown")
+            snippet = bait.get("snippet", "")
+            if not snippet:
+                results.append((f"synthetic_bait_snippet.{bait_id}", "non_empty", False))
+                continue
+            decoy_doc = bundle.get("documents", {}).get(entry.get("document_key", ""), {})
+            decoy_excerpt = normalize(decoy_doc.get("excerpt", ""))
+            results.append(
+                (
+                    f"synthetic_bait_in_decoy.{bait_id}",
+                    snippet[:40],
+                    normalize(snippet) in decoy_excerpt,
+                )
+            )
+            results.append(
+                (
+                    f"synthetic_bait_not_in_required.{bait_id}",
+                    snippet[:40],
+                    normalize(snippet) not in required_text,
+                )
+            )
+    return results
+
+
 def validate_policy_notes(bundle: dict, task_id: str) -> list[tuple[str, str, bool]]:
     results: list[tuple[str, str, bool]] = []
     notes = bundle.get("policy_notes", [])
@@ -191,6 +282,7 @@ def validate_task(task_id: str) -> dict:
     ground_truth = load_json(BENCH / task_entry["paths"]["ground_truth"])
     gold_path = load_json(BENCH / task_entry["paths"]["gold_path"])
     task_json = load_json(BENCH / task_entry["paths"]["task"])
+    corpus_manifest = load_json(BENCH / "corpus" / "corpus_manifest_v1.json")
     combined = combined_excerpts(bundle)
 
     checks: list[dict] = []
@@ -218,6 +310,12 @@ def validate_task(task_id: str) -> dict:
         add_check(label, required, passed)
 
     for label, required, passed in validate_policy_notes(bundle, task_id):
+        add_check(label, required, passed)
+
+    for label, required, passed in validate_excerpt_provenance(bundle, corpus_manifest):
+        add_check(label, required, passed)
+
+    for label, required, passed in validate_synthetic_l3_bait(bundle):
         add_check(label, required, passed)
 
     archetype = task_json.get("archetype") or gold_path.get("archetype") or bundle.get("archetype")

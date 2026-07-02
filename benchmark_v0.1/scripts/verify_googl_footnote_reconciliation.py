@@ -16,6 +16,8 @@ import json
 import sys
 from pathlib import Path
 
+from fracture_registry import fracture_codes as resolve_fracture_codes, l1_map_for_task
+
 # Q1 2026 (USD millions) — Alphabet 10-Q filed 2026-04-30, period ended 2026-03-31
 GT_Q1_2026 = {
     "google_services_revenue": 89_637,
@@ -36,13 +38,7 @@ GT_FY2025 = {
 
 SEGMENT_SUM_Q1_2026 = 110_076
 
-FAILURE_FRACTURE = {
-    "blind_sum": "RECON_OMIT",
-    "sign_error": "SIGN_ERR",
-    "wrong_period": "HALLUC_FILL",
-    "wrong_filing": "HALLUC_FILL",
-    "hedging_as_segment": "RECON_OMIT",
-}
+FAILURE_FRACTURE = l1_map_for_task("GOOGL_footnote_reconciliation")
 
 
 def _get_field(values: dict, *keys: str):
@@ -141,14 +137,16 @@ def verify(values: dict, gt: dict) -> dict:
     critical_fail = any(not c["pass"] and c["critical"] for c in checks)
 
     failure_modes = [] if all_pass else classify_failure(values, gt)
-    fracture_codes = list(dict.fromkeys(FAILURE_FRACTURE[m] for m in failure_modes if m in FAILURE_FRACTURE))
+    fracture_codes_list = resolve_fracture_codes(
+        failure_modes, task_id="GOOGL_footnote_reconciliation", layer="L1"
+    )
 
     return {
         "task_id": "GOOGL_footnote_reconciliation",
         "all_pass": all_pass,
         "critical_fail": critical_fail,
         "failure_modes": failure_modes,
-        "fracture_codes": fracture_codes,
+        "fracture_codes": fracture_codes_list,
         "checks": checks,
         "computed": {
             "segment_sum": segment_sum,

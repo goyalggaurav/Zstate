@@ -145,25 +145,14 @@ def check_nflx_gt() -> None:
 
 
 def check_fracture_taxonomy_registry() -> None:
-    """Benchmark verify scripts must only emit codes registered in fracture_taxonomy_v1.json."""
+    """Fracture library codes must be registered in fracture_taxonomy_v1.json."""
     taxonomy = json.loads((ROOT / "schemas" / "fracture_taxonomy_v1.json").read_text())
     registry = {entry["code"] for entry in taxonomy["codes"]}
 
-    bench_scripts = ROOT / "benchmark_v0.1" / "scripts"
-    sys.path.insert(0, str(bench_scripts))
-    from verify_fx_organic_growth import FAILURE_FRACTURE as pep_fractures  # noqa: E402
-    from verify_googl_footnote_reconciliation import FAILURE_FRACTURE as googl_fractures  # noqa: E402
-    from validate_agent_submission import FAILURE_FRACTURE as l3_fractures  # noqa: E402
-    from verify_amzn_footnote_reconciliation import FAILURE_FRACTURE as amzn_fractures  # noqa: E402
-    from verify_guidance_drift import FAILURE_FRACTURE as guidance_fractures  # noqa: E402
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from fracture_registry import all_registered_fracture_codes  # noqa: E402
 
-    emitted = (
-        set(googl_fractures.values())
-        | set(pep_fractures.values())
-        | set(amzn_fractures.values())
-        | set(guidance_fractures.values())
-        | set(l3_fractures.values())
-    )
+    emitted = all_registered_fracture_codes()
     missing = emitted - registry
     assert not missing, f"Fracture codes not in registry: {sorted(missing)}"
 
@@ -1106,6 +1095,25 @@ def check_leaderboard_v0() -> None:
     assert gpt["fracture_intensity"] >= doc["rankings"][0]["fracture_intensity"]
 
 
+def check_fracture_registry() -> None:
+    """P3-08 — central fracture library resolves L1/L2/L3 modes."""
+    sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
+    from fracture_registry import (  # noqa: E402
+        all_registered_fracture_codes,
+        fracture_code,
+        fracture_codes,
+        taxonomy_codes,
+    )
+
+    assert fracture_code("cite_halluc", layer="L3") == "CITE_HALLUC"
+    assert fracture_code("wrong_ytd_window", task_id="NFLX_guidance_drift", layer="L1") == "GUIDANCE_PERIOD_ERR"
+    assert fracture_codes(["blind_sum", "sign_error"], task_id="GOOGL_footnote_reconciliation", layer="L1") == [
+        "RECON_OMIT",
+        "SIGN_ERR",
+    ]
+    assert all_registered_fracture_codes() <= taxonomy_codes()
+
+
 def check_archetype_roles() -> None:
     """P2-13 — path_role slugs + archetype schema alignment."""
     sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
@@ -1155,6 +1163,7 @@ def main() -> int:
         ("AMZN L2 path variance", check_amzn_l2_path),
         ("Campaign execute scripted", check_campaign_execute_scripted),
         ("Leaderboard v0 generator", check_leaderboard_v0),
+        ("Fracture registry library", check_fracture_registry),
     ]
     failed = 0
     for name, fn in checks:

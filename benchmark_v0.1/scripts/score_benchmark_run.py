@@ -27,13 +27,7 @@ from agent_output_contract import load_json  # noqa: E402
 from archetype_roles import canonicalize_section_slug  # noqa: E402
 from benchmark_tool_backend import load_bundle, normalize_section_slug  # noqa: E402
 from validate_agent_submission import validate_submission  # noqa: E402
-
-L2_FAILURE_FRACTURE = {
-    "section_miss": "SECTION_MISS",
-    "section_partial": "SECTION_MISS",
-    "section_order": "PATH_INEFF",
-    "tool_miss": "PATH_INEFF",
-}
+from fracture_registry import fracture_codes as resolve_fracture_codes  # noqa: E402
 
 
 def load_task(task_id: str) -> dict:
@@ -272,9 +266,7 @@ def score_l2_section_recall(trace: dict | None, *, task_id: str, gold_path: dict
 
     failure_modes = list(dict.fromkeys(recall_failures + order_failures + tool_failures))
     l2_pass = l2_score >= 1.0
-    fracture_codes = list(dict.fromkeys(
-        L2_FAILURE_FRACTURE[m] for m in failure_modes if m in L2_FAILURE_FRACTURE
-    ))
+    fracture_codes = resolve_fracture_codes(failure_modes, layer="L2")
 
     return {
         "l2_pass": l2_pass,
@@ -300,7 +292,7 @@ def score_l3_submission(submission: dict | None, *, task_id: str) -> dict:
             "l3_pass": False,
             "l3_score": 0.0,
             "failure_modes": ["submission_missing"],
-            "fracture_codes": ["CITE_BROAD"],
+            "fracture_codes": resolve_fracture_codes(["submission_missing"], layer="L3"),
             "status": "missing_submission",
         }
     report = validate_submission(submission, task_id=task_id)

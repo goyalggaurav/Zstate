@@ -24,6 +24,7 @@ sys.path.insert(0, str(SCRIPTS))
 
 from archetype_roles import canonicalize_section_slug  # noqa: E402
 from benchmark_tool_backend import load_bundle  # noqa: E402
+from fracture_registry import fracture_codes as resolve_fracture_codes, layer_map  # noqa: E402
 
 TASK_BUNDLES = {
     "GOOGL_footnote_reconciliation": "corpus/googl_q1_2026_bundle.json",
@@ -31,17 +32,7 @@ TASK_BUNDLES = {
     "AMZN_footnote_reconciliation": "corpus/amzn_fy2025_bundle.json",
 }
 
-FAILURE_FRACTURE = {
-    "cite_halluc": "CITE_HALLUC",
-    "cite_slug_err": "SECTION_MISS",
-    "cite_doc_err": "CITE_BROAD",
-    "cite_orphan_metric": "CITE_BROAD",
-    "cite_incomplete": "CITE_BROAD",
-    "cite_missing": "CITE_BROAD",
-    "cite_duplicate_snippet": "CITE_BROAD",
-    "policy_omit": "POLICY_OMIT",
-    "schema_invalid": "CITE_BROAD",
-}
+FAILURE_FRACTURE = layer_map("L3")
 
 
 def load_json(path: Path) -> dict:
@@ -252,7 +243,7 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
             failure_modes.append("policy_omit")
 
     failure_modes = list(dict.fromkeys(failure_modes))
-    fracture_codes = list(dict.fromkeys(FAILURE_FRACTURE[m] for m in failure_modes if m in FAILURE_FRACTURE))
+    fracture_codes_list = resolve_fracture_codes(failure_modes, layer="L3")
     l3_pass = not failure_modes
 
     metric_ids = list(metrics.keys())
@@ -268,7 +259,7 @@ def validate_submission(submission: dict, *, task_id: str, task: dict | None = N
         "l3_score": l3_score,
         "all_pass": l3_pass,
         "failure_modes": failure_modes,
-        "fracture_codes": fracture_codes,
+        "fracture_codes": fracture_codes_list,
         "checks": checks,
         "citation_count": len(citations),
         "metrics_cited": sorted(cited_metrics),

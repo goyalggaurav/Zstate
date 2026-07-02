@@ -106,6 +106,11 @@
       "failure_mode_id": "wrong_filing",
       "anti_pattern": "use_fy2024_or_fy2025_annual_instead_of_q1_2026_10q",
       "fracture_code": "HALLUC_FILL"
+    },
+    {
+      "failure_mode_id": "hedging_as_segment",
+      "anti_pattern": "allocate_hedging_gains_to_reportable_segments",
+      "fracture_code": "RECON_OMIT"
     }
   ],
 
