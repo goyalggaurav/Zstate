@@ -177,7 +177,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | SH-09 | Architecture + expert workflow docs | done | Jul 2026 |
 | SH-10 | Trajectory schema v1 | done | `schemas/trajectory_v1.json` |
 | SH-11 | Trace enrichment + fracture registry | done | `trace_utils.py`, `fracture_taxonomy_v1.json` |
-| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 35 checks |
+| SH-12 | Smoke test harness | done | `scripts/smoke_test.py` — 42 checks (incl. L3 anchor regression, task schema coherence) |
 | SH-13 | Manifest + bundle validators | done | `validate_manifest.py`, `validate_corpus_bundle.py` B3 |
 | SH-14 | Shared runtime extract (Track A/B dedupe) | done | `shared/` — `safe_calc`, `llm_retry`, `trace_utils`; backends import shared |
 
@@ -192,7 +192,7 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | LATER-06 | **Full EDGAR ingest pipeline** | A | **Single home for corpus automation** — `ingest_edgar_excerpt.py` (accession → slice → bundle + checksum), NFLX Q4 2024 letter + Q3 2025 10-Q verbatim in `nflx_q2q3_2025_bundle.json`, manifest `ingest_status` + `checksum_sha256`; extend to other pilot tickers. P3-10 excerpt SHA pins are interim. GT signed off — ingest does not block published status. Depends on P2-08 / SH-06. |
 | LATER-03 | Track A — eval orchestrator (SH-07) | A | done | Adapters + `pilot_eval_campaign_v1` live run complete |
 | LATER-04 | Frontier campaign v4 (v1.1.3 FSM validation) | B | Optional API run; start-index 7 |
-| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | **9B shipped** (P3-29/29b); scale pass (P3-30–34) done; pinned post-9B rescore in `pilot_eval_5task_v1.json`. Enable `synthetic_l3_eval` on next live campaign; 9A weight bump deferred |
+| LATER-05 | Track A — model ranking / harder L3 thresholds | A | in_progress | **Partial:** 9B (P3-29/29b), scale pass (P3-30–34), v0.2 (P3-35/36), coherence + CI parity (P3-37/39) all done; pinned baseline `pilot_eval_5task_v1.json`. **Remaining:** live `synthetic_l3_eval` campaign (`pilot_eval_5task_synthetic_l3_v1`); 9A weight bump deferred |
 
 ---
 
@@ -207,6 +207,15 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 - Full platform microservices (`docs/specs/*`) before 10 tasks — manifest + scripts remain MVD
 - Merging Track A and B episode formats
 - LLM-judge for benchmark L2 before SH-08 calibration set
+
+### Defer until task 8–10 (Jul 2026 review)
+
+| Item | Why wait |
+|------|----------|
+| LATER-06 full EDGAR ingest | P3-10 SHA pins + expert excerpts work for pilot; ingest pays off at scale |
+| P4-01 45 tasks | Templates not proven until tasks 6–7 ship cleanly |
+| LLM L2 judge | Explicitly deferred until SH-08 calibration set |
+| `anchor_mode` strict/relaxed toggle | Token-set matching + anchor regression CI (P3-36) may suffice; revisit only if false fails spike on new tickers |
 
 ---
 
@@ -257,5 +266,5 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 1. **Weekly:** Pull only from P0/P1 unless env demo is shipped.  
 2. **Lab meeting prep:** P1-10, P1-11, P1-04 must be `done`.  
 3. **Investor / Zstate review:** P2-06 + roadmap Phase map.  
-4. **Before task #5:** P3-11 → P3-12 → P3-13 (registry, GT L1, doc sync).  
+4. **P3-03 scale pass (tasks 6–15):** per task — `scaffold_task.py` → expert GT draft → scripted plan → `validate_publish_task.py` (incl. schema coherence) → mock agent smoke. Architecture gates (P3-11–P3-39) all done.  
 5. **Update status** in this file when items complete; add new IDs sequentially.

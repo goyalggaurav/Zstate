@@ -400,7 +400,8 @@ def build_pilot_brief() -> Document:
         "AMZN (F): FY2025 segment operating income bridge with stock-based comp decoy.",
         "NFLX (F): FY2025 cash content guidance vs nine-month YTD actuals (guidance drift).",
         "KO (F, new): FY2025 five-segment Total net revenues + Corporate + Eliminations bridge "
-        "to $47,941M consolidated; LatAm (2)% total vs (12)% FX from MD&A.",
+        "to $47,941M consolidated (reconciliation_bridge_total, v0.2 naming); "
+        "LatAm (2)% total vs (12)% FX from MD&A.",
     ])
 
     add_heading(doc, "4. Eval methodology", 1)
@@ -411,6 +412,10 @@ def build_pilot_brief() -> Document:
         "Headline composite excludes GOOGL (ceiling); PEP + AMZN + NFLX (+ KO in 5-task campaigns).",
         "Models routed: OpenAI (gpt-*), Anthropic (claude-*), Gemini (gemini-* via OpenAI-compatible API).",
         "3 runs per task (median) for all models in pilot_eval_5task_v1.",
+        "v0.2 L3 anchors: ground-truth-derived row/column anchors with token-set matching; "
+        "anchor regression + schema coherence gates in CI.",
+        "Synthetic L3 decoy diagnostic (Jul 3): 0 bait citations across 14 evaluated runs, "
+        "3 models — robustness checkmark, not yet a ranking dimension.",
     ])
 
     add_heading(doc, "5. Findings (July 2026 pilot)", 1)
@@ -418,10 +423,11 @@ def build_pilot_brief() -> Document:
 
     add_heading(doc, "6. WIP / next steps", 1)
     add_bullets(doc, [
+        "Task #6 via scaffold_task.py — publish gate now includes task schema coherence (P3-37).",
         "Scale to 15-task MVD (5 companies x 3 task types) with expert sign-off pipeline.",
         "Tighten L3 citation rules or eval-mode prompts — CITE_BROAD is the main separator on headline tasks.",
+        "Synthetic L3 at 3x runs / harder decoys before treating it as a ranking dimension.",
         "Track B: more frontier trajectories + PM branch coverage.",
-        "Expert Workbench (spec) for CFA draft -> review -> publish workflow.",
         "LATER-06: full corpus ingest with excerpt SHA pins (P3-10 mitigation on KO bundle).",
     ])
 

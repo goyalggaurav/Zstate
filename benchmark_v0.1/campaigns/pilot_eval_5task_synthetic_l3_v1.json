@@ -1,0 +1,29 @@
+{
+  "campaign_id": "pilot_eval_5task_synthetic_l3_v1",
+  "backlog_ref": "LATER-05",
+  "description": "Synthetic L3 decoy-susceptibility fork — 5 published tasks × 3 models × 1 run; eval_mode + synthetic_l3_eval on. Diagnostic campaign; pilot_eval_5task_v1 remains the pinned headline baseline.",
+  "status": "execute_ready",
+  "eval_mode": true,
+  "synthetic_l3_eval": true,
+  "models": [
+    "gpt-4o",
+    "claude-sonnet-4-5",
+    "gemini-2.5-flash"
+  ],
+  "tasks": [
+    "GOOGL_footnote_reconciliation",
+    "PEP_fx_organic_growth",
+    "AMZN_footnote_reconciliation",
+    "NFLX_guidance_drift",
+    "KO_footnote_reconciliation"
+  ],
+  "runs_per_task": 1,
+  "aggregation": {
+    "composite_score": "median",
+    "headline_composite_score": "median",
+    "weighted_composite_by_model": "task_weighted_mean_of_task_medians",
+    "fracture_codes": "union"
+  },
+  "manifest_ref": "../manifest.json",
+  "runs_dir": "runs/pilot_eval_5task_synthetic_l3_v1"
+}

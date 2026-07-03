@@ -20,3 +20,8 @@ benchmark_v0.1/runs/*
 !benchmark_v0.1/runs/pilot_eval_5task_v1/
 benchmark_v0.1/runs/pilot_eval_5task_v1/*
 !benchmark_v0.1/runs/pilot_eval_5task_v1/pilot_eval_5task_v1.json
+# Synthetic L3 diagnostic report (LATER-05) — aggregate only; official pin unchanged
+!benchmark_v0.1/runs/pilot_eval_5task_synthetic_l3_v1/
+benchmark_v0.1/runs/pilot_eval_5task_synthetic_l3_v1/*
+!benchmark_v0.1/runs/pilot_eval_5task_synthetic_l3_v1/pilot_eval_5task_synthetic_l3_v1.json
+!benchmark_v0.1/runs/pilot_eval_5task_synthetic_l3_v1/LEADERBOARD_synthetic_l3.md

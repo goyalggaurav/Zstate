@@ -1,10 +1,11 @@
-# Pilot Eval Report — July 2026 (role slugs)
+# Pilot Eval Report — July 2026 (5-task pilot, v0.2 schema)
 
-**Campaign:** `pilot_eval_4task_v1`  
-**Run date:** 2026-07-02 (live NFLX re-run post expert sign-off)  
-**Models:** `gpt-4o`, `claude-sonnet-4-5`  
-**Tasks:** GOOGL + PEP + AMZN + NFLX (24 runs, eval_mode on)  
-**Artifacts:** `benchmark_v0.1/runs/pilot_eval_4task_v1/pilot_eval_4task_v1.json`
+**Campaign:** `pilot_eval_5task_v1` (pinned baseline)  
+**Run date:** 2026-07-02 (post-9B rescore pinned; v0.2 schema pass 2026-07-03)  
+**Models:** `gpt-4o`, `claude-sonnet-4-5`, `gemini-2.5-flash`  
+**Tasks:** GOOGL + PEP + AMZN + NFLX + KO (45 runs, eval_mode on)  
+**Artifacts:** `benchmark_v0.1/runs/pilot_eval_5task_v1/pilot_eval_5task_v1.json`  
+**Diagnostic fork:** `pilot_eval_5task_synthetic_l3_v1` (15 runs, synthetic L3 decoys on — see below)
 
 ---
 
@@ -12,61 +13,51 @@
 
 - **Eval mode:** generic citation rules only (no task-specific cheat-sheets).
 - **Path roles:** canonical slugs (`segment_financials`, `narrative_guidance`, etc.) — not issuer note numbers.
-- **Headline composite (P2-18):** GOOGL excluded from headline — ceiling task for frontier models; headline = PEP + AMZN + NFLX.
+- **Headline composite:** GOOGL excluded — ceiling task for frontier models; headline = PEP + AMZN + NFLX + KO (task-weighted mean of task medians).
 - **Layers:** L1 verify (metrics) · L2 gold-path (section recall/order/tools) · L3 submission (citations + policy acks).
+- **v0.2 L3 anchors (P3-35/36):** GT-derived row/column anchors with token-set matching; gold-path overrides only where discrimination requires them (KO bridge). Anchor regression + schema coherence gates in CI (P3-36/37/39).
+- **KO bridge naming:** `reconciliation_bridge_total` (renamed from `segment_net_revenues_sum` in v0.2) = five segments + Corporate + Eliminations = consolidated $47,941M.
 
 ---
 
-## Results summary
+## Results summary (pinned baseline)
 
-| Metric | All 4 tasks | Headline (PEP + AMZN + NFLX) |
-|--------|-------------|-------------------------------|
-| Runs scored | 24/24 | 18/18 |
-| L1 pass rate (median) | 1.0 | 1.0 |
-| L2 score (median) | 1.0 | 1.0 |
-| L3 score (median) | 0.915 | 0.915 |
-| Composite (median) | 0.983 | 0.958 |
+### Per-model composite (median, 3 runs per cell)
 
-### Per-model composite (median)
+| Model | GOOGL | PEP | AMZN | NFLX | KO | **Headline weighted** |
+|-------|-------|-----|------|------|-----|------------------------|
+| claude-sonnet-4-5 | 1.0 | 1.0 | 1.0 | 0.879 | 0.896 | **0.944** |
+| gemini-2.5-flash | 1.0 | 1.0 | 1.0 | 0.830 | 0.873 | **0.926** |
+| gpt-4o | 1.0 | 0.864 | 0.958 | 0.830 | 0.873 | **0.881** |
 
-| Model | GOOGL | PEP | AMZN | NFLX | All-task | **Headline weighted** |
-|-------|-------|-----|------|------|----------|------------------------|
-| gpt-4o | 1.0 | 0.864 | 0.958 | 0.629 | 0.958 | **0.817** |
-| claude-sonnet-4-5 | 1.0 | 0.898 | 1.0 | 1.0 | 1.0 | **0.966** |
-
-Headline weighted composite = task-weighted mean of PEP, AMZN, and NFLX task medians (`pilot_eval_4task_v1.json`).
+Headline weighted composite = task-weighted mean of PEP, AMZN, NFLX, and KO task medians (`pilot_eval_5task_v1.json`).
 
 ---
 
-## NFLX guidance drift (P2-01 / P2-19)
+## Fracture signal (Track A, 45 runs)
 
-Fourth published task — annual FY2025 cash content guidance (~$18B) vs nine-month YTD actuals from Q3 2025 10-Q.
+| Code | Count | Interpretation |
+|------|-------|---------------|
+| CITE_BROAD | 17 | Duplicate snippet reuse across metrics (L3 partial credit) |
+| CITE_HALLUC | 13 | Snippet not verbatim in bundle excerpt |
+| TIMEOUT | 1 | No submit within execution limits |
 
-| Model | NFLX composite (median) | L1 | L2 | L3 | Notes |
-|-------|-------------------------|----|----|-----|-------|
-| claude-sonnet-4-5 | **1.0** | pass | pass | pass | 3/3 clean after boolean submit schema fix |
-| gpt-4o | **0.629** | partial | pass | ~0.39 | Amort rounding (4002 vs 4003) on 2 runs; L3 duplicate snippets all runs |
-
-**Infrastructure fixes during NFLX pilot:**
-
-- Explicit `Search_Filing` period hints in task prompt (2024Q4 guidance vs 2025Q3 actuals).
-- Submit tool schema: `guidance_pace_under` typed as `boolean` (was inferred as integer via Python `bool` ⊂ `int`).
-- Trap decoy **7,385** sourced to Q2 2025 10-Q six-month column; amort trap **11,658** from Q3 nine-month amort line.
+**NFLX** and **KO** are the sharpest wedges — every model loses composite there on L3 citation quality.  
+**PEP** separates gpt-4o (duplicate MD&A citations).  
+**GOOGL** ceiling 1.0 for all three models — excluded from headline ranking.
 
 ---
 
-## Fracture signal (Track A)
+## Synthetic L3 diagnostic (LATER-05, 2026-07-03)
 
-| Code | Count (24 runs) | Interpretation |
-|------|-----------------|---------------|
-| CITE_BROAD | 11 | Duplicate snippet reuse across metrics (L3 partial credit) |
-| CITE_HALLUC | 3 | Snippet not in bundle excerpt |
-| GUIDANCE_PERIOD_ERR | 2 | True trap hits only (mis-tagged non-trap L1 fails fixed in verifier) |
+Fork campaign `pilot_eval_5task_synthetic_l3_v1` — same 5 tasks × 3 models × 1 run with `synthetic_l3_eval: true` (decoy bait excerpts injected per P3-15).
 
-**PEP** remains a sharp wedge (gpt-4o L3 duplicate MD&A citations).  
-**AMZN** separates models on L3 citation quality.  
-**NFLX** separates models on L1 precision + L3 citations once task is live.  
-**GOOGL** ceiling **1.0** both models — excluded from headline ranking.
+- **Decoy bait hits: 0 across 14 evaluated runs.** No frontier model cited a synthetic decoy excerpt. `synthetic_fracture_intensity` = 0.0 for all models.
+- 1 run not evaluated: gemini-2.5-flash NFLX TIMEOUT (composite 0.0, no submission to check).
+- **Interpretation:** at current decoy strength, synthetic L3 is a robustness checkmark, not a ranking dimension. Ranking continues to come from real-citation quality (CITE_BROAD / CITE_HALLUC). Revisit decoy strength if this changes at 3× runs or with harder baits.
+- Diagnostic report: `runs/pilot_eval_5task_synthetic_l3_v1/` (aggregate + leaderboard view). **Pinned baseline unchanged** — `pilot_eval_5task_v1` remains the official pilot report.
+
+**Infrastructure fix during fork run:** OpenAI adapter deferred the retrieval nudge until all parallel `tool_call_id`s have responses (2 gpt-4o slots initially 400'd when the nudge interleaved sibling tool results).
 
 ---
 
@@ -76,14 +67,15 @@ Fourth published task — annual FY2025 cash content guidance (~$18B) vs nine-mo
 |------|---------------|--------|
 | GOOGL | `GOOGL_GT_REVIEW.md` | published |
 | PEP | `PEP_FX_GT_REVIEW.md` | published |
-| AMZN | `AMZN_GT_REVIEW.md` | published |
-| NFLX | `NFLX_GT_REVIEW.md` | published (2026-07-02) |
+| AMZN | `AMZN_GT_REVIEW.md` | published (expert_reviewed metadata 2026-07-02) |
+| NFLX | `NFLX_GT_REVIEW.md` | published (computed-citation L3 policy signed off) |
+| KO | `KO_GT_REVIEW.md` | published (bridge semantics expert-confirmed 2026-07-02) |
 
 ---
 
 ## Next eval actions
 
-1. ~~**P2-06** — leaderboard v0~~ → [LEADERBOARD_v0.md](./LEADERBOARD_v0.md) (actionable fracture view)
-2. Add `gpt-4o-mini` for wider model spread.
-3. **LATER-06** — NFLX EDGAR verbatim ingest (excerpt SHA-256 mitigates until then).
-4. Tighten gpt-4o L3 on NFLX (distinct snippet enforcement already in eval_mode).
+1. **P3-03 task #6** via `scaffold_task.py` — publish gate now includes schema coherence (P3-37).
+2. Tighten L3 on NFLX/KO — CITE_BROAD is the main separator on headline tasks.
+3. Synthetic L3 at 3× runs (or harder decoys) before treating it as a ranking dimension.
+4. **LATER-06** — full EDGAR ingest (excerpt SHA-256 pins mitigate until then).

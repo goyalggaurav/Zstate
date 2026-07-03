@@ -62,6 +62,7 @@ class OpenAIBenchmarkAgent:
         self.pending_tool_calls: list[dict] | None = None
         self._pending_index = 0
         self._retrieval_nudge = RetrievalNudgeTracker()
+        self._pending_nudge: str | None = None
 
     def _request(self, payload: dict) -> dict:
         if not self.api_key:
@@ -128,6 +129,12 @@ class OpenAIBenchmarkAgent:
                 self._pending_index += 1
                 return self._tool_call_to_action(call)
 
+        # Flush any deferred nudge only after every tool_call_id has a tool
+        # response — a user message between sibling tool responses is a 400.
+        if self._pending_nudge:
+            self.messages.append({"role": "user", "content": self._pending_nudge})
+            self._pending_nudge = None
+
         payload = {
             "model": self.model,
             "messages": self.messages,
@@ -162,7 +169,7 @@ class OpenAIBenchmarkAgent:
         })
         nudge = self._retrieval_nudge.on_tool_result(name)
         if nudge:
-            self.messages.append({"role": "user", "content": nudge})
+            self._pending_nudge = nudge
 
     def _tool_call_to_action(self, call: dict) -> dict:
         name = call["name"]
