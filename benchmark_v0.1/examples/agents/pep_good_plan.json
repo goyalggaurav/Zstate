@@ -34,7 +34,8 @@
         "emea_organic_cc_growth_pct": 6.0,
         "latam_foods_reported_growth_pct": -0.2,
         "latam_foods_fx_impact_pct": -4.7,
-        "latam_foods_organic_cc_growth_pct": 4.5
+        "latam_foods_organic_cc_growth_pct": 4.5,
+        "cc_growth_verified": true
       }
     }
   ]

@@ -111,6 +111,10 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-34 | **Metric unit typing (L3)** | A | done | Eng | `infer_metric_unit` / `build_metric_units`; unit-aware `numeric_in_snippet` |
 | P3-35 | **KO `reconciliation_bridge_total` rename (v0.2)** | A | done | Eng | Renamed from `segment_net_revenues_sum` across GT, task schema, fixtures, pinned runs, L3 rules. Expert-confirmed bridge semantics 2026-07-02 |
 | P3-36 | **L3 anchor resilience (v0.2)** | A | done | Eng | GT-derived default anchors + token-set `row_label_match`; `validate_l3_anchor_regression.py` in smoke; AMZN explicit anchors removed (GT SSOT) |
+| P3-37 | **Task schema coherence gate** | A | done | Eng | `validate_task_schema_coherence.py` — structured_fields ↔ GT ↔ gold-path anchors/computed_citations ↔ scripted plan; in publish gate + smoke. Caught PEP plan/fixture missing `cc_growth_verified`, AMZN fixture stale `segment_net_sales_sum` |
+| P3-38 | **Metric rename tooling** | A | later | Eng | `migrate_metric_key.py` (task/GT/gold-path/fixtures/plan rewrite, `--dry-run`) + pinned-run rescore policy. Trigger: second rename or 10 tasks |
+| P3-39 | **CI parity script** | A | done | Eng | `scripts/ci_parity.sh` = single SSOT for CI steps; `ci.yml` runs it; publish-gate loop manifest-driven (no hardcoded task list); CI Python 3.14 matches local dev |
+| P3-40 | **Archetype metric slots** | A | later | Eng | `metric_slots` in `archetype_roles_v1.json`; `scaffold_task.py` pre-fills structured_fields; coherence validator checks conformance. Trigger: P3-03 scale (15 tasks) |
 | P3-28 | **`sync_track_a_docs.py`** | Both | done | Eng | Manifest-driven blocks in root README, benchmark README, ARCHITECTURE; `--check` in CI |
 | P3-29 | **L3 citation hardening (9B)** | A | done | Eng | Archetype baselines + KO column/row anchors; `l3_citation_rules.py`; KO trap fixture |
 | P3-17 | **Contract GT fixtures (new tasks)** | A | done | Eng | `l1_values_from_gt()` + `submission_from_gt()`; `GT_DERIVED_TASKS`; KO uses GT-only fixtures |
@@ -121,11 +125,11 @@ Status key: `todo` | `in_progress` | `done` | `blocked` | `deferred`
 | P3-22 | **`headline_eligible` manifest flag** | A | done | Eng | GOOGL `false`; PEP/AMZN/NFLX/KO explicit `true`; campaigns/leaderboard use `resolve_campaign_headline_tasks()` |
 | P3-23 | **Publish gate (`validate_publish_task.py`)** | A | done | Eng | GT L1 verify, submit schema, contract fixture parity, L3 submission fixture |
 | P3-24 | **Pin scored campaign report** | A | done | Eng | `manifest.pinned_campaign_report`; gitignore exception for `pilot_eval_5task_v1.json` only |
-| P3-25 | **CI — smoke + validators (no live API)** | A | done | Eng | `.github/workflows/ci.yml` |
+| P3-25 | **CI — smoke + validators (no live API)** | A | done | Eng | `.github/workflows/ci.yml`; superseded by P3-39 `ci_parity.sh` as step SSOT |
 | P3-26 | **Doc sync (5-task pilot SSOT)** | A | done | Eng | Root README, benchmark README, smoke leaderboard assert |
 | P3-27 | **Track A trajectory_v1 validation** | A | done | Eng | `shared/trace_utils.py`; validate on benchmark trace write |
 
-**Gate:** P3 architecture hardening **complete for pilot**; **v0.2 schema pass done** (P3-35 + P3-36). P3-03 (15 tasks) unblocked — scripted plan + publish gate per task. Full EDGAR ingest remains **LATER-06**.
+**Gate:** P3 architecture hardening **complete for pilot**; **v0.2 schema pass done** (P3-35 + P3-36); schema coherence + CI parity shipped (P3-37, P3-39). P3-03 (15 tasks) unblocked — scaffold, scripted plan, publish gate (incl. coherence) per task. Rename tooling (P3-38) and archetype metric slots (P3-40) deferred to scale triggers. Full EDGAR ingest remains **LATER-06**.
 
 ### Env + catalog scale
 

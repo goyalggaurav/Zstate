@@ -1,8 +1,8 @@
 # Track A Leaderboard v0 — Actionable Fracture View
 
 **Campaign:** `pilot_eval_5task_v1`  
-**Generated:** 2026-07-02T17:18:09.579809+00:00  
-**Git:** `e9c9347`  
+**Generated:** 2026-07-03T11:56:56.030964+00:00  
+**Git:** `279dde9`  
 **Source report:** 2026-07-02T15:18:14.991727+00:00  
 
 > **Primary rank:** headline weighted composite (PEP + AMZN + NFLX).  

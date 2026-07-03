@@ -159,6 +159,23 @@ def validate_publish_task(task_id: str) -> dict:
     except RuntimeError as exc:
         record("l3_anchor_regression", False, str(exc))
 
+    try:
+        coherence_report = run_json([
+            sys.executable,
+            str(SCRIPTS / "validate_task_schema_coherence.py"),
+            "--task",
+            task_id,
+        ])
+        failed = [
+            c["check"]
+            for t in coherence_report.get("tasks", [])
+            for c in t.get("checks", [])
+            if not c.get("pass")
+        ]
+        record("schema_coherence", coherence_report.get("all_pass", False), ", ".join(failed))
+    except RuntimeError as exc:
+        record("schema_coherence", False, str(exc))
+
     scripted = paths.get("scripted_plan")
     if status == "published":
         record("scripted_plan", bool(scripted and (BENCH / scripted).exists()), scripted or "required for published")

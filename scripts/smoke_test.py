@@ -1414,6 +1414,22 @@ def check_l3_anchor_regression() -> None:
     assert report["all_pass"] is True, report
 
 
+def check_task_schema_coherence() -> None:
+    """P3-37 — task/GT/gold-path/plan metric schema coherence across published tasks."""
+    report = run([
+        sys.executable,
+        "benchmark_v0.1/scripts/validate_task_schema_coherence.py",
+        "--all",
+    ])
+    failed = [
+        (t["task_id"], c["check"], c.get("detail"))
+        for t in report["tasks"]
+        for c in t["checks"]
+        if not c["pass"]
+    ]
+    assert report["all_pass"] is True, failed
+
+
 def check_synthetic_l3_eval() -> None:
     """P3-15 — decoy bait citation detection when synthetic_l3_eval is enabled."""
     sys.path.insert(0, str(ROOT / "benchmark_v0.1" / "scripts"))
@@ -1542,6 +1558,7 @@ def main() -> int:
         ("Mock agents (published tasks)", check_mock_agents_published),
         ("Submission from GT (computed L3)", check_submission_from_gt_computed),
         ("L3 anchor regression", check_l3_anchor_regression),
+        ("Task schema coherence", check_task_schema_coherence),
         ("Synthetic L3 eval", check_synthetic_l3_eval),
         ("Scaffold task CLI", check_scaffold_task),
         ("Doc sync from manifest", check_doc_sync),
